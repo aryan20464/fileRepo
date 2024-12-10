@@ -1,0 +1,60 @@
+Docker setup:
+
+1) Install Docker Desktop for Windows 
+
+2) Create a user login for docker app.docker.com
+    
+	2.1) Open a cmd and click docker login and follow necessary steps it gives at the time, differs with different versions i.e., web authentication or credential entry etc.
+
+3) Create a sample image using a Dockerfile
+
+Folder Structure
+
+F:\SampleImage
+.
+.
+.
+------>Dockerfile
+------>index.html
+
+	Contents of Dockerfile
+	# Use the official NGINX image from the Docker Hub
+	FROM nginx:latest
+
+	# Copy custom HTML file to the container's default NGINX directory
+	COPY index.html /usr/share/nginx/html/index.html
+
+	# Expose port 80 to access the server
+	EXPOSE 80
+
+	# Start the NGINX server
+	CMD ["nginx", "-g", "daemon off;"]
+	
+	Contents of index.html
+	<!DOCTYPE html>
+	<html>
+	<head>
+		<title>Welcome to My NGINX Server</title>
+	</head>
+	<body>
+		<h1>Hello, this is a simple NGINX server!</h1>
+	</body>
+	</html>
+
+4)Run the below command to build a docker image
+
+	docker build -t sample-image . 
+	
+	the above command will build the the image using dockerfile. The . indicates it will create the image at the same place using all files at the path and '-t' indicates the image name and in the above sample-image is the image name of the build.
+
+5) Run the below command to run the image.
+
+	docker run -it sample-image sh
+	
+	the above command runs the image named sample-image interactively i.e., you see the sh at end, it opens a cmd when it is run. other flags include -d for detached mode i.e., cmd can be closed after running the above command, -rm or --rm will run the image in a specific container and once container is closed it is autodeleted.
+	
+6) Once it is running correclty, you can push your docker image to hub to access it through internet in different systems.
+
+	docker tag sample-image <usernameofdocker>/sample-image
+	
+	docker push <usernameofdocker>/sample-image
