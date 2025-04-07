@@ -3,8 +3,6 @@ kind: ConfigMap
 metadata:
   name: promtail-config
   namespace: loki
-labels:
-  app: promtail
 data:
   promtail.yaml: |
     server:
@@ -50,7 +48,7 @@ spec:
     spec:
       containers:
         - name: promtail
-          image: grafana/promtail:2.9.2
+          image: tkgsharedharbor.corp.ad.sbi/itss/promtail:3.4.1
           args:
             - -config.file=/etc/promtail/promtail.yaml
           volumeMounts:
@@ -69,4 +67,4 @@ spec:
             path: /var/log
         - name: springlogs
           hostPath:
-            path: /path/to/your/springboot/logs
+            path: /var/log/containers/*.log
