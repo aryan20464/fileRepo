@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springboot-app
+  namespace: minikube-apps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: springboot-app
+  template:
+    metadata:
+      labels:
+        app: springboot-app
+    spec:
+      containers:
+        - name: springboot-app
+          image: dockedat6160/spring-test:1.0
+          ports:
+            - containerPort: 4202
+          volumeMounts:
+            - name: app-logs
+              mountPath: /app/logs
+
+        - name: promtail
+          image: grafana/promtail:3.4.1
+          args:
+            - -config.file=/etc/promtail/promtail.yaml
+          volumeMounts:
+            - name: promtail-config
+              mountPath: /etc/promtail
+            - name: app-logs
+              mountPath: /logs  # Promtail reads from here
+
+      volumes:
+        - name: app-logs
+          emptyDir: {}  # Shared volume between containers
+        - name: promtail-config
+          configMap:
+            name: promtail-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: promtail-config
+  namespace: minikube-apps
+data:
+  promtail.yaml: |
+    server:
+      http_listen_port: 9080
+      grpc_listen_port: 0
+
+    positions:
+      filename: /tmp/positions.yaml
+
+    clients:
+      - url: http://loki.loki.svc.cluster.local:3100/loki/api/v1/push
+
+    scrape_configs:
+      - job_name: springboot-sidecar
+        static_configs:
+          - targets:
+              - localhost
+            labels:
+              job: springboot-app
+              __path__: /logs/*.log
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot-app-service
+  namespace: minikube-apps
+spec:
+  type: NodePort
+  ports:
+    - port: 4202
+      targetPort: 4202
+      nodePort: 30422
+  selector:
+    app: springboot-app
