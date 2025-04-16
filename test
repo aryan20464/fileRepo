@@ -132,26 +132,30 @@ spec:
 
 
 
-# init-folder-pod.yaml
+# temp-pod-create-log-dir.yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: log-dir-init
+  name: init-log-folder
   namespace: uatcmm
 spec:
   restartPolicy: Never
   containers:
-    - name: init-container
-      image: alpine:latest
+    - name: busybox
+      image: busybox
       command: ["/bin/sh", "-c"]
       args:
         - |
-          mkdir -p /app/logs && echo "Log folder created."
+          mkdir -p /app/logs && \
+          touch /app/logs/application.log && \
+          echo "Log folder initialized." > /app/logs/application.log && \
+          ls -la /app/logs && sleep 5
       volumeMounts:
-        - name: log-volume
+        - name: app-logs
           mountPath: /app/logs
   volumes:
-    - name: log-volume
+    - name: app-logs
       persistentVolumeClaim:
         claimName: springboot-app-logs-pvc
+
 
