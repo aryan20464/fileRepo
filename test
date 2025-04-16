@@ -158,4 +158,28 @@ spec:
       persistentVolumeClaim:
         claimName: springboot-app-logs-pvc
 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fix-perms
+  namespace: uatcmm
+spec:
+  restartPolicy: Never
+  containers:
+    - name: chown
+      image: busybox
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          echo "Changing ownership to UID:GID of itss (use actual values)";
+          chown -R 1001:1001 /app/logs;
+          ls -l /app/logs;
+          echo "Done.";
+      volumeMounts:
+        - name: app-logs
+          mountPath: /app/logs
+  volumes:
+    - name: app-logs
+      persistentVolumeClaim:
+        claimName: springboot-app-logs-pvc
 
