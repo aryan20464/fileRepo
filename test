@@ -1,0 +1,130 @@
+2. ✅ Spring Boot Deployment (with sidecar Promtail and PVC)
+
+# springboot-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springboot-app
+  namespace: uatcmm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: springboot-app
+  template:
+    metadata:
+      labels:
+        app: springboot-app
+    spec:
+      containers:
+        - name: springboot-app
+          image: tkgsharedharbor.corp.ad.sbi/idea-indents-dev/spring-test:2.0
+          ports:
+            - containerPort: 4202
+          volumeMounts:
+            - name: app-logs
+              mountPath: /app/logs
+        - name: promtail
+          image: tkgsharedharbor.corp.ad.sbi/itss/promtail:3.4.1
+          args:
+            - -config.file=/etc/promtail/promtail.yaml
+          volumeMounts:
+            - name: promtail-config
+              mountPath: /etc/promtail
+            - name: app-logs
+              mountPath: /logs  # Promtail reads from here
+      volumes:
+        - name: app-logs
+          persistentVolumeClaim:
+            claimName: springboot-app-logs-pvc
+        - name: promtail-config
+          configMap:
+            name: promtail-config
+
+
+3. ✅ Promtail ConfigMap (in uatcmm)
+
+
+# promtail-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: promtail-config
+  namespace: uatcmm
+data:
+  promtail.yaml: |
+    server:
+      http_listen_port: 9080
+      grpc_listen_port: 0
+
+    positions:
+      filename: /tmp/positions.yaml
+
+    clients:
+      - url: http://loki.loki.svc.cluster.local:3100/loki/api/v1/push
+
+    scrape_configs:
+      - job_name: springboot-sidecar
+        static_configs:
+          - targets:
+              - localhost
+            labels:
+              job: springboot-app
+              __path__: /logs/*.log
+
+4. ✅ CronJob to Backup Logs (in uatcmm)
+
+# log-backup-cronjob.yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: loki-log-backup
+  namespace: uatcmm
+spec:
+  schedule: "0 0 * * *"  # Every day at midnight
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: log-backup
+              image: grafana/logcli:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  logcli --addr=http://loki.loki.svc.cluster.local:3100 \
+                         query '{job="springboot-app"}' \
+                         --limit=10000 \
+                         --since=24h \
+                         --output=raw > /backup/springboot-$(date +%F).log
+              volumeMounts:
+                - name: backup-storage
+                  mountPath: /backup
+          restartPolicy: OnFailure
+          volumes:
+            - name: backup-storage
+              persistentVolumeClaim:
+                claimName: springboot-app-logs-pvc
+
+5. ✅ Debug Pod to View Logs (in uatcmm)
+
+# log-viewer-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: log-access
+  namespace: uatcmm
+spec:
+  containers:
+    - name: log-viewer
+      image: alpine:latest
+      command: ["/bin/sh"]
+      args: ["-c", "sleep infinity"]
+      volumeMounts:
+        - name: backup-storage
+          mountPath: /mnt/logs
+  volumes:
+    - name: backup-storage
+      persistentVolumeClaim:
+        claimName: springboot-app-logs-pvc
