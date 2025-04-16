@@ -183,3 +183,28 @@ spec:
       persistentVolumeClaim:
         claimName: springboot-app-logs-pvc
 
+
+
+#check the backup is created or not ??
+
+
+# File: view-backup-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: log-checker
+  namespace: uatcmm
+spec:
+  containers:
+    - name: busybox
+      image: busybox
+      command: ["/bin/sh"]
+      args: ["-c", "sleep infinity"]
+      volumeMounts:
+        - name: backup-volume
+          mountPath: /backup
+  volumes:
+    - name: backup-volume
+      persistentVolumeClaim:
+        claimName: springboot-app-logs-pvc
+
