@@ -128,3 +128,30 @@ spec:
     - name: backup-storage
       persistentVolumeClaim:
         claimName: springboot-app-logs-pvc
+
+
+
+
+# init-folder-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: log-dir-init
+  namespace: uatcmm
+spec:
+  restartPolicy: Never
+  containers:
+    - name: init-container
+      image: alpine:latest
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          mkdir -p /app/logs && echo "Log folder created."
+      volumeMounts:
+        - name: log-volume
+          mountPath: /app/logs
+  volumes:
+    - name: log-volume
+      persistentVolumeClaim:
+        claimName: springboot-app-logs-pvc
+
