@@ -82,6 +82,19 @@ spec:
       labels:
         app: springboot-app
     spec:
+      initContainers:
+        - name: fix-perms
+          image: tkgsharedharbor.corp.ad.sbi/itss/busybox@sha256:8b4ea49396032c42dc0a4dc0b7d052bab0e48eea6960cd567b79e1926968c928
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Changing ownership to UID:GID of itss (use actual values)";
+              chown -R 1001:1001 /app/logs;
+              ls -l /app/logs;
+              echo "Done.";
+          volumeMounts:
+            - name: app-logs
+              mountPath: /app/logs
       containers:
         - name: springboot-app
           image: tkgsharedharbor.corp.ad.sbi/idea-indents-dev/spring-test:2.0
