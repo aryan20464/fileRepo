@@ -1,0 +1,32 @@
+#2. Job to Fetch Logs from Loki
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: fetch-loki-logs
+  namespace: uatcmm
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: log-fetcher
+          image: curlimages/curl:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Fetching logs for today...";
+              NOW=$(date -u +%s);
+              START=$(date -u -d "24 hours ago" +%s);
+              curl -G -s "http://loki.loki.svc.cluster.local:3100/loki/api/v1/query_range" \
+                --data-urlencode 'query={job="springboot-app"}' \
+                --data-urlencode start="${START}000000000" \
+                --data-urlencode end="${NOW}000000000" \
+                --data-urlencode limit=10000 > /backup/springboot-logs-$(date +%F).json
+              echo "Logs saved.";
+          volumeMounts:
+            - name: backup
+              mountPath: /backup
+      volumes:
+        - name: backup
+          persistentVolumeClaim:
+            claimName: loki-log-backup-pvc

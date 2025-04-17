@@ -1,0 +1,13 @@
+#1. PVC for Backing Up Logs
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: loki-log-backup-pvc
+  namespace: uatcmm
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: default

@@ -1,0 +1,22 @@
+#3. Pod to View/Access Logs from PVC
+apiVersion: v1
+kind: Pod
+metadata:
+  name: loki-log-reader
+  namespace: uatcmm
+spec:
+  containers:
+    - name: log-reader
+      image: busybox:1.36
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          echo "Log Viewer Ready. Use 'kubectl exec -it loki-log-reader -n uatcmm -- sh' to explore logs.";
+          sleep 3600
+      volumeMounts:
+        - name: backup
+          mountPath: /backup
+  volumes:
+    - name: backup
+      persistentVolumeClaim:
+        claimName: loki-log-backup-pvc
