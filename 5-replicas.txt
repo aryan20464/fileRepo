@@ -25,6 +25,7 @@ data:
               - localhost
             labels:
               job: springboot-app
+              pod_name: ${POD_NAME}
               __path__: /logs/*.log
 
 ---
@@ -60,7 +61,7 @@ spec:
   ports:
     - port: 4202
       targetPort: 4202
-      nodePort: 30005  # Ensure this matches your NGINX proxy_pass config
+      nodePort: 30005
 
 ---
 # ------------------------------
@@ -88,7 +89,7 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              echo "Changing ownership to UID:GID of itss (use actual values)";
+              echo "Changing ownership to UID:GID of itss";
               chown -R 1001:1001 /app/logs;
               ls -l /app/logs;
               echo "Done.";
@@ -107,6 +108,11 @@ spec:
           image: tkgsharedharbor.corp.ad.sbi/itss/promtail:3.4.1
           args:
             - -config.file=/etc/promtail/promtail.yaml
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
           volumeMounts:
             - name: promtail-config
               mountPath: /etc/promtail
@@ -121,7 +127,7 @@ spec:
         name: app-logs
       spec:
         accessModes: [ "ReadWriteOnce" ]
-        storageClassName: default  # 🔁 Replace with your actual StorageClass
+        storageClassName: default  # Replace with actual StorageClass if needed
         resources:
           requests:
             storage: 1Gi
