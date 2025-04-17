@@ -1,17 +1,4 @@
-C:\Users\1064695>kubectl describe pvc app-logs-springboot-app-0 -n uatcmm
-Name:          app-logs-springboot-app-0
-Namespace:     uatcmm
-StorageClass:  csi.vsphere.vmware.com
-Status:        Pending
-Volume:
-Labels:        app=springboot-app
-Annotations:   <none>
-Finalizers:    [kubernetes.io/pvc-protection]
-Capacity:
-Access Modes:
-VolumeMode:    Filesystem
-Used By:       springboot-app-0
-Events:
-  Type     Reason              Age                   From                         Message
-  ----     ------              ----                  ----                         -------
-  Warning  ProvisioningFailed  3m10s (x42 over 13m)  persistentvolume-controller  storageclass.storage.k8s.io "csi.vsphere.vmware.com" not found
+C:\Users\1064695>kubectl get storageclass -o wide
+NAME                PROVISIONER              RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+cmm-sc              csi.vsphere.vmware.com   Retain          Immediate           true                   299d
+default (default)   csi.vsphere.vmware.com   Delete          Immediate           true                   299d
