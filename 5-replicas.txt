@@ -1,0 +1,114 @@
+# ------------------------------
+# Promtail ConfigMap
+# ------------------------------
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: promtail-config
+  namespace: uatcmm
+data:
+  promtail.yaml: |
+    server:
+      http_listen_port: 9080
+      grpc_listen_port: 0
+
+    positions:
+      filename: /tmp/positions.yaml
+
+    clients:
+      - url: http://loki.loki.svc.cluster.local:3100/loki/api/v1/push
+
+    scrape_configs:
+      - job_name: springboot-sidecar
+        static_configs:
+          - targets:
+              - localhost
+            labels:
+              job: springboot-app
+              __path__: /logs/*.log
+
+---
+# ------------------------------
+# Headless Service for StatefulSet
+# ------------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot-app-headless
+  namespace: uatcmm
+spec:
+  clusterIP: None
+  selector:
+    app: springboot-app
+  ports:
+    - port: 4202
+      targetPort: 4202
+
+---
+# ------------------------------
+# NodePort Service (for NGINX)
+# ------------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot-app-service
+  namespace: uatcmm
+spec:
+  type: NodePort
+  selector:
+    app: springboot-app
+  ports:
+    - port: 4202
+      targetPort: 4202
+      nodePort: 30005  # Ensure this matches your NGINX proxy_pass config
+
+---
+# ------------------------------
+# StatefulSet with Promtail Sidecar
+# ------------------------------
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: springboot-app
+  namespace: uatcmm
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: springboot-app
+  serviceName: springboot-app-headless
+  template:
+    metadata:
+      labels:
+        app: springboot-app
+    spec:
+      containers:
+        - name: springboot-app
+          image: tkgsharedharbor.corp.ad.sbi/idea-indents-dev/spring-test:2.0
+          ports:
+            - containerPort: 4202
+          volumeMounts:
+            - name: app-logs
+              mountPath: /app/logs
+        - name: promtail
+          image: tkgsharedharbor.corp.ad.sbi/itss/promtail:3.4.1
+          args:
+            - -config.file=/etc/promtail/promtail.yaml
+          volumeMounts:
+            - name: promtail-config
+              mountPath: /etc/promtail
+            - name: app-logs
+              mountPath: /logs
+      volumes:
+        - name: promtail-config
+          configMap:
+            name: promtail-config
+  volumeClaimTemplates:
+    - metadata:
+        name: app-logs
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: default  # 🔁 Replace with your actual StorageClass
+        resources:
+          requests:
+            storage: 1Gi
