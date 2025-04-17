@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: fetch-loki-logs
-  namespace: uatcmm
+  namespace: loki
 spec:
   restartPolicy: Never
   initContainers:
@@ -20,29 +20,25 @@ spec:
           mountPath: /backup
   containers:
     - name: fetcher
-      image: curlimages/curl:8.2.1
-      command: ["/bin/sh", "-c"]
+      image: ubuntu:22.04
+      command: ["/bin/bash", "-c"]
       args:
         - |
+          apt update && apt install -y curl;
           echo "Fetching logs for the last 24 hours...";
           NOW=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           YESTERDAY=$(date -u -d "24 hours ago" +%Y-%m-%dT%H:%M:%SZ)
           FROM=$(date -d "$YESTERDAY" +%s)000
           TO=$(date -d "$NOW" +%s)000
 
-          RESPONSE=$(curl -sG \
+          curl -sG \
             --data-urlencode "query={job=\"springboot-app\"}" \
             --data-urlencode "start=$FROM" \
             --data-urlencode "end=$TO" \
-            http://loki.loki.svc.cluster.local:3100/loki/api/v1/query_range)
+            http://loki.loki.svc.cluster.local:3100/loki/api/v1/query_range \
+            -o /backup/springboot-logs-$(date +%F).json
 
-          echo "$RESPONSE" | jq -r '.data.result[] |
-            .stream.pod |= . // "unknown" |
-            .values[] |
-            ((.[0] | tonumber | strftime("%Y-%m-%d %H:%M:%S")) + " [" + .stream.pod + "] " + .[1])' \
-            > /backup/springboot-logs-$(date +%F).log
-
-          echo "Logs saved to /backup/springboot-logs-$(date +%F).log"
+          echo "Logs saved to /backup/springboot-logs-$(date +%F).json"
       volumeMounts:
         - name: backup-vol
           mountPath: /backup
