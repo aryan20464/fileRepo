@@ -5,19 +5,30 @@ metadata:
   namespace: uatcmm
 spec:
   restartPolicy: Never
-  containers:
-    - name: fetcher
-      image: curlimages/curl:8.2.1  # Has both curl and sh
+  initContainers:
+    - name: fix-permissions
+      image: busybox:1.35
       command: ["/bin/sh", "-c"]
       args:
         - |
-          echo "Fetching logs for last 24 hours..."
+          echo "Fixing permissions on /backup volume...";
+          chown -R 1000:1000 /backup;
+          chmod -R 777 /backup;
+          ls -ld /backup;
+      volumeMounts:
+        - name: backup-vol
+          mountPath: /backup
+  containers:
+    - name: fetcher
+      image: curlimages/curl:8.2.1
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          echo "Fetching logs for the last 24 hours...";
           NOW=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           YESTERDAY=$(date -u -d "24 hours ago" +%Y-%m-%dT%H:%M:%SZ)
           FROM=$(date -d "$YESTERDAY" +%s)000
           TO=$(date -d "$NOW" +%s)000
-
-          echo "Querying logs from $YESTERDAY to $NOW..."
 
           RESPONSE=$(curl -sG \
             --data-urlencode "query={job=\"springboot-app\"}" \
@@ -25,7 +36,11 @@ spec:
             --data-urlencode "end=$TO" \
             http://loki.loki.svc.cluster.local:3100/loki/api/v1/query_range)
 
-          echo "$RESPONSE" | jq -r '.data.result[] | .stream.pod |= . // "unknown" | .values[] | "\(. | .[0] | tonumber | strftime("%Y-%m-%d %H:%M:%S")) [\(.stream.pod)] \(. | .[1])"' > /backup/springboot-logs-$(date +%F).log
+          echo "$RESPONSE" | jq -r '.data.result[] |
+            .stream.pod |= . // "unknown" |
+            .values[] |
+            ((.[0] | tonumber | strftime("%Y-%m-%d %H:%M:%S")) + " [" + .stream.pod + "] " + .[1])' \
+            > /backup/springboot-logs-$(date +%F).log
 
           echo "Logs saved to /backup/springboot-logs-$(date +%F).log"
       volumeMounts:
