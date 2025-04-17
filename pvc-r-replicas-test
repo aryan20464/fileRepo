@@ -1,0 +1,60 @@
+C:\Users\1064695>kubectl describe pod springboot-app-0 -n uatcmm
+Name:             springboot-app-0
+Namespace:        uatcmm
+Priority:         0
+Service Account:  default
+Node:             <none>
+Labels:           app=springboot-app
+                  controller-revision-hash=springboot-app-648f868df9
+                  statefulset.kubernetes.io/pod-name=springboot-app-0
+Annotations:      <none>
+Status:           Pending
+IP:
+IPs:              <none>
+Controlled By:    StatefulSet/springboot-app
+Containers:
+  springboot-app:
+    Image:        tkgsharedharbor.corp.ad.sbi/idea-indents-dev/spring-test:2.0
+    Port:         4202/TCP
+    Host Port:    0/TCP
+    Environment:  <none>
+    Mounts:
+      /app/logs from app-logs (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-5rz4k (ro)
+  promtail:
+    Image:      tkgsharedharbor.corp.ad.sbi/itss/promtail:3.4.1
+    Port:       <none>
+    Host Port:  <none>
+    Args:
+      -config.file=/etc/promtail/promtail.yaml
+    Environment:  <none>
+    Mounts:
+      /etc/promtail from promtail-config (rw)
+      /logs from app-logs (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-5rz4k (ro)
+Conditions:
+  Type           Status
+  PodScheduled   False
+Volumes:
+  app-logs:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  app-logs-springboot-app-0
+    ReadOnly:   false
+  promtail-config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      promtail-config
+    Optional:  false
+  kube-api-access-5rz4k:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason            Age    From               Message
+  ----     ------            ----   ----               -------
+  Warning  FailedScheduling  3m45s  default-scheduler  0/6 nodes are available: pod has unbound immediate PersistentVolumeClaims. preemption: 0/6 nodes are available: 6 No preemption victims found for incoming pod..
