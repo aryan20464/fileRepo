@@ -208,3 +208,127 @@ spec:
       persistentVolumeClaim:
         claimName: springboot-app-logs-pvc
 
+5 repllica setup 
+
+the below is my docker file and yaml file for deployment. DOCKERFILE
+
+FROM tkgsharedharbor.corp.ad.sbi/idea-indents-dev/eclipse-temurin:17-alpine
+
+# Set the timezone
+ENV TZ=Asia/Dhaka
+RUN apk add --no-cache tzdata && \
+    cp /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo "$TZ" > /etc/timezone
+
+# Create group and user
+RUN addgroup --system --gid 1001 itss && \
+    adduser --system --uid 1001 --ingroup itss itss
+
+# Create application directories
+RUN mkdir -p /app/logs && \
+    mkdir -p /var/log/app-logs
+
+# Set ownership and permissions
+RUN chown -R itss:itss /app /var/log/app-logs && \
+    chmod -R 775 /app/logs /var/log/app-logs
+
+# Set working directory
+WORKDIR /app
+
+# Copy application jar
+COPY target/Starter.jar Starter.jar
+RUN chown itss:itss Starter.jar
+
+# Switch to non-root user
+USER itss
+
+# Expose port
+EXPOSE 4202
+
+# Entry point
+ENTRYPOINT ["java", "-jar", "Starter.jar"]
+
+
+YAML FILE BELOW
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springboot-app
+  namespace: uatcmm
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: springboot-app
+  template:
+    metadata:
+      labels:
+        app: springboot-app
+    spec:
+      containers:
+        - name: springboot-app
+          image: tkgsharedharbor.corp.ad.sbi/idea-indents-dev/spring-test:2.0
+          ports:
+            - containerPort: 4202
+          volumeMounts:
+            - name: app-logs
+              mountPath: /app/logs
+        - name: promtail
+          image: tkgsharedharbor.corp.ad.sbi/itss/promtail:3.4.1
+          args:
+            - -config.file=/etc/promtail/promtail.yaml
+          volumeMounts:
+            - name: promtail-config
+              mountPath: /etc/promtail
+            - name: app-logs
+              mountPath: /logs  # Promtail reads from here
+      volumes:
+        - name: app-logs
+          persistentVolumeClaim:
+            claimName: springboot-app-logs-pvc
+        - name: promtail-config
+          configMap:
+            name: promtail-config
+---
+# promtail-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: promtail-config
+  namespace: uatcmm
+data:
+  promtail.yaml: |
+    server:
+      http_listen_port: 9080
+      grpc_listen_port: 0
+
+    positions:
+      filename: /tmp/positions.yaml
+
+    clients:
+      - url: http://loki.loki.svc.cluster.local:3100/loki/api/v1/push
+
+    scrape_configs:
+      - job_name: springboot-sidecar
+        static_configs:
+          - targets:
+              - localhost
+            labels:
+              job: springboot-app
+              __path__: /logs/*.log
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot-app-service
+  namespace: uatcmm
+spec:
+  type: NodePort
+  ports:
+    - port: 4202
+      targetPort: 4202
+      nodePort: 30005
+  selector:
+    app: springboot-app now go ahead with this StatefulSet + Promtail + Loki model. for say 5 replicas. give me as detail information as possible
