@@ -28,3 +28,13 @@ spec:
     - name: app-logs
       persistentVolumeClaim:
         claimName: springboot-app-logs-pvc
+
+
+C:\Users\1064695>kubectl logs fetch-loki-logs -n loki
+Defaulted container "fetcher" out of: fetcher, fix-permissions (init)
+Fetching logs for the last 24 hours...
+date: invalid date '24 hours ago'
+date: invalid date ''
+date: invalid date '2025-04-17T09:19:00Z'
+/bin/sh: jq: not found
+Logs saved to /backup/springboot-logs-2025-04-17.log
