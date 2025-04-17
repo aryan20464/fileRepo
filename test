@@ -209,56 +209,14 @@ spec:
         claimName: springboot-app-logs-pvc
 
 5 repllica setup 
-
-the below is my docker file and yaml file for deployment. DOCKERFILE
-
-FROM tkgsharedharbor.corp.ad.sbi/idea-indents-dev/eclipse-temurin:17-alpine
-
-# Set the timezone
-ENV TZ=Asia/Dhaka
-RUN apk add --no-cache tzdata && \
-    cp /usr/share/zoneinfo/$TZ /etc/localtime && \
-    echo "$TZ" > /etc/timezone
-
-# Create group and user
-RUN addgroup --system --gid 1001 itss && \
-    adduser --system --uid 1001 --ingroup itss itss
-
-# Create application directories
-RUN mkdir -p /app/logs && \
-    mkdir -p /var/log/app-logs
-
-# Set ownership and permissions
-RUN chown -R itss:itss /app /var/log/app-logs && \
-    chmod -R 775 /app/logs /var/log/app-logs
-
-# Set working directory
-WORKDIR /app
-
-# Copy application jar
-COPY target/Starter.jar Starter.jar
-RUN chown itss:itss Starter.jar
-
-# Switch to non-root user
-USER itss
-
-# Expose port
-EXPOSE 4202
-
-# Entry point
-ENTRYPOINT ["java", "-jar", "Starter.jar"]
-
-
-YAML FILE BELOW
-
-
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: springboot-app
   namespace: uatcmm
 spec:
-  replicas: 2
+  serviceName: springboot-app-headless
+  replicas: 5
   selector:
     matchLabels:
       app: springboot-app
@@ -267,6 +225,7 @@ spec:
       labels:
         app: springboot-app
     spec:
+      terminationGracePeriodSeconds: 10
       containers:
         - name: springboot-app
           image: tkgsharedharbor.corp.ad.sbi/idea-indents-dev/spring-test:2.0
@@ -275,6 +234,13 @@ spec:
           volumeMounts:
             - name: app-logs
               mountPath: /app/logs
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1024Mi"
+              cpu: "500m"
         - name: promtail
           image: tkgsharedharbor.corp.ad.sbi/itss/promtail:3.4.1
           args:
@@ -283,16 +249,34 @@ spec:
             - name: promtail-config
               mountPath: /etc/promtail
             - name: app-logs
-              mountPath: /logs  # Promtail reads from here
+              mountPath: /logs  # Promtail reads logs here
       volumes:
-        - name: app-logs
-          persistentVolumeClaim:
-            claimName: springboot-app-logs-pvc
         - name: promtail-config
           configMap:
             name: promtail-config
+  volumeClaimTemplates:
+    - metadata:
+        name: app-logs
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: your-storage-class-name  # Replace with CSI storage class
 ---
-# promtail-configmap.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot-app-headless
+  namespace: uatcmm
+spec:
+  clusterIP: None
+  selector:
+    app: springboot-app
+  ports:
+    - port: 4202
+      targetPort: 4202
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -331,4 +315,5 @@ spec:
       targetPort: 4202
       nodePort: 30005
   selector:
-    app: springboot-app now go ahead with this StatefulSet + Promtail + Loki model. for say 5 replicas. give me as detail information as possible
+    app: springboot-app
+
