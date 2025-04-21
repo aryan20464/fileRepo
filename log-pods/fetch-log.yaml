@@ -46,3 +46,54 @@ spec:
     - name: backup-vol
       persistentVolumeClaim:
         claimName: loki-log-backup-pvc
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fetch-loki-logs
+  namespace: uatcmm
+spec:
+  restartPolicy: Never
+  initContainers:
+    - name: fix-permissions
+      image: busybox:1.35
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          echo "Fixing permissions on /backup volume...";
+          chown -R 1000:1000 /backup;
+          chmod -R 777 /backup;
+          ls -ld /backup;
+      volumeMounts:
+        - name: backup-vol
+          mountPath: /backup
+  containers:
+    - name: fetcher
+      image: ubuntu:22.04
+      command: ["/bin/bash", "-c"]
+      args:
+        - |
+          apt update && apt install -y curl;
+          echo "Fetching logs for the last 24 hours...";
+          NOW=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          YESTERDAY=$(date -u -d "24 hours ago" +%Y-%m-%dT%H:%M:%SZ)
+          FROM=$(date -d "$YESTERDAY" +%s)000
+          TO=$(date -d "$NOW" +%s)000
+
+          curl -sG \
+            --data-urlencode "query={job=\"springboot-app\"}" \
+            --data-urlencode "start=$FROM" \
+            --data-urlencode "end=$TO" \
+            http://loki.loki.svc.cluster.local:3100/loki/api/v1/query_range \
+            -o /backup/springboot-logs-$(date +%F).json
+
+          echo "Logs saved to /backup/springboot-logs-$(date +%F).json"
+      volumeMounts:
+        - name: backup-vol
+          mountPath: /backup
+  volumes:
+    - name: backup-vol
+      persistentVolumeClaim:
+        claimName: loki-log-backup-pvc
