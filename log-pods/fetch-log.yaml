@@ -152,481 +152,68 @@ spec:
       persistentVolumeClaim:
         claimName: loki-log-backup-pvc
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+kind: Pod
+metadata:
+  name: fetch-loki-logs
+  namespace: uatcmm
+spec:
+  restartPolicy: Never
+  initContainers:
+    - name: fix-permissions
+      image: busybox:1.35
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          echo "Fixing permissions on /backup volume...";
+          chown -R 1000:1000 /backup;
+          chmod -R 777 /backup;
+          ls -ld /backup;
+      volumeMounts:
+        - name: backup-vol
+          mountPath: /backup
+  containers:
+    - name: fetcher
+      image: ubuntu:22.04
+      command: ["/bin/bash", "-c"]
+      args:
+        - |
+          LOG_FILE="/backup/fetch-logs-debug.log"
+          exec > >(tee -a "$LOG_FILE") 2>&1
 
+          echo "[INFO] Starting log fetch process..."
+          echo "[INFO] Updating and installing required tools..."
+          apt update && apt install -y curl jq coreutils
 
-{
-   "status":"success",
-   "data":{
-      "resultType":"streams",
-      "result":[
-         {
-            "stream":{
-               "filename":"/logs/app.log",
-               "job":"springboot-app",
-               "pod_name":"springboot-app-4",
-               "service_name":"springboot-app"
-            },
-            "values":[
-               [
-                  "1745226677267094562",
-                  "2025-04-21 15:11:17 [http-nio-4202-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK"
-               ],
-               [
-                  "1745226677267088300",
-                  "2025-04-21 15:11:17 [http-nio-4202-exec-3] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor - Writing [\"hello\"]"
-               ],
-               [
-                  "1745226677267081829",
-                  "2025-04-21 15:11:17 [http-nio-4202-exec-3] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor - Using 'text/plain', given [*/*] and supported [text/plain, */*, text/plain, */*, application/json, application/*+json, application/json, application/*+json]"
-               ],
-               [
-                  "1745226677267073125",
-                  "2025-04-21 15:11:17 [http-nio-4202-exec-3] INFO  com.chakri.Starter.StartController - This is hello string 2025-04-21T15:11:17.214483471"
-               ],
-               [
-                  "1745226677267062413",
-                  "2025-04-21 15:11:17 [http-nio-4202-exec-3] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping - Mapped to com.chakri.Starter.StartController#one()"
-               ],
-               [
-                  "1745226677267050171",
-                  "2025-04-21 15:11:17 [http-nio-4202-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - GET \"/Starter/hello\", parameters={}"
-               ],
-               [
-                  "1745226676013827206",
-                  "2025-04-21 15:11:15 [http-nio-4202-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK"
-               ],
-               [
-                  "1745226676013820370",
-                  "2025-04-21 15:11:15 [http-nio-4202-exec-2] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor - Writing [\"hello\"]"
-               ],
-               [
-                  "1745226676013809792",
-                  "2025-04-21 15:11:15 [http-nio-4202-exec-2] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor - Using 'text/plain', given [*/*] and supported [text/plain, */*, text/plain, */*, application/json, application/*+json, application/json, application/*+json]"
-               ],
-               [
-                  "1745226676013797297",
-                  "2025-04-21 15:11:15 [http-nio-4202-exec-2] INFO  com.chakri.Starter.StartController - This is hello string 2025-04-21T15:11:15.879135680"
-               ],
-               [
-                  "1745226676013786947",
-                  "2025-04-21 15:11:15 [http-nio-4202-exec-2] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping - Mapped to com.chakri.Starter.StartController#one()"
-               ],
-               [
-                  "1745226676013776911",
-                  "2025-04-21 15:11:15 [http-nio-4202-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - GET \"/Starter/hello\", parameters={}"
-               ]
-            ]
-         },
-         {
-            "stream":{
-               "filename":"/logs/app.log",
-               "job":"springboot-app",
-               "pod_name":"springboot-app-3",
-               "service_name":"springboot-app"
-            },
-            "values":[
-               [
-                  "1745226680196492234",
-                  "2025-04-21 15:11:20 [http-nio-4202-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK"
-               ],
-               [
-                  "1745226680196485812",
-                  "2025-04-21 15:11:20 [http-nio-4202-exec-4] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor - Writing [\"hello\"]"
-               ],
-               [
-                  "1745226680196444772",
-                  "2025-04-21 15:11:20 [http-nio-4202-exec-4] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor - Using 'text/plain', given [*/*] and supported [text/plain, */*, text/plain, */*, application/json, application/*+json, application/json, application/*+json]"
-               ],
-               [
-                  "1745226680196423718",
-                  "2025-04-21 15:11:20 [http-nio-4202-exec-4] INFO  com.chakri.Starter.StartController - This is hello string 2025-04-21T15:11:20.150977023"
-               ],
-               [
-                  "1745226680196403181",
-                  "2025-04-21 15:11:20 [http-nio-4202-exec-4] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping - Mapped to com.chakri.Starter.StartController#one()"
-               ],
-               [
-                  "1745226680196364229",
-                  "2025-04-21 15:11:20 [http-nio-4202-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - GET \"/Starter/hello\", parameters={}"
-               ],
-               [
-                  "1745226678943912067",
-                  "2025-04-21 15:11:18 [http-nio-4202-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK"
-               ],
-               [
-                  "1745226678943905582",
-                  "2025-04-21 15:11:18 [http-nio-4202-exec-2] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor - Writing [\"hello\"]"
-               ],
-               [
-                  "1745226678943821616",
-                  "2025-04-21 15:11:18 [http-nio-4202-exec-2] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor - Using 'text/plain', given [*/*] and supported [text/plain, */*, text/plain, */*, application/json, application/*+json, application/json, application/*+json]"
-               ],
-               [
-                  "1745226678943778200",
-                  "2025-04-21 15:11:18 [http-nio-4202-exec-2] INFO  com.chakri.Starter.StartController - This is hello string 2025-04-21T15:11:18.806835940"
-               ],
-               [
-                  "1745226678943767262",
-                  "2025-04-21 15:11:18 [http-nio-4202-exec-2] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping - Mapped to com.chakri.Starter.StartController#one()"
-               ],
-               [
-                  "1745226678943753287",
-                  "2025-04-21 15:11:18 [http-nio-4202-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - GET \"/Starter/hello\", parameters={}"
-               ]
-            ]
-         },
-         {
-            "stream":{
-               "filename":"/logs/app.log",
-               "job":"springboot-app",
-               "pod_name":"springboot-app-2",
-               "service_name":"springboot-app"
-            },
-            "values":[
-               [
-                  "1745226678458499143",
-                  "2025-04-21 15:11:18 [http-nio-4202-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK"
-               ],
-               [
-                  "1745226678458459285",
-                  "2025-04-21 15:11:18 [http-nio-4202-exec-3] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor - Writing [\"hello\"]"
-               ],
-               [
-                  "1745226678458419351",
-                  "2025-04-21 15:11:18 [http-nio-4202-exec-3] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor - Using 'text/plain', given [*/*] and supported [text/plain, */*, text/plain, */*, application/json, application/*+json, application/json, application/*+json]"
-               ],
-               [
-                  "1745226678458408371",
-                  "2025-04-21 15:11:18 [http-nio-4202-exec-3] INFO  com.chakri.Starter.StartController - This is hello string 2025-04-21T15:11:18.300724220"
-               ],
-               [
-                  "1745226678458396673",
-                  "2025-04-21 15:11:18 [http-nio-4202-exec-3] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping - Mapped to com.chakri.Starter.StartController#one()"
-               ],
-               [
-                  "1745226678458385752",
-                  "2025-04-21 15:11:18 [http-nio-4202-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - GET \"/Starter/hello\", parameters={}"
-               ],
-               [
-                  "1745226675451891098",
-                  "2025-04-21 15:11:15 [http-nio-4202-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK"
-               ],
-               [
-                  "1745226675451882005",
-                  "2025-04-21 15:11:15 [http-nio-4202-exec-1] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor - Writing [\"hello\"]"
-               ],
-               [
-                  "1745226675451870066",
-                  "2025-04-21 15:11:15 [http-nio-4202-exec-1] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor - Using 'text/plain', given [*/*] and supported [text/plain, */*, text/plain, */*, application/json, application/*+json, application/json, application/*+json]"
-               ],
-               [
-                  "1745226675451863669",
-                  "2025-04-21 15:11:15 [http-nio-4202-exec-1] INFO  com.chakri.Starter.StartController - This is hello string 2025-04-21T15:11:15.217024404"
-               ],
-               [
-                  "1745226675216075750",
-                  "2025-04-21 15:11:15 [http-nio-4202-exec-1] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping - Mapped to com.chakri.Starter.StartController#one()"
-               ],
-               [
-                  "1745226675213868048",
-                  "2025-04-21 15:11:15 [http-nio-4202-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET \"/Starter/hello\", parameters={}"
-               ],
-               [
-                  "1745226675213865884",
-                  "2025-04-21 15:11:15 [http-nio-4202-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 3 ms"
-               ],
-               [
-                  "1745226675208243596",
-                  "2025-04-21 15:11:15 [http-nio-4202-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data"
-               ],
-               [
-                  "1745226675208220358",
-                  "2025-04-21 15:11:15 [http-nio-4202-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@2fe1c943"
-               ],
-               [
-                  "1745226675208200285",
-                  "2025-04-21 15:11:15 [http-nio-4202-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@6e872ba6"
-               ],
-               [
-                  "1745226675208163988",
-                  "2025-04-21 15:11:15 [http-nio-4202-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver"
-               ],
-               [
-                  "1745226675208124940",
-                  "2025-04-21 15:11:15 [http-nio-4202-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver"
-               ],
-               [
-                  "1745226675202074297",
-                  "2025-04-21 15:11:15 [http-nio-4202-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver"
-               ],
-               [
-                  "1745226675201985840",
-                  "2025-04-21 15:11:15 [http-nio-4202-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'"
-               ],
-               [
-                  "1745226675200752885",
-                  "2025-04-21 15:11:15 [http-nio-4202-exec-1] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/Starter] - Initializing Spring DispatcherServlet 'dispatcherServlet'"
-               ]
-            ]
-         },
-         {
-            "stream":{
-               "filename":"/logs/app.log",
-               "job":"springboot-app",
-               "pod_name":"springboot-app-0",
-               "service_name":"springboot-app"
-            },
-            "values":[
-               [
-                  "1745226679861050567",
-                  "2025-04-21 15:11:19 [http-nio-4202-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK"
-               ],
-               [
-                  "1745226679861017575",
-                  "2025-04-21 15:11:19 [http-nio-4202-exec-6] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor - Writing [\"hello\"]"
-               ],
-               [
-                  "1745226679860990040",
-                  "2025-04-21 15:11:19 [http-nio-4202-exec-6] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor - Using 'text/plain', given [*/*] and supported [text/plain, */*, text/plain, */*, application/json, application/*+json, application/json, application/*+json]"
-               ],
-               [
-                  "1745226679860977051",
-                  "2025-04-21 15:11:19 [http-nio-4202-exec-6] INFO  com.chakri.Starter.StartController - This is hello string 2025-04-21T15:11:19.720424543"
-               ],
-               [
-                  "1745226679860952829",
-                  "2025-04-21 15:11:19 [http-nio-4202-exec-6] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping - Mapped to com.chakri.Starter.StartController#one()"
-               ],
-               [
-                  "1745226679860941400",
-                  "2025-04-21 15:11:19 [http-nio-4202-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - GET \"/Starter/hello\", parameters={}"
-               ],
-               [
-                  "1745226679359880384",
-                  "2025-04-21 15:11:19 [http-nio-4202-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK"
-               ],
-               [
-                  "1745226679359854185",
-                  "2025-04-21 15:11:19 [http-nio-4202-exec-5] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor - Writing [\"hello\"]"
-               ],
-               [
-                  "1745226679359820730",
-                  "2025-04-21 15:11:19 [http-nio-4202-exec-5] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor - Using 'text/plain', given [*/*] and supported [text/plain, */*, text/plain, */*, application/json, application/*+json, application/json, application/*+json]"
-               ],
-               [
-                  "1745226679359796848",
-                  "2025-04-21 15:11:19 [http-nio-4202-exec-5] INFO  com.chakri.Starter.StartController - This is hello string 2025-04-21T15:11:19.277424080"
-               ],
-               [
-                  "1745226679359781694",
-                  "2025-04-21 15:11:19 [http-nio-4202-exec-5] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping - Mapped to com.chakri.Starter.StartController#one()"
-               ],
-               [
-                  "1745226679359768740",
-                  "2025-04-21 15:11:19 [http-nio-4202-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - GET \"/Starter/hello\", parameters={}"
-               ],
-               [
-                  "1745226677857500678",
-                  "2025-04-21 15:11:17 [http-nio-4202-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK"
-               ],
-               [
-                  "1745226677857497529",
-                  "2025-04-21 15:11:17 [http-nio-4202-exec-4] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor - Writing [\"hello\"]"
-               ],
-               [
-                  "1745226677857483499",
-                  "2025-04-21 15:11:17 [http-nio-4202-exec-4] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor - Using 'text/plain', given [*/*] and supported [text/plain, */*, text/plain, */*, application/json, application/*+json, application/json, application/*+json]"
-               ],
-               [
-                  "1745226677857426693",
-                  "2025-04-21 15:11:17 [http-nio-4202-exec-4] INFO  com.chakri.Starter.StartController - This is hello string 2025-04-21T15:11:17.733053697"
-               ],
-               [
-                  "1745226677857413747",
-                  "2025-04-21 15:11:17 [http-nio-4202-exec-4] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping - Mapped to com.chakri.Starter.StartController#one()"
-               ],
-               [
-                  "1745226677857397364",
-                  "2025-04-21 15:11:17 [http-nio-4202-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - GET \"/Starter/hello\", parameters={}"
-               ],
-               [
-                  "1745226676605646077",
-                  "2025-04-21 15:11:16 [http-nio-4202-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK"
-               ],
-               [
-                  "1745226676605615091",
-                  "2025-04-21 15:11:16 [http-nio-4202-exec-3] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor - Writing [\"hello\"]"
-               ],
-               [
-                  "1745226676605601788",
-                  "2025-04-21 15:11:16 [http-nio-4202-exec-3] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor - Using 'text/plain', given [*/*] and supported [text/plain, */*, text/plain, */*, application/json, application/*+json, application/json, application/*+json]"
-               ],
-               [
-                  "1745226676605585928",
-                  "2025-04-21 15:11:16 [http-nio-4202-exec-3] INFO  com.chakri.Starter.StartController - This is hello string 2025-04-21T15:11:16.578709313"
-               ],
-               [
-                  "1745226676605479814",
-                  "2025-04-21 15:11:16 [http-nio-4202-exec-3] DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping - Mapped to com.chakri.Starter.StartController#one()"
-               ],
-               [
-                  "1745226676605464151",
-                  "2025-04-21 15:11:16 [http-nio-4202-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - GET \"/Starter/hello\", parameters={}"
-               ]
-            ]
-         }
-      ],
-      "stats":{
-         "summary":{
-            "bytesProcessedPerSecond":725775,
-            "linesProcessedPerSecond":3820,
-            "totalBytesProcessed":13109,
-            "totalLinesProcessed":69,
-            "execTime":0.018062,
-            "queueTime":0.082792,
-            "subqueries":0,
-            "totalEntriesReturned":69,
-            "splits":2,
-            "shards":32,
-            "totalPostFilterLines":69,
-            "totalStructuredMetadataBytesProcessed":0
-         },
-         "querier":{
-            "store":{
-               "totalChunksRef":0,
-               "totalChunksDownloaded":0,
-               "chunksDownloadTime":0,
-               "queryReferencedStructuredMetadata":false,
-               "chunk":{
-                  "headChunkBytes":0,
-                  "headChunkLines":0,
-                  "decompressedBytes":0,
-                  "decompressedLines":0,
-                  "compressedBytes":0,
-                  "totalDuplicates":0,
-                  "postFilterLines":0,
-                  "headChunkStructuredMetadataBytes":0,
-                  "decompressedStructuredMetadataBytes":0
-               },
-               "chunkRefsFetchTime":0,
-               "congestionControlLatency":0,
-               "pipelineWrapperFilteredLines":0
-            }
-         },
-         "ingester":{
-            "totalReached":32,
-            "totalChunksMatched":0,
-            "totalBatches":35,
-            "totalLinesSent":69,
-            "store":{
-               "totalChunksRef":4,
-               "totalChunksDownloaded":4,
-               "chunksDownloadTime":382541,
-               "queryReferencedStructuredMetadata":false,
-               "chunk":{
-                  "headChunkBytes":0,
-                  "headChunkLines":0,
-                  "decompressedBytes":13109,
-                  "decompressedLines":69,
-                  "compressedBytes":2779,
-                  "totalDuplicates":0,
-                  "postFilterLines":69,
-                  "headChunkStructuredMetadataBytes":0,
-                  "decompressedStructuredMetadataBytes":0
-               },
-               "chunkRefsFetchTime":7129976,
-               "congestionControlLatency":0,
-               "pipelineWrapperFilteredLines":0
-            }
-         },
-         "cache":{
-            "chunk":{
-               "entriesFound":0,
-               "entriesRequested":0,
-               "entriesStored":0,
-               "bytesReceived":0,
-               "bytesSent":0,
-               "requests":0,
-               "downloadTime":0,
-               "queryLengthServed":0
-            },
-            "index":{
-               "entriesFound":0,
-               "entriesRequested":0,
-               "entriesStored":0,
-               "bytesReceived":0,
-               "bytesSent":0,
-               "requests":0,
-               "downloadTime":0,
-               "queryLengthServed":0
-            },
-            "result":{
-               "entriesFound":0,
-               "entriesRequested":0,
-               "entriesStored":0,
-               "bytesReceived":0,
-               "bytesSent":0,
-               "requests":0,
-               "downloadTime":0,
-               "queryLengthServed":0
-            },
-            "statsResult":{
-               "entriesFound":0,
-               "entriesRequested":0,
-               "entriesStored":0,
-               "bytesReceived":0,
-               "bytesSent":0,
-               "requests":0,
-               "downloadTime":0,
-               "queryLengthServed":0
-            },
-            "volumeResult":{
-               "entriesFound":0,
-               "entriesRequested":0,
-               "entriesStored":0,
-               "bytesReceived":0,
-               "bytesSent":0,
-               "requests":0,
-               "downloadTime":0,
-               "queryLengthServed":0
-            },
-            "seriesResult":{
-               "entriesFound":0,
-               "entriesRequested":0,
-               "entriesStored":0,
-               "bytesReceived":0,
-               "bytesSent":0,
-               "requests":0,
-               "downloadTime":0,
-               "queryLengthServed":0
-            },
-            "labelResult":{
-               "entriesFound":0,
-               "entriesRequested":0,
-               "entriesStored":0,
-               "bytesReceived":0,
-               "bytesSent":0,
-               "requests":0,
-               "downloadTime":0,
-               "queryLengthServed":0
-            },
-            "instantMetricResult":{
-               "entriesFound":0,
-               "entriesRequested":0,
-               "entriesStored":0,
-               "bytesReceived":0,
-               "bytesSent":0,
-               "requests":0,
-               "downloadTime":0,
-               "queryLengthServed":0
-            }
-         },
-         "index":{
-            "totalChunks":0,
-            "postFilterChunks":0,
-            "shardsDuration":0,
-            "usedBloomFilters":false
-         }
-      }
-   }
-}
+          echo "[INFO] Calculating time range for logs..."
+          NOW=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          YESTERDAY=$(date -u -d "24 hours ago" +%Y-%m-%dT%H:%M:%SZ)
+          FROM=$(date -d "$YESTERDAY" +%s)000
+          TO=$(date -d "$NOW" +%s)000
+          echo "[INFO] Time Range: FROM=$FROM TO=$TO"
+
+          echo "[INFO] Querying Loki..."
+          RESPONSE=$(curl -sG \
+            --data-urlencode "query={job=\"springboot-app\"}" \
+            --data-urlencode "start=$FROM" \
+            --data-urlencode "end=$TO" \
+            http://loki.loki.svc.cluster.local:3100/loki/api/v1/query_range)
+
+          echo "[INFO] Parsing response and writing to log file..."
+          echo "$RESPONSE" | jq -r '
+            .data.result[] |
+            .stream.pod as $pod |
+            .values[] |
+            ((.[0] | tonumber / 1000000000 | strftime("%Y-%m-%d %H:%M:%S")) + " [" + $pod + "] " + .[1])
+          ' > /backup/springboot-logs-$(date +%F).log
+
+          echo "[INFO] Logs saved to /backup/springboot-logs-$(date +%F).log"
+          echo "[INFO] Log fetch process complete."
+      volumeMounts:
+        - name: backup-vol
+          mountPath: /backup
+  volumes:
+    - name: backup-vol
+      persistentVolumeClaim:
+        claimName: loki-log-backup-pvc
+
