@@ -97,8 +97,7 @@ spec:
     - name: backup-vol
       persistentVolumeClaim:
         claimName: loki-log-backup-pvc
----------------------------------------------------------------------------------------------------------------------------------------------------------------
-apiVersion: v1
+-------------------------------------------------apiVersion: v1
 kind: Pod
 metadata:
   name: fetch-loki-logs
@@ -137,11 +136,12 @@ spec:
             --data-urlencode "end=$TO" \
             http://loki.loki.svc.cluster.local:3100/loki/api/v1/query_range)
 
-          echo "$RESPONSE" | jq -r '.data.result[] |
-            .stream.pod |= . // "unknown" |
+          echo "$RESPONSE" | jq -r '
+            .data.result[] |
+            .stream.pod as $pod |
             .values[] |
-            ((.[0] | tonumber / 1000000000 | strftime("%Y-%m-%d %H:%M:%S")) + " [" + $pod + "] " + .[1])' \
-            > /backup/springboot-logs-$(date +%F).log
+            ((.[0] | tonumber / 1000000000 | strftime("%Y-%m-%d %H:%M:%S")) + " [" + $pod + "] " + .[1])
+          ' > /backup/springboot-logs-$(date +%F).log
 
           echo "Logs saved to /backup/springboot-logs-$(date +%F).log"
       volumeMounts:
@@ -151,3 +151,4 @@ spec:
     - name: backup-vol
       persistentVolumeClaim:
         claimName: loki-log-backup-pvc
+
