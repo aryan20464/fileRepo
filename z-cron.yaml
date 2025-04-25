@@ -1,0 +1,52 @@
+# log-backup-cronjob.yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: loki-log-scheduler
+  namespace: loki
+spec:
+  schedule: "0 0 * * *"  # Every day at midnight
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: log-cron-backup
+              image: tkgsharedharbor.corp.ad.sbi/itss/ubuntu-curl-jq-cutils:22.04
+              env:
+                - name: TZ
+                  value: Asia/Kolkata
+              command: ["/bin/bash", "-c"]
+              args:
+                - |
+                  LOG_FILE="/backup/fetch-logs-debug.log"
+                  exec > >(tee -a "$LOG_FILE") 2>&1
+
+                  echo "[INFO] Starting log fetch process..."
+                  echo "[INFO] Updating and installing required tools..."
+
+                  echo "[INFO] Calculating time range for logs..."
+                  NOW=$(date +%Y-%m-%dT%H:%M:%SZ)
+                  YESTERDAY=$(date -d "24 hours ago" +%Y-%m-%dT00:00:00Z)
+                  FROM=$(date -d "$YESTERDAY" +%s)000
+                  TO=$(date -d "$NOW" +%s)000
+                  echo "[INFO] Time Range: FROM=$FROM TO=$TO"
+
+                  echo "[INFO] Querying Loki..."
+                  RESPONSE=$(curl -sG --data-urlencode "query={job=\"springboot-app\"}" --data-urlencode "start=$(date -d "24 hours ago" +%Y-%m-%dT00:00:00Z)" --data-urlencode "end=$NOW" http://loki.loki.svc.cluster.local:3100/loki/api/v1/query_range)
+                  
+                  echo "[RESPONSE] $RESPONSE"
+
+                  echo "[INFO] Parsing response and writing to log file..."
+                  echo "$RESPONSE" | jq -r '.data.result[] | .stream.pod_name as $pod | .values[] | ((.[0] | tonumber / 1000000000 | strftime("%Y-%m-%d %H:%M:%S")) + " [" + $pod + "] " + .[1])' > /backup/cron-springboot-logs-$(date +%F).log
+
+                  echo "[INFO] Logs saved to /backup/cron-springboot-backend-logs-$(date +%F).log"
+                  echo "[INFO] Log fetch process complete."
+              volumeMounts:
+                - name: backup-storage
+                  mountPath: /backup
+          restartPolicy: OnFailure
+          volumes:
+            - name: backup-storage
+              persistentVolumeClaim:
+                claimName: cronjob-logs-pvc
