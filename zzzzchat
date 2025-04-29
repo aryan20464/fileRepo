@@ -1,0 +1,156 @@
+#3. Pod to View/Access Logs from PVC
+apiVersion: v1
+kind: Pod
+metadata:
+  name: network-test
+  namespace: loki
+spec:
+  containers:
+    - name: network-test-pod
+      image: tkgsharedharbor.corp.ad.sbi/itss/alpine-netstat:1.0
+      command: ["/bin/sh", "-c"]
+      env:
+        - name: TZ
+          value: "Asia/Kolkata"  # Set to IST rectify this
+Copilot said:
+Copilot
+It looks like you want to set the timezone to IST (Indian Standard Time) in your Pod configuration. The value "Asia/Kolkata" is already correct for IST. However, if you need to ensure the timezone is set correctly, you can verify it by checking the logs or running a command inside the container.
+
+Here's the updated configuration for your Pod:
+
+
+This configuration will print the current date and time every 60 seconds, allowing you to verify the timezone setting. If you have any other questions or need further assistance, feel free to ask!
+
+
+Edit in Pages
+
+
+
+
+
+AI-generated content may be incorrect
+You said:
+
+just need to open the terminal thats it
+Copilot said:
+Copilot
+Got it! If you just need to open a terminal in your Pod, you can use the following command to access the terminal of the running container:
+
+
+This command will open an interactive terminal session in the network-test Pod within the loki namespace. Let me know if you need any further assistance!
+
+
+Edit in Pages
+
+
+
+
+
+AI-generated content may be incorrect
+You said:
+
+C:\Users\1064695>kubectl get pods -o wide -n loki
+NAME                                READY   STATUS      RESTARTS      AGE     IP             NODE                                      NOMINATED NODE   READINESS GATES
+loki-6b8cd9894d-bv65q               1/1     Running     0             6d17h   100.96.2.156   h06tkguatcmm-md-2-c655687c8xxd4f6-mnsqs   <none>           <none>
+loki-log-scheduler-29094872-xv4kp   0/1     Completed   0             2d11h   100.96.4.140   h06tkguatcmm-md-1-55b87b97dxdwldd-hl8nv   <none>           <none>
+loki-log-scheduler-29096312-dgwm5   0/1     Completed   0             35h     100.96.4.141   h06tkguatcmm-md-1-55b87b97dxdwldd-hl8nv   <none>           <none>
+loki-log-scheduler-29097752-g7j55   0/1     Completed   0             11h     100.96.4.143   h06tkguatcmm-md-1-55b87b97dxdwldd-hl8nv   <none>           <none>
+loki-log-view                       1/1     Running     1 (30m ago)   90m     100.96.4.144   h06tkguatcmm-md-1-55b87b97dxdwldd-hl8nv   <none>           <none>
+network-test                        1/1     Running     0             28m     100.96.4.146   h06tkguatcmm-md-1-55b87b97dxdwldd-hl8nv   <none>           <none>
+
+C:\Users\1064695>kubectl get nodes -o wide -n loki
+NAME                                       STATUS   ROLES           AGE    VERSION                   INTERNAL-IP      EXTERNAL-IP      OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME
+h06tkguatcmm-control-plane-hx8rx           Ready    control-plane   214d   v1.26.8+vmware.1-fips.1   10.177.151.132   10.177.151.132   Ubuntu 20.04.6 LTS   5.4.0-164-generic   containerd://1.6.18-1-gdbc99e5b1
+h06tkguatcmm-control-plane-lvg42           Ready    control-plane   214d   v1.26.8+vmware.1-fips.1   10.177.151.224   10.177.151.224   Ubuntu 20.04.6 LTS   5.4.0-164-generic   containerd://1.6.18-1-gdbc99e5b1
+h06tkguatcmm-control-plane-nvr4j           Ready    control-plane   194d   v1.26.8+vmware.1-fips.1   10.177.151.140   10.177.151.140   Ubuntu 20.04.6 LTS   5.4.0-164-generic   containerd://1.6.18-1-gdbc99e5b1
+h06tkguatcmm-md-0-77c68d6ff7x4ccgq-qwd44   Ready    <none>          214d   v1.26.8+vmware.1-fips.1   10.177.151.138   10.177.151.138   Ubuntu 20.04.6 LTS   5.4.0-164-generic   containerd://1.6.18-1-gdbc99e5b1
+h06tkguatcmm-md-1-55b87b97dxdwldd-hl8nv    Ready    <none>          214d   v1.26.8+vmware.1-fips.1   10.177.151.210   10.177.151.210   Ubuntu 20.04.6 LTS   5.4.0-164-generic   containerd://1.6.18-1-gdbc99e5b1
+h06tkguatcmm-md-2-c655687c8xxd4f6-mnsqs    Ready    <none>          214d   v1.26.8+vmware.1-fips.1   10.177.151.176   10.177.151.176   Ubuntu 20.04.6 LTS   5.4.0-164-generic   containerd://1.6.18-1-gdbc99e5b1
+
+C
+Copilot said:
+Copilot
+Great! It looks like your network-test Pod is running. To open a terminal in this Pod, you can use the following command:
+
+
+This will give you an interactive shell inside the network-test Pod. If you need any further assistance, feel free to ask!
+
+
+Edit in Pages
+
+
+
+
+
+AI-generated content may be incorrect
+You said:
+
+so it is running in which worker node ?\
+Copilot said:
+Copilot
+Your network-test Pod is running on the worker node with the name h06tkguatcmm-md-1-55b87b97dxdwldd-hl8nv and the internal IP address 10.177.151.210.
+
+If you need any more details or have other questions, feel free to ask!
+
+
+Edit in Pages
+
+
+
+
+
+AI-generated content may be incorrect
+You said:
+
+6.	
+10.177.151.106 - 10.177.151.240
+any
+10.191.158.41
+any
+tcp/7001
+tcp/7002
+tcp/4200
+Allow
+ what does this mean ?
+Copilot said:
+Copilot
+This looks like a firewall rule or network access control list (ACL) entry. Here's a breakdown of what each part means:
+
+10.177.151.106 - 10.177.151.240: This specifies the range of IP addresses that are allowed to access the destination. In this case, any IP address from 10.177.151.106 to 10.177.151.240.
+
+any: This indicates that the source port can be any port.
+
+10.191.158.41: This is the destination IP address that the traffic is allowed to reach.
+
+any: This indicates that the destination port can be any port.
+
+tcp/7001, tcp/7002, tcp/4200: These are the specific TCP ports that are allowed. Traffic on these ports will be permitted.
+
+Allow: This action specifies that the traffic matching the above criteria should be allowed.
+
+In summary, this rule allows traffic from any port within the IP range 10.177.151.106 to 10.177.151.240 to reach the destination IP 10.191.158.41 on TCP ports 7001, 7002, and 4200.
+
+If you have any more questions or need further clarification, feel free to ask!
+
+
+Edit in Pages
+
+
+
+
+
+AI-generated content may be incorrect
+You said:
+
+Your network-test Pod is running on the worker node with the name h06tkguatcmm-md-1-55b87b97dxdwldd-hl8nv and the internal IP address 10.177.151.210. so as per this the pod network test should be able to access 10.191.158.41 or not, please clarify ??
+Copilot said:
+Copilot
+Based on the firewall rule you provided, the network-test Pod should be able to access the IP address 10.191.158.41 on the specified TCP ports (7001, 7002, and 4200).
+
+Here's why:
+
+The source IP range 10.177.151.106 - 10.177.151.240 includes the internal IP of your network-test Pod (10.177.151.210).
+The rule allows traffic from any port within this IP range to the destination IP 10.191.158.41 on the specified TCP ports.
+Therefore, your network-test Pod should be able to communicate with 10.191.158.41 on TCP ports 7001, 7002, and 4200.
+
+If you need further assistance or have more questions, feel free to ask!
