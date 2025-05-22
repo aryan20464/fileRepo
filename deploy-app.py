@@ -28,3 +28,6 @@ activate()
 
 disconnect()
 exit()
+
+cd $MW_HOME/oracle_common/common/bin
+$ ./wlst.sh /path/to/deploy_app.py
