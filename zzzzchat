@@ -1,3 +1,27 @@
+#!/bin/bash
+
+echo "Deleting Spring Boot StatefulSet..."
+kubectl delete statefulset springboot-app -n uatcmm
+
+echo "Deleting Services..."
+kubectl delete service springboot-app-headless -n uatcmm
+kubectl delete service springboot-app-service -n uatcmm
+
+echo "Deleting Promtail or Alloy ConfigMap..."
+kubectl delete configmap promtail-config -n uatcmm || true
+kubectl delete configmap alloy-config -n uatcmm || true
+
+echo "Deleting PersistentVolumeClaims (PVCs)..."
+# List and delete PVCs related to app-logs
+for pvc in $(kubectl get pvc -n uatcmm -o name | grep app-logs); do
+  kubectl delete "$pvc" -n uatcmm
+done
+
+echo "✅ Cleanup complete."
+
+
+
+
 C:\Users\1064695>kubectl get pods -n uatcmm
 NAME                                 READY   STATUS    RESTARTS   AGE
 nginx-cmm-5df6bbd6f8-tbzdw           1/1     Running   0          26d
