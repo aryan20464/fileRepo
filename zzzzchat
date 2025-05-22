@@ -1,3 +1,31 @@
+C:\Users\1064695>kubectl get pods -n uatcmm
+NAME                                 READY   STATUS    RESTARTS   AGE
+nginx-cmm-5df6bbd6f8-tbzdw           1/1     Running   0          26d
+nginx-cmm-backend-5b5cbc6858-b2hn6   1/1     Running   0          34d
+springboot-app-0                     2/2     Running   0          26d
+springboot-app-1                     2/2     Running   0          26d
+springboot-app-2                     2/2     Running   0          26d
+springboot-app-3                     2/2     Running   0          26d
+springboot-app-4                     2/2     Running   0          26d
+
+C:\Users\1064695>kubectl get services -n uatcmm
+NAME                        TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+nginx-cmm-backend-service   NodePort    100.67.245.92   <none>        9444:30001/TCP   34d
+nginx-cmm-service           NodePort    100.69.183.44   <none>        80:30000/TCP     34d
+springboot-app-headless     ClusterIP   None            <none>        4202/TCP         26d
+springboot-app-service      NodePort    100.70.19.83    <none>        4202:30005/TCP   26d
+
+C:\Users\1064695>kubectl get configmap -n uatcmm
+NAME               DATA   AGE
+kube-root-ca.crt   1      335d
+promtail-config    1      26d
+
+
+
+
+
+
+
 #3. Pod to View/Access Logs from PVC
 apiVersion: v1
 kind: Pod
