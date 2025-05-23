@@ -14,7 +14,7 @@ data:
     discovery.static "static_target" {
       targets = ["localhost"]
       labels = {
-        job = "springboot-app",
+        job = "springboot-app"
         pod_name = "${POD_NAME}"
       }
     }
@@ -37,13 +37,52 @@ data:
       inputs = [local.file_match.logs.output]
     }
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: springboot-log-pvc
+  namespace: uatcmm
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot-headless
+  namespace: uatcmm
+spec:
+  clusterIP: None
+  selector:
+    app: springboot-app
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot-service
+  namespace: uatcmm
+spec:
+  selector:
+    app: springboot-app
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: springboot-app
   namespace: uatcmm
 spec:
-  serviceName: "springboot-app"
+  serviceName: "springboot-headless"
   replicas: 1
   selector:
     matchLabels:
@@ -65,7 +104,7 @@ spec:
             - name: log-volume
               mountPath: /logs
         - name: alloy
-          image: grafana/alloy:latest
+          image: tkgsharedharbor.corp.ad.sbi/itss/grafana-alloy:1.8.3
           args:
             - run
             - /etc/alloy/config.alloy
@@ -86,15 +125,3 @@ spec:
         - name: alloy-config-volume
           configMap:
             name: alloy-config
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: springboot-log-pvc
-  namespace: uatcmm
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
