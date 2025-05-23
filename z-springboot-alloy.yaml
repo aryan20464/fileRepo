@@ -1,3 +1,6 @@
+# ------------------------------
+# Alloy ConfigMap
+# ------------------------------
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -36,92 +39,114 @@ data:
     log.forward "default" {
       inputs = [local.file_match.logs.output]
     }
+
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: springboot-log-pvc
-  namespace: uatcmm
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
----
+# ------------------------------
+# Headless Service for StatefulSet
+# ------------------------------
 apiVersion: v1
 kind: Service
 metadata:
-  name: springboot-headless
+  name: springboot-app-headless
   namespace: uatcmm
 spec:
   clusterIP: None
   selector:
     app: springboot-app
   ports:
-    - name: http
-      port: 8080
-      targetPort: 8080
+    - port: 4202
+      targetPort: 4202
+
 ---
+# ------------------------------
+# NodePort Service (for NGINX)
+# ------------------------------
 apiVersion: v1
 kind: Service
 metadata:
-  name: springboot-service
+  name: springboot-app-service
   namespace: uatcmm
 spec:
+  type: NodePort
   selector:
     app: springboot-app
   ports:
-    - name: http
-      port: 8080
-      targetPort: 8080
+    - port: 4202
+      targetPort: 4202
+      nodePort: 30005
+
 ---
+# ------------------------------
+# StatefulSet with Alloy Sidecar
+# ------------------------------
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: springboot-app
   namespace: uatcmm
 spec:
-  serviceName: "springboot-headless"
-  replicas: 1
+  replicas: 5
   selector:
     matchLabels:
       app: springboot-app
+  serviceName: springboot-app-headless
   template:
     metadata:
       labels:
         app: springboot-app
     spec:
-      containers:
-        - name: springboot-container
-          image: your-springboot-image:latest
-          env:
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
+      initContainers:
+        - name: fix-perms
+          image: tkgsharedharbor.corp.ad.sbi/itss/busybox@sha256:8b4ea49396032c42dc0a4dc0b7d052bab0e48eea6960cd567b79e1926968c928
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Changing ownership to UID:GID of itss";
+              chown -R 1001:1001 /app/logs;
+              ls -l /app/logs;
+              echo "Done.";
           volumeMounts:
-            - name: log-volume
-              mountPath: /logs
+            - name: app-logs
+              mountPath: /app/logs
+      containers:
+        - name: springboot-app
+          image: tkgsharedharbor.corp.ad.sbi/idea-indents-dev/spring-test:2.0
+          ports:
+            - containerPort: 4202
+          env:
+            - name: TZ
+              value: "Asia/Kolkata"
+          volumeMounts:
+            - name: app-logs
+              mountPath: /app/logs
         - name: alloy
           image: tkgsharedharbor.corp.ad.sbi/itss/grafana-alloy:1.8.3
           args:
-            - run
-            - /etc/alloy/config.alloy
+            - "run"
+            - "--config.file=/etc/alloy/config.alloy"
+            - "--storage.path=/var/lib/alloy"
           env:
+            - name: TZ
+              value: "Asia/Kolkata"
             - name: POD_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
           volumeMounts:
-            - name: log-volume
-              mountPath: /logs
-            - name: alloy-config-volume
+            - name: alloy-config
               mountPath: /etc/alloy
+            - name: app-logs
+              mountPath: /logs
       volumes:
-        - name: log-volume
-          persistentVolumeClaim:
-            claimName: springboot-log-pvc
-        - name: alloy-config-volume
+        - name: alloy-config
           configMap:
             name: alloy-config
+  volumeClaimTemplates:
+    - metadata:
+        name: app-logs
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: default
+        resources:
+          requests:
+            storage: 1Gi
