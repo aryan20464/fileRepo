@@ -1,28 +1,17 @@
-discovery.kubernetes "pods" {
-  role = "pod"
-}
+C:\Users\1064695\Desktop>kubectl logs springboot-app-0 -c alloy -n uatcmm
 
-kubernetes.attributes "add_metadata" {
-  pod_name     = "${HOSTNAME}"
-  node         = "YOUR_NODE_NAME" # optional, can be left out if not needed
-  namespace    = "uatcmm"
-  tenant_id    = ""
-  discovery    = discovery.kubernetes.pods
-}
+Error: /etc/alloy/config.alloy:4:1: cannot find the definition of component name "kubernetes.attributes"
 
-local.file_match "app_logs" {
-  path_targets = [{
-    path = "/logs/app.log"
-  }]
-  forward_to = [kubernetes.attributes.add_metadata.receiver]
-}
+3 | }
+4 | kubernetes.attributes "add_metadata" {
+  | ^^^^^^^^^^^^^^^^^^^^^
+5 |   pod_name     = "${HOSTNAME}"
 
-loki.source.file "app_logs" {
-  forward_to = [loki.write.default.receiver]
-}
+Error: /etc/alloy/config.alloy:12:17: component "kubernetes.attributes.add_metadata.receiver" does not exist or is out of scope
 
-loki.write "default" {
-  endpoint {
-    url = "http://loki.loki.svc.cluster.local:3100/loki/api/v1/push"
-  }
-}
+11 |   path_targets = [{ "__path__" = "/logs/*.log" }]
+12 |   forward_to = [kubernetes.attributes.add_metadata.receiver]
+   |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+13 | }
+Error: could not perform the initial load successfully
+interrupt received
