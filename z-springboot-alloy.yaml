@@ -1,34 +1,43 @@
-# ------------------------------
-# Alloy ConfigMap (correct YAML format)
-# ------------------------------
+# -------------------------------------
+# ConfigMap for Alloy Configuration
+# -------------------------------------
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: alloy-config
   namespace: uatcmm
 data:
-  alloy.yaml: |
-    server:
-      http_listen_port: 9080
+  config.alloy: |
+    server {
+      http {
+        listen_port = 9080
+      }
+    }
 
-    scrape_configs:
-      - job_name: springboot-app
-        static_configs:
-          - targets: ["localhost"]
-            labels:
-              job: springboot-app
-              pod_name: ${POD_NAME}
-            files:
-              - /logs/*.log
+    scrape_configs {
+      job_name = "springboot-app"
 
-        pipeline_stages:
-          - multiline:
-              firstline: '^\S'
+      static_configs {
+        targets = ["localhost"]
+        labels = {
+          job = "springboot-app"
+          pod_name = "${POD_NAME}"
+        }
+        files = ["/logs/*.log"]
+      }
+
+      pipeline_stages {
+        multiline {
+          firstline = "^\\S"
+        }
+      }
+    }
 
 ---
-# ------------------------------
+
+# -------------------------------------
 # Headless Service for StatefulSet
-# ------------------------------
+# -------------------------------------
 apiVersion: v1
 kind: Service
 metadata:
@@ -43,9 +52,10 @@ spec:
       targetPort: 4202
 
 ---
-# ------------------------------
+
+# -------------------------------------
 # NodePort Service (for NGINX)
-# ------------------------------
+# -------------------------------------
 apiVersion: v1
 kind: Service
 metadata:
@@ -61,9 +71,10 @@ spec:
       nodePort: 30005
 
 ---
-# ------------------------------
-# StatefulSet with Alloy Sidecar (Promtail replaced by Alloy)
-# ------------------------------
+
+# -------------------------------------
+# StatefulSet with Alloy Sidecar
+# -------------------------------------
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -104,12 +115,11 @@ spec:
           volumeMounts:
             - name: app-logs
               mountPath: /app/logs
-
         - name: alloy
-          image: grafana/alloy:latest
+          image: grafana/alloy:v1.0.0
           args:
-            - --config.file=/etc/alloy/alloy.yaml
-            - --config.expand-env=true
+            - run
+            - /etc/alloy/config.alloy
           env:
             - name: TZ
               value: "Asia/Kolkata"
@@ -131,7 +141,7 @@ spec:
         name: app-logs
       spec:
         accessModes: [ "ReadWriteOnce" ]
-        storageClassName: default
+        storageClassName: default  # Replace if needed
         resources:
           requests:
             storage: 1Gi
