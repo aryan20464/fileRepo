@@ -1,15 +1,16 @@
-local.file_match "app_logs" {
-  path_targets = [{ __path__ = "/logs/*.log" }]
-  forward_to = [log_pipeline.app_logs.receiver]
-}
+C:\Users\1064695\Desktop>kubectl logs springboot-app-0 -c alloy -n uatcmm
+Error: /etc/alloy/config.alloy:6:3: cannot find the definition of component name "log_pipeline"
 
-log_pipeline "app_logs" {
-  stages = []
-  forward_to = [loki.write.default.receiver]
-}
+5 |
+6 |   log_pipeline "app_logs" {
+  |   ^^^^^^^^^^^^
+7 |   stages = []
 
-loki.write "default" {
-  endpoint {
-    url = "http://loki.loki.svc.cluster.local:3100/loki/api/v1/push"
-  }
-}
+Error: /etc/alloy/config.alloy:3:17: component "log_pipeline.app_logs.receiver" does not exist or is out of scope
+
+2 |   path_targets = [{ __path__ = "/logs/*.log" }]
+3 |   forward_to = [log_pipeline.app_logs.receiver]
+  |                 ^^^^^^^^^^^^^^^^^^^^^^^
+4 | }
+
+Error: could not perform the initial load successfully
