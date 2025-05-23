@@ -1,28 +1,18 @@
-Error: /etc/alloy/config.alloy:1:1: cannot find the definition of component name "server"
+Error: unknown flag: --config.file
+Usage:
+  /bin/alloy [global options] <subcommand> [flags]
+  /bin/alloy [command]
 
-1 | server "default" {
-  | ^^^^^^
-2 |   http {
+Available Commands:
+  completion  Generate the autocompletion script for the specified shell
+  convert     Convert a supported config file to Alloy
+  fmt         Format a configuration file
+  help        Help about any command
+  run         Run Grafana Alloy
+  tools       Utilties for various components
 
-Error: /etc/alloy/config.alloy:7:1: cannot find the definition of component name "discovery.static"
+Flags:
+  -h, --help      help for /bin/alloy
+  -v, --version   version for /bin/alloy
 
-6 |
-
-7 | discovery.static "example" {
-  | ^^^^^^^^^^^^^^^^
-8 |   targets = ["localhost"]
-
-Error: /etc/alloy/config.alloy:20:1: cannot find the definition of component name "log.forward"
-
-19 |
-20 | log.forward "default" {
-   | ^^^^^^^^^^^
-21 |   inputs = [local.file_match.logs.output]
-
-Error: /etc/alloy/config.alloy:16:18: component "discovery.static.example.targets" does not exist or is out of scope
-
-15 | local.file_match "logs" {
-16 |   path_targets = discovery.static.example.targets
-   |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
-17 |   paths        = ["/logs/*.log"]
-Error: could not perform the initial load successfully
+Use "/bin/alloy [command] --help" for more information about a command.
