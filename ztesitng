@@ -1,28 +1,15 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: alloy-config
-  namespace: uatcmm
-data:
-  config.alloy: |
-    [server]
-      http_listen_port = 9080
+Error: /etc/alloy/config.alloy:1:1: expected identifier, got [
 
-    [discovery.static.static_target]
-      targets = ["localhost"]
-      [discovery.static.static_target.labels]
-        job = "springboot-app"
-        pod_name = "${POD_NAME}"
+Error: /etc/alloy/config.alloy:4:1: expected identifier, got [
 
-    [local.file_match.logs]
-      path_targets = ["localhost"]
-      paths = ["/logs/*.log"]
+Error: /etc/alloy/config.alloy:6:3: expected identifier, got [
 
-    [log.process.multiline]
-      forward_to = ["log.forward.default.receiver"]
+Error: /etc/alloy/config.alloy:10:1: expected identifier, got [
 
-      [[log.process.multiline.stage]]
-        multiline = { firstline_pattern = "^\\S" }
+Error: /etc/alloy/config.alloy:14:1: expected identifier, got [
 
-    [log.forward.default]
-      inputs = ["local.file_match.logs.output"]
+Error: /etc/alloy/config.alloy:17:3: expected identifier, got [
+
+Error: /etc/alloy/config.alloy:20:1: expected identifier, got [
+interrupt received
+Error: could not perform the initial load successfully
