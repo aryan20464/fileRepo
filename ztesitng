@@ -1,36 +1,16 @@
-Error: /etc/alloy/config.alloy:1:1: cannot find the definition of component name "server"
 
-1 | server "default" {
-  | ^^^^^^
-2 |   http {
+Error: /etc/alloy/config.alloy:1:1: expected identifier, got [
 
+Error: /etc/alloy/config.alloy:4:1: expected identifier, got [
 
-Error: /etc/alloy/config.alloy:7:1: cannot find the definition of component name "discovery.static"
+Error: /etc/alloy/config.alloy:6:3: expected identifier, got [
 
-6 |
-7 | discovery.static "static_target" {
-  | ^^^^^^^^^^^^^^^^
-8 |   targets = ["localhost"]
+Error: /etc/alloy/config.alloy:10:1: expected identifier, got [
 
-Error: /etc/alloy/config.alloy:20:1: cannot find the definition of component name "log.process"
+Error: /etc/alloy/config.alloy:14:1: expected identifier, got [
 
-19 |
-20 | log.process "multiline" {
-   | ^^^^^^^^^^^
-21 |   forward_to = [log.forward.default.receiver]
+Error: /etc/alloy/config.alloy:17:3: expected identifier, got [
 
-Error: /etc/alloy/config.alloy:29:1: cannot find the definition of component name "log.forward"
-
-28 |
-29 | log.forward "default" {
-   | ^^^^^^^^^^^
-30 |   inputs = [local.file_match.logs.output]
-
-Error: /etc/alloy/config.alloy:16:18: component "discovery.static.static_target.targets" does not exist or is out of scope
-
-15 | local.file_match "logs" {
-16 |   path_targets = discovery.static.static_target.targets
-   |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-17 |   paths        = ["/logs/*.log"]
+Error: /etc/alloy/config.alloy:20:1: expected identifier, got [
 interrupt received
 Error: could not perform the initial load successfully
