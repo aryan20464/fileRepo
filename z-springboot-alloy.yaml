@@ -1,0 +1,141 @@
+# ------------------------------
+# Alloy ConfigMap (replaces Promtail)
+# ------------------------------
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alloy-config
+  namespace: uatcmm
+data:
+  config.alloy: |
+    discovery.kubernetes "self" {}
+
+    local.file_match "spring_logs" {
+      path_targets = ["/logs/*.log"]
+    }
+
+    loki.source.file "spring_log_source" {
+      targets = local.file_match.spring_logs.targets
+
+      labels = {
+        job      = "springboot-app"
+        pod_name = "${HOSTNAME}"
+      }
+
+      multiline {
+        firstline_regex = "^\S"
+      }
+    }
+
+    loki.write "send_to_loki" {
+      endpoint {
+        url = "http://loki.loki.svc.cluster.local:3100/loki/api/v1/push"
+      }
+
+      source = [loki.source.file.spring_log_source]
+    }
+
+---
+# ------------------------------
+# Headless Service for StatefulSet
+# ------------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot-app-headless
+  namespace: uatcmm
+spec:
+  clusterIP: None
+  selector:
+    app: springboot-app
+  ports:
+    - port: 4202
+      targetPort: 4202
+
+---
+# ------------------------------
+# NodePort Service (for NGINX)
+# ------------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot-app-service
+  namespace: uatcmm
+spec:
+  type: NodePort
+  selector:
+    app: springboot-app
+  ports:
+    - port: 4202
+      targetPort: 4202
+      nodePort: 30005
+
+---
+# ------------------------------
+# StatefulSet with Alloy Sidecar
+# ------------------------------
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: springboot-app
+  namespace: uatcmm
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: springboot-app
+  serviceName: springboot-app-headless
+  template:
+    metadata:
+      labels:
+        app: springboot-app
+    spec:
+      initContainers:
+        - name: fix-perms
+          image: tkgsharedharbor.corp.ad.sbi/itss/busybox@sha256:8b4ea49396032c42dc0a4dc0b7d052bab0e48eea6960cd567b79e1926968c928
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Changing ownership to UID:GID of itss";
+              chown -R 1001:1001 /app/logs;
+              ls -l /app/logs;
+              echo "Done.";
+          volumeMounts:
+            - name: app-logs
+              mountPath: /app/logs
+      containers:
+        - name: springboot-app
+          image: tkgsharedharbor.corp.ad.sbi/idea-indents-dev/spring-test:2.0
+          ports:
+            - containerPort: 4202
+          env:
+            - name: TZ
+              value: "Asia/Kolkata"
+          volumeMounts:
+            - name: app-logs
+              mountPath: /app/logs
+        - name: alloy
+          image: grafana/alloy:latest
+          args:
+            - "--config.file=/etc/alloy/config.alloy"
+          env:
+            - name: TZ
+              value: "Asia/Kolkata"
+          volumeMounts:
+            - name: alloy-config
+              mountPath: /etc/alloy
+            - name: app-logs
+              mountPath: /logs
+      volumes:
+        - name: alloy-config
+          configMap:
+            name: alloy-config
+  volumeClaimTemplates:
+    - metadata:
+        name: app-logs
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: default
+        resources:
+          requests:
+            storage: 1Gi
