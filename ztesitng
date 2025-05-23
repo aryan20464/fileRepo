@@ -1,12 +1,9 @@
-local.file_match "app_logs" {
-  path = "/logs/*.log"
-}
+Error: /etc/alloy/config.alloy:9:1: cannot find the definition of component name "pipeline"
 
-loki.write.default {
-  endpoint = "http://loki.loki.svc.cluster.local:3100/loki/api/v1/push"
-}
+ 8 |
+ 9 | pipeline "default" {
+   | ^^^^^^^^
 
-pipeline "default" {
-  sources = [local.file_match.app_logs.output]
-  sinks   = [loki.write.default.input]
-}
+10 |   sources = [local.file_match.app_logs.output]
+interrupt received
+Error: could not perform the initial load successfully
