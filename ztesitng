@@ -1,0 +1,22 @@
+Error: /etc/alloy/alloy.config:1:1: cannot find the definition of component name "server"
+
+1 | server "default" {
+  | ^^^^^^
+2 |   http {
+
+Error: /etc/alloy/alloy.config:24:1: cannot find the definition of component name "discovery.static"
+
+23 |
+24 | discovery.static "static_target" {
+   | ^^^^^^^^^^^^^^^^
+25 |   targets = ["localhost"]
+
+Error: /etc/alloy/alloy.config:28:1: cannot find the definition of component name "log.process"
+
+27 |
+28 | log.process "multiline" {
+   | ^^^^^^^^^^^
+29 |   stage.multiline {
+interrupt received
+
+Error: could not perform the initial load successfully
