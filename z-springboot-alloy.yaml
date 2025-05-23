@@ -1,5 +1,5 @@
 # ------------------------------
-# Alloy ConfigMap (replacing Promtail)
+# Alloy ConfigMap (Replaces Promtail)
 # ------------------------------
 apiVersion: v1
 kind: ConfigMap
@@ -9,29 +9,35 @@ metadata:
 data:
   alloy.config: |
     logging {
-      level = "info"
+      level  = "info"
       format = "logfmt"
     }
 
-    loki.write {
-      endpoint = "http://loki.loki.svc.cluster.local:3100/loki/api/v1/push"
+    discovery.kubernetes "pods" {
+      role = "pod"
     }
 
-    loki.source.file {
-      paths = ["/logs/*.log"]
+    local.file_match "springboot_logs" {
+      path_targets = ["/logs/*.log"]
+    }
+
+    loki.write "send_logs" {
+      endpoint {
+        url = "http://loki.loki.svc.cluster.local:3100/loki/api/v1/push"
+      }
+
       labels = {
         job      = "springboot-app"
         pod_name = "${POD_NAME}"
       }
-      multiline {
-        firstline_regex = "^\\S"
-      }
+
+      forward_to = [local.file_match.springboot_logs.receiver]
     }
 
----
 # ------------------------------
 # Headless Service for StatefulSet
 # ------------------------------
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -45,10 +51,10 @@ spec:
     - port: 4202
       targetPort: 4202
 
----
 # ------------------------------
 # NodePort Service (for NGINX)
 # ------------------------------
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -63,10 +69,10 @@ spec:
       targetPort: 4202
       nodePort: 30005
 
----
 # ------------------------------
 # StatefulSet with Alloy Sidecar
 # ------------------------------
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -110,8 +116,9 @@ spec:
         - name: alloy
           image: grafana/alloy:latest
           args:
-            - "--config.file=/etc/alloy/alloy.config"
-            - "--config.expand-env=true"
+            - run
+            - --config.file=/etc/alloy/alloy.config
+            - --config.expand-env=true
           env:
             - name: TZ
               value: "Asia/Kolkata"
