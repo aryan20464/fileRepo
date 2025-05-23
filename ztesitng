@@ -1,31 +1,15 @@
-https://grafana.com/docs/alloy/latest/reference/components/local/local.file_match/
+local.file_match "app_logs" {
+  path_targets = [{ __path__ = "/logs/*.log" }]
+  forward_to = [log_pipeline.app_logs.receiver]
+}
 
-C:\Users\1064695\Desktop>kubectl logs springboot-app-0 -c alloy -n uatcmm
-ts=2025-05-23T08:54:45.939760081Z level=info "boringcrypto enabled"=false
-ts=2025-05-23T08:54:45.936717907Z level=info source=/go/pkg/mod/github.com/!kim!machine!gun/automemlimit@v0.6.1/memlimit/memlimit.go:176 msg="GOMEMLIMIT is updated" package=github.com/KimMachineGun/automemlimit/memlimit GOMEMLIMIT=7496898969
-ts=2025-05-23T08:54:45.939835459Z level=info msg="no peer discovery configured: both join and discover peers are empty" service=cluster
-ts=2025-05-23T08:54:45.939840595Z level=info msg="starting complete graph evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8
-ts=2025-05-23T08:54:45.939850929Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node_id=otel duration=2.186µs
-ts=2025-05-23T08:54:45.939857931Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node_id=livedebugging duration=14.319µs
-ts=2025-05-23T08:54:45.939864859Z level=info msg="running usage stats reporter"
-ts=2025-05-23T08:54:45.939869324Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node_id=loki.write.default duration=945.038µs
-ts=2025-05-23T08:54:45.939875117Z level=error msg="failed to evaluate config" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node=local.file_match.app_logs err="decoding configuration: /etc/alloy/config.alloy:3:3: unrecognized attribute name \"forward_to\""
-ts=2025-05-23T08:54:45.939884347Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node_id=local.file_match.app_logs duration=96.317µs
-ts=2025-05-23T08:54:45.93989037Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node_id=remotecfg duration=62.766µs
-ts=2025-05-23T08:54:45.93989757Z level=info msg="applying non-TLS config to HTTP server" service=http
-ts=2025-05-23T08:54:45.939902818Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node_id=http duration=6.429µs
-ts=2025-05-23T08:54:45.939910374Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node_id=ui duration=1.275µs
-ts=2025-05-23T08:54:45.93991815Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node_id=cluster duration=1.68µs
-ts=2025-05-23T08:54:45.939925885Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node_id=labelstore duration=7.511µs
-ts=2025-05-23T08:54:45.939933293Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node_id=tracing duration=6.57µs
-ts=2025-05-23T08:54:45.939943584Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node_id=logging duration=191.875µs
-ts=2025-05-23T08:54:45.939954137Z level=info msg="finished complete graph evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 duration=1.579276ms
-Error: /etc/alloy/config.alloy:3:3: unrecognized attribute name "forward_to"
+log_pipeline "app_logs" {
+  stages = []
+  forward_to = [loki.write.default.receiver]
+}
 
-2 |   path_targets = [{"__path__" = "/logs/*.log"}]
-3 |   forward_to = [loki.write.default.receiver]
-  |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-4 | }
-
-ts=2025-05-23T08:54:45.940149001Z level=error msg="failed to start reporter" err="context canceled"
-Error: could not perform the initial load successfully
+loki.write "default" {
+  endpoint {
+    url = "http://loki.loki.svc.cluster.local:3100/loki/api/v1/push"
+  }
+}
