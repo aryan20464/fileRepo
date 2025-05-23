@@ -9,23 +9,17 @@ metadata:
 data:
   config.alloy: |
     local.file_match "app_logs" {
-      paths = ["/logs/*.log"]
+      include = ["/logs/*.log"]
     }
 
     loki.write "default" {
       endpoint {
         url = "http://loki.loki.svc.cluster.local:3100/loki/api/v1/push"
       }
-
-      labels = {
-        job = "springboot-app"
-        pod = "${POD_NAME}"
-      }
-
       forward_to = [local.file_match.app_logs.output]
     }
 
----
+--- 
 # ----------------------------------------
 # Headless Service for StatefulSet
 # ----------------------------------------
@@ -62,7 +56,7 @@ spec:
 
 ---
 # ----------------------------------------
-# StatefulSet: Spring Boot with Alloy
+# StatefulSet: Spring Boot with Alloy Sidecar
 # ----------------------------------------
 apiVersion: apps/v1
 kind: StatefulSet
@@ -70,7 +64,7 @@ metadata:
   name: springboot-app
   namespace: uatcmm
 spec:
-  replicas: 5
+  replicas: 1  # only 1 replica until everything functions
   serviceName: springboot-app-headless
   selector:
     matchLabels:
@@ -87,8 +81,8 @@ spec:
           args:
             - |
               echo "Fixing log dir perms";
-              chown -R 1001:1001 /app/logs
-              ls -l /app/logs
+              chown -R 1001:1001 /app/logs;
+              ls -l /app/logs;
           volumeMounts:
             - name: app-logs
               mountPath: /app/logs
@@ -108,7 +102,7 @@ spec:
         - name: alloy
           image: tkgsharedharbor.corp.ad.sbi/itss/grafana-alloy:1.8.3
           command: ["/bin/alloy"]
-          args: ["run", "/etc/alloy/config.alloy"]
+          args: ["run", "--config", "/etc/alloy/config.alloy"]
           env:
             - name: TZ
               value: "Asia/Kolkata"
