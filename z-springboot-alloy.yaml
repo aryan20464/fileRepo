@@ -1,5 +1,5 @@
 # ------------------------------
-# Alloy ConfigMap (replacing Promtail)
+# Alloy ConfigMap (correct YAML format)
 # ------------------------------
 apiVersion: v1
 kind: ConfigMap
@@ -7,41 +7,23 @@ metadata:
   name: alloy-config
   namespace: uatcmm
 data:
-  alloy.config: |
-    server "default" {
-      http {
-        listen_address = "0.0.0.0:9080"
-      }
-    }
+  alloy.yaml: |
+    server:
+      http_listen_port: 9080
 
-    local.file_match "springboot_logs" {
-      path_targets = ["/logs/*.log"]
-    }
+    scrape_configs:
+      - job_name: springboot-app
+        static_configs:
+          - targets: ["localhost"]
+            labels:
+              job: springboot-app
+              pod_name: ${POD_NAME}
+            files:
+              - /logs/*.log
 
-    loki.write "send_to_loki" {
-      endpoint {
-        url = "http://loki.loki.svc.cluster.local:3100/loki/api/v1/push"
-      }
-
-      labels = {
-        job      = "springboot-app",
-        pod_name = "${POD_NAME}"
-      }
-
-      forward_to = [local.file_match.springboot_logs.receiver]
-    }
-
-    discovery.static "static_target" {
-      targets = ["localhost"]
-    }
-
-    log.process "multiline" {
-      stage.multiline {
-        firstline_pattern = "^\\S"
-      }
-
-      forward_to = [loki.write.send_to_loki.receiver]
-    }
+        pipeline_stages:
+          - multiline:
+              firstline: '^\S'
 
 ---
 # ------------------------------
@@ -80,7 +62,7 @@ spec:
 
 ---
 # ------------------------------
-# StatefulSet with Alloy Sidecar
+# StatefulSet with Alloy Sidecar (Promtail replaced by Alloy)
 # ------------------------------
 apiVersion: apps/v1
 kind: StatefulSet
@@ -122,11 +104,12 @@ spec:
           volumeMounts:
             - name: app-logs
               mountPath: /app/logs
+
         - name: alloy
-          image: tkgsharedharbor.corp.ad.sbi/itss/grafana-alloy:1.8.3
+          image: grafana/alloy:latest
           args:
-            - run
-            - /etc/alloy/alloy.config
+            - --config.file=/etc/alloy/alloy.yaml
+            - --config.expand-env=true
           env:
             - name: TZ
               value: "Asia/Kolkata"
@@ -148,7 +131,7 @@ spec:
         name: app-logs
       spec:
         accessModes: [ "ReadWriteOnce" ]
-        storageClassName: default  # Replace with actual StorageClass if needed
+        storageClassName: default
         resources:
           requests:
             storage: 1Gi
