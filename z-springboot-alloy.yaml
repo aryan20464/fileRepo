@@ -1,7 +1,6 @@
----
-# ------------------------------
-# Alloy ConfigMap
-# ------------------------------
+# ----------------------------------------
+# ConfigMap: Alloy Configuration
+# ----------------------------------------
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -9,38 +8,27 @@ metadata:
   namespace: uatcmm
 data:
   config.alloy: |
-    local.file_match "springboot_logs" {
-      path_targets = [
-        {
-          __path__ = "/logs/*.log"
-        }
-      ]
+    local.file_match "app_logs" {
+      paths = ["/logs/*.log"]
     }
 
-    loki.source.file "springboot_file" {
-      targets    = local.file_match.springboot_logs.targets
-      forward_to = [loki.process.labels.receiver]
-    }
-
-    loki.process "labels" {
-      stage.labels {
-        values = {
-          job = "springboot-app"
-        }
-      }
-      forward_to = [loki.write.loki_receiver.receiver]
-    }
-
-    loki.write "loki_receiver" {
+    loki.write "default" {
       endpoint {
         url = "http://loki.loki.svc.cluster.local:3100/loki/api/v1/push"
       }
+
+      labels = {
+        job = "springboot-app"
+        pod = "${POD_NAME}"
+      }
+
+      forward_to = [local.file_match.app_logs.output]
     }
 
 ---
-# ------------------------------
-# Headless Service
-# ------------------------------
+# ----------------------------------------
+# Headless Service for StatefulSet
+# ----------------------------------------
 apiVersion: v1
 kind: Service
 metadata:
@@ -55,9 +43,9 @@ spec:
       targetPort: 4202
 
 ---
-# ------------------------------
-# NodePort Service
-# ------------------------------
+# ----------------------------------------
+# NodePort Service for external access
+# ----------------------------------------
 apiVersion: v1
 kind: Service
 metadata:
@@ -73,9 +61,9 @@ spec:
       nodePort: 30005
 
 ---
-# ------------------------------
-# StatefulSet with Alloy Sidecar
-# ------------------------------
+# ----------------------------------------
+# StatefulSet: Spring Boot with Alloy
+# ----------------------------------------
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -83,10 +71,10 @@ metadata:
   namespace: uatcmm
 spec:
   replicas: 5
+  serviceName: springboot-app-headless
   selector:
     matchLabels:
       app: springboot-app
-  serviceName: springboot-app-headless
   template:
     metadata:
       labels:
@@ -98,11 +86,13 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              echo "Setting ownership on /app/logs";
-              chown -R 1001:1001 /app/logs;
+              echo "Fixing log dir perms";
+              chown -R 1001:1001 /app/logs
+              ls -l /app/logs
           volumeMounts:
             - name: app-logs
               mountPath: /app/logs
+
       containers:
         - name: springboot-app
           image: tkgsharedharbor.corp.ad.sbi/idea-indents-dev/spring-test:2.0
@@ -114,26 +104,34 @@ spec:
           volumeMounts:
             - name: app-logs
               mountPath: /app/logs
+
         - name: alloy
           image: tkgsharedharbor.corp.ad.sbi/itss/grafana-alloy:1.8.3
-          args: ["--config.file=/etc/alloy/config.alloy"]
+          command: ["/bin/alloy"]
+          args: ["run", "/etc/alloy/config.alloy"]
           env:
             - name: TZ
               value: "Asia/Kolkata"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
           volumeMounts:
             - name: alloy-config
               mountPath: /etc/alloy
             - name: app-logs
               mountPath: /logs
+
       volumes:
         - name: alloy-config
           configMap:
             name: alloy-config
+
   volumeClaimTemplates:
     - metadata:
         name: app-logs
       spec:
-        accessModes: [ "ReadWriteOnce" ]
+        accessModes: ["ReadWriteOnce"]
         storageClassName: default
         resources:
           requests:
