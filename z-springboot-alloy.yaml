@@ -1,3 +1,4 @@
+---
 # ------------------------------
 # Alloy ConfigMap
 # ------------------------------
@@ -8,33 +9,37 @@ metadata:
   namespace: uatcmm
 data:
   config.alloy: |
-    server "default" {
-      http {
-        listen_port = 9080
+    local.file_match "springboot_logs" {
+      path_targets = [
+        {
+          __path__ = "/logs/*.log"
+        }
+      ]
+    }
+
+    loki.source.file "springboot_file" {
+      targets    = local.file_match.springboot_logs.targets
+      forward_to = [loki.process.labels.receiver]
+    }
+
+    loki.process "labels" {
+      stage.labels {
+        values = {
+          job = "springboot-app"
+        }
       }
+      forward_to = [loki.write.loki_receiver.receiver]
     }
 
-    discovery.static "example" {
-      targets = ["localhost"]
-      labels = {
-        job = "springboot-app"
-        pod_name = "${POD_NAME}"
+    loki.write "loki_receiver" {
+      endpoint {
+        url = "http://loki.loki.svc.cluster.local:3100/loki/api/v1/push"
       }
-    }
-
-    local.file_match "logs" {
-      path_targets = discovery.static.example.targets
-      paths        = ["/logs/*.log"]
-    }
-
-    log.forward "default" {
-      inputs = [local.file_match.logs.output]
     }
 
 ---
-
 # ------------------------------
-# Headless Service for StatefulSet
+# Headless Service
 # ------------------------------
 apiVersion: v1
 kind: Service
@@ -50,9 +55,8 @@ spec:
       targetPort: 4202
 
 ---
-
 # ------------------------------
-# NodePort Service (for external access via NGINX or direct NodePort)
+# NodePort Service
 # ------------------------------
 apiVersion: v1
 kind: Service
@@ -69,7 +73,6 @@ spec:
       nodePort: 30005
 
 ---
-
 # ------------------------------
 # StatefulSet with Alloy Sidecar
 # ------------------------------
@@ -95,10 +98,8 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              echo "Changing ownership to UID:GID of itss";
+              echo "Setting ownership on /app/logs";
               chown -R 1001:1001 /app/logs;
-              ls -l /app/logs;
-              echo "Done.";
           volumeMounts:
             - name: app-logs
               mountPath: /app/logs
@@ -115,13 +116,10 @@ spec:
               mountPath: /app/logs
         - name: alloy
           image: tkgsharedharbor.corp.ad.sbi/itss/grafana-alloy:1.8.3
+          args: ["--config.file=/etc/alloy/config.alloy"]
           env:
             - name: TZ
               value: "Asia/Kolkata"
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
           volumeMounts:
             - name: alloy-config
               mountPath: /etc/alloy
