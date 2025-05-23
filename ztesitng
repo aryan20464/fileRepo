@@ -1,55 +1,28 @@
-Error: /etc/alloy/config.alloy:1:1: expected identifier, got [
+Error: /etc/alloy/config.alloy:1:1: cannot find the definition of component name "server"
 
-Error: /etc/alloy/config.alloy:4:1: expected identifier, got [
+1 | server "default" {
+  | ^^^^^^
+2 |   http {
 
-Error: /etc/alloy/config.alloy:6:3: expected identifier, got [
+Error: /etc/alloy/config.alloy:7:1: cannot find the definition of component name "discovery.static"
 
-Error: /etc/alloy/config.alloy:10:1: expected identifier, got [
+6 |
 
-Error: /etc/alloy/config.alloy:14:1: expected identifier, got [
+7 | discovery.static "example" {
+  | ^^^^^^^^^^^^^^^^
+8 |   targets = ["localhost"]
 
-Error: /etc/alloy/config.alloy:17:3: expected identifier, got [
+Error: /etc/alloy/config.alloy:20:1: cannot find the definition of component name "log.forward"
 
-Error: /etc/alloy/config.alloy:20:1: expected identifier, got [
-interrupt received
+19 |
+20 | log.forward "default" {
+   | ^^^^^^^^^^^
+21 |   inputs = [local.file_match.logs.output]
+
+Error: /etc/alloy/config.alloy:16:18: component "discovery.static.example.targets" does not exist or is out of scope
+
+15 | local.file_match "logs" {
+16 |   path_targets = discovery.static.example.targets
+   |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+17 |   paths        = ["/logs/*.log"]
 Error: could not perform the initial load successfully
-
-
-// Collection: mount a local directory with a certain path spec
-local.file_match "applogs" {
-    path_targets = [{"__path__" = "/tmp/app-logs/app.log"}]
-}
-
-// Collection: Take the file match as input, and scrape those mounted log files
-loki.source.file "local_files" {
-    targets    = local.file_match.applogs.targets
-
-    // This specifies which component should process the logs next, the "link in the chain"
-    forward_to = [loki.process.add_new_label.receiver]
-}
-
-// Transformation: pull some data out of the log message, and turn it into a label
-loki.process "add_new_label" {
-    stage.logfmt {
-        mapping = {
-            "extracted_level" = "level",
-        }
-    }
-
-    // Add the value of "extracted_level" from the extracted map as a "level" label
-    stage.labels {
-        values = {
-            "level" = "extracted_level",
-        }
-    }
-
-    // The next link in the chain is the local_loki "receiver" (receives the telemetry)
-    forward_to = [loki.write.local_loki.receiver]
-}
-
-// Anything that comes into this component gets written to the loki remote API
-loki.write "local_loki" {
-    endpoint {
-        url = "http://loki:3100/loki/api/v1/push"
-    }
-}
