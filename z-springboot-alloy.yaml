@@ -1,5 +1,5 @@
 # ------------------------------
-# Alloy ConfigMap (TOML format for Alloy v1.8.3)
+# Alloy ConfigMap
 # ------------------------------
 apiVersion: v1
 kind: ConfigMap
@@ -8,27 +8,28 @@ metadata:
   namespace: uatcmm
 data:
   config.alloy: |
-    [server]
-      http_listen_port = 9080
+    server "default" {
+      http {
+        listen_port = 9080
+      }
+    }
 
-    [discovery.static.static_target]
+    discovery.static "example" {
       targets = ["localhost"]
-      [discovery.static.static_target.labels]
+      labels = {
         job = "springboot-app"
         pod_name = "${POD_NAME}"
+      }
+    }
 
-    [local.file_match.logs]
-      path_targets = ["localhost"]
-      paths = ["/logs/*.log"]
+    local.file_match "logs" {
+      path_targets = discovery.static.example.targets
+      paths        = ["/logs/*.log"]
+    }
 
-    [log.process.multiline]
-      forward_to = ["log.forward.default.receiver"]
-
-      [[log.process.multiline.stage]]
-        multiline = { firstline_pattern = "^\\S" }
-
-    [log.forward.default]
-      inputs = ["local.file_match.logs.output"]
+    log.forward "default" {
+      inputs = [local.file_match.logs.output]
+    }
 
 ---
 
@@ -51,7 +52,7 @@ spec:
 ---
 
 # ------------------------------
-# NodePort Service (for external access, e.g. via NGINX)
+# NodePort Service (for external access via NGINX or direct NodePort)
 # ------------------------------
 apiVersion: v1
 kind: Service
@@ -70,7 +71,7 @@ spec:
 ---
 
 # ------------------------------
-# StatefulSet with Spring Boot app + Alloy sidecar
+# StatefulSet with Alloy Sidecar
 # ------------------------------
 apiVersion: apps/v1
 kind: StatefulSet
@@ -112,7 +113,6 @@ spec:
           volumeMounts:
             - name: app-logs
               mountPath: /app/logs
-
         - name: alloy
           image: tkgsharedharbor.corp.ad.sbi/itss/grafana-alloy:1.8.3
           env:
@@ -127,12 +127,10 @@ spec:
               mountPath: /etc/alloy
             - name: app-logs
               mountPath: /logs
-
       volumes:
         - name: alloy-config
           configMap:
             name: alloy-config
-
   volumeClaimTemplates:
     - metadata:
         name: app-logs
