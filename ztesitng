@@ -20,3 +20,7 @@ Error: /etc/alloy/alloy.config:28:1: cannot find the definition of component nam
 interrupt received
 
 Error: could not perform the initial load successfully
+
+
+interrupt received
+Error: reading config path "/etc/alloy/config.alloy": stat /etc/alloy/config.alloy: no such file or directory
