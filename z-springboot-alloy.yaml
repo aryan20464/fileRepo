@@ -17,8 +17,8 @@ data:
     discovery.static "static_target" {
       targets = ["localhost"]
       labels = {
-        job = "springboot-app"
-        pod_name = "${POD_NAME}"
+        job = "springboot-app",
+        pod_name = "${POD_NAME}",
       }
     }
 
@@ -121,10 +121,6 @@ spec:
               mountPath: /app/logs
         - name: alloy
           image: tkgsharedharbor.corp.ad.sbi/itss/grafana-alloy:1.8.3
-          args:
-            - "run"
-            - "--config.file=/etc/alloy/config.alloy"
-            - "--storage.path=/var/lib/alloy"
           env:
             - name: TZ
               value: "Asia/Kolkata"
