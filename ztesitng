@@ -1,7 +1,12 @@
-Error: /etc/alloy/config.alloy:9:1: cannot find the definition of component name "forward"
+local.file_match "app_logs" {
+  path = "/logs/*.log"
+}
 
- 8 |
- 9 | forward "loki" {
-   | ^^^^^^^
-10 |   from = local.file_match.app_logs.output
-Error: could not perform the initial load successfully
+loki.write.default {
+  endpoint = "http://loki.loki.svc.cluster.local:3100/loki/api/v1/push"
+}
+
+pipeline "default" {
+  sources = [local.file_match.app_logs.output]
+  sinks   = [loki.write.default.input]
+}
