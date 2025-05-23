@@ -1,38 +1,31 @@
+https://grafana.com/docs/alloy/latest/reference/components/local/local.file_match/
+
 C:\Users\1064695\Desktop>kubectl logs springboot-app-0 -c alloy -n uatcmm
-ts=2025-05-23T08:43:40.703534469Z level=info "boringcrypto enabled"=false
-ts=2025-05-23T08:43:40.701863152Z level=info source=/go/pkg/mod/github.com/!kim!machine!gun/automemlimit@v0.6.1/memlimit/memlimit.go:176 msg="GOMEMLIMIT is updated" package=github.com/KimMachineGun/automemlimit/memlimit GOMEMLIMIT=7496898969
-ts=2025-05-23T08:43:40.703591002Z level=info msg="no peer discovery configured: both join and discover peers are empty" service=cluster
-ts=2025-05-23T08:43:40.703596939Z level=info msg="running usage stats reporter"
-ts=2025-05-23T08:43:40.703600503Z level=info msg="starting complete graph evaluation" controller_path=/ controller_id="" trace_id=1a8ab8fc48b9ce890db117f42da28710
-ts=2025-05-23T08:43:40.703623136Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=1a8ab8fc48b9ce890db117f42da28710 node_id=logging duration=92.954µs
-ts=2025-05-23T08:43:40.703648261Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=1a8ab8fc48b9ce890db117f42da28710 node_id=otel duration=1.355µs
-ts=2025-05-23T08:43:40.703668108Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=1a8ab8fc48b9ce890db117f42da28710 node_id=labelstore duration=7.382µs
-ts=2025-05-23T08:43:40.703732072Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=1a8ab8fc48b9ce890db117f42da28710 node_id=remotecfg duration=54.116µs
-ts=2025-05-23T08:43:40.703753614Z level=info msg="applying non-TLS config to HTTP server" service=http
-ts=2025-05-23T08:43:40.703759439Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=1a8ab8fc48b9ce890db117f42da28710 node_id=http duration=9.058µs
-ts=2025-05-23T08:43:40.703768436Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=1a8ab8fc48b9ce890db117f42da28710 node_id=cluster duration=509ns
-ts=2025-05-23T08:43:40.703793708Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=1a8ab8fc48b9ce890db117f42da28710 node_id=livedebugging duration=3.811µs
-ts=2025-05-23T08:43:40.703803807Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=1a8ab8fc48b9ce890db117f42da28710 node_id=ui duration=537ns
-ts=2025-05-23T08:43:40.703855145Z level=error msg="failed to evaluate config" controller_path=/ controller_id="" trace_id=1a8ab8fc48b9ce890db117f42da28710 node=loki.write.default err="decoding configuration: /etc/alloy/config.alloy:7:3: \"endpoint\" must be a block, but is used as an attribute"
-ts=2025-05-23T08:43:40.703875294Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=1a8ab8fc48b9ce890db117f42da28710 node_id=loki.write.default duration=55.369µs
-ts=2025-05-23T08:43:40.70391967Z level=error msg="failed to evaluate config" controller_path=/ controller_id="" trace_id=1a8ab8fc48b9ce890db117f42da28710 node=local.file_match.app_logs err="decoding configuration: /etc/alloy/config.alloy:2:3: unrecognized attribute name \"path\""
-ts=2025-05-23T08:43:40.703934754Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=1a8ab8fc48b9ce890db117f42da28710 node_id=local.file_match.app_logs duration=41.33µs
-ts=2025-05-23T08:43:40.70395314Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=1a8ab8fc48b9ce890db117f42da28710 node_id=tracing duration=5.027µs
-ts=2025-05-23T08:43:40.703963592Z level=info msg="finished complete graph evaluation" controller_path=/ controller_id="" trace_id=1a8ab8fc48b9ce890db117f42da28710 duration=561.653µs
-Error: /etc/alloy/config.alloy:7:3: "endpoint" must be a block, but is used as an attribute
+ts=2025-05-23T08:54:45.939760081Z level=info "boringcrypto enabled"=false
+ts=2025-05-23T08:54:45.936717907Z level=info source=/go/pkg/mod/github.com/!kim!machine!gun/automemlimit@v0.6.1/memlimit/memlimit.go:176 msg="GOMEMLIMIT is updated" package=github.com/KimMachineGun/automemlimit/memlimit GOMEMLIMIT=7496898969
+ts=2025-05-23T08:54:45.939835459Z level=info msg="no peer discovery configured: both join and discover peers are empty" service=cluster
+ts=2025-05-23T08:54:45.939840595Z level=info msg="starting complete graph evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8
+ts=2025-05-23T08:54:45.939850929Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node_id=otel duration=2.186µs
+ts=2025-05-23T08:54:45.939857931Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node_id=livedebugging duration=14.319µs
+ts=2025-05-23T08:54:45.939864859Z level=info msg="running usage stats reporter"
+ts=2025-05-23T08:54:45.939869324Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node_id=loki.write.default duration=945.038µs
+ts=2025-05-23T08:54:45.939875117Z level=error msg="failed to evaluate config" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node=local.file_match.app_logs err="decoding configuration: /etc/alloy/config.alloy:3:3: unrecognized attribute name \"forward_to\""
+ts=2025-05-23T08:54:45.939884347Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node_id=local.file_match.app_logs duration=96.317µs
+ts=2025-05-23T08:54:45.93989037Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node_id=remotecfg duration=62.766µs
+ts=2025-05-23T08:54:45.93989757Z level=info msg="applying non-TLS config to HTTP server" service=http
+ts=2025-05-23T08:54:45.939902818Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node_id=http duration=6.429µs
+ts=2025-05-23T08:54:45.939910374Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node_id=ui duration=1.275µs
+ts=2025-05-23T08:54:45.93991815Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node_id=cluster duration=1.68µs
+ts=2025-05-23T08:54:45.939925885Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node_id=labelstore duration=7.511µs
+ts=2025-05-23T08:54:45.939933293Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node_id=tracing duration=6.57µs
+ts=2025-05-23T08:54:45.939943584Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 node_id=logging duration=191.875µs
+ts=2025-05-23T08:54:45.939954137Z level=info msg="finished complete graph evaluation" controller_path=/ controller_id="" trace_id=904978ba8905200ee990ed40cdf1ffa8 duration=1.579276ms
+Error: /etc/alloy/config.alloy:3:3: unrecognized attribute name "forward_to"
 
-6 | loki.write "default" {
-7 |   endpoint = "http://loki.loki.svc.cluster.local:3100/loki/api/v1/push"
-  |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-8 | }
+2 |   path_targets = [{"__path__" = "/logs/*.log"}]
+3 |   forward_to = [loki.write.default.receiver]
+  |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4 | }
 
-Error: /etc/alloy/config.alloy:2:3: unrecognized attribute name "path"
-
-1 | local.file_match "app_logs" {
-2 |   path = "/logs/*.log"
-  |   ^^^^^^^^^^^^^^^^^^^^
-3 |   forward_to = [loki.write.default.output]
-
-interrupt received
-ts=2025-05-23T08:43:40.704103947Z level=error msg="failed to start reporter" err="context canceled"
+ts=2025-05-23T08:54:45.940149001Z level=error msg="failed to start reporter" err="context canceled"
 Error: could not perform the initial load successfully
