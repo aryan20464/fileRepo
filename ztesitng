@@ -1,9 +1,12 @@
-C:\Users\1064695\Desktop>kubectl logs springboot-app-0 -c alloy -n uatcmm
+local.file_match "app_logs" {
+  path = "/logs/*.log"
+}
 
-Error: /etc/alloy/config.alloy:15:35: expected block label, got TERMINATOR
+loki.write.default {
+  endpoint = "http://loki.loki.svc.cluster.local:3100/loki/api/v1/push"
+}
 
-Error: /etc/alloy/config.alloy:16:1: expected block body, got }
-
-Error: /etc/alloy/config.alloy:17:1: expected TERMINATOR, got EOF
-interrupt received
-Error: could not perform the initial load successfully
+forward "loki" {
+  from = local.file_match.app_logs.output
+  to   = loki.write.default.input
+}
