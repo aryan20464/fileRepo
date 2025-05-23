@@ -1,18 +1,41 @@
-Error: unknown flag: --config.file
-Usage:
-  /bin/alloy [global options] <subcommand> [flags]
-  /bin/alloy [command]
+ts=2025-05-23T07:07:11.705265666Z level=info "boringcrypto enabled"=false
+ts=2025-05-23T07:07:11.703198966Z level=info source=/go/pkg/mod/github.com/!kim!machine!gun/automemlimit@v0.6.1/memlimit/memlimit.go:176 msg="GOMEMLIMIT is updated" package=github.com/KimMachineGun/automemlimit/memlimit GOMEMLIMIT=7496898969
+ts=2025-05-23T07:07:11.70534328Z level=info msg="no peer discovery configured: both join and discover peers are empty" service=cluster
+ts=2025-05-23T07:07:11.705351795Z level=info msg="running usage stats reporter"
+ts=2025-05-23T07:07:11.705357697Z level=info msg="starting complete graph evaluation" controller_path=/ controller_id="" trace_id=98b529f4052eecabd4f400b3a24532cf
+ts=2025-05-23T07:07:11.705371884Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=98b529f4052eecabd4f400b3a24532cf node_id=livedebugging duration=16.358µs
+ts=2025-05-23T07:07:11.705381178Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=98b529f4052eecabd4f400b3a24532cf node_id=labelstore duration=4.23µs
+ts=2025-05-23T07:07:11.70538854Z level=error msg="failed to evaluate config" controller_path=/ controller_id="" trace_id=98b529f4052eecabd4f400b3a24532cf node=local.file_match.app_logs err="decoding configuration: /etc/alloy/config.alloy:2:3: unrecognized attribute name \"paths\""
+ts=2025-05-23T07:07:11.705467852Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=98b529f4052eecabd4f400b3a24532cf node_id=local.file_match.app_logs duration=57.433µs
+ts=2025-05-23T07:07:11.705477477Z level=error msg="failed to evaluate config" controller_path=/ controller_id="" trace_id=98b529f4052eecabd4f400b3a24532cf node=loki.write.default err="decoding configuration: /etc/alloy/config.alloy:10:3: unrecognized attribute name \"labels\""
+ts=2025-05-23T07:07:11.705486865Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=98b529f4052eecabd4f400b3a24532cf node_id=loki.write.default duration=98.691µs
+ts=2025-05-23T07:07:11.705494629Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=98b529f4052eecabd4f400b3a24532cf node_id=tracing duration=17.625µs
+ts=2025-05-23T07:07:11.705502434Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=98b529f4052eecabd4f400b3a24532cf node_id=otel duration=1.84µs
+ts=2025-05-23T07:07:11.705515394Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=98b529f4052eecabd4f400b3a24532cf node_id=logging duration=255.935µs
+ts=2025-05-23T07:07:11.705614586Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=98b529f4052eecabd4f400b3a24532cf node_id=remotecfg duration=73.889µs
+ts=2025-05-23T07:07:11.705646467Z level=info msg="applying non-TLS config to HTTP server" service=http
+ts=2025-05-23T07:07:11.705655208Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=98b529f4052eecabd4f400b3a24532cf node_id=http duration=16.542µs
+ts=2025-05-23T07:07:11.705668875Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=98b529f4052eecabd4f400b3a24532cf node_id=cluster duration=3.611µs
+ts=2025-05-23T07:07:11.705693318Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=98b529f4052eecabd4f400b3a24532cf node_id=ui duration=7.537µs
+ts=2025-05-23T07:07:11.705706503Z level=info msg="finished complete graph evaluation" controller_path=/ controller_id="" trace_id=98b529f4052eecabd4f400b3a24532cf duration=821.898µs
 
-Available Commands:
-  completion  Generate the autocompletion script for the specified shell
-  convert     Convert a supported config file to Alloy
-  fmt         Format a configuration file
-  help        Help about any command
-  run         Run Grafana Alloy
-  tools       Utilties for various components
+Error: /etc/alloy/config.alloy:2:3: unrecognized attribute name "paths"
 
-Flags:
-  -h, --help      help for /bin/alloy
-  -v, --version   version for /bin/alloy
+1 | local.file_match "app_logs" {
+2 |   paths = ["/logs/*.log"]
+  |   ^^^^^^^^^^^^^^^^^^^^^^^
+3 | }
 
-Use "/bin/alloy [command] --help" for more information about a command.
+Error: /etc/alloy/config.alloy:10:3: unrecognized attribute name "labels"
+
+ 9 |
+10 |     labels = {
+   |  ___^^^^^^^^^^
+11 | |     job = "springboot-app",
+12 | |     pod = "${POD_NAME}",
+13 | |   }
+   | |_^^^
+14 |
+ts=2025-05-23T07:07:11.705957867Z level=error msg="failed to start reporter" err="context canceled"
+interrupt received
+Error: could not perform the initial load successfully
