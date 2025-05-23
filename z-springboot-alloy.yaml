@@ -1,6 +1,3 @@
-# -------------------------------------
-# ConfigMap for Alloy Configuration
-# -------------------------------------
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -8,140 +5,96 @@ metadata:
   namespace: uatcmm
 data:
   config.alloy: |
-    server {
+    server "default" {
       http {
         listen_port = 9080
       }
     }
 
-    scrape_configs {
-      job_name = "springboot-app"
-
-      static_configs {
-        targets = ["localhost"]
-        labels = {
-          job = "springboot-app"
-          pod_name = "${POD_NAME}"
-        }
-        files = ["/logs/*.log"]
+    discovery.static "static_target" {
+      targets = ["localhost"]
+      labels = {
+        job = "springboot-app",
+        pod_name = "${POD_NAME}"
       }
+    }
 
-      pipeline_stages {
+    local.file_match "logs" {
+      path_targets = discovery.static.static_target.targets
+      paths        = ["/logs/*.log"]
+    }
+
+    log.process "multiline" {
+      forward_to = [log.forward.default.receiver]
+      stage {
         multiline {
-          firstline = "^\\S"
+          firstline_pattern = "^\\S"
         }
       }
     }
 
+    log.forward "default" {
+      inputs = [local.file_match.logs.output]
+    }
 ---
-
-# -------------------------------------
-# Headless Service for StatefulSet
-# -------------------------------------
-apiVersion: v1
-kind: Service
-metadata:
-  name: springboot-app-headless
-  namespace: uatcmm
-spec:
-  clusterIP: None
-  selector:
-    app: springboot-app
-  ports:
-    - port: 4202
-      targetPort: 4202
-
----
-
-# -------------------------------------
-# NodePort Service (for NGINX)
-# -------------------------------------
-apiVersion: v1
-kind: Service
-metadata:
-  name: springboot-app-service
-  namespace: uatcmm
-spec:
-  type: NodePort
-  selector:
-    app: springboot-app
-  ports:
-    - port: 4202
-      targetPort: 4202
-      nodePort: 30005
-
----
-
-# -------------------------------------
-# StatefulSet with Alloy Sidecar
-# -------------------------------------
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: springboot-app
   namespace: uatcmm
 spec:
-  replicas: 5
+  serviceName: "springboot-app"
+  replicas: 1
   selector:
     matchLabels:
       app: springboot-app
-  serviceName: springboot-app-headless
   template:
     metadata:
       labels:
         app: springboot-app
     spec:
-      initContainers:
-        - name: fix-perms
-          image: tkgsharedharbor.corp.ad.sbi/itss/busybox@sha256:8b4ea49396032c42dc0a4dc0b7d052bab0e48eea6960cd567b79e1926968c928
-          command: ["/bin/sh", "-c"]
-          args:
-            - |
-              echo "Changing ownership to UID:GID of itss";
-              chown -R 1001:1001 /app/logs;
-              ls -l /app/logs;
-              echo "Done.";
-          volumeMounts:
-            - name: app-logs
-              mountPath: /app/logs
       containers:
-        - name: springboot-app
-          image: tkgsharedharbor.corp.ad.sbi/idea-indents-dev/spring-test:2.0
-          ports:
-            - containerPort: 4202
+        - name: springboot-container
+          image: your-springboot-image:latest
           env:
-            - name: TZ
-              value: "Asia/Kolkata"
-          volumeMounts:
-            - name: app-logs
-              mountPath: /app/logs
-        - name: alloy
-          image: grafana/alloy:v1.0.0
-          args:
-            - run
-            - /etc/alloy/config.alloy
-          env:
-            - name: TZ
-              value: "Asia/Kolkata"
             - name: POD_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
           volumeMounts:
-            - name: alloy-config
-              mountPath: /etc/alloy
-            - name: app-logs
+            - name: log-volume
               mountPath: /logs
+        - name: alloy
+          image: grafana/alloy:latest
+          args:
+            - run
+            - /etc/alloy/config.alloy
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          volumeMounts:
+            - name: log-volume
+              mountPath: /logs
+            - name: alloy-config-volume
+              mountPath: /etc/alloy
       volumes:
-        - name: alloy-config
+        - name: log-volume
+          persistentVolumeClaim:
+            claimName: springboot-log-pvc
+        - name: alloy-config-volume
           configMap:
             name: alloy-config
-  volumeClaimTemplates:
-    - metadata:
-        name: app-logs
-      spec:
-        accessModes: [ "ReadWriteOnce" ]
-        storageClassName: default  # Replace if needed
-        resources:
-          requests:
-            storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: springboot-log-pvc
+  namespace: uatcmm
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
