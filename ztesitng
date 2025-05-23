@@ -1,14 +1,29 @@
-local.file_match "app_logs" {
-  path_targets = [{ __path__ = "/logs/*.log" }]
-  forward_to = [loki.process.app.receiver]
-}
+ts=2025-05-23T09:02:35.2895137Z level=info "boringcrypto enabled"=false
+ts=2025-05-23T09:02:35.286627971Z level=info source=/go/pkg/mod/github.com/!kim!machine!gun/automemlimit@v0.6.1/memlimit/memlimit.go:176 msg="GOMEMLIMIT is updated" package=github.com/KimMachineGun/automemlimit/memlimit GOMEMLIMIT=7496898969
+ts=2025-05-23T09:02:35.289599082Z level=info msg="no peer discovery configured: both join and discover peers are empty" service=cluster
+ts=2025-05-23T09:02:35.289606987Z level=info msg="starting complete graph evaluation" controller_path=/ controller_id="" trace_id=e4438dab1244c7d74a794efdd80f7d06
+ts=2025-05-23T09:02:35.289620463Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=e4438dab1244c7d74a794efdd80f7d06 node_id=remotecfg duration=59.149µs
+ts=2025-05-23T09:02:35.289627506Z level=info msg="applying non-TLS config to HTTP server" service=http
+ts=2025-05-23T09:02:35.289631996Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=e4438dab1244c7d74a794efdd80f7d06 node_id=http duration=8.007µs
+ts=2025-05-23T09:02:35.289639968Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=e4438dab1244c7d74a794efdd80f7d06 node_id=cluster duration=548ns
+ts=2025-05-23T09:02:35.289648023Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=e4438dab1244c7d74a794efdd80f7d06 node_id=livedebugging duration=3.066µs
+ts=2025-05-23T09:02:35.289656146Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=e4438dab1244c7d74a794efdd80f7d06 node_id=ui duration=556ns
+ts=2025-05-23T09:02:35.289664244Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=e4438dab1244c7d74a794efdd80f7d06 node_id=labelstore duration=2.289µs
+ts=2025-05-23T09:02:35.289672995Z level=info msg="running usage stats reporter"
+ts=2025-05-23T09:02:35.289676805Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=e4438dab1244c7d74a794efdd80f7d06 node_id=loki.write.default duration=584.518µs
+ts=2025-05-23T09:02:35.289685881Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=e4438dab1244c7d74a794efdd80f7d06 node_id=loki.process.app duration=154.123µs
+ts=2025-05-23T09:02:35.289691205Z level=error msg="failed to evaluate config" controller_path=/ controller_id="" trace_id=e4438dab1244c7d74a794efdd80f7d06 node=local.file_match.app_logs err="decoding configuration: /etc/alloy/config.alloy:3:3: unrecognized attribute name \"forward_to\""
+ts=2025-05-23T09:02:35.289701803Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=e4438dab1244c7d74a794efdd80f7d06 node_id=local.file_match.app_logs duration=60.954µs
+ts=2025-05-23T09:02:35.289710189Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=e4438dab1244c7d74a794efdd80f7d06 node_id=tracing duration=8.978µs
+ts=2025-05-23T09:02:35.28971887Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=e4438dab1244c7d74a794efdd80f7d06 node_id=otel duration=8.312µs
+ts=2025-05-23T09:02:35.289725616Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=e4438dab1244c7d74a794efdd80f7d06 node_id=logging duration=220.971µs
+ts=2025-05-23T09:02:35.289732514Z level=info msg="finished complete graph evaluation" controller_path=/ controller_id="" trace_id=e4438dab1244c7d74a794efdd80f7d06 duration=1.290508ms
+Error: /etc/alloy/config.alloy:3:3: unrecognized attribute name "forward_to"
 
-loki.process "app" {
-  forward_to = [loki.write.default.receiver]
-}
-
-loki.write "default" {
-  endpoint {
-    url = "http://loki.loki.svc.cluster.local:3100/loki/api/v1/push"
-  }
-}
+2 |   path_targets = [{ __path__ = "/logs/*.log" }]
+3 |   forward_to = [loki.process.app.receiver]
+  |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4 | }
+ts=2025-05-23T09:02:35.289911326Z level=error msg="failed to start reporter" err="context canceled"
+interrupt received
+Error: could not perform the initial load successfully
