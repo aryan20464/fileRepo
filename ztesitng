@@ -1,3 +1,26 @@
+#log_base=/weblogic/app_logs/Starter
+#server.servlet.context-path=/Starter
+#server.port=4202
+#logging.file.name=D:\\app_logs\\app.log
+#logging.file.name=/app/logs/app.log
+
+# Set the root logging level (INFO, DEBUG, ERROR, etc.)
+logging.level.root=INFO
+
+# Configure log file location
+#logging.file.name=/var/log/app-logs/app.log
+logging.file.name=/app/logs/app.log
+
+# Log pattern (optional - keeps logs readable)
+logging.pattern.file=%d{yyyy-MM-dd HH:mm:ss} [%thread] -  %-5level %logger{36} - %msg%n
+logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+
+server.servlet.context-path=/Starter
+server.port=4202
+
+
+
+
 sub_filter_once off;
     sub_filter '="/' '="/apache-home/';
     sub_filter "='/” “='/apache-home/";
