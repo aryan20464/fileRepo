@@ -1,3 +1,41 @@
+server {
+    listen 80;
+    server_name yourdomain.com;
+
+    location /apache-home/ {
+        proxy_pass http://localhost:9080/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /manager/ {
+        proxy_pass http://localhost:9080/manager/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Authorization $http_authorization;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #!/bin/bash
 
 export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
