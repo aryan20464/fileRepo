@@ -1,3 +1,12 @@
+#!/bin/bash
+
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+export CATALINA_HOME=/devtools/apache-tomcat
+export CATALINA_BASE=/devtools/apache-tomcat
+export JAVA_OPTS="-Xms512M -Xmx1024M -XX:+UseG1GC -Djava.security.egd=file:/dev/./urandom"
+
+
+
 discovery.kubernetes "pods" {
   selectors = [
     {
