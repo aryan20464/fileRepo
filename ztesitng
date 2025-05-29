@@ -1,3 +1,5 @@
+sub_filter "='/” “='/apache-home/";
+
 Ip=10.30.130.32 time=- [29/May/2025:15:04:04 +0530] Request="GET /host-manager/images/tomcat.svg HTTP/1.1" Status=404 Request_size=548 URL="https://10.191.158.42:4200/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"rt=0.000 uct="-" uht="-" urt="-"
 Ip=10.30.130.32 time=- [29/May/2025:15:04:04 +0530] Request="GET /host-manager/images/asf-logo.svg HTTP/1.1" Status=404 Request_size=548 URL="https://10.191.158.42:4200/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"rt=0.000 uct="-" uht="-" urt="-"
 
