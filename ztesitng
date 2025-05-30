@@ -1,3 +1,11 @@
+
+We are familiar with hardening of VMs and supporting environments where application goes into deployment. Since, we are interested in moving to a cluster solution in future we are interested in obtaining hardened base images upon which we can build our application so that we can ensure security and also comply with future IT/IS/VA of applications.
+
+With respect to the above, kindly send us information about how to obtain hardened docker images and if it carries any license to be obtained and/or if/any pricing is there for obtaining images.
+
+Thank you
+
+
 location /manager/ {
         proxy_pass http://localhost:9080/manager/;
         proxy_set_header Host $host;
