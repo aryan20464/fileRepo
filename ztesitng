@@ -1,9 +1,26 @@
+We are currently involved in hardening virtual machines and their supporting environments as part of our standard practices for securing application deployments. As we look ahead to transitioning into a clustered deployment model, we are exploring the use of hardened Docker base images as a foundation upon which we can securely build our applications.
 
-We are familiar with hardening of VMs and supporting environments where application goes into deployment. Since, we are interested in moving to a cluster solution in future we are interested in obtaining hardened base images upon which we can build our application so that we can ensure security and also comply with future IT/IS/VA of applications.
+We understand that Docker provides access to hardened images, and we are interested in incorporating these into our CI/CD and deployment pipelines to ensure alignment with IT, Information Security (IS), and Vulnerability Assessment (VA) compliance requirements.
 
-With respect to the above, kindly send us information about how to obtain hardened docker images and if it carries any license to be obtained and/or if/any pricing is there for obtaining images.
+In this context, we kindly request the following information:
 
-Thank you
+Licensing Requirements
+
+Are there any specific licenses required to access or use Docker’s hardened base images?
+
+Are these images available under a standard Docker subscription, or do they require an enterprise plan?
+
+Pricing Structure
+
+Please provide information on any associated costs or subscription tiers required to obtain and maintain access to these hardened images.
+
+Compliance and Support
+
+Do the hardened images comply with any recognized security benchmarks or standards (e.g., CIS, NIST)?
+
+Are there support or maintenance options available for these images?
+
+We appreciate your assistance in helping us better understand the terms of usage and any potential investment needed to integrate these images into our secure application environment.
 
 
 location /manager/ {
