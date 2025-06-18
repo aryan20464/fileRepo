@@ -1,3 +1,5 @@
+https://1drv.ms/u/s!AqWEEegNKXk2cPvUx9O78ylfX-o?e=vf2YyT
+
 location /fileUpload {
     # Allow up to 200MB file uploads (adjust as needed)
     client_max_body_size 200M;
