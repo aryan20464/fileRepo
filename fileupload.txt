@@ -1,4 +1,33 @@
-https://1drv.ms/u/s!AqWEEegNKXk2cPvUx9O78ylfX-o?e=vf2YyT
+#!/bin/bash
+
+JAR_PATH="$1"
+
+if [ -z "$JAR_PATH" ]; then
+  echo "Error: No JAR file path provided."
+  exit 1
+fi
+
+# Optional: Log received file
+echo "Received JAR: $JAR_PATH"
+
+# Stop any running instance (customize the pattern if needed)
+pkill -f 'java -jar'
+
+# Start the new application
+echo "Starting application..."
+nohup java -jar "$JAR_PATH" --spring.profiles.active=uat > /opt/logs/app.log 2>&1 &
+
+# Check if started successfully
+sleep 5
+if pgrep -f "$JAR_PATH" > /dev/null; then
+  echo "Application started successfully."
+  exit 0
+else
+  echo "Application failed to start."
+  exit 1
+fi
+
+
 
 location /fileUpload {
     # Allow up to 200MB file uploads (adjust as needed)
