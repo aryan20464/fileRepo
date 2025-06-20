@@ -1,0 +1,57 @@
+<!-- Table to display results -->
+<table *ngIf="data.length > 0" border="1" cellpadding="8" cellspacing="0">
+  <thead>
+    <tr>
+      <th *ngFor="let header of tableHeaders">{{ header }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let row of data">
+      <td *ngFor="let header of tableHeaders">{{ row[header] }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- No data message -->
+<p *ngIf="data.length === 0 && submitted">No data found for selected dates.</p>
+
+
+
+import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html'
+})
+export class AppComponent {
+  fromDate: string = '';
+  toDate: string = '';
+  data: any[] = [];
+  tableHeaders: string[] = [];
+  submitted: boolean = false;
+
+  constructor(private http: HttpClient) {}
+
+  onSubmit() {
+    const payload = {
+      fromDate: this.fromDate,
+      toDate: this.toDate
+    };
+
+    this.http.post<any[]>('http://your-backend-url/api/your-endpoint', payload)
+      .subscribe({
+        next: (response) => {
+          this.data = response || [];
+          this.tableHeaders = this.data.length > 0 ? Object.keys(this.data[0]) : [];
+          this.submitted = true;
+        },
+        error: (error) => {
+          console.error('Error fetching data', error);
+          this.data = [];
+          this.tableHeaders = [];
+          this.submitted = true;
+        }
+      });
+  }
+}
