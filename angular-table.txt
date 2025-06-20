@@ -1,3 +1,7 @@
+The 'Object' type is assignable to very few other types. Did you mean to use the 'any' type instead?
+  Type 'Object' is missing the following properties from type 'any[]': length, pop, push, concat, and 26 more.ts(2696)
+(property) LhouserComponent.branchReportData: any[]
+
 <!-- Table to display results -->
 <table *ngIf="data.length > 0" border="1" cellpadding="8" cellspacing="0">
   <thead>
