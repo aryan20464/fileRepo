@@ -1,3 +1,17 @@
+List<CircleSummary> summaries = new ArrayList<>();
+
+@Getter
+@Setter
+public class CircleSummary {
+    private String ccode;
+    private String circleName;
+    private long total;
+    private long pending;
+    private long approved;
+    private long rejected;
+    private long received;
+    private long completed;}
+
 The 'Object' type is assignable to very few other types. Did you mean to use the 'any' type instead?
   Type 'Object' is missing the following properties from type 'any[]': length, pop, push, concat, and 26 more.ts(2696)
 (property) LhouserComponent.branchReportData: any[]
