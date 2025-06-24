@@ -1,3 +1,27 @@
+this.allData = this.allData.map(item => {
+  const createdAt = new Date(item.createdAt);
+  const updatedAt = item.updatedAt ? new Date(item.updatedAt) : null;
+
+  if (updatedAt) {
+    const diffMs = updatedAt.getTime() - createdAt.getTime(); // milliseconds
+    const diffHours = diffMs / (1000 * 60 * 60); // convert ms to hours
+    const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+    return {
+      ...item,
+      tatHours: diffHours.toFixed(2)  // keep 2 decimal places
+      tatDays : diffDays.toFixed(2) // keep 2 decimal places
+    };
+  } else {
+    return {
+      ...item,
+      tatHours: '',  // or null, or 'Pending'
+      tatDays : '', // or null, or 'Pending'
+    };
+  }
+});
+
+
 List<CircleSummary> summaries = new ArrayList<>();
 
 @Getter
