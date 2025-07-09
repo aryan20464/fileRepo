@@ -1,0 +1,157 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36" version="25.0.3">
+  <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
+    <mxGraphModel dx="1050" dy="541" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-7" value="FCNY Module" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="383" y="256" width="134" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0Kmae_XXpIcbisTiChTe-10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="450" y="270" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0Kmae_XXpIcbisTiChTe-11" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="0Kmae_XXpIcbisTiChTe-10" vertex="1" connectable="0">
+          <mxGeometry x="-0.2871" y="-1" relative="1" as="geometry">
+            <mxPoint y="-21" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0Kmae_XXpIcbisTiChTe-5" value="" style="endArrow=classic;html=1;rounded=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="446" y="317" as="sourcePoint" />
+            <mxPoint x="446" y="367" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0Kmae_XXpIcbisTiChTe-31" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="0Kmae_XXpIcbisTiChTe-13" target="0Kmae_XXpIcbisTiChTe-52" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="516" y="422" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0Kmae_XXpIcbisTiChTe-32" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="0Kmae_XXpIcbisTiChTe-31" vertex="1" connectable="0">
+          <mxGeometry x="-0.2603" y="1" relative="1" as="geometry">
+            <mxPoint x="1" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0Kmae_XXpIcbisTiChTe-45" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="0Kmae_XXpIcbisTiChTe-13" target="0Kmae_XXpIcbisTiChTe-44" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0Kmae_XXpIcbisTiChTe-48" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="0Kmae_XXpIcbisTiChTe-45" vertex="1" connectable="0">
+          <mxGeometry x="-0.5618" y="1" relative="1" as="geometry">
+            <mxPoint x="-17" y="-9" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0Kmae_XXpIcbisTiChTe-13" value="Branch Staff ?" style="rhombus;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="397" y="367" width="100" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="TlEDB1siWfGGDDj7Wg8u-13" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="0Kmae_XXpIcbisTiChTe-34">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="734" y="461.7872340425532" as="sourcePoint" />
+            <mxPoint x="734" y="534" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="734" y="477" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TlEDB1siWfGGDDj7Wg8u-28" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.637;entryY=1.02;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="0Kmae_XXpIcbisTiChTe-34" target="TlEDB1siWfGGDDj7Wg8u-3">
+          <mxGeometry x="-0.9143" relative="1" as="geometry">
+            <mxPoint x="450" y="970" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="810" y="422" />
+              <mxPoint x="810" y="970" />
+              <mxPoint x="475" y="970" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0Kmae_XXpIcbisTiChTe-34" value="GMUK&amp;nbsp;" style="rhombus;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="686" y="367" width="94" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="TlEDB1siWfGGDDj7Wg8u-5" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="0Kmae_XXpIcbisTiChTe-44" target="TlEDB1siWfGGDDj7Wg8u-4">
+          <mxGeometry x="-0.1429" y="-8" relative="1" as="geometry">
+            <mxPoint x="176" y="422" as="sourcePoint" />
+            <mxPoint x="106" y="422" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TlEDB1siWfGGDDj7Wg8u-9" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="0Kmae_XXpIcbisTiChTe-44" target="0Kmae_XXpIcbisTiChTe-62">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0Kmae_XXpIcbisTiChTe-44" value="Checker ?" style="rhombus;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="240" y="367" width="110" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="TlEDB1siWfGGDDj7Wg8u-14" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="0Kmae_XXpIcbisTiChTe-52" target="0Kmae_XXpIcbisTiChTe-34">
+          <mxGeometry x="0.2" y="8" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TlEDB1siWfGGDDj7Wg8u-24" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="0Kmae_XXpIcbisTiChTe-52" target="0Kmae_XXpIcbisTiChTe-58">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="606" y="524" />
+              <mxPoint x="606" y="524" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0Kmae_XXpIcbisTiChTe-52" value="&lt;div&gt;&amp;nbsp; Zonal / Circle&lt;span style=&quot;background-color: initial;&quot;&gt;&amp;nbsp;User&lt;/span&gt;&lt;/div&gt;" style="rhombus;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="556" y="367" width="100" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="0Kmae_XXpIcbisTiChTe-56" value="Show dashboard of indent details of all branches" style="whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="700" y="534" width="96" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0Kmae_XXpIcbisTiChTe-58" value="Show dashboard of indent details of that zone / circle" style="whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="559" y="534" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0Kmae_XXpIcbisTiChTe-62" value="View, Approve or Reject Requests" style="whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="236" y="534" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0Kmae_XXpIcbisTiChTe-73" value="" style="whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="65" y="534" width="141" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="0Kmae_XXpIcbisTiChTe-81" value="View raised indents &amp;amp; their status" style="rounded=0;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="82" y="636.5" width="104" height="72.5" as="geometry" />
+        </mxCell>
+        <mxCell id="0Kmae_XXpIcbisTiChTe-82" value="Edit the Indent incase it is not yet approved&amp;nbsp;" style="rounded=0;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="82" y="729" width="104" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="0Kmae_XXpIcbisTiChTe-127" value="&lt;font style=&quot;font-size: 28px;&quot;&gt;Foreign Currency Indent Module Process Flow&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=1;align=center;strokeColor=none;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="10" y="149" width="810" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="TlEDB1siWfGGDDj7Wg8u-1" value="Raise an Indent" style="whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="82" y="549" width="104" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="TlEDB1siWfGGDDj7Wg8u-3" value="No functionality/ No option visible" style="whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="399" y="534" width="120" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="TlEDB1siWfGGDDj7Wg8u-18" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="127" y="476.44444444444446" as="sourcePoint" />
+            <mxPoint x="127" y="534" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="127" y="494" />
+              <mxPoint x="127" y="494" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TlEDB1siWfGGDDj7Wg8u-23" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="-0.9681" y="-18" relative="1" as="geometry">
+            <mxPoint x="77" y="422" as="sourcePoint" />
+            <mxPoint x="455" y="653" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="16" y="422" />
+              <mxPoint x="16" y="974" />
+              <mxPoint x="455" y="974" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TlEDB1siWfGGDDj7Wg8u-4" value="Maker ?" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="78" y="367" width="99" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="TlEDB1siWfGGDDj7Wg8u-16" value="Mark the indent with appropriate status after currency is received" style="whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="81" y="809" width="105" height="130" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
