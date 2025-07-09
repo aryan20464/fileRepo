@@ -1,3 +1,104 @@
+import jwtDecode from 'jwt-decode';
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthService {
+  constructor(private router: Router) {}
+
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  isTokenExpired(): boolean {
+    const token = this.getToken();
+    if (!token) return true;
+
+    try {
+      const decoded: { exp: number } = jwtDecode(token);
+      const now = Date.now() / 1000; // current time in seconds
+      return decoded.exp < now;
+    } catch (err) {
+      return true; // treat decoding errors as expired
+    }
+  }
+
+  isLoggedIn(): boolean {
+    return !this.isTokenExpired();
+  }
+
+  logout(): void {
+    localStorage.removeItem('token');
+  }
+}
+
+
+
+
+Auth Guard
+
+import { Injectable } from '@angular/core';
+import { CanActivate, Router } from '@angular/router';
+import { AuthService } from './auth.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthGuard implements CanActivate {
+  constructor(private auth: AuthService, private router: Router) {}
+
+  canActivate(): boolean {
+    if (this.auth.isLoggedIn()) {
+      return true;
+    } else {
+      this.auth.logout(); // clear token if expired
+      this.router.navigate(['/login']);
+      return false;
+    }
+  }
+}
+
+
+
+token interceptor
+
+import { Injectable } from '@angular/core';
+import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { AuthService } from './auth.service';
+import { Router } from '@angular/router';
+
+@Injectable()
+export class TokenInterceptor implements HttpInterceptor {
+  constructor(private auth: AuthService, private router: Router) {}
+
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    const token = this.auth.getToken();
+
+    if (token) {
+      req = req.clone({
+        headers: req.headers.set('Authorization', `Bearer ${token}`)
+      });
+    }
+
+    return next.handle(req).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401 || this.auth.isTokenExpired()) {
+          this.auth.logout();
+          this.router.navigate(['/login']);
+        }
+        return throwError(() => error);
+      })
+    );
+  }
+}
+
+
+
+
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { AuthService } from './auth.service';
