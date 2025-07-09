@@ -1,4 +1,53 @@
- background: linear-gradient(
+import { Injectable } from '@angular/core';
+import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { AuthService } from './auth.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class LoginGuard implements CanActivate {
+
+  constructor(private auth: AuthService, private router: Router) {}
+
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): boolean | UrlTree {
+
+    // 🚫 If user is already logged in
+    if (this.auth.isLoggedIn()) {
+      // ✅ Redirect to dashboard or home (adjust as needed)
+      return this.router.parseUrl('/dashboard');
+    }
+
+    // ✅ Allow access to login/register/public routes
+    return true;
+  }
+}
+
+
+const routes: Routes = [
+  { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
+  { path: 'register', component: RegisterComponent, canActivate: [LoginGuard] },
+
+  // Protected routes
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+  { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
+
+  // Default redirect
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '**', redirectTo: 'login' }
+];
+
+
+
+
+
+
+
+
+background: linear-gradient(
     to bottom right,
     rgba(0, 0, 0, 0.5),
     rgba(40, 40, 40, 0.6)
