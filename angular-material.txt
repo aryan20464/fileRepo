@@ -1,3 +1,19 @@
+refreshToken() {
+  const refreshToken = this.getRefreshToken();
+  if (!refreshToken) return;
+
+  this.http.post<{ token: string }>(`${this.baseUrl}/refresh`, { refreshToken })
+    .subscribe({
+      next: res => {
+        localStorage.setItem('token', res.token);
+        console.log(`[JWT Refresh] New token retrieved and stored at ${new Date().toLocaleTimeString()}`);
+      },
+      error: () => this.logout()
+    });
+}
+
+
+
 private monitorUserActivity() {
   ['mousemove', 'keydown'].forEach(event =>
     document.addEventListener(event, () => {
