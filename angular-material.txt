@@ -1,15 +1,48 @@
-import jwtDecode from 'jwt-decode';
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+auth service 
 
-@Injectable({
-  providedIn: 'root'
-})
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import jwtDecode from 'jwt-decode';
+
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-  constructor(private router: Router) {}
+  private baseUrl = 'http://localhost:8080/api/auth';
+
+  constructor(private http: HttpClient, private router: Router) {}
+
+  login(credentials: { username: string, password: string }) {
+    return this.http.post<{ token: string, refreshToken: string }>(`${this.baseUrl}/login`, credentials);
+  }
+
+  refreshToken() {
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) return;
+
+    this.http.post<{ token: string }>(`${this.baseUrl}/refresh`, { refreshToken })
+      .subscribe({
+        next: res => localStorage.setItem('token', res.token),
+        error: () => this.logout()
+      });
+  }
+
+  saveTokens(token: string, refreshToken: string) {
+    localStorage.setItem('token', token);
+    localStorage.setItem('refreshToken', refreshToken);
+  }
 
   getToken(): string | null {
     return localStorage.getItem('token');
+  }
+
+  getRefreshToken(): string | null {
+    return localStorage.getItem('refreshToken');
+  }
+
+  logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    this.router.navigate(['/login']);
   }
 
   isTokenExpired(): boolean {
@@ -17,217 +50,237 @@ export class AuthService {
     if (!token) return true;
 
     try {
-      const decoded: { exp: number } = jwtDecode(token);
-      const now = Date.now() / 1000; // current time in seconds
-      return decoded.exp < now;
-    } catch (err) {
-      return true; // treat decoding errors as expired
-    }
-  }
-
-  isLoggedIn(): boolean {
-    return !this.isTokenExpired();
-  }
-
-  logout(): void {
-    localStorage.removeItem('token');
-  }
-}
-
-
-
-
-Auth Guard
-
-import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
-import { AuthService } from './auth.service';
-
-@Injectable({
-  providedIn: 'root'
-})
-export class AuthGuard implements CanActivate {
-  constructor(private auth: AuthService, private router: Router) {}
-
-  canActivate(): boolean {
-    if (this.auth.isLoggedIn()) {
+      const decoded: any = jwtDecode(token);
+      return decoded.exp < Date.now() / 1000;
+    } catch {
       return true;
-    } else {
-      this.auth.logout(); // clear token if expired
-      this.router.navigate(['/login']);
-      return false;
     }
   }
 }
 
 
-
-token interceptor
+token interceptor 
 
 import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { AuthService } from './auth.service';
-import { Router } from '@angular/router';
+import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { AuthService } from '../services/auth.service';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(private authService: AuthService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = this.auth.getToken();
-
+    const token = this.authService.getToken();
     if (token) {
-      req = req.clone({
-        headers: req.headers.set('Authorization', `Bearer ${token}`)
-      });
+      req = req.clone({ headers: req.headers.set('Authorization', `Bearer ${token}`) });
     }
-
-    return next.handle(req).pipe(
-      catchError((error: HttpErrorResponse) => {
-        if (error.status === 401 || this.auth.isTokenExpired()) {
-          this.auth.logout();
-          this.router.navigate(['/login']);
-        }
-        return throwError(() => error);
-      })
-    );
+    return next.handle(req);
   }
 }
 
 
-
+auth guard
 
 import { Injectable } from '@angular/core';
-import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { CanActivate, Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+
+@Injectable({ providedIn: 'root' })
+export class AuthGuard implements CanActivate {
+  constructor(private authService: AuthService, private router: Router) {}
+
+  canActivate(): boolean {
+    if (!this.authService.isTokenExpired()) return true;
+    this.authService.logout();
+    return false;
+  }
+}
+
+
+activity-monitor.service.ts
+
+import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class LoginGuard implements CanActivate {
+@Injectable({ providedIn: 'root' })
+export class ActivityMonitorService {
+  private lastActivity = Date.now();
+  private readonly checkInterval = 2 * 60 * 1000; // 2 mins
+  private readonly maxInactivity = 5 * 60 * 1000; // 5 mins
 
-  constructor(private auth: AuthService, private router: Router) {}
-
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): boolean | UrlTree {
-
-    // 🚫 If user is already logged in
-    if (this.auth.isLoggedIn()) {
-      // ✅ Redirect to dashboard or home (adjust as needed)
-      return this.router.parseUrl('/dashboard');
-    }
-
-    // ✅ Allow access to login/register/public routes
-    return true;
-  }
-}
-
-
-const routes: Routes = [
-  { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
-  { path: 'register', component: RegisterComponent, canActivate: [LoginGuard] },
-
-  // Protected routes
-  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
-  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
-  { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
-
-  // Default redirect
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: '**', redirectTo: 'login' }
-];
-
-
-
-
-
-
-
-
-background: linear-gradient(
-    to bottom right,
-    rgba(0, 0, 0, 0.5),
-    rgba(40, 40, 40, 0.6)
-  );
-  color: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-
-
-
-
-<div class="login-container">
-  <mat-card class="login-card">
-    <mat-card-title>Login</mat-card-title>
-    <mat-card-content>
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Email</mat-label>
-          <input matInput placeholder="Enter email" formControlName="email" required />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Password</mat-label>
-          <input matInput type="password" placeholder="Enter password" formControlName="password" required />
-        </mat-form-field>
-
-        <button mat-raised-button color="primary" class="full-width">Login</button>
-      </form>
-    </mat-card-content>
-  </mat-card>
-</div>
-
-
-
-
-.login-container {
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #f5f5f5;
-}
-
-.login-card {
-  width: 350px;
-  padding: 20px;
-}
-
-.full-width {
-  width: 100%;
-  margin-bottom: 16px;
-}
-
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
-@Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
-})
-export class LoginComponent {
-  loginForm: FormGroup;
-
-  constructor(private fb: FormBuilder) {
-    this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
-    });
+  constructor(private authService: AuthService) {
+    this.monitorUserActivity();
+    setInterval(() => this.handleInactivity(), this.checkInterval);
   }
 
-  onSubmit(): void {
-    if (this.loginForm.valid) {
-      console.log('Login data:', this.loginForm.value);
-      // Handle login
+  private monitorUserActivity() {
+    ['mousemove', 'keydown'].forEach(event =>
+      document.addEventListener(event, () => this.lastActivity = Date.now())
+    );
+  }
+
+  private handleInactivity() {
+    const now = Date.now();
+    if (now - this.lastActivity < this.maxInactivity) {
+      this.authService.refreshToken(); // user is active, refresh session
+    } else {
+      this.authService.logout(); // user is inactive for too long
     }
   }
 }
+app component lo constructor(private activityMonitor: ActivityMonitorService) {}
 
+
+Auth controller java
+
+@RestController
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
+public class AuthController {
+
+    private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepo;
+    private final JwtUtil jwtUtil;
+    private final RefreshTokenService refreshTokenService;
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody AuthRequest request) {
+        User user = userRepository.findByUsername(request.getUsername())
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!user.getPassword().equals(request.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String accessToken = jwtUtil.generateToken(user);
+        String refreshToken = refreshTokenService.createRefreshToken(user);
+
+        return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refresh(@RequestBody TokenRefreshRequest request) {
+        return refreshTokenService.findByToken(request.getRefreshToken())
+            .map(refreshTokenService::verifyExpiration)
+            .map(RefreshToken::getUser)
+            .map(user -> {
+                String token = jwtUtil.generateToken(user);
+                return ResponseEntity.ok(new TokenRefreshResponse(token));
+            })
+            .orElseThrow(() -> new RuntimeException("Refresh token invalid"));
+    }
+}
+
+
+refresh token service 
+
+@Service
+@RequiredArgsConstructor
+public class RefreshTokenService {
+
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final UserRepository userRepository;
+
+    private final long refreshTokenDurationMs = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+    public String createRefreshToken(User user) {
+        refreshTokenRepository.deleteByUser(user); // Remove old token
+
+        RefreshToken token = RefreshToken.builder()
+                .user(user)
+                .token(UUID.randomUUID().toString())
+                .expiryDate(Instant.now().plusMillis(refreshTokenDurationMs))
+                .build();
+
+        refreshTokenRepository.save(token);
+        return token.getToken();
+    }
+
+    public Optional<RefreshToken> findByToken(String token) {
+        return refreshTokenRepository.findByToken(token);
+    }
+
+    public RefreshToken verifyExpiration(RefreshToken token) {
+        if (token.getExpiryDate().isBefore(Instant.now())) {
+            refreshTokenRepository.delete(token);
+            throw new RuntimeException("Refresh token expired");
+        }
+        return token;
+    }
+}
+
+
+jwtutil 
+
+@Component
+public class JwtUtil {
+
+    private final String SECRET = "my-secret-key";
+    private final long EXPIRATION = 5 * 60 * 1000; // 5 min
+
+    public String generateToken(User user) {
+        return Jwts.builder()
+                .setSubject(user.getUsername())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
+                .signWith(SignatureAlgorithm.HS512, SECRET)
+                .compact();
+    }
+
+    public String extractUsername(String token) {
+        return Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public boolean isTokenValid(String token) {
+        try {
+            Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token);
+            return true;
+        } catch (JwtException e) {
+            return false;
+        }
+    }
+}
+
+
+
+🧾 DTOs
+AuthRequest.java
+java
+Copy
+Edit
+@Data
+public class AuthRequest {
+    private String username;
+    private String password;
+}
+AuthResponse.java
+java
+Copy
+Edit
+@Data
+@AllArgsConstructor
+public class AuthResponse {
+    private String token;
+    private String refreshToken;
+}
+TokenRefreshRequest.java
+java
+Copy
+Edit
+@Data
+public class TokenRefreshRequest {
+    private String refreshToken;
+}
+TokenRefreshResponse.java
+java
+Copy
+Edit
+@Data
+@AllArgsConstructor
+public class TokenRefreshResponse {
+    private String token;
+}
 
 
 
