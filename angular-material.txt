@@ -1,3 +1,136 @@
+✅ 1. Check if Periodic Inactivity Check Is Running
+In your ActivityMonitorService, update the handleInactivity() method:
+
+ts
+Copy
+Edit
+private handleInactivity() {
+  const now = Date.now();
+  const timeSinceLastActivity = now - this.lastActivity;
+  const secondsIdle = Math.floor(timeSinceLastActivity / 1000);
+
+  console.log(`[Session Check] ${new Date().toLocaleTimeString()} - Idle for ${secondsIdle} seconds`);
+
+  if (timeSinceLastActivity < this.maxInactivity) {
+    this.authService.refreshToken();
+  } else {
+    console.log(`[Logout Triggered] Inactive for ${secondsIdle} seconds`);
+    this.authService.logout();
+  }
+}
+✅ Now you’ll see a log every 2 mins (or whatever checkInterval is) even if user isn’t doing anything.
+
+✅ 2. Log When Token Is Refreshed and Decoded Expiry Time
+In your auth.service.ts, update refreshToken():
+
+ts
+Copy
+Edit
+refreshToken() {
+  const refreshToken = this.getRefreshToken();
+  if (!refreshToken) return;
+
+  this.http.post<{ token: string }>(`${this.baseUrl}/refresh`, { refreshToken })
+    .subscribe({
+      next: res => {
+        localStorage.setItem('token', res.token);
+
+        try {
+          const decoded: any = jwtDecode(res.token);
+          const exp = decoded.exp;
+          const expDate = new Date(exp * 1000);
+
+          console.log(`[JWT Refresh] New token stored at ${new Date().toLocaleTimeString()}`);
+          console.log(`[JWT Expiry] Token expires at ${expDate.toLocaleTimeString()}`);
+        } catch (e) {
+          console.warn('[JWT Decode Error]', e);
+        }
+      },
+      error: () => this.logout()
+    });
+}
+✅ You’ll see:
+
+csharp
+Copy
+Edit
+[JWT Refresh] New token stored at 7:58:12 PM
+[JWT Expiry] Token expires at 8:03:12 PM
+✅ 3. Optional: Log on Activity Events
+In monitorUserActivity():
+
+ts
+Copy
+Edit
+private monitorUserActivity() {
+  ['mousemove', 'keydown'].forEach(event =>
+    document.addEventListener(event, () => {
+      this.lastActivity = Date.now();
+      console.log(`[Activity] ${event} at ${new Date(this.lastActivity).toLocaleTimeString()}`);
+    })
+  );
+}
+🧪 Result in Browser Console
+You’ll now see logs like:
+
+csharp
+Copy
+Edit
+[Activity] keydown at 8:00:12 PM
+[Session Check] 8:02:12 PM - Idle for 50 seconds
+[JWT Refresh] New token stored at 8:02:12 PM
+[JWT Expiry] Token expires at 8:07:12 PM
+🛠️ Bonus: View Token Expiry Any Time in DevTools Console
+If you expose a function in the window, you can debug easily:
+
+ts
+Copy
+Edit
+(window as any).printJwtExpiry = () => {
+  const token = localStorage.getItem('token');
+  if (!token) return console.log('No token');
+  const decoded: any = jwtDecode(token);
+  const exp = decoded.exp;
+  console.log(`[Manual Check] Token expires at: ${new Date(exp * 1000).toLocaleTimeString()}`);
+};
+Now in browser console, just run:
+
+js
+Copy
+Edit
+printJwtExpiry()
+✅ It’ll print the JWT expiry any time manually.
+
+Let me know if you want a visual countdown, or a warning popup when 1 minute remains before logout.
+
+
+
+
+
+
+
+
+
+Ask ChatGPT
+
+
+
+Tools
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 refreshToken() {
   const refreshToken = this.getRefreshToken();
   if (!refreshToken) return;
