@@ -105,25 +105,6 @@ refreshTokenAndUpdateExpiry(onSuccess: (expiryMs: number) => void) {
 
 
 
-Ask ChatGPT
-
-
-
-Tools
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 refreshToken() {
   const refreshToken = this.getRefreshToken();
