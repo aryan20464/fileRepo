@@ -1,6 +1,5 @@
-
-What is one of the rights of a Data Principal under the DPDP Act?
-a.    Right to marketing calls
-b.    Right to erasure of personal data
-c.    Right to sell data
-d.    Right to anonymity
+What does 'Legitimate Use' under the Act mean?
+a.    Any use that benefits the government
+b.    Use for profit
+c.    Use without consent under permitted conditions
+d.    Use for advertisements
