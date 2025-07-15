@@ -1,5 +1,5 @@
- Tom receives a call from someone sounding like their Bank officer, warning of fraudulent activity and asking for the OTP. The call ID shows the Bank's real number. The OTP is shared and money is lost. What kind of scam is this?
-a.   Pharming
-b.   Piggybacking
-c.   Scareware
-d.   Vishing
+Which of the following is a cyber security obligation under the DPDP Act?
+a.    Maintain social media presence
+b.    Perform routine cyber audits
+c.    Enable two-factor authentication for all bank accounts
+d.    File income tax
