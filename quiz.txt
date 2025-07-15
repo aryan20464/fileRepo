@@ -1,5 +1,5 @@
-If suspicious activity is observed in a current account having multi user variant of CINB, what action can a branch take?
-a.   Block the Admin
-b.   Block the Maker
-c.   block the Checker
-d.   Block all active users
+ Tom receives a call from someone sounding like their Bank officer, warning of fraudulent activity and asking for the OTP. The call ID shows the Bank's real number. The OTP is shared and money is lost. What kind of scam is this?
+a.   Pharming
+b.   Piggybacking
+c.   Scareware
+d.   Vishing
