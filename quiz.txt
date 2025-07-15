@@ -1,5 +1,5 @@
-What does 'Legitimate Use' under the Act mean?
-a.    Any use that benefits the government
-b.    Use for profit
-c.    Use without consent under permitted conditions
-d.    Use for advertisements
+The DPDP Act primarily applies to which type of data?
+a.    Financial data only
+b.    Anonymous data
+c.    Personal data
+d.    Government records
