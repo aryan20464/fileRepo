@@ -1,5 +1,5 @@
-The DPDP Act primarily applies to which type of data?
-a.    Financial data only
-b.    Anonymous data
-c.    Personal data
-d.    Government records
+Which of the following is a responsibility of the Data Fiduciary?
+a.    Investing in crypto
+b.    Publishing user data
+c.    Ensuring data accuracy and security
+d.    Selling data to third parties
