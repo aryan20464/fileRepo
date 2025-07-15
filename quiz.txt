@@ -1,5 +1,5 @@
-Which is not a type of money mule account
-a.   Unknowing/unwitting Money Mules
-b.   Wilful money mules
-c.   Complicit Money Mules
-d.   Lazy Account
+Consent under the DPDP Act must be:
+a.    Implied
+b.    Presumed
+c.    Explicit and informed
+d.    Automatically generated
