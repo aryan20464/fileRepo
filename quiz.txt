@@ -1,5 +1,5 @@
-PAN Number is what type of Information?
-a.   Internal
-b.   Public
-c.   Confidential
-d.   None of the above
+ How does the DPDP Act promote accountability in cyber security?
+a.    By requiring WhatsApp groups for security teams
+b.    By appointing Data Protection Officers for large-scale processors
+c.    By outsourcing data protection
+d.    By creating open data lakes
