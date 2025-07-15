@@ -1,5 +1,5 @@
-What is the primary purpose of SBI's compensation policy for cyber frauds?
-a.   To penalize cybercriminals
-b.   To compensate the bank for losses
-c.   To protect customers from financial loss due to unauthorized electronic transactions
-d.   To increase transaction limits
+PAN Number is what type of Information?
+a.   Internal
+b.   Public
+c.   Confidential
+d.   None of the above
