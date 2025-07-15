@@ -1,5 +1,5 @@
-Most important aspects to look for during EDD are /is ?
-a.   Call customer to visit the branch with KYC
-b.   Physical site verification, matching transactions with activity, not to tip off the customer, monitor Sudden Spurt in transactions, filing STR(IF REQUIRED)
-c.   Ask cutomer to close accounts in other banks
-d.   All of the above
+If suspicious activity is observed in a current account having multi user variant of CINB, what action can a branch take?
+a.   Block the Admin
+b.   Block the Maker
+c.   block the Checker
+d.   Block all active users
