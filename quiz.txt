@@ -1,5 +1,5 @@
- How does the DPDP Act promote accountability in cyber security?
-a.    By requiring WhatsApp groups for security teams
-b.    By appointing Data Protection Officers for large-scale processors
-c.    By outsourcing data protection
-d.    By creating open data lakes
+Most important aspects to look for during EDD are /is ?
+a.   Call customer to visit the branch with KYC
+b.   Physical site verification, matching transactions with activity, not to tip off the customer, monitor Sudden Spurt in transactions, filing STR(IF REQUIRED)
+c.   Ask cutomer to close accounts in other banks
+d.   All of the above
