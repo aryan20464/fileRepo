@@ -1,5 +1,5 @@
-Consent under the DPDP Act must be:
-a.    Implied
-b.    Presumed
-c.    Explicit and informed
-d.    Automatically generated
+What is considered a 'personal data breach' under the DPDP Act?
+a.    Data shared with family
+b.    Authorized data sharing
+c.    Unauthorized access, disclosure, or loss of personal data
+d.    Editing one's own data
