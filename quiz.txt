@@ -1,5 +1,5 @@
-Which of the following is a responsibility of the Data Fiduciary?
-a.    Investing in crypto
-b.    Publishing user data
-c.    Ensuring data accuracy and security
-d.    Selling data to third parties
+Which is not a type of money mule account
+a.   Unknowing/unwitting Money Mules
+b.   Wilful money mules
+c.   Complicit Money Mules
+d.   Lazy Account
