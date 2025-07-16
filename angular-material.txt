@@ -1,61 +1,14 @@
-rules:
-  - id: angular-dangerous-innerhtml
-    patterns:
-      - pattern: $X.innerHTML = $Y
-      - pattern-not: $X.innerHTML = this.sanitizer.bypassSecurityTrustHtml($Y)
-    message: "Avoid assigning directly to `innerHTML`; use Angular DomSanitizer instead."
-    severity: ERROR
-    languages: [typescript]
-    metadata:
-      owasp: "A7: Cross-Site Scripting (XSS)"
-      category: security
-    paths:
-      include: ["src/**/*.ts"]
+@PostMapping("/refresh")
+public ResponseEntity<?> refresh(@RequestBody TokenRefreshRequest request) {
+    String refreshToken = request.getRefreshToken();
+    if (jwtUtil.validateToken(refreshToken)) {
+        String newToken = jwtUtil.generateToken(...);
+        return ResponseEntity.ok(new JwtResponse(newToken));
+    } else {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+}
 
-  - id: angular-http-no-observable-pipe-catcherror
-    pattern: |
-      this.http.$METHOD($URL).subscribe($ARGS)
-    message: "Missing error handling in HttpClient call — use pipe + catchError."
-    severity: WARNING
-    languages: [typescript]
-    metadata:
-      category: best-practice
-    paths:
-      include: ["src/app/**/*.ts"]
-
-  - id: angular-trackby-missing
-    pattern: |
-      *ngFor="let $X of $Y"
-    message: "Add 'trackBy' to improve performance and avoid DOM re-rendering."
-    severity: INFO
-    languages: [html]
-    metadata:
-      category: performance
-    paths:
-      include: ["src/**/*.html"]
-
-  - id: angular-any-type
-    pattern: |
-      let $VAR: any = $VALUE
-    message: "Avoid using 'any' type. Use explicit typing for safety."
-    severity: WARNING
-    languages: [typescript]
-    metadata:
-      category: code-quality
-    paths:
-      include: ["src/**/*.ts"]
-
-  - id: hardcoded-api-key
-    pattern: |
-      const $KEY = "$SECRET"
-    message: "Potential hardcoded credential or secret."
-    severity: ERROR
-    languages: [typescript, javascript]
-    metadata:
-      owasp: "A2: Broken Authentication"
-      category: security
-    paths:
-      include: ["src/**/*.ts", "src/**/*.js"]
 
 
 
