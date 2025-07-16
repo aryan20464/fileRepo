@@ -1,3 +1,33 @@
+package com.example.jwt.controller;
+
+import com.example.jwt.model.AuthRequest;
+import com.example.jwt.util.JwtUtil;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api")
+public class AuthController {
+
+    private final JwtUtil jwtUtil;
+
+    public AuthController(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody AuthRequest request) {
+        // Replace with actual user validation
+        if ("admin".equals(request.getUsername()) && "password".equals(request.getPassword())) {
+            String token = jwtUtil.generateToken(request.getUsername());
+            return ResponseEntity.ok().body("JWT Token: " + token);
+        }
+        return ResponseEntity.status(401).body("Invalid Credentials");
+    }
+}
+
+
+
 @PostMapping("/refresh")
 public ResponseEntity<?> refresh(@RequestBody TokenRefreshRequest request) {
     String refreshToken = request.getRefreshToken();
