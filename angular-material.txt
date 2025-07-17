@@ -1,3 +1,30 @@
+NAMESPACE=<your-grafana-namespace>
+GRAFANA_SVC=$(kubectl get svc -n $NAMESPACE -o jsonpath='{.items[?(@.metadata.name=="grafana")].metadata.name}')
+SERVICE_TYPE=$(kubectl get svc $GRAFANA_SVC -n $NAMESPACE -o jsonpath='{.spec.type}')
+
+if [ "$SERVICE_TYPE" == "LoadBalancer" ]; then
+  EXTERNAL_IP=$(kubectl get svc $GRAFANA_SVC -n $NAMESPACE -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+  PORT=$(kubectl get svc $GRAFANA_SVC -n $NAMESPACE -o jsonpath='{.spec.ports[0].port}')
+  echo "Grafana is accessible at: http://$EXTERNAL_IP:$PORT"
+
+elif [ "$SERVICE_TYPE" == "NodePort" ]; then
+  NODE_IP=$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[?(@.type=="InternalIP")].address}')
+  NODE_PORT=$(kubectl get svc $GRAFANA_SVC -n $NAMESPACE -o jsonpath='{.spec.ports[0].nodePort}')
+  echo "Grafana is accessible at: http://$NODE_IP:$NODE_PORT"
+
+else
+  # Check if there's an Ingress
+  INGRESS_NAME=$(kubectl get ingress -n $NAMESPACE -o jsonpath='{.items[?(@.metadata.name=="grafana")].metadata.name}')
+  if [ -n "$INGRESS_NAME" ]; then
+    HOST=$(kubectl get ingress $INGRESS_NAME -n $NAMESPACE -o jsonpath='{.spec.rules[0].host}')
+    echo "Grafana is accessible at: http://$HOST"
+  else
+    echo "Grafana is not exposed externally (ClusterIP or no Ingress found)."
+  fi
+fi
+
+
+
 package com.example.jwt.controller;
 
 import com.example.jwt.model.AuthRequest;
