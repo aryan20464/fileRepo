@@ -1,32 +1,33 @@
-***************************
-APPLICATION FAILED TO START
-***************************
-
-Description:
-
-An attempt was made to call a method that does not exist. The attempt was made from the following location:
-
-    org.apache.catalina.authenticator.AuthenticatorBase.startInternal(AuthenticatorBase.java:1319)
-
-The following method did not exist:
-
-    javax.servlet.ServletContext.getVirtualServerName()Ljava/lang/String;
-
-The calling method's class, org.apache.catalina.authenticator.AuthenticatorBase, was loaded from the following location:
-
-    jar:file:/D:/dev-tools/mave_repo/org/apache/tomcat/embed/tomcat-embed-core/9.0.63/tomcat-embed-core-9.0.63.jar!/org/apache/catalina/authenticator/AuthenticatorBase.class
-
-The called method's class, javax.servlet.ServletContext, is available from the following locations:
-
-    jar:file:/D:/dev-tools/mave_repo/javax/servlet/javax.servlet-api/3.0.1/javax.servlet-api-3.0.1.jar!/javax/servlet/ServletContext.class
-    jar:file:/D:/dev-tools/mave_repo/org/apache/tomcat/embed/tomcat-embed-core/9.0.63/tomcat-embed-core-9.0.63.jar!/javax/servlet/ServletContext.class
-
-The called method's class hierarchy was loaded from the following locations:
-
-    javax.servlet.ServletContext: file:/D:/dev-tools/mave_repo/javax/servlet/javax.servlet-api/3.0.1/javax.servlet-api-3.0.1.jar
-
-
-Action:
-
-Correct the classpath of your application so that it contains compatible versions of the classes org.apache.catalina.authenticator.AuthenticatorBase and javax.servlet.ServletContext
-
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    ako.vmware.com/controller-cluster-uuid: cluster-d1b2dc1e-9884-4fec-8248-d9be3306d249
+    ako.vmware.com/host-fqdn-vs-uuid-map: '{"cmm-uat.sbi":"virtualservice-8243db71-f167-4558-9b17-8d2b70d2e03d"}'
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"networking.k8s.io/v1","kind":"Ingress","metadata":{"annotations":{"nginx.ingress.kubernetes.io/rewrite-target":"/"},"name":"minimal-ingress","namespace":"uatcmm"},"spec":{"ingressClassName":"uatcmm","rules":[{"host":"cmm-uat.sbi","http":{"paths":[{"backend":{"service":{"name":"nginx-cmm-service","port":{"number":80}}},"path":"/","pathType":"Prefix"}]}}]}}
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  creationTimestamp: "2024-12-24T10:56:18Z"
+  generation: 1
+  name: minimal-ingress
+  namespace: uatcmm
+  resourceVersion: "76971686"
+  uid: 5514c861-b1f3-4263-a377-6eddf353b751
+spec:
+  ingressClassName: uatcmm
+  rules:
+  - host: cmm-uat.sbi
+    http:
+      paths:
+      - backend:
+          service:
+            name: nginx-cmm-service
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+status:
+  loadBalancer:
+    ingress:
+    - hostname: cmm-uat.sbi
+      ip: 10.177.151.52
