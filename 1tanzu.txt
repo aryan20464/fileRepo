@@ -8,7 +8,7 @@ metadata:
 spec:
   ingressClassName: uatcmm
   rules:
-  - host: kube-uat.hyg
+  - host: ""   # Accept requests to IP directly
     http:
       paths:
       - path: /
