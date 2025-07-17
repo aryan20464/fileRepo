@@ -1,0 +1,32 @@
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+An attempt was made to call a method that does not exist. The attempt was made from the following location:
+
+    org.apache.catalina.authenticator.AuthenticatorBase.startInternal(AuthenticatorBase.java:1319)
+
+The following method did not exist:
+
+    javax.servlet.ServletContext.getVirtualServerName()Ljava/lang/String;
+
+The calling method's class, org.apache.catalina.authenticator.AuthenticatorBase, was loaded from the following location:
+
+    jar:file:/D:/dev-tools/mave_repo/org/apache/tomcat/embed/tomcat-embed-core/9.0.63/tomcat-embed-core-9.0.63.jar!/org/apache/catalina/authenticator/AuthenticatorBase.class
+
+The called method's class, javax.servlet.ServletContext, is available from the following locations:
+
+    jar:file:/D:/dev-tools/mave_repo/javax/servlet/javax.servlet-api/3.0.1/javax.servlet-api-3.0.1.jar!/javax/servlet/ServletContext.class
+    jar:file:/D:/dev-tools/mave_repo/org/apache/tomcat/embed/tomcat-embed-core/9.0.63/tomcat-embed-core-9.0.63.jar!/javax/servlet/ServletContext.class
+
+The called method's class hierarchy was loaded from the following locations:
+
+    javax.servlet.ServletContext: file:/D:/dev-tools/mave_repo/javax/servlet/javax.servlet-api/3.0.1/javax.servlet-api-3.0.1.jar
+
+
+Action:
+
+Correct the classpath of your application so that it contains compatible versions of the classes org.apache.catalina.authenticator.AuthenticatorBase and javax.servlet.ServletContext
+
