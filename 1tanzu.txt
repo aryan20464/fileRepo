@@ -5,16 +5,17 @@ metadata:
   namespace: uatcmm
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+    ako.vmware.com/load-balancer-ip: "10.177.151.52"   # 🔑 This is the key part
 spec:
   ingressClassName: uatcmm
   rules:
-  - host: cmm-uat.sbi
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: nginx-cmm-service
-            port:
-              number: 80
+    - host: cmm-uat.sbi
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-cmm-service
+                port:
+                  number: 80
