@@ -1,112 +1,135 @@
+# ----------------------------------------
+# ConfigMap: Alloy Configuration
+# ----------------------------------------
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: loki-config
-  namespace: loki
-  labels:
-    app: loki
+  name: alloy-config
+  namespace: uatcmm
 data:
-  loki.yaml: |
-    auth_enabled: false
-
-    server:
-      http_listen_port: 3100
-      grpc_listen_port: 9095
-
-    common:
-      path_prefix: /loki
-      replication_factor: 1
-      ring:
-        kvstore:
-          store: inmemory
-
-    ingester:
-      wal:
-        enabled: true
-        dir: /loki/wal
-      max_chunk_age: 1h
-      chunk_idle_period: 3m
-      lifecycler:
-        ring:
-          kvstore:
-            store: inmemory
-
-    schema_config:
-      configs:
-        - from: 2024-01-01
-          store: boltdb-shipper
-          object_store: filesystem
-          schema: v12
-          index:
-            prefix: index_
-            period: 24h
-
-    storage_config:
-      boltdb_shipper:
-        active_index_directory: /loki/index
-        cache_location: /loki/cache
-      filesystem:
-        directory: /loki/chunks
-
-    limits_config:
-      allow_structured_metadata: false
-      reject_old_samples: true
-      reject_old_samples_max_age: 168h
-
-    table_manager:
-      retention_deletes_enabled: true
-      retention_period: 7d
-
-    compactor:
-      working_directory: /loki/compactor
+  config.alloy: |
+    local.file_match "app_logs" {
+      path_targets = [{ "__path__" = "/logs/*.log" }]
+    }
+      
+      loki.source.file "app_logs" {
+      targets    = local.file_match.app_logs.targets
+      forward_to = [loki.write.default.receiver]
+    }
+      
+      loki.write "default" {
+        endpoint {
+        url = "http://loki.loki.svc.cluster.local:3100/loki/api/v1/push"
+      }
+    }
 ---
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: loki
-  namespace: loki
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: loki
-  template:
-    metadata:
-      labels:
-        app: loki
-    spec:
-      containers:
-        - name: loki
-          image: tkgsharedharbor.corp.ad.sbi/itss/loki:3.4.1
-          args:
-            - -config.file=/etc/loki/loki.yaml
-          ports:
-            - containerPort: 3100
-          volumeMounts:
-            - name: loki-config
-              mountPath: /etc/loki
-            - name: loki-storage
-              mountPath: /loki
-          env:
-            - name: TZ
-              value: "Asia/Kolkata"
-      volumes:
-        - name: loki-config
-          configMap:
-            name: loki-config
-        - name: loki-storage
-          emptyDir: {}
-
----
+# ----------------------------------------
+# Headless Service for StatefulSet
+# ----------------------------------------
 apiVersion: v1
 kind: Service
 metadata:
-  name: loki
-  namespace: loki
+  name: springboot-app-headless
+  namespace: uatcmm
 spec:
+  clusterIP: None
   selector:
-    app: loki
+    app: springboot-app
   ports:
-    - port: 3100
-      targetPort: 3100
-      protocol: TCP
+    - port: 4202
+      targetPort: 4202
+
+---
+# ----------------------------------------
+# NodePort Service for external access
+# ----------------------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot-app-service
+  namespace: uatcmm
+spec:
+  type: NodePort
+  selector:
+    app: springboot-app
+  ports:
+    - port: 4202
+      targetPort: 4202
+      nodePort: 30005
+
+---
+# ----------------------------------------
+# StatefulSet: Spring Boot with Alloy Sidecar
+# ----------------------------------------
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: springboot-app
+  namespace: uatcmm
+spec:
+  replicas: 1  # only 1 replica until everything functions
+  serviceName: springboot-app-headless
+  selector:
+    matchLabels:
+      app: springboot-app
+  template:
+    metadata:
+      labels:
+        app: springboot-app
+    spec:
+      initContainers:
+        - name: fix-perms
+          image: tkgsharedharbor.corp.ad.sbi/itss/busybox@sha256:8b4ea49396032c42dc0a4dc0b7d052bab0e48eea6960cd567b79e1926968c928
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Fixing log dir perms";
+              chown -R 1001:1001 /app/logs;
+              ls -l /app/logs;
+          volumeMounts:
+            - name: app-logs
+              mountPath: /app/logs
+
+      containers:
+        - name: springboot-app
+          image: tkgsharedharbor.corp.ad.sbi/idea-indents-dev/spring-test:2.0
+          ports:
+            - containerPort: 4202
+          env:
+            - name: TZ
+              value: "Asia/Kolkata"
+          volumeMounts:
+            - name: app-logs
+              mountPath: /app/logs
+
+        - name: alloy
+          image: tkgsharedharbor.corp.ad.sbi/itss/grafana-alloy:1.8.3
+          command: ["/bin/alloy"]
+          args: ["run", "/etc/alloy/config.alloy"]
+          env:
+            - name: TZ
+              value: "Asia/Kolkata"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          volumeMounts:
+            - name: alloy-config
+              mountPath: /etc/alloy
+            - name: app-logs
+              mountPath: /logs
+
+      volumes:
+        - name: alloy-config
+          configMap:
+            name: alloy-config
+
+  volumeClaimTemplates:
+    - metadata:
+        name: app-logs
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: default
+        resources:
+          requests:
+            storage: 1Gi
