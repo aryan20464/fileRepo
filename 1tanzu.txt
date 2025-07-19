@@ -1,3 +1,29 @@
+#log_base=/weblogic/app_logs/Starter
+#server.servlet.context-path=/Starter
+#server.port=4202
+#logging.file.name=D:\\app_logs\\app.log
+#logging.file.name=/app/logs/app.log
+
+# Set the root logging level (INFO, DEBUG, ERROR, etc.)
+logging.level.root=INFO
+
+# Configure log file location
+#logging.file.name=/var/log/app-logs/app.log
+logging.file.name=/devtools/starter.log
+
+# Log pattern (optional - keeps logs readable)
+logging.pattern.file=%d{yyyy-MM-dd HH:mm:ss} [%thread] - [%-5level] %logger{36} - %msg%n
+logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} [%thread] [%-5level] %logger{36} - %msg%n
+
+server.servlet.context-path=/Starter
+#server.port=4202
+
+spring.banner.location=classpath:/banner.txt
+spring.application.name=StarterService
+
+
+
+
 # ----------------------------------------
 # ConfigMap: Alloy Configuration
 # ----------------------------------------
@@ -133,3 +159,184 @@ spec:
         resources:
           requests:
             storage: 1Gi
+
+
+# ------------------------------
+# Promtail ConfigMap
+# ------------------------------
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: promtail-config
+  namespace: uatcmm
+data:
+  promtail.yaml: |
+    server:
+      http_listen_port: 9080
+      grpc_listen_port: 0
+
+    positions:
+      filename: /tmp/positions.yaml
+
+    clients:
+      - url: http://loki.loki.svc.cluster.local:3100/loki/api/v1/push
+
+    scrape_configs:
+      - job_name: springboot-sidecar
+        static_configs:
+          - targets:
+              - localhost
+            labels:
+              job: springboot-app
+              pod_name: ${POD_NAME}
+              __path__: /logs/*.log
+        pipeline_stages:
+          - multiline:
+              firstline: '^\S'
+---
+# ------------------------------
+# Headless Service for StatefulSet
+# ------------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot-app-headless
+  namespace: uatcmm
+spec:
+  clusterIP: None
+  selector:
+    app: springboot-app
+  ports:
+    - port: 4202
+      targetPort: 4202
+
+---
+# ------------------------------
+# NodePort Service (for NGINX)
+# ------------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot-app-service
+  namespace: uatcmm
+spec:
+  type: NodePort
+  selector:
+    app: springboot-app
+  ports:
+    - port: 4202
+      targetPort: 4202
+      nodePort: 30005
+
+---
+# ------------------------------
+# StatefulSet with Promtail Sidecar
+# ------------------------------
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: springboot-app
+  namespace: uatcmm
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: springboot-app
+  serviceName: springboot-app-headless
+  template:
+    metadata:
+      labels:
+        app: springboot-app
+    spec:
+      initContainers:
+        - name: fix-perms
+          image: tkgsharedharbor.corp.ad.sbi/itss/busybox@sha256:8b4ea49396032c42dc0a4dc0b7d052bab0e48eea6960cd567b79e1926968c928
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Changing ownership to UID:GID of itss";
+              chown -R 1001:1001 /app/logs;
+              ls -l /app/logs;
+              echo "Done.";
+          volumeMounts:
+            - name: app-logs
+              mountPath: /app/logs
+      containers:
+        - name: springboot-app
+          image: tkgsharedharbor.corp.ad.sbi/idea-indents-dev/spring-test:2.0
+          ports:
+            - containerPort: 4202
+          env:
+            - name: TZ
+              value: "Asia/Kolkata"
+          volumeMounts:
+            - name: app-logs
+              mountPath: /app/logs
+        - name: promtail
+          image: tkgsharedharbor.corp.ad.sbi/itss/promtail:3.4.1
+          args:
+            - -config.file=/etc/promtail/promtail.yaml
+            - -config.expand-env=true
+          env:
+            - name: TZ
+              value: "Asia/Kolkata"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          volumeMounts:
+            - name: promtail-config
+              mountPath: /etc/promtail
+            - name: app-logs
+              mountPath: /logs
+      volumes:
+        - name: promtail-config
+          configMap:
+            name: promtail-config
+  volumeClaimTemplates:
+    - metadata:
+        name: app-logs
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: default  # Replace with actual StorageClass if needed
+        resources:
+          requests:
+            storage: 1Gi
+
+
+
+FROM tkgsharedharbor.corp.ad.sbi/idea-indents-dev/eclipse-temurin:17-alpine
+
+# Set the timezone
+ENV TZ=Asia/Dhaka
+RUN apk add --no-cache tzdata && \
+    cp /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo "$TZ" > /etc/timezone
+
+# Create group and user
+RUN addgroup --system --gid 1001 itss && \
+    adduser --system --uid 1001 --ingroup itss itss
+
+# Create application directories
+RUN mkdir -p /app/logs && \
+    mkdir -p /var/log/app-logs
+
+# Set ownership and permissions
+RUN chown -R itss:itss /app /var/log/app-logs && \
+    chmod -R 775 /app/logs /var/log/app-logs
+
+# Set working directory
+WORKDIR /app
+
+# Copy application jar
+COPY target/Starter.jar Starter.jar
+RUN chown itss:itss Starter.jar
+
+# Switch to non-root user
+USER itss
+
+# Expose port
+EXPOSE 4202
+
+# Entry point
+ENTRYPOINT ["java", "-jar", "Starter.jar"]
