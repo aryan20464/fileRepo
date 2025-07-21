@@ -1,80 +1,33 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: dbcon-app
-  namespace: uatcmm
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: dbcon-app
-  template:
-    metadata:
-      labels:
-        app: dbcon-app
-    spec:
-      containers:
-        - name: dbcon-app
-          image: tkgsharedharbor.corp.ad.sbi/uat-cmm/dbcon:1.0
-          ports:
-            - containerPort: 4204
-          volumeMounts:
-            - name: app-logs
-              mountPath: /app/logs
+// Read log files from /logs/*.log
+local.file_match "app_logs" {
+  path_targets = [
+    {
+      __path__ = "/logs/*.log"
+    }
+  ]
+}
 
-        - name: promtail
-          image: tkgsharedharbor.corp.ad.sbi/itss/promtail:3.4.1
-          args:
-            - -config.file=/etc/promtail/promtail.yaml
-          volumeMounts:
-            - name: promtail-config
-              mountPath: /etc/promtail
-            - name: app-logs
-              mountPath: /logs  # Promtail reads from here
+// Read the actual log lines from the container-shared volume
+loki.source.file "app_logs" {
+  targets    = local.file_match.app_logs.targets
+  forward_to = [loki.process.app_logs.receiver]
+}
 
-      volumes:
-        - name: app-logs
-          emptyDir: {}  # Shared volume between containers
-        - name: promtail-config
-          configMap:
-            name: promtail-config
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: promtail-config
-  namespace: uatcmm
-data:
-  promtail.yaml: |
-    server:
-      http_listen_port: 9081
-      grpc_listen_port: 0
+// Process logs and attach labels
+loki.process "app_logs" {
+  stage.static_labels {
+    values = {
+      job         = "dbcon-app"
+      servicename = "dbcon"
+    }
+  }
 
-    positions:
-      filename: /tmp/positions.yaml
+  forward_to = [loki.write.default.receiver]
+}
 
-    clients:
-      - url: http://loki.loki.svc.cluster.local:3100/loki/api/v1/push
-
-    scrape_configs:
-      - job_name: springboot-sidecar
-        static_configs:
-          - targets:
-              - localhost
-            labels:
-              job: dbcon-app
-              __path__: /logs/*.log
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: dbcon-app-service
-  namespace: uatcmm
-spec:
-  type: NodePort
-  ports:
-    - port: 4204
-      targetPort: 4204
-      nodePort: 30006
-  selector:
-    app: dbcon-app
+// Push logs to Loki
+loki.write "default" {
+  endpoint {
+    url = "http://loki.loki.svc.cluster.local:3100/loki/api/v1/push"
+  }
+}
