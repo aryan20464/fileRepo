@@ -1,4 +1,21 @@
 # ----------------------------------------
+# PersistentVolumeClaim: Dynamic via StorageClass
+# ----------------------------------------
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: app-logs-pvc
+  namespace: uatcmm
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: default  # <-- This triggers dynamic provisioning
+
+---
+# ----------------------------------------
 # ConfigMap: Alloy Configuration (Flow Mode)
 # ----------------------------------------
 apiVersion: v1
@@ -8,28 +25,15 @@ metadata:
   namespace: uatcmm
 data:
   config.alloy: |
-    // ----------------------------------------
-    // File matching configuration: reads app logs from /logs
-    // ----------------------------------------
     local.file_match "app_logs" {
-      path_targets = [
-        {
-          __path__ = "/logs/*.log"
-        }
-      ]
+      path_targets = [{ "__path__" = "/logs/*.log" }]
     }
 
-    // ----------------------------------------
-    // Loki source: scrape log files
-    // ----------------------------------------
     loki.source.file "app_logs" {
       targets    = local.file_match.app_logs.targets
       forward_to = [loki.process.add_labels.receiver]
     }
 
-    // ----------------------------------------
-    // Add labels (e.g., job, servicename)
-    // ----------------------------------------
     loki.process "add_labels" {
       stage.static_labels {
         values = {
@@ -37,13 +41,9 @@ data:
           servicename = "dbcon"
         }
       }
-
       forward_to = [loki.write.to_loki.receiver]
     }
 
-    // ----------------------------------------
-    // Write logs to Loki
-    // ----------------------------------------
     loki.write "to_loki" {
       endpoint {
         url = "http://loki.loki.svc.cluster.local:3100/loki/api/v1/push"
@@ -52,7 +52,7 @@ data:
 
 ---
 # ----------------------------------------
-# Deployment: Application + Alloy Sidecar
+# Deployment: App + Alloy Sidecar
 # ----------------------------------------
 apiVersion: apps/v1
 kind: Deployment
@@ -70,20 +70,14 @@ spec:
         app: dbcon-app
     spec:
       containers:
-        # ---------------------------
-        # Main Application Container
-        # ---------------------------
         - name: dbcon-app
           image: tkgsharedharbor.corp.ad.sbi/uat-cmm/dbcon:1.0
           ports:
             - containerPort: 4204
           volumeMounts:
             - name: app-logs
-              mountPath: /app/logs  # App writes logs here
+              mountPath: /app/logs
 
-        # ---------------------------
-        # Grafana Alloy Sidecar Container
-        # ---------------------------
         - name: alloy
           image: grafana/alloy:latest
           args: ["--config.file=/etc/alloy/config.alloy"]
@@ -91,14 +85,13 @@ spec:
             - name: alloy-config
               mountPath: /etc/alloy
             - name: app-logs
-              mountPath: /logs  # Alloy reads logs here
+              mountPath: /logs
 
       volumes:
-        # Shared Volume for Logs between app and alloy
         - name: app-logs
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: app-logs-pvc
 
-        # Volume for Alloy config
         - name: alloy-config
           configMap:
             name: alloy-config
@@ -114,9 +107,9 @@ metadata:
   namespace: uatcmm
 spec:
   type: NodePort
+  selector:
+    app: dbcon-app
   ports:
     - port: 4204
       targetPort: 4204
       nodePort: 30006
-  selector:
-    app: dbcon-app
