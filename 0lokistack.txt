@@ -43,3 +43,22 @@ chunk_store_config:
 table_manager:
   retention_deletes_enabled: false
   retention_period: 0s
+
+
+server "http" {
+  listen_address = "0.0.0.0:12345" # Alloy UI/metrics port
+  log_level      = "info"
+}
+
+local.file_match "app_logs" {
+  path_targets = {
+    "app" = "/uat/xsys/app.log"
+  }
+  forward_to = [loki.write.default.receiver]
+}
+
+loki.write "default" {
+  endpoint {
+    url = "http://localhost:3100/loki/api/v1/push"
+  }
+}
