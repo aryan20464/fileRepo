@@ -1,3 +1,11 @@
+failed parsing config: loki-config.yaml: yaml: unmarshal errors:
+  line 15: field max_transfer_retries not found in type ingester.Config
+  line 31: field shared_store not found in type boltdb.IndexCfg
+  line 37: field enforce_metric_name not found in type validation.plain
+  line 42: field max_look_back_period not found in type config.ChunkStoreConfig. Use `-config.expand-env=true` flag if you want to expand environment variables in your config file
+
+
+
 server {
     listen 80;
     server_name yourdomain.com;
