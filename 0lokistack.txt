@@ -1,5 +1,28 @@
-level=error ts=2025-07-23T11:59:37.051922181Z caller=main.go:70 msg="validating config" err="MULTIPLE CONFIG ERRORS FOUND, PLEASE READ CAREFULLY\nCONFIG ERROR: schema v13 is required to store Structured Metadata and use native OTLP ingestion, your schema version is v11. Set `allow_structured_metadata: false` in the `limits_config` section or set the command line argument `-validation.allow-structured-metadata=false` and restart Loki. Then proceed to update to schema v13 or newer before re-enabling this config, search for 'Storage Schema' in the docs for the schema update procedure\nCONFIG ERROR: `tsdb` index type is required to store Structured Metadata and use native OTLP ingestion, your index type is `boltdb-shipper` (defined in the `store` parameter of the schema_config). Set `allow_structured_metadata: false` in the `limits_config` section or set the command line argument `-validation.allow-structured-metadata=false` and restart Loki. Then proceed to update the schema to use index type `tsdb` before re-enabling this config, search for 'Storage Schema' in the docs for the schema update procedure"
-[
+init compactor: mkdir /var/loki: permission denied
+error initialising module: compactor
+github.com/grafana/dskit/modules.(*Manager).initModule
+        /src/loki/vendor/github.com/grafana/dskit/modules/modules.go:138
+github.com/grafana/dskit/modules.(*Manager).InitModuleServices
+        /src/loki/vendor/github.com/grafana/dskit/modules/modules.go:108
+github.com/grafana/loki/v3/pkg/loki.(*Loki).Run
+        /src/loki/pkg/loki/loki.go:495
+main.main
+        /src/loki/cmd/loki/main.go:129
+runtime.main
+        /usr/local/go/src/runtime/proc.go:272
+runtime.goexit
+        /usr/local/go/src/runtime/asm_amd64.s:1700
+level=info ts=2025-07-23T12:02:51.590493545Z caller=main.go:126 msg="Starting Loki" version="(version=3.4.5, branch=release-3.4.x, revision=b2c87ba6)"
+level=info ts=2025-07-23T12:02:51.590538023Z caller=main.go:127 msg="Loading configuration file" filename=loki-config-fixed.yaml
+level=info ts=2025-07-23T12:02:51.590659157Z caller=modules.go:1246 msg="Ruler storage is not configured; ruler will not be started."
+level=info ts=2025-07-23T12:02:51.604367729Z caller=server.go:351 msg="server listening on addresses" http=0.0.0.0:3100 grpc=0.0.0.0:9095
+level=info ts=2025-07-23T12:02:51.608892117Z caller=table_manager.go:136 index-store=boltdb-shipper-2020-10-24 msg="uploading tables"
+level=info ts=2025-07-23T12:02:51.608981975Z caller=table_manager.go:300 index-store=boltdb-shipper-2020-10-24 msg="query readiness setup completed" duration=2.232µs distinct_users_len=0 distinct_users=
+level=info ts=2025-07-23T12:02:51.609023747Z caller=shipper.go:165 index-store=boltdb-shipper-2020-10-24 msg="starting index shipper in RW mode"
+level=info ts=2025-07-23T12:02:51.609701585Z caller=index_client.go:91 index-store=boltdb-shipper-2020-10-24 msg="starting boltdb shipper in RW mode"
+level=info ts=2025-07-23T12:02:51.609774429Z caller=table_manager.go:187 index-store=boltdb-shipper-2020-10-24 msg="handing over indexes to shipper"
+level=error ts=2025-07-23T12:02:51.612832739Z caller=log.go:216 msg="error running loki" err="init compactor: mkdir /var/loki: permission denied\nerror initialising module: compactor\ngithub.com/grafana/dskit/modules.(*Manager).initModule\n\t/src/loki/vendor/github.com/grafana/dskit/modules/modules.go:138\ngithub.com/grafana/dskit/modules.(*Manager).InitModuleServices\n\t/src/loki/vendor/github.com/grafana/dskit/modules/modules.go:108\ngithub.com/grafana/loki/v3/pkg/loki.(*Loki).Run\n\t/src/loki/pkg/loki/loki.go:495\nmain.main\n\t/src/loki/cmd/loki/main.go:129\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:272\nruntime.goexit\n\t/usr/local/go/src/runtime/asm_amd64.s:1700"
+
 
 
 server {
