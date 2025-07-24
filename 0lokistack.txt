@@ -1,3 +1,12 @@
+ts=2025-07-24T07:18:26.768278361Z level=info msg="peers changed" service=cluster peers_count=1 min_cluster_size=0 peers=tss-ideacoreuat
+ts=2025-07-24T07:18:26.76840656Z level=info msg="tail routine: started" component_path=/ component_id=loki.source.file.in_swift_listener_logs component=tailer path=/weblogic/app_logs/in_swift_listner/service.log
+ts=2025-07-24T07:18:26.76854908Z level=info msg="Seeked /weblogic/app_logs/in_swift_listner/service.log - &{Offset:1137445 Whence:0}" component_path=/ component_id=loki.source.file.in_swift_listener_logs component=tailer
+ts=2025-07-24T07:18:26.784912507Z level=info msg="now listening for http traffic" service=http addr=127.0.0.1:12345
+ts=2025-07-24T07:18:27.299515991Z level=warn msg="error sending batch, will retry" component_path=/ component_id=loki.write.default component=client host=10.191.158.42:4200 status=429 tenant="" error="server returned HTTP status 429 Too Many Requests (429): Ingestion rate limit exceeded for user fake (limit: 4194304 bytes/sec) while attempting to ingest '1441' lines totaling '1040251' bytes, reduce log volume or contact your Loki administrator to see if the limit can be increased"
+ts=2025-07-24T07:18:28.408852336Z level=warn msg="error sending batch, will retry" component_path=/ component_id=loki.write.default component=client host=10.191.158.42:4200 status=429 tenant="" error="server returned HTTP status 429 Too Many Requests (429): Ingestion rate limit exceeded for user fake (limit: 4194304 bytes/sec) while attempting to ingest '1686' lines totaling '1043303' bytes, reduce log volume or contact your Loki administrator to see if the limit can be increased"
+
+
+
 local.file_match "app_logs" {
   path_targets = [{ "__path__" = "/logs/*.log" }]
 }
