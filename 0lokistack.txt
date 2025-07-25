@@ -1,3 +1,5 @@
+ERROR source=db.go:1109 msg="compaction failed" component=tsdb err="preallocate: no space left on device"
+
 ts=2025-07-24T07:18:26.768278361Z level=info msg="peers changed" service=cluster peers_count=1 min_cluster_size=0 peers=tss-ideacoreuat
 ts=2025-07-24T07:18:26.76840656Z level=info msg="tail routine: started" component_path=/ component_id=loki.source.file.in_swift_listener_logs component=tailer path=/weblogic/app_logs/in_swift_listner/service.log
 ts=2025-07-24T07:18:26.76854908Z level=info msg="Seeked /weblogic/app_logs/in_swift_listner/service.log - &{Offset:1137445 Whence:0}" component_path=/ component_id=loki.source.file.in_swift_listener_logs component=tailer
