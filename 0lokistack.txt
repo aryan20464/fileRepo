@@ -1,49 +1,111 @@
-Details
-Error: "addFieldFromCalculation" not found in: reduce,filterFieldsByName,renameByRegex,filterByRefId,filterByValue,organize,joinByField,seriesToRows,concatenate,calculateField,labelsToFields,groupBy,sortBy,merge,histogram,rowsToFields,configFromData,prepareTimeSeries,convertFieldType,spatial,fieldLookup,extractFields,heatmap,groupingToMatrix,limit,joinByLabels,partitionByValues,formatString,groupToNestedTable,formatTime,timeSeriesTable,transpose
-
-    at pe (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:15:101363)
-    at div
-    at V (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:159:197996)
-    at ao (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:175:91842)
-    at pe (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:15:101363)
-    at um (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:17:214506)
-    at x (https://10.191.158.42:4200/grafana/public/build/8528.27db4dccf7d9bf0b6625.js:1:5022)
-    at Co (https://10.191.158.42:4200/grafana/public/build/8528.27db4dccf7d9bf0b6625.js:3:93023)
-    at Suspense
-    at m (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:12:158558)
-    at U (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:159:6379)
-    at F (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:159:7060)
-    at m (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:249:4573)
-    at jn (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:249:12204)
-    at div
-    at https://10.191.158.42:4200/grafana/public/build/7814.dff15f84a3d9eef00c0b.js:1:157988
-    at main
-    at div
-    at div
-    at div
-    at Qr (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:159:87163)
-    at sn (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:159:93284)
-    at Ta (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:159:94453)
-    at d (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:282:209271)
-    at m (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:249:4573)
-    at jn (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:249:12204)
-    at Tn (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:249:11537)
-    at ct (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:240:18361)
-    at h (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:5:195383)
-    at Kt (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:249:41361)
-    at ga (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:159:94721)
-    at div
-    at c (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:292:78062)
-    at ve (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:159:19114)
-    at y (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:153:9126)
-    at p (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:368:138723)
-    at C (https://10.191.158.42:4200/grafana/public/build/7643.58cff21b29bee3f3dd7a.js:176:36434)
-    at u (https://10.191.158.42:4200/grafana/public/build/7814.dff15f84a3d9eef00c0b.js:24:14695)
-    at m (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:12:158558)
-    at r (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:12:159104)
-    at Ze (https://10.191.158.42:4200/grafana/public/build/7643.58cff21b29bee3f3dd7a.js:180:515)
-    at bs (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:159:95196)
-
+{
+  "title": "Disk Space Table (Node Exporter)",
+  "panels": [
+    {
+      "title": "Filesystem Usage Table (GiB & MiB)",
+      "type": "table",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "-- PROMETHEUS_UID_HERE --"
+      },
+      "targets": [
+        {
+          "expr": "node_filesystem_size_bytes{fstype!=\"\",mountpoint!=\"\"}",
+          "refId": "A"
+        },
+        {
+          "expr": "node_filesystem_free_bytes{fstype!=\"\",mountpoint!=\"\"}",
+          "refId": "B"
+        },
+        {
+          "expr": "node_filesystem_avail_bytes{fstype!=\"\",mountpoint!=\"\"}",
+          "refId": "C"
+        },
+        {
+          "expr": "node_filesystem_size_bytes{fstype!=\"\",mountpoint!=\"\"} - node_filesystem_free_bytes{fstype!=\"\",mountpoint!=\"\"}",
+          "refId": "D"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "joinByLabels",
+          "options": {
+            "mode": "outer",
+            "joinFields": ["mountpoint", "device"],
+            "on": ["mountpoint", "device"]
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "A": "Total (GiB)",
+              "B": "Free (GiB)",
+              "C": "Avail (GiB)",
+              "D": "Used (GiB)"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "reduceRow",
+            "reduce": "sum",
+            "alias": "Used (MiB)",
+            "replaceFields": false,
+            "expression": "D / (1024 * 1024)"
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "reduceRow",
+            "reduce": "sum",
+            "alias": "Free (MiB)",
+            "replaceFields": false,
+            "expression": "B / (1024 * 1024)"
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "fieldName": "/.*/",
+                "format": "number",
+                "type": "number"
+              }
+            ]
+          }
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "sortBy": [{ "desc": true, "displayName": "Used (GiB)" }]
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "gigabytes",
+          "decimals": 2
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      }
+    }
+  ],
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "30s"
+}
 
 local.file_match "app_logs" {
   path_targets = [{ "__path__" = "/logs/*.log" }]
