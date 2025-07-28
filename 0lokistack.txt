@@ -1,3 +1,28 @@
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+import org.springframework.stereotype.Component;
+import java.io.IOException;
+
+@Component
+public class RemoveJSessionIdFilter implements Filter {
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+        throws IOException, ServletException {
+
+        if (response instanceof HttpServletResponse) {
+            HttpServletResponse httpResp = (HttpServletResponse) response;
+            Cookie cookie = new Cookie("JSESSIONID", null);
+            cookie.setMaxAge(0); // Delete it
+            cookie.setPath("/");
+            httpResp.addCookie(cookie);
+        }
+
+        chain.doFilter(request, response);
+    }
+}
+
+
 ERROR source=db.go:1109 msg="compaction failed" component=tsdb err="preallocate: no space left on device"
 
 ts=2025-07-24T07:18:26.768278361Z level=info msg="peers changed" service=cluster peers_count=1 min_cluster_size=0 peers=tss-ideacoreuat
