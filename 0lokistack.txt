@@ -1,168 +1,48 @@
-{
-  "annotations": {
-    "list": []
-  },
-  "editable": true,
-  "gnetId": null,
-  "graphTooltip": 0,
-  "id": null,
-  "iteration": 1687600000000,
-  "links": [],
-  "panels": [
-    {
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 16,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 1,
-      "options": {
-        "showHeader": true,
-        "sortBy": []
-      },
-      "pluginVersion": "9.0.0",
-      "targets": [
-        {
-          "expr": "node_filesystem_size_bytes{fstype=~\"ext4|xfs\",mountpoint!~\"/(boot|run|var/lib/docker|tmpfs|sys|proc|dev)\"}",
-          "format": "table",
-          "instant": true,
-          "interval": "",
-          "refId": "A"
-        },
-        {
-          "expr": "node_filesystem_free_bytes{fstype=~\"ext4|xfs\",mountpoint!~\"/(boot|run|var/lib/docker|tmpfs|sys|proc|dev)\"}",
-          "format": "table",
-          "instant": true,
-          "interval": "",
-          "refId": "B"
-        }
-      ],
-      "title": "Mount Point Storage Usage (GB & MB)",
-      "transformations": [
-        {
-          "id": "joinByField",
-          "options": {
-            "byField": "mountpoint"
-          }
-        },
-        {
-          "id": "addFieldFromCalculation",
-          "options": {
-            "alias": "Used (Bytes)",
-            "mode": "binary",
-            "reducer": "sum",
-            "replaceFields": false,
-            "sourceFields": ["Value - A", "Value - B"],
-            "binary": {
-              "left": "Value - A",
-              "operator": "-",
-              "right": "Value - B"
-            }
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "indexByName": {},
-            "renameByName": {
-              "mountpoint": "Mount Point",
-              "fstype": "Filesystem",
-              "Value - A": "Total (Bytes)",
-              "Value - B": "Free (Bytes)",
-              "Used (Bytes)": "Used (Bytes)"
-            }
-          }
-        },
-        {
-          "id": "addFieldFromCalculation",
-          "options": {
-            "alias": "Total (GB)",
-            "mode": "binary",
-            "binary": {
-              "left": "Total (Bytes)",
-              "operator": "/",
-              "right": 1073741824
-            }
-          }
-        },
-        {
-          "id": "addFieldFromCalculation",
-          "options": {
-            "alias": "Free (GB)",
-            "mode": "binary",
-            "binary": {
-              "left": "Free (Bytes)",
-              "operator": "/",
-              "right": 1073741824
-            }
-          }
-        },
-        {
-          "id": "addFieldFromCalculation",
-          "options": {
-            "alias": "Used (GB)",
-            "mode": "binary",
-            "binary": {
-              "left": "Used (Bytes)",
-              "operator": "/",
-              "right": 1073741824
-            }
-          }
-        },
-        {
-          "id": "addFieldFromCalculation",
-          "options": {
-            "alias": "Total (MB)",
-            "mode": "binary",
-            "binary": {
-              "left": "Total (Bytes)",
-              "operator": "/",
-              "right": 1048576
-            }
-          }
-        },
-        {
-          "id": "addFieldFromCalculation",
-          "options": {
-            "alias": "Free (MB)",
-            "mode": "binary",
-            "binary": {
-              "left": "Free (Bytes)",
-              "operator": "/",
-              "right": 1048576
-            }
-          }
-        },
-        {
-          "id": "addFieldFromCalculation",
-          "options": {
-            "alias": "Used (MB)",
-            "mode": "binary",
-            "binary": {
-              "left": "Used (Bytes)",
-              "operator": "/",
-              "right": 1048576
-            }
-          }
-        }
-      ],
-      "type": "table"
-    }
-  ],
-  "schemaVersion": 37,
-  "title": "Mount Point Storage Table",
-  "uid": "mountpoint-storage",
-  "version": 1
-}
+Details
+Error: "addFieldFromCalculation" not found in: reduce,filterFieldsByName,renameByRegex,filterByRefId,filterByValue,organize,joinByField,seriesToRows,concatenate,calculateField,labelsToFields,groupBy,sortBy,merge,histogram,rowsToFields,configFromData,prepareTimeSeries,convertFieldType,spatial,fieldLookup,extractFields,heatmap,groupingToMatrix,limit,joinByLabels,partitionByValues,formatString,groupToNestedTable,formatTime,timeSeriesTable,transpose
+
+    at pe (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:15:101363)
+    at div
+    at V (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:159:197996)
+    at ao (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:175:91842)
+    at pe (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:15:101363)
+    at um (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:17:214506)
+    at x (https://10.191.158.42:4200/grafana/public/build/8528.27db4dccf7d9bf0b6625.js:1:5022)
+    at Co (https://10.191.158.42:4200/grafana/public/build/8528.27db4dccf7d9bf0b6625.js:3:93023)
+    at Suspense
+    at m (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:12:158558)
+    at U (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:159:6379)
+    at F (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:159:7060)
+    at m (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:249:4573)
+    at jn (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:249:12204)
+    at div
+    at https://10.191.158.42:4200/grafana/public/build/7814.dff15f84a3d9eef00c0b.js:1:157988
+    at main
+    at div
+    at div
+    at div
+    at Qr (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:159:87163)
+    at sn (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:159:93284)
+    at Ta (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:159:94453)
+    at d (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:282:209271)
+    at m (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:249:4573)
+    at jn (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:249:12204)
+    at Tn (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:249:11537)
+    at ct (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:240:18361)
+    at h (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:5:195383)
+    at Kt (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:249:41361)
+    at ga (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:159:94721)
+    at div
+    at c (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:292:78062)
+    at ve (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:159:19114)
+    at y (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:153:9126)
+    at p (https://10.191.158.42:4200/grafana/public/build/271.0422b2cc2fc38a2adb08.js:368:138723)
+    at C (https://10.191.158.42:4200/grafana/public/build/7643.58cff21b29bee3f3dd7a.js:176:36434)
+    at u (https://10.191.158.42:4200/grafana/public/build/7814.dff15f84a3d9eef00c0b.js:24:14695)
+    at m (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:12:158558)
+    at r (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:12:159104)
+    at Ze (https://10.191.158.42:4200/grafana/public/build/7643.58cff21b29bee3f3dd7a.js:180:515)
+    at bs (https://10.191.158.42:4200/grafana/public/build/1194.1d8a37cb8415dd4c9fde.js:159:95196)
 
 
 local.file_match "app_logs" {
