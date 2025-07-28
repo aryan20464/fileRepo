@@ -1,111 +1,83 @@
 {
-  "title": "Disk Space Table (Node Exporter)",
+  "__inputs": [],
+  "title": "Mount Point Disk Usage Table",
+  "uid": null,
+  "version": 1,
+  "schemaVersion": 38,
+  "refresh": "30s",
   "panels": [
     {
-      "title": "Filesystem Usage Table (GiB & MiB)",
       "type": "table",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "-- PROMETHEUS_UID_HERE --"
-      },
+      "title": "Filesystem Usage Table",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 12 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
         {
           "expr": "node_filesystem_size_bytes{fstype!=\"\",mountpoint!=\"\"}",
+          "legendFormat": "{{mountpoint}} total",
           "refId": "A"
         },
         {
           "expr": "node_filesystem_free_bytes{fstype!=\"\",mountpoint!=\"\"}",
+          "legendFormat": "{{mountpoint}} free",
           "refId": "B"
         },
         {
-          "expr": "node_filesystem_avail_bytes{fstype!=\"\",mountpoint!=\"\"}",
-          "refId": "C"
-        },
-        {
           "expr": "node_filesystem_size_bytes{fstype!=\"\",mountpoint!=\"\"} - node_filesystem_free_bytes{fstype!=\"\",mountpoint!=\"\"}",
-          "refId": "D"
+          "legendFormat": "{{mountpoint}} used",
+          "refId": "C"
         }
       ],
       "transformations": [
         {
-          "id": "joinByLabels",
-          "options": {
-            "mode": "outer",
-            "joinFields": ["mountpoint", "device"],
-            "on": ["mountpoint", "device"]
-          }
+          "id": "merge",
+          "options": {}
         },
         {
-          "id": "organize",
+          "id": "groupBy",
           "options": {
-            "excludeByName": {
-              "Time": true
-            },
-            "indexByName": {},
-            "renameByName": {
-              "A": "Total (GiB)",
-              "B": "Free (GiB)",
-              "C": "Avail (GiB)",
-              "D": "Used (GiB)"
-            }
-          }
-        },
-        {
-          "id": "calculateField",
-          "options": {
-            "mode": "reduceRow",
-            "reduce": "sum",
-            "alias": "Used (MiB)",
-            "replaceFields": false,
-            "expression": "D / (1024 * 1024)"
-          }
-        },
-        {
-          "id": "calculateField",
-          "options": {
-            "mode": "reduceRow",
-            "reduce": "sum",
-            "alias": "Free (MiB)",
-            "replaceFields": false,
-            "expression": "B / (1024 * 1024)"
-          }
-        },
-        {
-          "id": "convertFieldType",
-          "options": {
-            "conversions": [
-              {
-                "fieldName": "/.*/",
-                "format": "number",
-                "type": "number"
-              }
+            "fields": {},
+            "aggregations": [
+              { "fieldName": "Value #A", "operation": "last", "alias": "Total (GiB)" },
+              { "fieldName": "Value #B", "operation": "last", "alias": "Free (GiB)" },
+              { "fieldName": "Value #C", "operation": "last", "alias": "Used (GiB)" }
             ]
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "reduceRow",
+            "reduce": "sum",
+            "expression": "(`Used (GiB)` * 1024)",
+            "alias": "Used (MiB)"
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "reduceRow",
+            "reduce": "sum",
+            "expression": "(`Free (GiB)` * 1024)",
+            "alias": "Free (MiB)"
           }
         }
       ],
       "options": {
         "showHeader": true,
-        "sortBy": [{ "desc": true, "displayName": "Used (GiB)" }]
+        "sortBy": [{ "displayName": "Used (GiB)", "desc": true }]
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "gigabytes",
+          "unit": "none",
           "decimals": 2
         },
         "overrides": []
-      },
-      "gridPos": {
-        "h": 12,
-        "w": 24,
-        "x": 0,
-        "y": 0
       }
     }
-  ],
-  "schemaVersion": 38,
-  "version": 1,
-  "refresh": "30s"
+  ]
 }
+
 
 local.file_match "app_logs" {
   path_targets = [{ "__path__" = "/logs/*.log" }]
