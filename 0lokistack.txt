@@ -1,32 +1,27 @@
 {
-  "title": "Mount Point Storage Table",
-  "uid": "mountpoint-storage-table",
+  "title": "Mount Point Disk Usage",
   "schemaVersion": 38,
   "version": 1,
   "refresh": "30s",
   "panels": [
     {
-      "id": 1,
       "type": "table",
-      "title": "Disk Usage by Mount Point",
+      "title": "Mount Point Storage Table",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
         {
           "refId": "A",
-          "expr": "node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\",mountpoint!=\"\"}",
-          "legendFormat": "",
+          "expr": "node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\"}",
           "format": "time_series"
         },
         {
           "refId": "B",
-          "expr": "node_filesystem_free_bytes{fstype!~\"tmpfs|overlay\",mountpoint!=\"\"}",
-          "legendFormat": "",
+          "expr": "node_filesystem_free_bytes{fstype!~\"tmpfs|overlay\"}",
           "format": "time_series"
         },
         {
           "refId": "C",
-          "expr": "node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\",mountpoint!=\"\"} - node_filesystem_free_bytes{fstype!~\"tmpfs|overlay\",mountpoint!=\"\"}",
-          "legendFormat": "",
+          "expr": "node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\"} - node_filesystem_free_bytes{fstype!~\"tmpfs|overlay\"}",
           "format": "time_series"
         }
       ],
@@ -39,14 +34,12 @@
           "id": "merge",
           "options": {
             "mode": "outer",
-            "joinFields": ["instance", "mountpoint"]
+            "joinFields": ["mountpoint"]
           }
         },
         {
           "id": "organize",
           "options": {
-            "excludeByName": {},
-            "indexByName": {},
             "renameByName": {
               "mountpoint": "Mount Point",
               "Value #A": "Total (GiB)",
@@ -58,27 +51,25 @@
         {
           "id": "calculateField",
           "options": {
-            "mode": "binary",
-            "reduce": "sum",
             "alias": "Used (MiB)",
             "binary": {
               "left": "Used (GiB)",
               "operator": "*",
               "right": "1024"
-            }
+            },
+            "mode": "binary"
           }
         },
         {
           "id": "calculateField",
           "options": {
-            "mode": "binary",
-            "reduce": "sum",
             "alias": "Free (MiB)",
             "binary": {
               "left": "Free (GiB)",
               "operator": "*",
               "right": "1024"
-            }
+            },
+            "mode": "binary"
           }
         },
         {
@@ -95,13 +86,14 @@
         }
       ],
       "options": {
-        "showHeader": true,
-        "sortBy": []
+        "showHeader": true
       },
-      "gridPos": { "h": 12, "w": 24, "x": 0, "y": 0 }
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 10 },
+      "id": 1
     }
   ]
 }
+
 
 
 
