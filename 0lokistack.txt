@@ -1,39 +1,168 @@
-import org.springframework.boot.web.servlet.ServletContextInitializer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-import javax.servlet.ServletContext;
-import javax.servlet.SessionTrackingMode;
-import java.util.Collections;
-
-@Configuration
-public class DisableSessionTrackingConfig {
-
-    @Bean
-    public ServletContextInitializer disableSessionTracking() {
-        return new ServletContextInitializer() {
-            @Override
-            public void onStartup(ServletContext servletContext) {
-                servletContext.setSessionTrackingModes(
-                    Collections.singleton(SessionTrackingMode.NONE)
-                );
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": null,
+  "iteration": 1687600000000,
+  "links": [],
+  "panels": [
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "9.0.0",
+      "targets": [
+        {
+          "expr": "node_filesystem_size_bytes{fstype=~\"ext4|xfs\",mountpoint!~\"/(boot|run|var/lib/docker|tmpfs|sys|proc|dev)\"}",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "refId": "A"
+        },
+        {
+          "expr": "node_filesystem_free_bytes{fstype=~\"ext4|xfs\",mountpoint!~\"/(boot|run|var/lib/docker|tmpfs|sys|proc|dev)\"}",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "refId": "B"
+        }
+      ],
+      "title": "Mount Point Storage Usage (GB & MB)",
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "mountpoint"
+          }
+        },
+        {
+          "id": "addFieldFromCalculation",
+          "options": {
+            "alias": "Used (Bytes)",
+            "mode": "binary",
+            "reducer": "sum",
+            "replaceFields": false,
+            "sourceFields": ["Value - A", "Value - B"],
+            "binary": {
+              "left": "Value - A",
+              "operator": "-",
+              "right": "Value - B"
             }
-        };
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "mountpoint": "Mount Point",
+              "fstype": "Filesystem",
+              "Value - A": "Total (Bytes)",
+              "Value - B": "Free (Bytes)",
+              "Used (Bytes)": "Used (Bytes)"
+            }
+          }
+        },
+        {
+          "id": "addFieldFromCalculation",
+          "options": {
+            "alias": "Total (GB)",
+            "mode": "binary",
+            "binary": {
+              "left": "Total (Bytes)",
+              "operator": "/",
+              "right": 1073741824
+            }
+          }
+        },
+        {
+          "id": "addFieldFromCalculation",
+          "options": {
+            "alias": "Free (GB)",
+            "mode": "binary",
+            "binary": {
+              "left": "Free (Bytes)",
+              "operator": "/",
+              "right": 1073741824
+            }
+          }
+        },
+        {
+          "id": "addFieldFromCalculation",
+          "options": {
+            "alias": "Used (GB)",
+            "mode": "binary",
+            "binary": {
+              "left": "Used (Bytes)",
+              "operator": "/",
+              "right": 1073741824
+            }
+          }
+        },
+        {
+          "id": "addFieldFromCalculation",
+          "options": {
+            "alias": "Total (MB)",
+            "mode": "binary",
+            "binary": {
+              "left": "Total (Bytes)",
+              "operator": "/",
+              "right": 1048576
+            }
+          }
+        },
+        {
+          "id": "addFieldFromCalculation",
+          "options": {
+            "alias": "Free (MB)",
+            "mode": "binary",
+            "binary": {
+              "left": "Free (Bytes)",
+              "operator": "/",
+              "right": 1048576
+            }
+          }
+        },
+        {
+          "id": "addFieldFromCalculation",
+          "options": {
+            "alias": "Used (MB)",
+            "mode": "binary",
+            "binary": {
+              "left": "Used (Bytes)",
+              "operator": "/",
+              "right": 1048576
+            }
+          }
+        }
+      ],
+      "type": "table"
     }
+  ],
+  "schemaVersion": 37,
+  "title": "Mount Point Storage Table",
+  "uid": "mountpoint-storage",
+  "version": 1
 }
-
-
-
-
-ERROR source=db.go:1109 msg="compaction failed" component=tsdb err="preallocate: no space left on device"
-
-ts=2025-07-24T07:18:26.768278361Z level=info msg="peers changed" service=cluster peers_count=1 min_cluster_size=0 peers=tss-ideacoreuat
-ts=2025-07-24T07:18:26.76840656Z level=info msg="tail routine: started" component_path=/ component_id=loki.source.file.in_swift_listener_logs component=tailer path=/weblogic/app_logs/in_swift_listner/service.log
-ts=2025-07-24T07:18:26.76854908Z level=info msg="Seeked /weblogic/app_logs/in_swift_listner/service.log - &{Offset:1137445 Whence:0}" component_path=/ component_id=loki.source.file.in_swift_listener_logs component=tailer
-ts=2025-07-24T07:18:26.784912507Z level=info msg="now listening for http traffic" service=http addr=127.0.0.1:12345
-ts=2025-07-24T07:18:27.299515991Z level=warn msg="error sending batch, will retry" component_path=/ component_id=loki.write.default component=client host=10.191.158.42:4200 status=429 tenant="" error="server returned HTTP status 429 Too Many Requests (429): Ingestion rate limit exceeded for user fake (limit: 4194304 bytes/sec) while attempting to ingest '1441' lines totaling '1040251' bytes, reduce log volume or contact your Loki administrator to see if the limit can be increased"
-ts=2025-07-24T07:18:28.408852336Z level=warn msg="error sending batch, will retry" component_path=/ component_id=loki.write.default component=client host=10.191.158.42:4200 status=429 tenant="" error="server returned HTTP status 429 Too Many Requests (429): Ingestion rate limit exceeded for user fake (limit: 4194304 bytes/sec) while attempting to ingest '1686' lines totaling '1043303' bytes, reduce log volume or contact your Loki administrator to see if the limit can be increased"
-
 
 
 local.file_match "app_logs" {
