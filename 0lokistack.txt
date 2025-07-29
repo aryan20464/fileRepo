@@ -38,11 +38,42 @@ node_load15
 node_procs_running
 node_procs_blocked
 
-# Threads (if exposed via custom exporter or script)
-# (Node Exporter does not expose threads by default)
-
 # System Uptime (in seconds)
 node_time_seconds - node_boot_time_seconds
+
+---
+
+### 💽 Disk Metrics PromQL Queries
+
+# Disk Total
+node_filesystem_size_bytes{fstype!~"tmpfs|aufs|overlay"}
+
+# Disk Free
+node_filesystem_free_bytes{fstype!~"tmpfs|aufs|overlay"}
+
+# Disk Used
+node_filesystem_size_bytes{fstype!~"tmpfs|aufs|overlay"} - node_filesystem_free_bytes{fstype!~"tmpfs|aufs|overlay"}
+
+---
+
+### 🌐 NGINX Metrics PromQL Queries
+
+# Total Requests per second
+sum(rate(nginx_http_requests_total[1m]))
+
+# Request Percentages by Status Code
+
+# 2xx Success Rate
+100 * sum(rate(nginx_http_requests_total{code=~"2.."}[1m])) / sum(rate(nginx_http_requests_total[1m]) or vector(1))
+
+# 3xx Redirection Rate
+100 * sum(rate(nginx_http_requests_total{code=~"3.."}[1m])) / sum(rate(nginx_http_requests_total[1m]) or vector(1))
+
+# 4xx Client Error Rate
+100 * sum(rate(nginx_http_requests_total{code=~"4.."}[1m])) / sum(rate(nginx_http_requests_total[1m]) or vector(1))
+
+# 5xx Server Error Rate
+100 * sum(rate(nginx_http_requests_total{code=~"5.."}[1m])) / sum(rate(nginx_http_requests_total[1m]) or vector(1))
 
 ---
 
@@ -51,14 +82,10 @@ node_time_seconds - node_boot_time_seconds
 - **Line graphs** for network traffic over time (bytes/sec)
 - **Single stat panels** for total CPU, memory, swap usage
 - **Bar graphs** per interface (network) or per mount point (disk)
-- **Table** for process stats and system uptime
+- **Table** for process stats, uptime, and disk usage
+- **Pie chart or stat** panels for NGINX request codes
 
----
-
-Would you like the dashboard JSON for these as well?
-
-
-
+Would you like the combined dashboard JSON with all these panels pre-configured?
 
 
 
