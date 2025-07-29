@@ -1,3 +1,7 @@
+  - job_name: 'nginxlog-exporter'
+    static_configs:
+      - targets: ['localhost:4040']
+
 listen:
   port: 4040
   address: 0.0.0.0
