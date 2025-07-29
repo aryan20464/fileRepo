@@ -1,98 +1,154 @@
 {
-  "title": "Mount Point Disk Usage",
-  "schemaVersion": 38,
-  "version": 1,
-  "refresh": "30s",
-  "panels": [
-    {
-      "type": "table",
-      "title": "Mount Point Storage Table",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "targets": [
-        {
-          "refId": "A",
-          "expr": "node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\"}",
-          "format": "time_series"
-        },
-        {
-          "refId": "B",
-          "expr": "node_filesystem_free_bytes{fstype!~\"tmpfs|overlay\"}",
-          "format": "time_series"
-        },
-        {
-          "refId": "C",
-          "expr": "node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\"} - node_filesystem_free_bytes{fstype!~\"tmpfs|overlay\"}",
-          "format": "time_series"
-        }
-      ],
-      "transformations": [
-        {
-          "id": "seriesToColumns",
-          "options": {}
-        },
-        {
-          "id": "merge",
-          "options": {
-            "mode": "outer",
-            "joinFields": ["mountpoint"]
+  "dashboard": {
+    "id": null,
+    "title": "Linux System Monitoring",
+    "timezone": "browser",
+    "panels": [
+      {
+        "type": "graph",
+        "title": "Network Receive Bytes/sec",
+        "datasource": "prometheus",
+        "targets": [
+          { "expr": "rate(node_network_receive_bytes_total[1m])", "refId": "A" }
+        ],
+        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 6 }
+      },
+      {
+        "type": "graph",
+        "title": "Network Transmit Bytes/sec",
+        "datasource": "prometheus",
+        "targets": [
+          { "expr": "rate(node_network_transmit_bytes_total[1m])", "refId": "A" }
+        ],
+        "gridPos": { "x": 12, "y": 0, "w": 12, "h": 6 }
+      },
+      {
+        "type": "stat",
+        "title": "CPU Usage (%)",
+        "datasource": "prometheus",
+        "targets": [
+          { "expr": "100 - (avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)", "refId": "A" }
+        ],
+        "gridPos": { "x": 0, "y": 6, "w": 6, "h": 4 }
+      },
+      {
+        "type": "stat",
+        "title": "Memory Used (GiB)",
+        "datasource": "prometheus",
+        "targets": [
+          { "expr": "(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / (1024*1024*1024)", "refId": "A" }
+        ],
+        "gridPos": { "x": 6, "y": 6, "w": 6, "h": 4 }
+      },
+      {
+        "type": "stat",
+        "title": "Swap Used (GiB)",
+        "datasource": "prometheus",
+        "targets": [
+          { "expr": "(node_memory_SwapTotal_bytes - node_memory_SwapFree_bytes) / (1024*1024*1024)", "refId": "A" }
+        ],
+        "gridPos": { "x": 12, "y": 6, "w": 6, "h": 4 }
+      },
+      {
+        "type": "stat",
+        "title": "Running Processes",
+        "datasource": "prometheus",
+        "targets": [
+          { "expr": "node_procs_running", "refId": "A" }
+        ],
+        "gridPos": { "x": 18, "y": 6, "w": 6, "h": 4 }
+      },
+      {
+        "type": "stat",
+        "title": "Blocked Processes",
+        "datasource": "prometheus",
+        "targets": [
+          { "expr": "node_procs_blocked", "refId": "A" }
+        ],
+        "gridPos": { "x": 0, "y": 10, "w": 6, "h": 4 }
+      },
+      {
+        "type": "stat",
+        "title": "System Uptime (s)",
+        "datasource": "prometheus",
+        "targets": [
+          { "expr": "node_time_seconds - node_boot_time_seconds", "refId": "A" }
+        ],
+        "gridPos": { "x": 6, "y": 10, "w": 6, "h": 4 }
+      },
+      {
+        "type": "graph",
+        "title": "Network Errors In/Out",
+        "datasource": "prometheus",
+        "targets": [
+          { "expr": "rate(node_network_receive_errs_total[1m])", "refId": "A" },
+          { "expr": "rate(node_network_transmit_errs_total[1m])", "refId": "B" }
+        ],
+        "gridPos": { "x": 0, "y": 14, "w": 12, "h": 6 }
+      },
+      {
+        "type": "graph",
+        "title": "Load Average",
+        "datasource": "prometheus",
+        "targets": [
+          { "expr": "node_load1", "refId": "A" },
+          { "expr": "node_load5", "refId": "B" },
+          { "expr": "node_load15", "refId": "C" }
+        ],
+        "gridPos": { "x": 12, "y": 14, "w": 12, "h": 6 }
+      },
+      {
+        "type": "table",
+        "title": "Disk Space Per Mount Point",
+        "datasource": "prometheus",
+        "targets": [
+          {
+            "expr": "node_filesystem_size_bytes{fstype!=\"rootfs\"}",
+            "refId": "A",
+            "format": "table"
+          },
+          {
+            "expr": "node_filesystem_free_bytes{fstype!=\"rootfs\"}",
+            "refId": "B",
+            "format": "table"
+          },
+          {
+            "expr": "node_filesystem_size_bytes{fstype!=\"rootfs\"} - node_filesystem_free_bytes{fstype!=\"rootfs\"}",
+            "refId": "C",
+            "format": "table"
           }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "renameByName": {
-              "mountpoint": "Mount Point",
-              "Value #A": "Total (GiB)",
-              "Value #B": "Free (GiB)",
-              "Value #C": "Used (GiB)"
+        ],
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {},
+              "indexByName": {},
+              "renameByName": {},
+              "selectByName": {}
             }
           }
-        },
-        {
-          "id": "calculateField",
-          "options": {
-            "alias": "Used (MiB)",
-            "binary": {
-              "left": "Used (GiB)",
-              "operator": "*",
-              "right": "1024"
-            },
-            "mode": "binary"
-          }
-        },
-        {
-          "id": "calculateField",
-          "options": {
-            "alias": "Free (MiB)",
-            "binary": {
-              "left": "Free (GiB)",
-              "operator": "*",
-              "right": "1024"
-            },
-            "mode": "binary"
-          }
-        },
-        {
-          "id": "convertFieldType",
-          "options": {
-            "conversions": [
-              { "fieldName": "Total (GiB)", "format": "bytes", "unit": "gibibytes" },
-              { "fieldName": "Free (GiB)", "format": "bytes", "unit": "gibibytes" },
-              { "fieldName": "Used (GiB)", "format": "bytes", "unit": "gibibytes" },
-              { "fieldName": "Used (MiB)", "format": "bytes", "unit": "mebibytes" },
-              { "fieldName": "Free (MiB)", "format": "bytes", "unit": "mebibytes" }
-            ]
-          }
-        }
-      ],
-      "options": {
-        "showHeader": true
+        ],
+        "gridPos": { "x": 0, "y": 20, "w": 24, "h": 8 }
       },
-      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 10 },
-      "id": 1
-    }
-  ]
+      {
+        "type": "graph",
+        "title": "Disk Read/Write Bytes/sec",
+        "datasource": "prometheus",
+        "targets": [
+          { "expr": "rate(node_disk_read_bytes_total[1m])", "refId": "A" },
+          { "expr": "rate(node_disk_written_bytes_total[1m])", "refId": "B" }
+        ],
+        "gridPos": { "x": 0, "y": 28, "w": 24, "h": 6 }
+      }
+    ],
+    "schemaVersion": 36,
+    "version": 2,
+    "refresh": "5s"
+  },
+  "overwrite": true
 }
+
 
 
 
