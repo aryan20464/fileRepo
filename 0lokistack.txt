@@ -1,52 +1,12 @@
-  - job_name: 'nginxlog-exporter'
-    static_configs:
-      - targets: ['localhost:4040']
+ curl -i http://localhost:4040/metrics
+HTTP/1.1 200 OK
+Content-Type: text/plain; version=0.0.4; charset=utf-8
+Date: Tue, 29 Jul 2025 12:29:26 GMT
+Content-Length: 467
 
-listen:
-  port: 4040
-  address: 0.0.0.0
-
-namespace: nginx
-
-log_format:
-  name: custom_main
-  format: 'Ip=$remote_addr time=$remote_user [$time_local] Request="$request" Status=$status Request_size=$body_bytes_sent URL="$http_referer" Client="$http_user_agent" rt=$request_time uct="$upstream_connect_time" uht="$upstream_header_time" urt="$upstream_response_time"'
-
-metrics:
-  - name: http_response_count_total
-    type: counter
-    help: "Number of HTTP responses"
-    labels:
-      - status
-      - method
-      - request
-    value: "1"
-
-  - name: http_response_size_bytes
-    type: counter
-    help: "Size of HTTP responses in bytes"
-    labels:
-      - status
-    value: "$body_bytes_sent"
-
-  - name: http_response_time_seconds
-    type: histogram
-    help: "Histogram of response times"
-    labels:
-      - status
-    buckets: [0.01, 0.05, 0.1, 0.3, 0.5, 1, 2, 5]
-    value: "$request_time"
-
-  - name: upstream_response_time_seconds
-    type: histogram
-    help: "Histogram of upstream response times"
-    labels:
-      - status
-    buckets: [0.01, 0.05, 0.1, 0.3, 0.5, 1, 2, 5]
-    value: "$upstream_response_time"
-
-files:
-  - /node/nginx/logs/access.log
+# HELP prometheus_nginxlog_exporter_build_info A metric with a constant '1' value labeled by version, revision, branch, goversion from which prometheus_nginxlog_exporter was built, and the goos and goarch for the build.
+# TYPE prometheus_nginxlog_exporter_build_info gauge
+prometheus_nginxlog_exporter_build_info{branch="v1.11.0",goarch="amd64",goos="linux",goversion="go1.18.10",revision="76552e7cadc1f76b4e28b5c872412db4a091aca0",tags="unknown",version="1.11.0"} 1
 
 
 
