@@ -1,7 +1,49 @@
-log_format  main     'Ip=$remote_addr time=$remote_user [$time_local] Request="$request" '
-                         'Status=$status Request_size=$body_bytes_sent URL="$http_referer" '
-                         'Client="$http_user_agent"'
-                         'rt=$request_time uct="$upstream_connect_time" uht="$upstream_header_time" urt="$upstream_response_time"';
+listen:
+  port: 4040
+  address: 0.0.0.0
+
+namespace: nginx
+
+log_format:
+  name: custom_main
+  format: 'Ip=$remote_addr time=$remote_user [$time_local] Request="$request" Status=$status Request_size=$body_bytes_sent URL="$http_referer" Client="$http_user_agent"rt=$request_time uct="$upstream_connect_time" uht="$upstream_header_time" urt="$upstream_response_time"'
+
+metrics:
+  - name: http_response_count_total
+    type: counter
+    help: "Number of HTTP responses"
+    labels:
+      - status
+      - method
+      - request
+    value: "1"
+
+  - name: http_response_size_bytes
+    type: counter
+    help: "Size of HTTP responses in bytes"
+    labels:
+      - status
+    value: "$body_bytes_sent"
+
+  - name: http_response_time_seconds
+    type: histogram
+    help: "Histogram of response times"
+    labels:
+      - status
+    buckets: [0.01, 0.05, 0.1, 0.3, 0.5, 1, 2, 5]
+    value: "$request_time"
+
+  - name: upstream_response_time_seconds
+    type: histogram
+    help: "Histogram of upstream response times"
+    labels:
+      - status
+    buckets: [0.01, 0.05, 0.1, 0.3, 0.5, 1, 2, 5]
+    value: "$upstream_response_time"
+
+files:
+  - /var/log/nginx/access.log
+
 
 
 
