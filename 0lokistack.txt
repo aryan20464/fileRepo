@@ -1,4 +1,3 @@
- cat nginx-log-exporter.yml
 listen:
   port: 4040
   address: 0.0.0.0
@@ -7,7 +6,7 @@ namespace: nginx
 
 log_format:
   name: custom_main
-  format: 'Ip=$remote_addr time=$remote_user [$time_local] Request="$request" Status=$status Request_size=$body_bytes_sent URL="$http_referer" Client="$http_user_agent"rt=$request_time uct="$upstream_connect_time" uht="$upstream_header_time" urt="$upstream_response_time"'
+  format: 'Ip=$remote_addr time=$remote_user [$time_local] Request="$request" Status=$status Request_size=$body_bytes_sent URL="$http_referer" Client="$http_user_agent" rt=$request_time uct="$upstream_connect_time" uht="$upstream_header_time" urt="$upstream_response_time"'
 
 metrics:
   - name: http_response_count_total
@@ -45,9 +44,6 @@ metrics:
 files:
   - /node/nginx/logs/access.log
 
-cd /node/nginx/logs/
-ls
-access.log  error.log  nginx.pid
 
 
 
