@@ -1,153 +1,63 @@
-{
-  "dashboard": {
-    "id": null,
-    "title": "Linux System Monitoring",
-    "timezone": "browser",
-    "panels": [
-      {
-        "type": "graph",
-        "title": "Network Receive Bytes/sec",
-        "datasource": "prometheus",
-        "targets": [
-          { "expr": "rate(node_network_receive_bytes_total[1m])", "refId": "A" }
-        ],
-        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 6 }
-      },
-      {
-        "type": "graph",
-        "title": "Network Transmit Bytes/sec",
-        "datasource": "prometheus",
-        "targets": [
-          { "expr": "rate(node_network_transmit_bytes_total[1m])", "refId": "A" }
-        ],
-        "gridPos": { "x": 12, "y": 0, "w": 12, "h": 6 }
-      },
-      {
-        "type": "stat",
-        "title": "CPU Usage (%)",
-        "datasource": "prometheus",
-        "targets": [
-          { "expr": "100 - (avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)", "refId": "A" }
-        ],
-        "gridPos": { "x": 0, "y": 6, "w": 6, "h": 4 }
-      },
-      {
-        "type": "stat",
-        "title": "Memory Used (GiB)",
-        "datasource": "prometheus",
-        "targets": [
-          { "expr": "(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / (1024*1024*1024)", "refId": "A" }
-        ],
-        "gridPos": { "x": 6, "y": 6, "w": 6, "h": 4 }
-      },
-      {
-        "type": "stat",
-        "title": "Swap Used (GiB)",
-        "datasource": "prometheus",
-        "targets": [
-          { "expr": "(node_memory_SwapTotal_bytes - node_memory_SwapFree_bytes) / (1024*1024*1024)", "refId": "A" }
-        ],
-        "gridPos": { "x": 12, "y": 6, "w": 6, "h": 4 }
-      },
-      {
-        "type": "stat",
-        "title": "Running Processes",
-        "datasource": "prometheus",
-        "targets": [
-          { "expr": "node_procs_running", "refId": "A" }
-        ],
-        "gridPos": { "x": 18, "y": 6, "w": 6, "h": 4 }
-      },
-      {
-        "type": "stat",
-        "title": "Blocked Processes",
-        "datasource": "prometheus",
-        "targets": [
-          { "expr": "node_procs_blocked", "refId": "A" }
-        ],
-        "gridPos": { "x": 0, "y": 10, "w": 6, "h": 4 }
-      },
-      {
-        "type": "stat",
-        "title": "System Uptime (s)",
-        "datasource": "prometheus",
-        "targets": [
-          { "expr": "node_time_seconds - node_boot_time_seconds", "refId": "A" }
-        ],
-        "gridPos": { "x": 6, "y": 10, "w": 6, "h": 4 }
-      },
-      {
-        "type": "graph",
-        "title": "Network Errors In/Out",
-        "datasource": "prometheus",
-        "targets": [
-          { "expr": "rate(node_network_receive_errs_total[1m])", "refId": "A" },
-          { "expr": "rate(node_network_transmit_errs_total[1m])", "refId": "B" }
-        ],
-        "gridPos": { "x": 0, "y": 14, "w": 12, "h": 6 }
-      },
-      {
-        "type": "graph",
-        "title": "Load Average",
-        "datasource": "prometheus",
-        "targets": [
-          { "expr": "node_load1", "refId": "A" },
-          { "expr": "node_load5", "refId": "B" },
-          { "expr": "node_load15", "refId": "C" }
-        ],
-        "gridPos": { "x": 12, "y": 14, "w": 12, "h": 6 }
-      },
-      {
-        "type": "table",
-        "title": "Disk Space Per Mount Point",
-        "datasource": "prometheus",
-        "targets": [
-          {
-            "expr": "node_filesystem_size_bytes{fstype!=\"rootfs\"}",
-            "refId": "A",
-            "format": "table"
-          },
-          {
-            "expr": "node_filesystem_free_bytes{fstype!=\"rootfs\"}",
-            "refId": "B",
-            "format": "table"
-          },
-          {
-            "expr": "node_filesystem_size_bytes{fstype!=\"rootfs\"} - node_filesystem_free_bytes{fstype!=\"rootfs\"}",
-            "refId": "C",
-            "format": "table"
-          }
-        ],
-        "transformations": [
-          {
-            "id": "organize",
-            "options": {
-              "excludeByName": {},
-              "indexByName": {},
-              "renameByName": {},
-              "selectByName": {}
-            }
-          }
-        ],
-        "gridPos": { "x": 0, "y": 20, "w": 24, "h": 8 }
-      },
-      {
-        "type": "graph",
-        "title": "Disk Read/Write Bytes/sec",
-        "datasource": "prometheus",
-        "targets": [
-          { "expr": "rate(node_disk_read_bytes_total[1m])", "refId": "A" },
-          { "expr": "rate(node_disk_written_bytes_total[1m])", "refId": "B" }
-        ],
-        "gridPos": { "x": 0, "y": 28, "w": 24, "h": 6 }
-      }
-    ],
-    "schemaVersion": 36,
-    "version": 2,
-    "refresh": "5s"
-  },
-  "overwrite": true
-}
+### 📡 Network Monitoring PromQL Queries
+
+# Bytes received per second per interface
+rate(node_network_receive_bytes_total[1m])
+
+# Bytes transmitted per second per interface
+rate(node_network_transmit_bytes_total[1m])
+
+# Packets dropped
+rate(node_network_dropped_total[1m])
+
+# Errors in/out
+rate(node_network_receive_errs_total[1m])
+rate(node_network_transmit_errs_total[1m])
+
+# Interface saturation (bytes in + out per interface)
+rate(node_network_receive_bytes_total[1m]) + rate(node_network_transmit_bytes_total[1m])
+
+---
+
+### 🖥️ System Metrics PromQL Queries
+
+# CPU Usage (total usage per instance)
+100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+
+# Load average (1m, 5m, 15m)
+node_load1
+node_load5
+node_load15
+
+# Total Memory Used
+(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / (1024 * 1024 * 1024)
+
+# Total Swap Used
+(node_memory_SwapTotal_bytes - node_memory_SwapFree_bytes) / (1024 * 1024 * 1024)
+
+# Running and Blocked Processes
+node_procs_running
+node_procs_blocked
+
+# Threads (if exposed via custom exporter or script)
+# (Node Exporter does not expose threads by default)
+
+# System Uptime (in seconds)
+node_time_seconds - node_boot_time_seconds
+
+---
+
+### 🧪 Example Visualization Ideas in Grafana
+
+- **Line graphs** for network traffic over time (bytes/sec)
+- **Single stat panels** for total CPU, memory, swap usage
+- **Bar graphs** per interface (network) or per mount point (disk)
+- **Table** for process stats and system uptime
+
+---
+
+Would you like the dashboard JSON for these as well?
+
+
 
 
 
