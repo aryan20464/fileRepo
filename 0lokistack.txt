@@ -1,39 +1,18 @@
 listen:
   port: 4040
-  address: 0.0.0.0
+  address: "0.0.0.0"
+  metrics_endpoint: "/metrics"
 
-namespace: nginx
-
-log_format:
-  name: custom_main
-  format: 'Ip=$remote_addr time=$remote_user [$time_local] Request="$request" Status=$status Request_size=$body_bytes_sent URL="$http_referer" Client="$http_user_agent"rt=$request_time uct="$upstream_connect_time" uht="$upstream_header_time" urt="$upstream_response_time"'
-
-metrics:
-  - name: nginx_http_requests_total
-    type: counter
-    help: "Total HTTP requests"
+namespaces:
+  - name: nginx
+    format: 'Ip=$remote_addr time=$remote_user [$time_local] Request="$request" Status=$status Request_size=$body_bytes_sent URL="$http_referer" Client="$http_user_agent"rt=$request_time uct="$upstream_connect_time" uht="$upstream_header_time" urt="$upstream_response_time"'
+    source:
+      files:
+        - /node/nginx/logs/access.log
     labels:
-      - status
-      - request
-    value: "1"
+      app: "nginx"
+    histogram_buckets: [0.001, 0.01, 0.05, 0.1, 0.3, 0.5, 1, 2, 5]
 
-  - name: nginx_response_size_bytes
-    type: counter
-    help: "Total bytes sent to client"
-    labels:
-      - status
-    value: "$body_bytes_sent"
-
-  - name: nginx_response_time_seconds
-    type: histogram
-    help: "Histogram of request time"
-    labels:
-      - status
-    buckets: [0.001, 0.01, 0.05, 0.1, 0.3, 0.5, 1, 2, 5]
-    value: "$request_time"
-
-files:
-  - /node/nginx/logs/access.log
 
 
 curl -i http://localhost:4040/metrics
