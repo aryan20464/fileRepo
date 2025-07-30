@@ -1,6 +1,8 @@
-Ip=10.30.130.32 time=- [30/Jul/2025:10:17:43 +0530] Request="GET /grafana/api/live/ws HTTP/1.1" Status=400 Request_size=12 URL="-" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"rt=0.004 uct="0.000" uht="0.004" urt="0.004"
+./prometheus-nginxlog-exporter -config-file nginx-log-exporter-new.yml -log-level debug
+2025-07-30T11:19:45.939+0530    info    prometheus-nginxlog-exporter/main.go:162        loading configuration file nginx-log-exporter-new.yml
+2025-07-30T11:19:45.940+0530    debug   prometheus-nginxlog-exporter/main.go:119        using configuration {Listen:{Port:4040 Address:0.0.0.0 MetricsEndpoint:/metrics} Consul:{Enable:false Address: Datacenter: Scheme: Token: Service:{ID: Name: Address: Tags:[]}} Namespaces:[] EnableExperimentalFeatures:false EnableExperimentalFeaturesOld:false}
+2025-07-30T11:19:45.940+0530    info    prometheus-nginxlog-exporter/main.go:148        running HTTP server on address 0.0.0.0:4040, serving metrics at /metrics
 
-10.191.158.43 - - [25/Sep/2024:15:20:52 +0530] "HEAD / HTTP/1.1" 200 0 "-" "curl/7.61.1"
 
 
 curl -i http://localhost:4040/metrics
