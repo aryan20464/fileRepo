@@ -1,17 +1,11 @@
-listen:
-  port: 4040
-  address: "0.0.0.0"
-  metrics_endpoint: "/metrics"
+[weblogic@tss-ideaappuat nginx-log-exporter]$ ./prometheus-nginxlog-exporter -config-file logexporter.yaml -log-level debug
+2025-07-30T11:34:22.685+0530    info    prometheus-nginxlog-exporter/main.go:162        loading configuration file logexporter.yaml
+2025-07-30T11:34:22.686+0530    warn    config/struct_namespace.go:98   No globs for /node/nginx/logs/access.log
+2025-07-30T11:34:22.686+0530    debug   prometheus-nginxlog-exporter/main.go:119        using configuration {Listen:{Port:4040 Address:0.0.0.0 MetricsEndpoint:/metrics} Consul:{Enable:false Address: Datacenter: Scheme: Token: Service:{ID: Name: Address: Tags:[]}} Namespaces:[{Name:nginx NamespaceLabelName: NamespaceLabels:map[] MetricsOverride:<nil> NamespacePrefix: SourceFiles:[/node/nginx/logs/access.log] SourceData:{Files:[/node/nginx/logs/access.log] Syslog:<nil>} Parser: Format:Ip=$remote_addr time=$remote_user [$time_local] Request="$request" Status=$status Request_size=$body_bytes_sent URL="$http_referer" Client="$http_user_agent" rt=$request_time uct="$upstream_connect_time" uht="$upstream_header_time" urt="$upstream_response_time" Labels:map[app:nginx] RelabelConfigs:[] HistogramBuckets:[0.001 0.01 0.05 0.1 0.3 0.5 1 2 5] PrintLog:false OrderedLabelNames:[] OrderedLabelValues:[]}] EnableExperimentalFeatures:false EnableExperimentalFeaturesOld:false}
+2025-07-30T11:34:22.687+0530    info    prometheus-nginxlog-exporter/main.go:139        starting listener for namespace nginx
+2025-07-30T11:34:22.687+0530    info    prometheus-nginxlog-exporter/main.go:148        running HTTP server on address 0.0.0.0:4040, serving metrics at /metrics
 
-namespaces:
-  - name: nginx
-    format: 'Ip=$remote_addr time=$remote_user [$time_local] Request="$request" Status=$status Request_size=$body_bytes_sent URL="$http_referer" Client="$http_user_agent"rt=$request_time uct="$upstream_connect_time" uht="$upstream_header_time" urt="$upstream_response_time"'
-    source:
-      files:
-        - /node/nginx/logs/access.log
-    labels:
-      app: "nginx"
-    histogram_buckets: [0.001, 0.01, 0.05, 0.1, 0.3, 0.5, 1, 2, 5]
+
 
 
 
