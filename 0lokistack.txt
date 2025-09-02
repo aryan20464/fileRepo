@@ -5,7 +5,7 @@
 2025-07-30T11:34:22.687+0530    info    prometheus-nginxlog-exporter/main.go:139        starting listener for namespace nginx
 2025-07-30T11:34:22.687+0530    info    prometheus-nginxlog-exporter/main.go:148        running HTTP server on address 0.0.0.0:4040, serving metrics at /metrics
 
-
+https://accounts.google.com/ServiceLogin?passive=1209600&continue=https://cloud.google.com/innovators/getcertified&followup=https://cloud.google.com/innovators/getcertified
 
 
 
