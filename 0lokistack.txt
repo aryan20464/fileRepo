@@ -9,6 +9,9 @@ https://accounts.google.com/ServiceLogin?passive=1209600&continue=https://cloud.
 
 https://www.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm%7ERational&product=ibm/Rational/IBM+Installation+Manager&release=1.10.1.2&platform=Windows&function=fixId&fixids=1.10.1.2-IBMIM-WIN64-20250605_1202&useReleaseAsTarget=true&includeRequisites=1&includeSupersedes=0&downloadMethod=http
 
+RHJ62BKpuGV!cj3
+
+
 curl -i http://localhost:4040/metrics
 HTTP/1.1 200 OK
 Content-Type: text/plain; version=0.0.4; charset=utf-8
