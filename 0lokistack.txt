@@ -11,6 +11,28 @@ https://www.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm%7ERational&p
 
 RHJ62BKpuGV!cj3
 
+crc setup --log-level debug
+DEBU CRC version: 2.53.0+a6f712
+DEBU OpenShift version: 4.19.3
+DEBU MicroShift version: 4.19.0
+DEBU Running 'crc setup'
+INFO Using bundle path C:\Users\1064695\.crc\cache\crc_hyperv_4.19.3_amd64.crcbundle
+INFO Checking minimum RAM requirements
+DEBU Total memory of system is 34190172160 bytes
+INFO Check if Podman binary exists in: C:\Users\1064695\.crc\bin\oc
+INFO Checking if running in a shell with administrator rights
+DEBU Running '$currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent());$currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)'
+DEBU Command failed: fork/exec C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe: Access is denied.
+DEBU stdout:
+DEBU stderr:
+INFO Checking Windows release
+DEBU Running '(Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name ReleaseId).ReleaseId'
+DEBU Command failed: fork/exec C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe: Access is denied.
+DEBU stdout:
+DEBU stderr:
+DEBU fork/exec C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe: Access is denied.
+DEBU Failed to get Windows release id
+ERRO Please manually update your Windows 10 installation
 
 curl -i http://localhost:4040/metrics
 HTTP/1.1 200 OK
