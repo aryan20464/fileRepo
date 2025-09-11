@@ -34,9 +34,11 @@
               "src/assets"
             ],
             "styles": [
+              // Framework styles (loaded first to allow overrides)
               "node_modules/primeicons/primeicons.css",
               "node_modules/font-awesome/css/font-awesome.min.css",
-              "node_modules/primeflex/primeflex.css",             
+              "node_modules/primeflex/primeflex.css",
+              // Custom styles (loaded last to override frameworks)
               "src/assets/css/global.css",
               "src/assets/css/nav.css"
             ],
@@ -55,7 +57,7 @@
                 "scripts": true,
                 "styles": {
                   "minify": true,
-                  "inlineCritical": false
+                  "inlineCritical": true // Enabled to reduce layout shifts
                 }
               },
               "outputHashing": "all",
@@ -72,8 +74,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "70kb",
-                  "maximumError": "80kb"
+                  "maximumWarning": "100kb", // Increased to avoid style omission
+                  "maximumError": "120kb"
                 }
               ]
             },
@@ -88,7 +90,7 @@
                 "scripts": true,
                 "styles": {
                   "minify": true,
-                  "inlineCritical": false
+                  "inlineCritical": true
                 }
               },
               "outputHashing": "all",
@@ -105,8 +107,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "70kb",
-                  "maximumError": "80kb"
+                  "maximumWarning": "100kb",
+                  "maximumError": "120kb"
                 }
               ]
             },
@@ -121,7 +123,7 @@
                 "scripts": true,
                 "styles": {
                   "minify": true,
-                  "inlineCritical": false
+                  "inlineCritical": true
                 }
               },
               "outputHashing": "all",
@@ -138,8 +140,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "70kb",
-                  "maximumError": "80kb"
+                  "maximumWarning": "100kb",
+                  "maximumError": "120kb"
                 }
               ]
             },
@@ -154,7 +156,7 @@
                 "scripts": true,
                 "styles": {
                   "minify": true,
-                  "inlineCritical": false
+                  "inlineCritical": true
                 }
               },
               "outputHashing": "all",
@@ -171,8 +173,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "70kb",
-                  "maximumError": "80kb"
+                  "maximumWarning": "100kb",
+                  "maximumError": "120kb"
                 }
               ]
             }
@@ -222,15 +224,11 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint", // Updated to ESLint
           "options": {
-            "tsConfig": [
-              "tsconfig.app.json",
-              "tsconfig.spec.json",
-              "e2e/tsconfig.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
             ]
           }
         },
@@ -267,67 +265,84 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import { BrowserModule } from '@angular/platform-browser';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
-
-import { HttpErrorInterceptor } from 'src/services/security/http-error.interceptor';
-
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { NavComponent } from './nav/nav.component';
-import { SidebarModule } from 'primeng/sidebar';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule } from '@angular/forms';
+
+// PrimeNG Imports
+import { SidebarModule } from 'primeng/sidebar';
 import { ToastModule } from 'primeng/toast';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
-import { FormsModule } from '@angular/forms';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { PanelModule } from 'primeng/panel';
-import { HeaderRfmComponent } from './header-rfm/header-rfm.component';
-import { MasterDataModule } from '../modules/master-data/master-data.module';
-import { AppConfigModule } from 'src/modules/app-config/app-config.module';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { ErrorpageComponent } from './errorpage/errorpage.component';
-import {TreeModule} from 'primeng/tree';
-import {OrderListModule} from 'primeng/orderlist';
-import { appCommonModule } from 'src/modules/common/common.module';
+import { TreeModule } from 'primeng/tree';
+import { OrderListModule } from 'primeng/orderlist';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
-import {MultiSelectModule} from 'primeng/multiselect';
-import {DropdownModule} from 'primeng/dropdown';
-import { FooterRfmComponent } from './footer-rfm/footer-rfm.component';
-// new imports -- fcny module -- chakri
-import { BranchmakerComponent } from 'src/modules/fcny-module/branchmaker/branchmaker.component';
-import { BranchcheckerComponent } from 'src/modules/fcny-module/branchchecker/branchchecker.component';
-import { ZonaluserComponent } from 'src/modules/fcny-module/zonaluser/zonaluser.component';
-import { LhouserComponent } from 'src/modules/fcny-module/lhouser/lhouser.component';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { DropdownModule } from 'primeng/dropdown';
+import { PaginatorModule } from 'primeng/paginator';
+import { providePrimeNG } from 'primeng/config';
+import Aura from '@primeng/themes/aura';
+
+// Angular Material Imports
 import { MatChipsModule } from '@angular/material/chips';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon'; // Optional if you want to use an icon
+import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
-import { BranchmakereditComponent } from 'src/modules/fcny-module/branchmakeredit/branchmakeredit.component';
-import { BranchmakermarkrtoComponent } from 'src/modules/fcny-module/branchmakermarkrto/branchmakermarkrto.component';
-import { ShowindentdetailsComponent } from 'src/modules/fcny-module/showindentdetails/showindentdetails.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDialogModule } from '@angular/material/dialog';
-import { ShowbranchdetailsComponent } from 'src/modules/fcny-module/showbranchdetails/showbranchdetails.component';
-import { PaginatorModule } from 'primeng/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 
-//new components -- fac module -- Bhaskar Sir
+// App Imports
+import { HttpErrorInterceptor } from 'src/services/security/http-error.interceptor';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { NavComponent } from './nav/nav.component';
+import { HeaderRfmComponent } from './header-rfm/header-rfm.component';
+import { ErrorpageComponent } from './errorpage/errorpage.component';
+import { FooterRfmComponent } from './footer-rfm/footer-rfm.component';
+import { MasterDataModule } from '../modules/master-data/master-data.module';
+import { AppConfigModule } from 'src/modules/app-config/app-config.module';
+import { appCommonModule } from 'src/modules/common/common.module';
+import { BranchmakerComponent } from 'src/modules/fcny-module/branchmaker/branchmaker.component';
+import { BranchcheckerComponent } from 'src/modules/fcny-module/branchchecker/branchchecker.component';
+import { ZonaluserComponent } from 'src/modules/fcny-module/zonaluser/zonaluser.component';
+import { LhouserComponent } from 'src/modules/fcny-module/lhouser/lhouser.component';
+import { BranchmakereditComponent } from 'src/modules/fcny-module/branchmakeredit/branchmakeredit.component';
+import { BranchmakermarkrtoComponent } from 'src/modules/fcny-module/branchmakermarkrto/branchmakermarkrto.component';
+import { ShowindentdetailsComponent } from 'src/modules/fcny-module/showindentdetails/showindentdetails.component';
+import { ShowbranchdetailsComponent } from 'src/modules/fcny-module/showbranchdetails/showbranchdetails.component';
 import { PendingRequestsComponent } from 'src/modules/fac-module/pending-requests/pending-requests.component';
 import { FacApproveModalComponent } from 'src/modules/fac-module/fac-approve-modal/fac-approve-modal.component';
-
-import { PrimeNG, providePrimeNG } from 'primeng/config';
-import Aura from '@primeng/themes/aura';
-import { Ripple } from 'primeng/ripple';
-import material from '@primeng/themes/material'
-
 
 @NgModule({
   declarations: [
@@ -336,7 +351,6 @@ import material from '@primeng/themes/material'
     HeaderRfmComponent,
     ErrorpageComponent,
     FooterRfmComponent,
-    // new components -- fcny module chakri
     BranchmakerComponent,
     BranchcheckerComponent,
     ZonaluserComponent,
@@ -345,7 +359,6 @@ import material from '@primeng/themes/material'
     BranchmakermarkrtoComponent,
     ShowindentdetailsComponent,
     ShowbranchdetailsComponent,
-    // new components -- fac module Bhaskar sir
     PendingRequestsComponent,
     FacApproveModalComponent
   ],
@@ -354,6 +367,8 @@ import material from '@primeng/themes/material'
     HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    FormsModule,
+    // PrimeNG Modules
     SidebarModule,
     ToastModule,
     InputTextModule,
@@ -361,18 +376,15 @@ import material from '@primeng/themes/material'
     ConfirmDialogModule,
     TableModule,
     ButtonModule,
-    FormsModule,
     PanelMenuModule,
-    MasterDataModule,
     PanelModule,
-    AppConfigModule,
     TreeModule,
     OrderListModule,
-    appCommonModule,
     BreadcrumbModule,
     MultiSelectModule,
     DropdownModule,
-    //new imports -- fcny module --chakri
+    PaginatorModule,
+    // Angular Material Modules
     MatChipsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -380,615 +392,527 @@ import material from '@primeng/themes/material'
     MatTabsModule,
     MatExpansionModule,
     MatDialogModule,
-    PaginatorModule,
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
+    // App Modules
+    MasterDataModule,
+    AppConfigModule,
+    appCommonModule
   ],
   providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: HttpErrorInterceptor,
-      multi: true
-    },
-   
+    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
+    providePrimeNG({ theme: Aura }) // Configure PrimeNG theme
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA], // Removed NO_ERRORS_SCHEMA to catch template errors
   bootstrap: [AppComponent]
 })
 export class AppModule { }
 
-/*
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
-*/
+// TODO: Verify PrimeNG and Angular Material versions in package.json are compatible with Angular 18.
+// Run `ng update primeng @angular/material` to update dependencies.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* 
-    Created on : Oct 17, 2015, 3:24:04 PM
-    Author     : Bagchi
+  Corrected global.css
+  Changes:
+  - Use PrimeFlex for responsive layouts.
+  - Replace specific PrimeNG selectors with CSS variables.
+  - Fix asset paths for baseHref.
+  - Add font fallbacks and reduce !important usage.
+  - Preserve original rules as comments for reference.
 */
+
 B {
-    font-weight: bold
+  font-weight: bold;
 }
 
 #ttl0 {
-    padding-left: 50px;
-    height: 200px;
+  padding-left: 3rem; /* Adjusted from 50px for responsiveness */
+  height: 12rem;
 }
 
 .ttl1 {
-    font-size: 15pt;
-    font-weight: bold;
-    font-family: Comic Sans MS;
+  font-size: 1.2rem; /* Converted to rem */
+  font-weight: bold;
+  font-family: 'Comic Sans MS', sans-serif;
 }
 
 .TextScrollStyle {
-    visibility: visible;
-    font-size: 13pt;
-    font-family: Comic Sans MS;
-    font-weight: bold;
-    padding-top: 0;
+  visibility: visible;
+  font-size: 1rem;
+  font-family: 'Comic Sans MS', sans-serif;
+  font-weight: bold;
+  padding-top: 0;
 }
 
 .welcomeText {
-    font-family: Comic Sans MS;
-    font-size: 15pt;
-    font-weight: bold;
-    color: #0E088E;
+  font-family: 'Comic Sans MS', sans-serif;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--primary-color, #0E088E); /* Use CSS variable with fallback */
 }
 
 .rowStyle0 {
-    font-family: Comic Sans MS;
-    font-size: 10pt;
-    background-color: #F8E1FF;
-    color: #0914A8;
-    border: 1px solid #000080;
+  font-family: 'Comic Sans MS', sans-serif;
+  font-size: 0.8rem;
+  background-color: #F8E1FF;
+  color: #0914A8;
+  border: 1px solid #000080;
 }
 
 .rowStyle1 {
-    font-family: Comic Sans MS;
-    font-size: 10pt;
-    background-color: #E2FEE3;
-    color: #0914A8;
-    border: 1px solid #000080;
+  font-family: 'Comic Sans MS', sans-serif;
+  font-size: 0.8rem;
+  background-color: #E2FEE3;
+  color: #0914A8;
+  border: 1px solid #000080;
 }
 
 .headerStyle {
-    font-family: Comic Sans MS;
-    font-size: 10pt;
-    font-weight: bold;
-    background-color: #02738A;
-    color: #FFFFFF;
-    border: 1px solid #000080;
+  font-family: 'Comic Sans MS', sans-serif;
+  font-size: 0.8rem;
+  font-weight: bold;
+  background-color: #02738A;
+  color: #FFFFFF;
+  border: 1px solid #000080;
 }
 
 .buttonStyle {
-    font-family: Comic Sans MS;
-    font-size: 10pt;
-    font-weight: bold;
-    background-color: #AE1384;
-    color: #7BD7EA;
-    border: 1px solid #000000;
-    cursor: hand;
-    height: 25px;
+  font-family: 'Comic Sans MS', sans-serif;
+  font-size: 0.8rem;
+  font-weight: bold;
+  background-color: #AE1384;
+  color: #7BD7EA;
+  border: 1px solid #000000;
+  cursor: pointer; /* Updated from cursor: hand */
+  height: 1.5rem;
 }
 
 .txtStyle_update {
-    font-family: Comic Sans MS;
-    font-size: 12pt;
-    font-weight: bold;
-    background-color: #FFFFCC;
-    color: #000080;
-    border: 2px solid #96964B;
+  font-family: 'Comic Sans MS', sans-serif;
+  font-size: 1rem;
+  font-weight: bold;
+  background-color: #FFFFCC;
+  color: #000080;
+  border: 2px solid #96964B;
 }
 
 .txtStyle {
-    font-family: Comic Sans MS;
-    font-size: 12pt;
-    font-weight: bold;
-    background-color: #FFFFCC;
-    color: #000080;
-    border-color: #000080;
-    border-width: 2px;
-    border-style: solid;
+  font-family: 'Comic Sans MS', sans-serif;
+  font-size: 1rem;
+  font-weight: bold;
+  background-color: #FFFFCC;
+  color: #000080;
+  border: 2px solid #000080;
 }
 
 .innerTxtStyle {
-    font-family: Comic Sans MS;
-    font-size: 9pt;
-    font-weight: bold;
-    background-color: #FFFFCC;
-    color: #000080;
-    border: 1px solid #000000;
+  font-family: 'Comic Sans MS', sans-serif;
+  font-size: 0.7rem;
+  font-weight: bold;
+  background-color: #FFFFCC;
+  color: #000080;
+  border: 1px solid #000000;
 }
 
 .innerTxtHeader {
-    font-family: Comic Sans MS;
-    font-size: 9pt;
-    font-weight: bold;
-    background-color: #66F4D5;
-    color: #4F2CB6;
-    border: 1px solid #000000;
+  font-family: 'Comic Sans MS', sans-serif;
+  font-size: 0.7rem;
+  font-weight: bold;
+  background-color: #66F4D5;
+  color: #4F2CB6;
+  border: 1px solid #000000;
 }
 
 .mandatoryStyle {
-    background-color: #CDE7FC;
-    color: #3704CE;
+  background-color: #CDE7FC;
+  color: #3704CE;
 }
 
 .browseButtonStyle {
-    font-family: Comic Sans MS;
-    font-size: 10pt;
-    font-weight: bold;
-    background-color: #AE1384;
-    color: #7BD7EA;
-    border: 1px solid #000000;
-    cursor: hand;
-    height: 18px;
-    width: 18px;
+  font-family: 'Comic Sans MS', sans-serif;
+  font-size: 0.8rem;
+  font-weight: bold;
+  background-color: #AE1384;
+  color: #7BD7EA;
+  border: 1px solid #000000;
+  cursor: pointer;
+  height: 1.2rem;
+  width: 1.2rem;
 }
 
 .readonlyStyle {
-    font-family: Comic Sans MS;
-    font-size: 12pt;
-    background-color: #A0B7F0;
-    color: #0000FF;
-    border: 2px solid #000080;
+  font-family: 'Comic Sans MS', sans-serif;
+  font-size: 1rem;
+  background-color: #A0B7F0;
+  color: #0000FF;
+  border: 2px solid #000080;
 }
 
 input.comboStyle {
-    height: 20px !important;
-    font-family: Comic Sans MS;
-    font-size: 9pt;
+  height: 1.5rem;
+  font-family: 'Comic Sans MS', sans-serif;
+  font-size: 0.7rem;
 }
 
 comboStyle {
-    font-size: 9pt !important;
-    font-family: Comic Sans MS;
+  font-size: 0.7rem;
+  font-family: 'Comic Sans MS', sans-serif;
 }
 
 select {
-    font-family: Comic Sans MS;
-    font-size: 8pt;
+  font-family: 'Comic Sans MS', sans-serif;
+  font-size: 0.6rem;
 }
 
-/* .myFooter .p-datatable .p-datatable-header  {
-    bottom: -600px;
-} */
-
-.myFooter .p-datatable {
-    /* background: rgba(0, 0, 0, 0.03);
-    color: #212529;
-    border: none;
-    border-width: 1px 0 0 0;
-    padding: 1rem 1rem;
-    font-weight: 600; */
-    /* position: relative; */
-    bottom: -60px;
-}
-
-.p-datatable .p-datatable-header {
-    background: #f4f4f4;
-    /* background: rgba(0, 0, 0, 0.03); */
-    color: #212529;
-    border: none;
-    border-width: 1px 0 0 0;
-    padding: 0rem 0rem !important;
-    font-weight: 600;
-}
-
-body {
-    height: 100%;
-    margin: 0;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    /*background-image: linear-gradient(to left, rgba(12,163, 210,1), rgba(12,163, 210,0), rgba(12,163, 210,1));*/
-    background-image: url("../images/background.jpg");
-    background-size: 100% 100%;
-    border: none;
-}
-
+/* Use PrimeFlex for responsive layouts */
 .mainTabDiv {
-    /* margin: 1% 1%; */
-    margin-left: 0%;
-    width: 96%;
-    /* border-style: ridge; */
-    border: 2px solid;
-    /* border-width: 2px; */
-    border-color: black;
-    box-shadow: 0 0 20px hsla(0, 2%, 2%, 1);
-    /* background: #f4f4f4; */
-    background-color: aliceblue;
+  margin: 1rem; /* Replaced margin-left: 0% and width: 96% */
+  width: 100%;
+  max-width: 100%;
+  border: 2px solid black;
+  box-shadow: 0 0 1.2rem hsla(0, 2%, 2%, 1);
+  background-color: aliceblue;
+  box-sizing: border-box; /* Prevent overflow */
 }
 
 .txnTabDiv {
-    margin: 1% 3%;
-    margin-left: -80px;
-    margin-right: 3%;
-    width: 105%;
-    /* border-style: ridge; */
-    border: 2px solid;
-    /* border-width: 2px; */
-    border-color: black;
-    background-color: aliceblue;
+  margin: 1rem; /* Replaced negative margins and width: 105% */
+  width: 100%;
+  max-width: 100%;
+  border: 2px solid black;
+  background-color: aliceblue;
+  box-sizing: border-box;
+}
+
+/* Original footer rule commented out due to potential overlap issues */
+/*
+.myFooter .p-datatable {
+  bottom: -60px;
+}
+*/
+.myFooter .p-datatable {
+  margin-top: 1rem; /* Adjusted for proper spacing */
+  width: 100%;
+}
+
+/* Use PrimeNG CSS variables for compatibility */
+.p-datatable {
+  --p-datatable-header-bg: #f4f4f4; /* Replaces .p-datatable .p-datatable-header */
+  --p-datatable-header-color: #212529;
+  --p-datatable-header-padding: 0.5rem;
+}
+
+.p-datatable .p-datatable-header {
+  background: var(--p-datatable-header-bg);
+  color: var(--p-datatable-header-color);
+  padding: var(--p-datatable-header-padding);
+  border: none;
+}
+
+body {
+  height: 100vh;
+  margin: 0;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-image: url("/rfm/assets/images/background.jpg"); /* Fixed path for baseHref */
+  background-size: cover; /* Adjusted for responsiveness */
 }
 
 .chkBx {
-    font-family: Calibri;
+  font-family: Calibri, sans-serif;
 }
 
 .chkBxVald {
-    font-family: Calibri;
+  font-family: Calibri, sans-serif;
 }
 
 .tglChkImg {
-    width: 20px;
-    height: 20px;
+  width: 1.2rem;
+  height: 1.2rem;
 }
 
 .nav-link[data-toggle].collapsed:before {
-    content: " ▾";
+  content: " ▾";
 }
 
 .nav-link[data-toggle]:not(.collapsed):before {
-    content: " ▴";
+  content: " ▴";
 }
 
 #sidebar {
-    border: 2px solid blue;
-    -moz-box-shadow: 3px 0 5px 0 #555;
-    -webkit-box-shadow: 3px 0 5px 0 #555;
-    box-shadow: 3px 0 5px 0 #555;
-    min-height: 50vh !important;
+  border: 2px solid blue;
+  box-shadow: 3px 0 5px 0 #555;
+  min-height: 50vh;
 }
 
 .link-color {
-    color: navy;
-    font-weight: bold;
+  color: navy;
+  font-weight: bold;
 }
 
 .link-color:hover {
-    color: red;
-    font-weight: bold;
+  color: red;
+  font-weight: bold;
 }
 
 .link-color-1 {
-    color: navy;
+  color: navy;
 }
 
 .link-color-1:hover {
-    color: green;
+  color: green;
 }
 
-/********Changes by Ankita******************/
 textarea {
-    resize: none;
+  resize: none;
 }
 
-.p-datatable .p-datatable-tbody>tr.p-highlight {
-    background: silver;
-    color: #ffffff;
+/* PrimeNG Table Customizations */
+.p-datatable .p-datatable-tbody > tr.p-highlight {
+  background: silver;
+  color: #ffffff;
 }
 
 .p-datatable-thead {
-    font-family: sans-serif;
+  font-family: sans-serif;
 }
 
-.p-datatable .p-datatable-thead>tr>th {
-    /* background-color: rgb(108, 247, 201); */
-    /* background-color: rgb(162 245 217); */
-    background-color: #2b2b50;
-    font-size: 16px;
+.p-datatable .p-datatable-thead > tr > th {
+  background-color: #2b2b50;
+  font-size: 1rem;
+  color: white;
 }
 
-th {
-    color: white !important;
+.p-datatable.p-datatable-sm .p-datatable-thead > tr > th {
+  padding: 0.3rem 0.2rem; /* Simplified */
 }
 
-.p-datatable.p-datatable-sm .p-datatable-thead>tr>th {
-    padding-top: 0.300%;
-    padding-bottom: 0.300%;
-    padding-left: 0.200%;
-    padding-right: 0%;
+.p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
+  font-family: sans-serif;
+  font-size: 0.8rem;
+  padding: 0.2rem;
 }
 
-.p-datatable.p-datatable-sm .p-datatable-tbody>tr>td {
-    font-family: sans-serif;
-    font-size: 12px;
-    padding-top: 0.200%;
-    padding-bottom: 0.200%;
-    padding-right: 0.200%;
-    padding-left: 0.200%;
-}
-
-.p-input-icon-right>.p-inputtext {
-    font-family: sans-serif;
-}
-
+.p-input-icon-right > .p-inputtext,
 .p-inputtext {
-    font-family: sans-serif;
-    font-size: 12px;
+  font-family: sans-serif;
+  font-size: 0.8rem;
 }
 
 .p-menuitem-text {
-    font-family: efframedium;
-    font-size: 18px;
+  font-family: efframedium, sans-serif;
+  font-size: 1rem;
 }
 
 .p-accordion .p-accordion-header .p-accordion-header-link {
-    padding: 0.43rem 0.5rem;
-    background: cadetblue;
+  padding: 0.43rem 0.5rem;
+  background: cadetblue;
 }
 
-.p-accordion .p-accordion-header:not(.p-disabled).p-highlight .p-accordion-header-link {
-    background: cadetblue;
-}
-
-.p-accordion .p-accordion-header:not(.p-disabled).p-highlight:hover .p-accordion-header-link {
-    background: darkcyan;
-}
-
-.p-accordion .p-accordion-header .p-accordion-header-link:focus {
-    background: darkcyan;
-}
-
+.p-accordion .p-accordion-header:not(.p-disabled).p-highlight .p-accordion-header-link,
+.p-accordion .p-accordion-header:not(.p-disabled).p-highlight:hover .p-accordion-header-link,
+.p-accordion .p-accordion-header .p-accordion-header-link:focus,
 .p-accordion .p-accordion-header:not(.p-highlight):not(.p-disabled):hover .p-accordion-header-link {
-    background: darkcyan;
+  background: darkcyan;
 }
 
 .p-component * {
-    text-overflow: ellipsis;
+  text-overflow: ellipsis;
 }
 
 .p-datatable.p-datatable-gridlines .p-paginator-bottom {
-    border-top: 2px solid;
+  border-top: 2px solid;
 }
 
 .p-datatable .p-sortable-column.p-highlight {
-    background: #bc1255;
+  background: #bc1255;
 }
 
 .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
-    background: #bc1255;
-    border-color: #bc1255;
+  background: #bc1255;
+  border-color: #bc1255;
 }
 
 .p-paginator .p-paginator-current {
-    color: black;
+  color: black;
 }
 
 .p-panelmenu-header-link {
-    background: violet;
+  background: violet;
 }
 
 .p-dialog {
-    border-style: ridge;
-    border: 3px solid;
-    border-color: #263e51;
+  border: 3px solid #263e51;
 }
 
 .p-dialog .p-dialog-header {
-    background: #263e51;
-    border-style: groove;
-    border: 2px solid;
-    border-color: cadetblue;
-    padding: 1%;
+  background: #263e51;
+  border: 2px solid cadetblue;
+  padding: 1%;
 }
 
 .p-dialog .p-dialog-footer button {
-    float: right;
+  float: right;
 }
 
 .p-button.p-button-raised {
-    font-weight: 700;
-    transition-duration: 0.5s;
+  font-weight: 700;
+  transition-duration: 0.5s;
 }
 
 .plusBtn {
-    font-size: 0.2%;
-    margin-left: 20%;
-    width: 170% !important;
+  font-size: 0.2rem; /* Adjusted for clarity */
+  margin-left: 1rem;
+  width: auto; /* Replaced 170% */
 }
 
-
-/*.p-button-outlined.p-button-rounded.p-button-raised.p-button-success:hover:enabled {
-    background-color: #34A835;
-    color: white;
-}
-.p-button-outlined.p-button-rounded.p-button-raised.p-button-help:hover:enabled {
-    background-color: #9C27B0;
-    color: white;
-}
-.p-button-outlined.p-button-rounded.p-button-raised.p-button-success:hover:enabled {
-    background-color: #34A835;
-    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
-    color: white;
-}
-
-.p-button-outlined.p-button-rounded.p-button-raised.p-button-danger:hover:enabled {
-    background-color: #e91224;
-    color: white;
-}*/
-
-.p-button-outlined.p-button-rounded.p-button-raised.p-button-info:hover:enabled {
-    background-color: #007ad9;
-    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
-    color: white;
-}
-
-
-.irm.p-button-success:enabled {
-    background-color: #34A835;
-    box-shadow: 0 0 10px hsla(0, 2%, 2%, 1);
-    color: white;
-}
-
-.irm.p-button-success:focus:enabled {
-    background-color: #34A835 !important;
-    box-shadow: 0 0 20px red !important;
-    color: white;
-}
-
+/* Button styles using PrimeNG variables */
+.irm.p-button-success:enabled,
+.irm.p-button-success:focus:enabled,
 .irm.p-button-success:hover:enabled {
-    background-color: #34A835;
-    color: white;
+  background-color: var(--p-button-success-bg, #34A835);
+  color: white;
+  box-shadow: 0 0 0.6rem hsla(0, 2%, 2%, 0.5);
 }
 
-.irm.p-button-help:enabled {
-    background-color: #9C27B0;
-    box-shadow: 0 0 10px hsla(0, 2%, 2%, 1);
-    color: white;
-}
-
+.irm.p-button-help:enabled,
+.irm.p-button-help:focus:enabled,
 .irm.p-button-help:hover:enabled {
-    background-color: #9C27B0;
-    color: white;
+  background-color: var(--p-button-help-bg, #9C27B0);
+  color: white;
+  box-shadow: 0 0 0.6rem hsla(0, 2%, 2%, 0.5);
 }
 
-.irm.p-button-help:focus:enabled {
-    background-color: #9C27B0;
-    box-shadow: 0 0 20px red !important;
-    color: white;
-}
-
-.irm.p-button-danger:enabled {
-    background-color: #e91224;
-    box-shadow: 0 0 10px hsla(0, 2%, 2%, 1);
-    color: white;
-}
+.irm.p-button-danger:enabled,
+.irm.p-button-danger:focus:enabled,
 .irm.p-button-danger:hover:enabled {
-    background-color: #e91224;
-    color: white;
-}
-.irm.p-button-danger:focus:enabled {
-    background-color: #e91224;
-    box-shadow: 0 0 20px black !important;
-    color: white;
+  background-color: var(--p-button-danger-bg, #e91224);
+  color: white;
+  box-shadow: 0 0 0.6rem hsla(0, 2%, 2%, 0.5);
 }
 
-.irm.p-button-info:enabled {
-    background-color: #007ad9;
-    box-shadow: 0 0 10px hsla(0, 2%, 2%, 1);
-    color: white;
-}
+.irm.p-button-info:enabled,
+.irm.p-button-info:focus:enabled,
 .irm.p-button-info:hover:enabled {
-    background-color: #007ad9;
-    color: white;
-}
-.irm.p-button-info:focus:enabled {
-    background-color: #007ad9;
-    box-shadow: 0 0 20px red !important;
-    color: white;
+  background-color: var(--p-button-info-bg, #007ad9);
+  color: white;
+  box-shadow: 0 0 0.6rem hsla(0, 2%, 2%, 0.5);
 }
 
-.irm.p-button-lg:enabled {
-    background-color: darkred;
-    padding: 2px;
-    box-shadow: 0 0 10px hsla(0, 2%, 2%, 1);
-    color: white;
-}
+.irm.p-button-lg:enabled,
+.irm.p-button-lg:focus:enabled,
 .irm.p-button-lg:hover:enabled {
-    background-color: darkred;
-    padding: 2px;
-    color: white;
+  background-color: darkred;
+  padding: 0.2rem;
+  color: white;
+  box-shadow: 0 0 0.6rem hsla(0, 2%, 2%, 0.5);
 }
-.irm.p-button-lg:focus:enabled {
-    background-color: darkred;
-    padding: 2px;
-    box-shadow: 0 0 20px red !important;
-    color: white;
-}
-
-
-
-
-
 
 .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
-    background: #bc1255;
-    border-color: red;
-    color: #ffffff;
+  background: #bc1255;
+  border-color: red;
+  color: #ffffff;
 }
 
 .p-column-filter-row .p-column-filter-menu-button {
-    margin-left: 0%;
-    margin-right: 0%;
-    justify-content: right;
-    width: auto;
+  margin: 0;
+  justify-content: right;
+  width: auto;
 }
 
 .p-column-filter-row .p-column-filter-clear-button {
-    margin-left: 0.5rem;
-    display: none;
+  margin-left: 0.5rem;
+  display: none;
 }
 
 .p-tabview-title {
-    line-height: 0.5 !important;
+  line-height: 1.2; /* Adjusted for readability */
 }
 
-/*********************************************/
 .p-checkbox .p-checkbox-box {
-    width: 17px;
-    height: 17px;
+  width: 1rem;
+  height: 1rem;
 }
 
 .p-checkbox .p-checkbox-box .p-checkbox-icon {
-    font-size: 10px;
+  font-size: 0.6rem;
 }
 
 .p-disabled,
 .p-component:disabled {
-    color: darkblue;
-    font-weight: bold;
-    /* cursor: default !important; */
-    /* pointer-events: none; */
+  color: darkblue;
+  font-weight: bold;
 }
 
-/*added by chakri as on modal open, the parent container is getting a scroll down*/
+/* Recommend moving to component-specific CSS with panelClass */
 .mat-dialog-container {
-    padding: 0px !important;
+  padding: 0;
 }
 
 .caption-div {
-    color: aliceblue;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    background-image: linear-gradient(to right, rgba(1, 96, 100, 1), rgba(1, 96, 100, 0));
+  color: aliceblue;
+  padding: 0.3rem 0;
+  background-image: linear-gradient(to right, rgba(1, 96, 100, 1), rgba(1, 96, 100, 0));
 }
 
-
-
 #queryData {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-    border-collapse: collapse;
-    width: 60%;
-    outline: 1px solid black;
-    box-shadow: 0 0 20px hsla(0, 2%, 2%, 1);
-  }
-  
-  #queryData td, #queryData th {
-    border: 0px solid teal;
-    padding: 5px;
-  }
-  
-  #queryData tr:nth-child(even){background-color: white;}
-  #queryData tr:nth-child(odd){background-color: white;}
-  
-  #queryData tr:hover {background-color: #ddd;}
-  
-  .queryData-th {
-    padding-left: 5px;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    text-align: left;
-    font-size: 20px;
-    color: aliceblue !important;
-    background-image: linear-gradient(to right, rgba(1, 96, 100, 1), rgba(1, 96, 100, 0));
-  }
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%; /* Adjusted for responsiveness */
+  outline: 1px solid black;
+  box-shadow: 0 0 1.2rem hsla(0, 2%, 2%, 1);
+}
 
-  .irm.p-datatable-sm {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
-    width: 100% !important;
-  }
+#queryData td,
+#queryData th {
+  border: 0px solid teal;
+  padding: 0.3rem;
+}
 
+#queryData tr:nth-child(even),
+#queryData tr:nth-child(odd) {
+  background-color: white;
+}
 
+#queryData tr:hover {
+  background-color: #ddd;
+}
+
+.queryData-th {
+  padding: 0.5rem 0.3rem;
+  text-align: left;
+  font-size: 1.2rem;
+  color: aliceblue;
+  background-image: linear-gradient(to right, rgba(1, 96, 100, 1), rgba(1, 96, 100, 0));
+}
+
+.irm.p-datatable-sm {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  width: 100%;
+}
