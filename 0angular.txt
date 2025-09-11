@@ -1,0 +1,994 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "rfm": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "rfm",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/rfm",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": "zone.js",
+            "tsConfig": "tsconfig.app.json",
+            "aot": true,
+            "allowedCommonJsDependencies": [
+              "lodash",
+              "jspdf-autotable",
+              "file-saver",
+              "core-js",
+              "raf",
+              "rgbcolor",
+              "process",
+              "crypto-js"
+            ],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "node_modules/primeicons/primeicons.css",
+              "node_modules/font-awesome/css/font-awesome.min.css",
+              "node_modules/primeflex/primeflex.css",             
+              "src/assets/css/global.css",
+              "src/assets/css/nav.css"
+            ],
+            "scripts": [],
+            "baseHref": "/rfm/"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                }
+              },
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "70kb",
+                  "maximumError": "80kb"
+                }
+              ]
+            },
+            "uat": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.uat.ts"
+                }
+              ],
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                }
+              },
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "70kb",
+                  "maximumError": "80kb"
+                }
+              ]
+            },
+            "preprod": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.preprod.ts"
+                }
+              ],
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                }
+              },
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "5mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "70kb",
+                  "maximumError": "80kb"
+                }
+              ]
+            },
+            "local": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.ts"
+                }
+              ],
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                }
+              },
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "5mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "70kb",
+                  "maximumError": "80kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "buildTarget": "rfm:build"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "rfm:build:production"
+            },
+            "uat": {
+              "buildTarget": "rfm:build:uat"
+            },
+            "preprod": {
+              "buildTarget": "rfm:build:preprod"
+            },
+            "local": {
+              "buildTarget": "rfm:build:local"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "buildTarget": "rfm:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "src/test.ts",
+            "polyfills": "zone.js",
+            "tsConfig": "tsconfig.spec.json",
+            "karmaConfig": "karma.conf.js",
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.css"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "tsconfig.app.json",
+              "tsconfig.spec.json",
+              "e2e/tsconfig.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "e2e/protractor.conf.js",
+            "devServerTarget": "rfm:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "rfm:serve:production"
+            },
+            "local": {
+              "devServerTarget": "rfm:serve:local"
+            },
+            "uat": {
+              "devServerTarget": "rfm:serve:uat"
+            },
+            "preprod": {
+              "devServerTarget": "rfm:serve:preprod"
+            }
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "analytics": false
+  }
+}
+
+
+
+
+
+import { BrowserModule } from '@angular/platform-browser';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
+
+import { HttpErrorInterceptor } from 'src/services/security/http-error.interceptor';
+
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { NavComponent } from './nav/nav.component';
+import { SidebarModule } from 'primeng/sidebar';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastModule } from 'primeng/toast';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { FormsModule } from '@angular/forms';
+import { PanelMenuModule } from 'primeng/panelmenu';
+import { PanelModule } from 'primeng/panel';
+import { HeaderRfmComponent } from './header-rfm/header-rfm.component';
+import { MasterDataModule } from '../modules/master-data/master-data.module';
+import { AppConfigModule } from 'src/modules/app-config/app-config.module';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { ErrorpageComponent } from './errorpage/errorpage.component';
+import {TreeModule} from 'primeng/tree';
+import {OrderListModule} from 'primeng/orderlist';
+import { appCommonModule } from 'src/modules/common/common.module';
+import { BreadcrumbModule } from 'primeng/breadcrumb';
+import {MultiSelectModule} from 'primeng/multiselect';
+import {DropdownModule} from 'primeng/dropdown';
+import { FooterRfmComponent } from './footer-rfm/footer-rfm.component';
+// new imports -- fcny module -- chakri
+import { BranchmakerComponent } from 'src/modules/fcny-module/branchmaker/branchmaker.component';
+import { BranchcheckerComponent } from 'src/modules/fcny-module/branchchecker/branchchecker.component';
+import { ZonaluserComponent } from 'src/modules/fcny-module/zonaluser/zonaluser.component';
+import { LhouserComponent } from 'src/modules/fcny-module/lhouser/lhouser.component';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon'; // Optional if you want to use an icon
+import { MatTabsModule } from '@angular/material/tabs';
+import { BranchmakereditComponent } from 'src/modules/fcny-module/branchmakeredit/branchmakeredit.component';
+import { BranchmakermarkrtoComponent } from 'src/modules/fcny-module/branchmakermarkrto/branchmakermarkrto.component';
+import { ShowindentdetailsComponent } from 'src/modules/fcny-module/showindentdetails/showindentdetails.component';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ShowbranchdetailsComponent } from 'src/modules/fcny-module/showbranchdetails/showbranchdetails.component';
+import { PaginatorModule } from 'primeng/paginator';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
+import { MatPaginatorModule } from '@angular/material/paginator';
+
+//new components -- fac module -- Bhaskar Sir
+import { PendingRequestsComponent } from 'src/modules/fac-module/pending-requests/pending-requests.component';
+import { FacApproveModalComponent } from 'src/modules/fac-module/fac-approve-modal/fac-approve-modal.component';
+
+import { PrimeNG, providePrimeNG } from 'primeng/config';
+import Aura from '@primeng/themes/aura';
+import { Ripple } from 'primeng/ripple';
+import material from '@primeng/themes/material'
+
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    NavComponent,
+    HeaderRfmComponent,
+    ErrorpageComponent,
+    FooterRfmComponent,
+    // new components -- fcny module chakri
+    BranchmakerComponent,
+    BranchcheckerComponent,
+    ZonaluserComponent,
+    LhouserComponent,
+    BranchmakereditComponent,
+    BranchmakermarkrtoComponent,
+    ShowindentdetailsComponent,
+    ShowbranchdetailsComponent,
+    // new components -- fac module Bhaskar sir
+    PendingRequestsComponent,
+    FacApproveModalComponent
+  ],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    SidebarModule,
+    ToastModule,
+    InputTextModule,
+    DialogModule,
+    ConfirmDialogModule,
+    TableModule,
+    ButtonModule,
+    FormsModule,
+    PanelMenuModule,
+    MasterDataModule,
+    PanelModule,
+    AppConfigModule,
+    TreeModule,
+    OrderListModule,
+    appCommonModule,
+    BreadcrumbModule,
+    MultiSelectModule,
+    DropdownModule,
+    //new imports -- fcny module --chakri
+    MatChipsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatTabsModule,
+    MatExpansionModule,
+    MatDialogModule,
+    PaginatorModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+  ],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
+      multi: true
+    },
+   
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Oct 17, 2015, 3:24:04 PM
+    Author     : Bagchi
+*/
+B {
+    font-weight: bold
+}
+
+#ttl0 {
+    padding-left: 50px;
+    height: 200px;
+}
+
+.ttl1 {
+    font-size: 15pt;
+    font-weight: bold;
+    font-family: Comic Sans MS;
+}
+
+.TextScrollStyle {
+    visibility: visible;
+    font-size: 13pt;
+    font-family: Comic Sans MS;
+    font-weight: bold;
+    padding-top: 0;
+}
+
+.welcomeText {
+    font-family: Comic Sans MS;
+    font-size: 15pt;
+    font-weight: bold;
+    color: #0E088E;
+}
+
+.rowStyle0 {
+    font-family: Comic Sans MS;
+    font-size: 10pt;
+    background-color: #F8E1FF;
+    color: #0914A8;
+    border: 1px solid #000080;
+}
+
+.rowStyle1 {
+    font-family: Comic Sans MS;
+    font-size: 10pt;
+    background-color: #E2FEE3;
+    color: #0914A8;
+    border: 1px solid #000080;
+}
+
+.headerStyle {
+    font-family: Comic Sans MS;
+    font-size: 10pt;
+    font-weight: bold;
+    background-color: #02738A;
+    color: #FFFFFF;
+    border: 1px solid #000080;
+}
+
+.buttonStyle {
+    font-family: Comic Sans MS;
+    font-size: 10pt;
+    font-weight: bold;
+    background-color: #AE1384;
+    color: #7BD7EA;
+    border: 1px solid #000000;
+    cursor: hand;
+    height: 25px;
+}
+
+.txtStyle_update {
+    font-family: Comic Sans MS;
+    font-size: 12pt;
+    font-weight: bold;
+    background-color: #FFFFCC;
+    color: #000080;
+    border: 2px solid #96964B;
+}
+
+.txtStyle {
+    font-family: Comic Sans MS;
+    font-size: 12pt;
+    font-weight: bold;
+    background-color: #FFFFCC;
+    color: #000080;
+    border-color: #000080;
+    border-width: 2px;
+    border-style: solid;
+}
+
+.innerTxtStyle {
+    font-family: Comic Sans MS;
+    font-size: 9pt;
+    font-weight: bold;
+    background-color: #FFFFCC;
+    color: #000080;
+    border: 1px solid #000000;
+}
+
+.innerTxtHeader {
+    font-family: Comic Sans MS;
+    font-size: 9pt;
+    font-weight: bold;
+    background-color: #66F4D5;
+    color: #4F2CB6;
+    border: 1px solid #000000;
+}
+
+.mandatoryStyle {
+    background-color: #CDE7FC;
+    color: #3704CE;
+}
+
+.browseButtonStyle {
+    font-family: Comic Sans MS;
+    font-size: 10pt;
+    font-weight: bold;
+    background-color: #AE1384;
+    color: #7BD7EA;
+    border: 1px solid #000000;
+    cursor: hand;
+    height: 18px;
+    width: 18px;
+}
+
+.readonlyStyle {
+    font-family: Comic Sans MS;
+    font-size: 12pt;
+    background-color: #A0B7F0;
+    color: #0000FF;
+    border: 2px solid #000080;
+}
+
+input.comboStyle {
+    height: 20px !important;
+    font-family: Comic Sans MS;
+    font-size: 9pt;
+}
+
+comboStyle {
+    font-size: 9pt !important;
+    font-family: Comic Sans MS;
+}
+
+select {
+    font-family: Comic Sans MS;
+    font-size: 8pt;
+}
+
+/* .myFooter .p-datatable .p-datatable-header  {
+    bottom: -600px;
+} */
+
+.myFooter .p-datatable {
+    /* background: rgba(0, 0, 0, 0.03);
+    color: #212529;
+    border: none;
+    border-width: 1px 0 0 0;
+    padding: 1rem 1rem;
+    font-weight: 600; */
+    /* position: relative; */
+    bottom: -60px;
+}
+
+.p-datatable .p-datatable-header {
+    background: #f4f4f4;
+    /* background: rgba(0, 0, 0, 0.03); */
+    color: #212529;
+    border: none;
+    border-width: 1px 0 0 0;
+    padding: 0rem 0rem !important;
+    font-weight: 600;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    /*background-image: linear-gradient(to left, rgba(12,163, 210,1), rgba(12,163, 210,0), rgba(12,163, 210,1));*/
+    background-image: url("../images/background.jpg");
+    background-size: 100% 100%;
+    border: none;
+}
+
+.mainTabDiv {
+    /* margin: 1% 1%; */
+    margin-left: 0%;
+    width: 96%;
+    /* border-style: ridge; */
+    border: 2px solid;
+    /* border-width: 2px; */
+    border-color: black;
+    box-shadow: 0 0 20px hsla(0, 2%, 2%, 1);
+    /* background: #f4f4f4; */
+    background-color: aliceblue;
+}
+
+.txnTabDiv {
+    margin: 1% 3%;
+    margin-left: -80px;
+    margin-right: 3%;
+    width: 105%;
+    /* border-style: ridge; */
+    border: 2px solid;
+    /* border-width: 2px; */
+    border-color: black;
+    background-color: aliceblue;
+}
+
+.chkBx {
+    font-family: Calibri;
+}
+
+.chkBxVald {
+    font-family: Calibri;
+}
+
+.tglChkImg {
+    width: 20px;
+    height: 20px;
+}
+
+.nav-link[data-toggle].collapsed:before {
+    content: " ▾";
+}
+
+.nav-link[data-toggle]:not(.collapsed):before {
+    content: " ▴";
+}
+
+#sidebar {
+    border: 2px solid blue;
+    -moz-box-shadow: 3px 0 5px 0 #555;
+    -webkit-box-shadow: 3px 0 5px 0 #555;
+    box-shadow: 3px 0 5px 0 #555;
+    min-height: 50vh !important;
+}
+
+.link-color {
+    color: navy;
+    font-weight: bold;
+}
+
+.link-color:hover {
+    color: red;
+    font-weight: bold;
+}
+
+.link-color-1 {
+    color: navy;
+}
+
+.link-color-1:hover {
+    color: green;
+}
+
+/********Changes by Ankita******************/
+textarea {
+    resize: none;
+}
+
+.p-datatable .p-datatable-tbody>tr.p-highlight {
+    background: silver;
+    color: #ffffff;
+}
+
+.p-datatable-thead {
+    font-family: sans-serif;
+}
+
+.p-datatable .p-datatable-thead>tr>th {
+    /* background-color: rgb(108, 247, 201); */
+    /* background-color: rgb(162 245 217); */
+    background-color: #2b2b50;
+    font-size: 16px;
+}
+
+th {
+    color: white !important;
+}
+
+.p-datatable.p-datatable-sm .p-datatable-thead>tr>th {
+    padding-top: 0.300%;
+    padding-bottom: 0.300%;
+    padding-left: 0.200%;
+    padding-right: 0%;
+}
+
+.p-datatable.p-datatable-sm .p-datatable-tbody>tr>td {
+    font-family: sans-serif;
+    font-size: 12px;
+    padding-top: 0.200%;
+    padding-bottom: 0.200%;
+    padding-right: 0.200%;
+    padding-left: 0.200%;
+}
+
+.p-input-icon-right>.p-inputtext {
+    font-family: sans-serif;
+}
+
+.p-inputtext {
+    font-family: sans-serif;
+    font-size: 12px;
+}
+
+.p-menuitem-text {
+    font-family: efframedium;
+    font-size: 18px;
+}
+
+.p-accordion .p-accordion-header .p-accordion-header-link {
+    padding: 0.43rem 0.5rem;
+    background: cadetblue;
+}
+
+.p-accordion .p-accordion-header:not(.p-disabled).p-highlight .p-accordion-header-link {
+    background: cadetblue;
+}
+
+.p-accordion .p-accordion-header:not(.p-disabled).p-highlight:hover .p-accordion-header-link {
+    background: darkcyan;
+}
+
+.p-accordion .p-accordion-header .p-accordion-header-link:focus {
+    background: darkcyan;
+}
+
+.p-accordion .p-accordion-header:not(.p-highlight):not(.p-disabled):hover .p-accordion-header-link {
+    background: darkcyan;
+}
+
+.p-component * {
+    text-overflow: ellipsis;
+}
+
+.p-datatable.p-datatable-gridlines .p-paginator-bottom {
+    border-top: 2px solid;
+}
+
+.p-datatable .p-sortable-column.p-highlight {
+    background: #bc1255;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+    background: #bc1255;
+    border-color: #bc1255;
+}
+
+.p-paginator .p-paginator-current {
+    color: black;
+}
+
+.p-panelmenu-header-link {
+    background: violet;
+}
+
+.p-dialog {
+    border-style: ridge;
+    border: 3px solid;
+    border-color: #263e51;
+}
+
+.p-dialog .p-dialog-header {
+    background: #263e51;
+    border-style: groove;
+    border: 2px solid;
+    border-color: cadetblue;
+    padding: 1%;
+}
+
+.p-dialog .p-dialog-footer button {
+    float: right;
+}
+
+.p-button.p-button-raised {
+    font-weight: 700;
+    transition-duration: 0.5s;
+}
+
+.plusBtn {
+    font-size: 0.2%;
+    margin-left: 20%;
+    width: 170% !important;
+}
+
+
+/*.p-button-outlined.p-button-rounded.p-button-raised.p-button-success:hover:enabled {
+    background-color: #34A835;
+    color: white;
+}
+.p-button-outlined.p-button-rounded.p-button-raised.p-button-help:hover:enabled {
+    background-color: #9C27B0;
+    color: white;
+}
+.p-button-outlined.p-button-rounded.p-button-raised.p-button-success:hover:enabled {
+    background-color: #34A835;
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+    color: white;
+}
+
+.p-button-outlined.p-button-rounded.p-button-raised.p-button-danger:hover:enabled {
+    background-color: #e91224;
+    color: white;
+}*/
+
+.p-button-outlined.p-button-rounded.p-button-raised.p-button-info:hover:enabled {
+    background-color: #007ad9;
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+    color: white;
+}
+
+
+.irm.p-button-success:enabled {
+    background-color: #34A835;
+    box-shadow: 0 0 10px hsla(0, 2%, 2%, 1);
+    color: white;
+}
+
+.irm.p-button-success:focus:enabled {
+    background-color: #34A835 !important;
+    box-shadow: 0 0 20px red !important;
+    color: white;
+}
+
+.irm.p-button-success:hover:enabled {
+    background-color: #34A835;
+    color: white;
+}
+
+.irm.p-button-help:enabled {
+    background-color: #9C27B0;
+    box-shadow: 0 0 10px hsla(0, 2%, 2%, 1);
+    color: white;
+}
+
+.irm.p-button-help:hover:enabled {
+    background-color: #9C27B0;
+    color: white;
+}
+
+.irm.p-button-help:focus:enabled {
+    background-color: #9C27B0;
+    box-shadow: 0 0 20px red !important;
+    color: white;
+}
+
+.irm.p-button-danger:enabled {
+    background-color: #e91224;
+    box-shadow: 0 0 10px hsla(0, 2%, 2%, 1);
+    color: white;
+}
+.irm.p-button-danger:hover:enabled {
+    background-color: #e91224;
+    color: white;
+}
+.irm.p-button-danger:focus:enabled {
+    background-color: #e91224;
+    box-shadow: 0 0 20px black !important;
+    color: white;
+}
+
+.irm.p-button-info:enabled {
+    background-color: #007ad9;
+    box-shadow: 0 0 10px hsla(0, 2%, 2%, 1);
+    color: white;
+}
+.irm.p-button-info:hover:enabled {
+    background-color: #007ad9;
+    color: white;
+}
+.irm.p-button-info:focus:enabled {
+    background-color: #007ad9;
+    box-shadow: 0 0 20px red !important;
+    color: white;
+}
+
+.irm.p-button-lg:enabled {
+    background-color: darkred;
+    padding: 2px;
+    box-shadow: 0 0 10px hsla(0, 2%, 2%, 1);
+    color: white;
+}
+.irm.p-button-lg:hover:enabled {
+    background-color: darkred;
+    padding: 2px;
+    color: white;
+}
+.irm.p-button-lg:focus:enabled {
+    background-color: darkred;
+    padding: 2px;
+    box-shadow: 0 0 20px red !important;
+    color: white;
+}
+
+
+
+
+
+
+.p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+    background: #bc1255;
+    border-color: red;
+    color: #ffffff;
+}
+
+.p-column-filter-row .p-column-filter-menu-button {
+    margin-left: 0%;
+    margin-right: 0%;
+    justify-content: right;
+    width: auto;
+}
+
+.p-column-filter-row .p-column-filter-clear-button {
+    margin-left: 0.5rem;
+    display: none;
+}
+
+.p-tabview-title {
+    line-height: 0.5 !important;
+}
+
+/*********************************************/
+.p-checkbox .p-checkbox-box {
+    width: 17px;
+    height: 17px;
+}
+
+.p-checkbox .p-checkbox-box .p-checkbox-icon {
+    font-size: 10px;
+}
+
+.p-disabled,
+.p-component:disabled {
+    color: darkblue;
+    font-weight: bold;
+    /* cursor: default !important; */
+    /* pointer-events: none; */
+}
+
+/*added by chakri as on modal open, the parent container is getting a scroll down*/
+.mat-dialog-container {
+    padding: 0px !important;
+}
+
+.caption-div {
+    color: aliceblue;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    background-image: linear-gradient(to right, rgba(1, 96, 100, 1), rgba(1, 96, 100, 0));
+}
+
+
+
+#queryData {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    border-collapse: collapse;
+    width: 60%;
+    outline: 1px solid black;
+    box-shadow: 0 0 20px hsla(0, 2%, 2%, 1);
+  }
+  
+  #queryData td, #queryData th {
+    border: 0px solid teal;
+    padding: 5px;
+  }
+  
+  #queryData tr:nth-child(even){background-color: white;}
+  #queryData tr:nth-child(odd){background-color: white;}
+  
+  #queryData tr:hover {background-color: #ddd;}
+  
+  .queryData-th {
+    padding-left: 5px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    text-align: left;
+    font-size: 20px;
+    color: aliceblue !important;
+    background-image: linear-gradient(to right, rgba(1, 96, 100, 1), rgba(1, 96, 100, 0));
+  }
+
+  .irm.p-datatable-sm {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
+    width: 100% !important;
+  }
+
+
