@@ -5,11 +5,37 @@
 2025-07-30T11:34:22.687+0530    info    prometheus-nginxlog-exporter/main.go:139        starting listener for namespace nginx
 2025-07-30T11:34:22.687+0530    info    prometheus-nginxlog-exporter/main.go:148        running HTTP server on address 0.0.0.0:4040, serving metrics at /metrics
 
-https://accounts.google.com/ServiceLogin?passive=1209600&continue=https://cloud.google.com/innovators/getcertified&followup=https://cloud.google.com/innovators/getcertified
+Below Storage to be decided  by AO
 
-https://www.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm%7ERational&product=ibm/Rational/IBM+Installation+Manager&release=1.10.1.2&platform=Windows&function=fixId&fixids=1.10.1.2-IBMIM-WIN64-20250605_1202&useReleaseAsTarget=true&includeRequisites=1&includeSupersedes=0&downloadMethod=http
+Object Storage (For Quay)
+URL
+Bucket Name
+Access Key
+Secret Key
+Valid Certificate
 
-RHJ62BKpuGV!cj3
+Object Storage (For Loki)
+URL
+Bucket Name
+Access Key
+Secret Key
+Valid Certificate
+
+NFS (For Internal Registry)
+Storage - 500 GB
+NFS Path
+Access  - Read Write
+
+NFS (ETCD Cron Job)
+Storage - 750 GB
+NFS Path -
+Access - Read Write
+
+NFS (3Scale)
+Storage - 
+NFS Path -
+Access - Read Write
+
 
 crc setup --log-level debug
 DEBU CRC version: 2.53.0+a6f712
