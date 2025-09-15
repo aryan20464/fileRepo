@@ -1,3 +1,59 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-cmm-backend
+  namespace: uatcmm
+  labels:
+    app: nginx-cmm-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-cmm-backend
+  template:
+    metadata:
+      labels:
+        app: nginx-cmm-backend
+    spec:
+      containers:
+        - name: nginx-cmm-backend
+          image: tkgsharedharbor.corp.ad.sbi/uat-cmm/hrm_kube_backend:4.0
+          ports:
+            - containerPort: 9444
+          imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            runAsUser: 1001
+            seccompProfile:
+              type: RuntimeDefault
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-cmm-backend-service
+  namespace: uatcmm
+spec:
+  selector:
+    app: nginx-cmm-backend
+  type: ClusterIP
+  ports:
+    - port: 9444
+      targetPort: 9444
+
+
+
+
+
+
+
+
+
+
 [weblogic@tss-ideaappuat nginx-log-exporter]$ ./prometheus-nginxlog-exporter -config-file logexporter.yaml -log-level debug
 2025-07-30T11:34:22.685+0530    info    prometheus-nginxlog-exporter/main.go:162        loading configuration file logexporter.yaml
 2025-07-30T11:34:22.686+0530    warn    config/struct_namespace.go:98   No globs for /node/nginx/logs/access.log
