@@ -15,7 +15,8 @@ NAME      CLASS                 HOSTS         ADDRESS        PORTS   AGE
 cmm-ing   cmmuat-ingressclass   cmm-uat.sbi   10.177.107.9   80      74d
 
 
-
+2025/09/16 06:37:15 [emerg] 1#1: open() "/var/run/nginx.pid" failed (13: Permission denied)
+nginx: [emerg] open() "/var/run/nginx.pid" failed (13: Permission denied)
 
 
 
