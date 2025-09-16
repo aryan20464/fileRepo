@@ -1,3 +1,5 @@
+Error: container has runAsNonRoot and image has non-numeric user (nginx), cannot verify user is non-root (pod: "nginx-cmm-bbb847c9-99fpw_uatcmm(57b8f422-5304-406d-b1a1-ffd375e95981)", container: nginx-cmm)
+
 # Use only NGINX, no Node or NPM involved
 FROM tkgsharedharbor.corp.ad.sbi/uat-cmm/nginx:latest
 
