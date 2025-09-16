@@ -1,3 +1,4 @@
+export JAVA_OPTS="-Xms512M -Xmx1024M -XX:+UseG1GC -Djava.security.egd=file:/dev/./urandom"
 D:\chakri\tanzu\ks-vks\test>kubectl logs nginx-cmm-5f5c5576bc-w6mtg -n uatcmm
 /docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
 /docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
