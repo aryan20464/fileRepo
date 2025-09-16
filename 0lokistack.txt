@@ -1,64 +1,28 @@
-# Use a base image with Node.js and npm for building
-FROM tkgsharedharbor.corp.ad.sbi/uat-cmm/node:14 AS builder
-
-# Set the working directory in the container
-WORKDIR /app
-
-# Copy package.json and package-lock.json files separately
-COPY package.json . 
-COPY angular.json .
-COPY karma.conf.js .
-COPY package.json .
-COPY tsconfig.app.json .
-COPY tsconfig.json .
-COPY tsconfig.spec.json .
-COPY tslint.json .
-
-#COPY package-lock.json .
-
-# Install project dependencies
-RUN npm config set proxy http://swg.sbi.co.in:9090
-RUN npm config set https-proxy http://swg.sbi.co.in:9090
-RUN npm install
-
-
-# Copy the necessary files for building the Angular app
-COPY angular.json . 
-COPY tsconfig.json . 
-COPY src ./src
-
-# Install the Angular CLI globally (you can skip this if it's already installed)
-RUN npm install -g @angular/cli
-
-# Build the Angular app for production
-RUN npm run buildprod
-
-# Use a smaller base image for the runtime
+# Use only NGINX, no Node or NPM involved
 FROM tkgsharedharbor.corp.ad.sbi/uat-cmm/nginx:latest
 
-# delete the default configuration file and copy a custom configuration file in its place
+# Start as root to fix permissions
+USER root
+
+# Remove default site config and add your own (optional)
 RUN rm /etc/nginx/conf.d/default.conf
-#COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# Copy the built Angular app from the builder stage to the runtime image
-COPY --from=builder /app/dist/rfm/ /usr/share/nginx/html/
+# Copy the already-built Angular app into the image
+COPY dist/rfm/ /usr/share/nginx/html/
 
-# Set the appropriate permissions for the NGINX directories
-# RUN chmod -R 755 /usr/share/nginx/html
-# Set the appropriate permissions for the NGINX directories
-
+# Set proper ownership to nginx user (UID 101)
 RUN chown -R nginx:nginx /usr/share/nginx/html && \
     chown -R nginx:nginx /etc/nginx && \
     chown -R nginx:nginx /var/cache/nginx && \
     chown -R nginx:nginx /var/log/nginx
 
-# Expose the default port for serving Angular apps (usually 80)
-EXPOSE 4201
+# Drop to non-root user
+USER nginx
 
-# Start the NGINX web server
+EXPOSE 80
+
 CMD ["nginx", "-g", "daemon off;"]
-
 
 
 
