@@ -19,7 +19,39 @@ cmm-ing   cmmuat-ingressclass   cmm-uat.sbi   10.177.107.9   80      74d
 nginx: [emerg] open() "/var/run/nginx.pid" failed (13: Permission denied)
 
 
-
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    ako.vmware.com/controller-cluster-uuid: cluster-13e84635-e75a-4134-b68f-cd2069bd5e88
+    ako.vmware.com/host-fqdn-vs-uuid-map: '{"cmm-uat.sbi":"virtualservice-9436f684-5398-4708-b213-d4dfbe5ac592"}'
+    ako.vmware.com/tenant-name: admin
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"networking.k8s.io/v1","kind":"Ingress","metadata":{"annotations":{},"name":"cmm-ing","namespace":"uatcmm"},"spec":{"ingressClassName":"cmmuat-ingressclass","rules":[{"host":"cmm-uat.sbi","http":{"paths":[{"backend":{"service":{"name":"kubernetes","port":{"number":443}}},"path":"/","pathType":"ImplementationSpecific"}]}}]}}
+  creationTimestamp: "2025-07-03T15:54:05Z"
+  generation: 1
+  name: cmm-ing
+  namespace: uatcmm
+  resourceVersion: "5989"
+  uid: 3298ea09-e7a8-4d93-b092-5efa951547f1
+spec:
+  ingressClassName: cmmuat-ingressclass
+  rules:
+  - host: cmm-uat.sbi
+    http:
+      paths:
+      - backend:
+          service:
+            name: kubernetes
+            port:
+              number: 443
+        path: /
+        pathType: ImplementationSpecific
+status:
+  loadBalancer:
+    ingress:
+    - hostname: cmm-uat.sbi
+      ip: 10.177.107.9
 
 
 
