@@ -1,3 +1,14 @@
+/devtools/maven/apache-maven-3.9.11/bin/mvn --version
+Failed to load native library:jansi-2.4.2-89cd0d7fff2e5a04-libjansi.so. The native library file at /tmp/jansi-2.4.2-89cd0d7fff2e5a04-libjansi.so is not executable, make sure that the directory is mounted on a partition without the noexec flag, or set the jansi.tmpdir system property to point to a proper location.  osinfo: Linux/x86_64
+java.lang.UnsatisfiedLinkError: /tmp/jansi-2.4.2-89cd0d7fff2e5a04-libjansi.so: /tmp/jansi-2.4.2-89cd0d7fff2e5a04-libjansi.so: failed to map segment from shared object
+Apache Maven 3.9.11 (3e54c93a704957b63ee3494413a2b544fd3d825b)
+Maven home: /devtools/maven/apache-maven-3.9.11
+Java version: 1.8.0_271, vendor: Oracle Corporation, runtime: /usr/java/jdk1.8.0_271-amd64/jre
+Default locale: en_IN, platform encoding: UTF-8
+OS name: "linux", version: "4.18.0-553.66.1.el8_10.x86_64", arch: "amd64", family: "unix"
+
+
+
 https://gitlab.com/gitlab-org/gitlab-runner/-/releases/v16.8.1/downloads/packages/rpm/gitlab-runner_amd64.rpm
 
 export JAVA_OPTS="-Xms512M -Xmx1024M -XX:+UseG1GC -Djava.security.egd=file:/dev/./urandom"
