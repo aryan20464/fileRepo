@@ -2,24 +2,29 @@ stages:
   - build
 
 variables:
-  # Custom Maven repository location inside your runner folder
   MAVEN_REPO: "/devtools/gitlab-runner/.m2/repository"
   MAVEN_CLI_OPTS: "-B -Dmaven.test.skip=true -Dmaven.repo.local=$MAVEN_REPO"
+  JAVA_HOME: "/devtools/java/jdk1.8.0_401"
+  MAVEN_HOME: "/devtools/maven/apache-maven-3.8.5"
 
 build-war:
   stage: build
   script:
     - echo "Using Maven repo at $MAVEN_REPO"
     - mkdir -p $MAVEN_REPO
+    - export PATH="$JAVA_HOME/bin:$MAVEN_HOME/bin:$PATH"
+
+    # Verify Java & Maven versions being used
+    - java -version
+    - mvn -version
+
+    # Build the WAR
     - mvn $MAVEN_CLI_OPTS clean package
-    # If you use Gradle instead, comment the line above and use:
-    # - ./gradlew clean build -x test --gradle-user-home /devtools/gitlab-runner/.gradle
   artifacts:
     paths:
       - target/*.war
   only:
-    - release   # change to the branch you want
-
+    - release   # trigger only when pushing to release branch
 
 
 
