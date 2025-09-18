@@ -1,15 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.7.0</version>
+		<relativePath/>
+		<!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.sbi</groupId>
+	<artifactId>dbcon</artifactId>
+	<packaging>jar</packaging>
+	<name>dbcon</name>
+	<description>Indents Service For RFM</description>
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-envers</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc8</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.13.4</version>
+		</dependency>
+		<!-- JSON WEB TOKEN -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jetbrains</groupId>
+			<artifactId>annotations</artifactId>
+			<version>17.0.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<!--added by chakri on 20241023 for sending email -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+	</dependencies>
+	<build>
+		<finalName>${project.artifactId}</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.properties</include>
+					<include>**/*.txt</include>
+				</includes>
+			</resource>
+		</resources>
+	</build>
+	<profiles>
+		<profile>
+			<id>local2</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<spring.profiles.active>local2</spring.profiles.active>
+			</properties>
+		</profile>
+		<profile>
+			<id>local1</id>
+			<properties>
+				<spring.profiles.active>local1</spring.profiles.active>
+			</properties>
+		</profile>
+		<profile>
+			<id>local</id>
+			<properties>
+				<spring.profiles.active>local</spring.profiles.active>
+			</properties>
+		</profile>
+		<profile>
+			<id>uat</id>
+			<properties>
+				<spring.profiles.active>uat</spring.profiles.active>
+			</properties>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<spring.profiles.active>prod</spring.profiles.active>
+			</properties>
+		</profile>
+		<profile>
+			<id>dr</id>
+			<properties>
+				<spring.profiles.active>dr</spring.profiles.active>
+			</properties>
+		</profile>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<spring.profiles.active>dev</spring.profiles.active>
+			</properties>
+		</profile>
+	</profiles>
+</project>
+
 Running with gitlab-runner 16.8.1 (a6097117)
   on custom-runner TAP5h3h8a, system ID: s_03cc683b0faa
 Preparing the "shell" executor
 00:00
 Using Shell (bash) executor...
 Preparing environment
-00:00
+00:01
 Running on tss-ideasvnuat...
 Getting source from Git repository
-00:01
+00:00
+Fetching changes with git depth set to 20...
+Reinitialized existing Git repository in /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/.git/
+Checking out b9b53ae6 as detached HEAD (ref is main)...
+Skipping Git submodules setup
 Executing "step_script" stage of the job script
-00:05
+00:03
 $ echo "Using Maven repo at $MAVEN_REPO"
 Using Maven repo at /devtools/gitlab-runner/.m2/repository
 $ mkdir -p $MAVEN_REPO
@@ -38,20 +245,20 @@ $ mvn $MAVEN_CLI_OPTS clean package
 [INFO] ---------------------------< com.sbi:dbcon >----------------------------
 [INFO] Building dbcon 2.7.0
 [INFO] --------------------------------[ jar ]---------------------------------
-[INFO] Downloading from central: https://repo.maven.apache.org/maven2/net/minidev/json-smart/2.4.8/json-smart-2.4.8.pom
-[INFO] Downloading from central: https://repo.maven.apache.org/maven2/net/bytebuddy/byte-buddy/1.12.10/byte-buddy-1.12.10.pom
-[INFO] Downloading from central: https://repo.maven.apache.org/maven2/net/bytebuddy/byte-buddy-agent/1.12.10/byte-buddy-agent-1.12.10.pom
-[INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/glassfish/jaxb/jaxb-runtime/2.3.6/jaxb-runtime-2.3.6.pom
-[INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/apache/httpcomponents/httpcore/4.4.15/httpcore-4.4.15.pom
-[INFO] Downloading from central: https://repo.maven.apache.org/maven2/commons-codec/commons-codec/1.15/commons-codec-1.15.pom
-[INFO] Downloading from central: https://repo.maven.apache.org/maven2/com/sun/activation/jakarta.activation/1.2.2/jakarta.activation-1.2.2.pom
+[WARNING] The POM for net.minidev:json-smart:jar:2.4.8 is missing, no dependency information available
+[WARNING] The POM for net.bytebuddy:byte-buddy:jar:1.12.10 is missing, no dependency information available
+[WARNING] The POM for net.bytebuddy:byte-buddy-agent:jar:1.12.10 is missing, no dependency information available
+[WARNING] The POM for org.glassfish.jaxb:jaxb-runtime:jar:2.3.6 is missing, no dependency information available
+[WARNING] The POM for org.apache.httpcomponents:httpcore:jar:4.4.15 is missing, no dependency information available
+[WARNING] The POM for commons-codec:commons-codec:jar:1.15 is missing, no dependency information available
+[WARNING] The POM for com.sun.activation:jakarta.activation:jar:1.2.2 is missing, no dependency information available
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  2.827 s
-[INFO] Finished at: 2025-09-18T16:51:34+05:30
+[INFO] Total time:  0.899 s
+[INFO] Finished at: 2025-09-18T17:15:50+05:30
 [INFO] ------------------------------------------------------------------------
-[ERROR] Failed to execute goal on project dbcon: Could not resolve dependencies for project com.sbi:dbcon:jar:2.7.0: Failed to collect dependencies at org.springframework.boot:spring-boot-starter-test:jar:2.7.0 -> com.jayway.jsonpath:json-path:jar:2.7.0 -> net.minidev:json-smart:jar:2.4.8: Failed to read artifact descriptor for net.minidev:json-smart:jar:2.4.8: Could not transfer artifact net.minidev:json-smart:pom:2.4.8 from/to central (https://repo.maven.apache.org/maven2): transfer failed for https://repo.maven.apache.org/maven2/net/minidev/json-smart/2.4.8/json-smart-2.4.8.pom: Unknown host repo.maven.apache.org: Name or service not known -> [Help 1]
+[ERROR] Failed to execute goal on project dbcon: Could not resolve dependencies for project com.sbi:dbcon:jar:2.7.0: The following artifacts could not be resolved: net.minidev:json-smart:jar:2.4.8, org.slf4j:slf4j-api:jar:1.7.36, net.bytebuddy:byte-buddy:jar:1.12.10, net.bytebuddy:byte-buddy-agent:jar:1.12.10, org.glassfish.jaxb:jaxb-runtime:jar:2.3.6, org.apache.httpcomponents:httpcore:jar:4.4.15, commons-codec:commons-codec:jar:1.15, com.sun.activation:jakarta.activation:jar:1.2.2: Cannot access central (https://repo.maven.apache.org/maven2) in offline mode and the artifact net.minidev:json-smart:jar:2.4.8 has not been downloaded from it before. -> [Help 1]
 [ERROR] 
 [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
 [ERROR] Re-run Maven using the -X switch to enable full debug logging.
@@ -61,6 +268,8 @@ $ mvn $MAVEN_CLI_OPTS clean package
 Cleaning up project directory and file based variables
 00:00
 ERROR: Job failed: exit status 1
+
+
 
 
 
