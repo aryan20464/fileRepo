@@ -1,3 +1,12 @@
+[[runners]]
+  name = "custom-runner"
+  url = "https://gitlab.example.com:10000/"
+  token = "REGISTERED_TOKEN_FROM_GITLAB"
+  executor = "shell"
+  tls-ca-file = "/devtools/gitlab-runner/gitlab.crt"
+
+
+
 /devtools/maven/apache-maven-3.9.11/bin/mvn --version
 Failed to load native library:jansi-2.4.2-89cd0d7fff2e5a04-libjansi.so. The native library file at /tmp/jansi-2.4.2-89cd0d7fff2e5a04-libjansi.so is not executable, make sure that the directory is mounted on a partition without the noexec flag, or set the jansi.tmpdir system property to point to a proper location.  osinfo: Linux/x86_64
 java.lang.UnsatisfiedLinkError: /tmp/jansi-2.4.2-89cd0d7fff2e5a04-libjansi.so: /tmp/jansi-2.4.2-89cd0d7fff2e5a04-libjansi.so: failed to map segment from shared object
