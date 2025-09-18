@@ -1,3 +1,74 @@
+Running with gitlab-runner 16.8.1 (a6097117)
+  on custom-runner TAP5h3h8a, system ID: s_03cc683b0faa
+Preparing the "shell" executor
+00:00
+Using Shell (bash) executor...
+Preparing environment
+00:00
+Running on tss-ideasvnuat...
+Getting source from Git repository
+00:01
+Fetching changes with git depth set to 20...
+Reinitialized existing Git repository in /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/.git/
+Checking out 4efca30f as detached HEAD (ref is main)...
+Skipping Git submodules setup
+Executing "step_script" stage of the job script
+00:03
+$ echo "Using Maven repo at $MAVEN_REPO"
+Using Maven repo at /devtools/gitlab-runner/.m2/repository
+$ mkdir -p $MAVEN_REPO
+$ export PATH="$MAVEN_HOME/bin:$PATH"
+$ java -version
+java version "1.8.0_271"
+Java(TM) SE Runtime Environment (build 1.8.0_271-b09)
+Java HotSpot(TM) 64-Bit Server VM (build 25.271-b09, mixed mode)
+$ mvn -version
+Apache Maven 3.8.5 (3599d3414f046de2324203b78ddcf9b5e4388aa0)
+Maven home: /devtools/maven/apache-maven-3.8.5
+Java version: 1.8.0_271, vendor: Oracle Corporation, runtime: /usr/java/jdk1.8.0_271-amd64/jre
+Default locale: en_IN, platform encoding: UTF-8
+OS name: "linux", version: "4.18.0-553.66.1.el8_10.x86_64", arch: "amd64", family: "unix"
+$ mvn $MAVEN_CLI_OPTS clean package
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.sbi:dbcon:jar:2.7.0
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: com.oracle.database.jdbc:ojdbc8:jar -> duplicate declaration of version (?) @ line 127, column 15
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] 
+[INFO] ---------------------------< com.sbi:dbcon >----------------------------
+[INFO] Building dbcon 2.7.0
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:3.2.0:clean (default-clean) @ dbcon ---
+[INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/codehaus/plexus/plexus-utils/1.1/plexus-utils-1.1.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  1.657 s
+[INFO] Finished at: 2025-09-18T16:38:57+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-clean-plugin:3.2.0:clean (default-clean) on project dbcon: Execution default-clean of goal org.apache.maven.plugins:maven-clean-plugin:3.2.0:clean failed: Plugin org.apache.maven.plugins:maven-clean-plugin:3.2.0 or one of its dependencies could not be resolved: Could not transfer artifact org.codehaus.plexus:plexus-utils:jar:1.1 from/to central (https://repo.maven.apache.org/maven2): transfer failed for https://repo.maven.apache.org/maven2/org/codehaus/plexus/plexus-utils/1.1/plexus-utils-1.1.jar: Unknown host repo.maven.apache.org: Name or service not known -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/PluginResolutionException
+Cleaning up project directory and file based variables
+00:00
+ERROR: Job failed: exit status 1
+
+
+
+
+
+
+
+
 stages:
   - build
 
