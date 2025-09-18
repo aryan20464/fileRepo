@@ -1,3 +1,20 @@
+mvn dependency:resolve-sources -U
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective settings
+[WARNING] Unrecognised tag: 'servers' (position: START_TAG seen ...</server>\r\n    -->\r\n<servers>... @135:10)  @ D:\dev-tools\apache-maven-3.8.5-bin\apache-maven-3.8.5\conf\settings.xml, line 135, column 10
+[WARNING]
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  0.832 s
+[INFO] Finished at: 2025-09-18T17:27:48+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Could not find goal 'resolve-sources' in plugin org.apache.maven.plugins:maven-dependency-plugin:3.3.0 among available goals analyze, analyze-dep-mgt, analyze-duplicate, analyze-only, analyze-report, build-classpath, collect, copy, copy-dependencies, display-ancestors, get, go-offline, help, list, list-classes, list-repositories, properties, purge-local-repository, resolve, resolve-plugins, sources, tree, unpack, unpack-dependencies -> [Help 1]
+[ERROR]
+
+
+
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
