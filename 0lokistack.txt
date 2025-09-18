@@ -1,3 +1,35 @@
+stages:
+  - build
+
+variables:
+  # Custom Maven repository location inside your runner folder
+  MAVEN_REPO: "/devtools/gitlab-runner/.m2/repository"
+  MAVEN_CLI_OPTS: "-B -Dmaven.test.skip=true -Dmaven.repo.local=$MAVEN_REPO"
+
+build-war:
+  stage: build
+  script:
+    - echo "Using Maven repo at $MAVEN_REPO"
+    - mkdir -p $MAVEN_REPO
+    - mvn $MAVEN_CLI_OPTS clean package
+    # If you use Gradle instead, comment the line above and use:
+    # - ./gradlew clean build -x test --gradle-user-home /devtools/gitlab-runner/.gradle
+  artifacts:
+    paths:
+      - target/*.war
+  only:
+    - release   # change to the branch you want
+
+
+
+
+
+
+
+
+
+
+
 [[runners]]
   name = "custom-runner"
   url = "https://gitlab.example.com:10000/"
