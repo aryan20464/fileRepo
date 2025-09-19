@@ -1,3 +1,41 @@
+stages:
+  - build
+
+variables:
+  MAVEN_REPO: "/devtools/gitlab-runner/.m2/repository"
+  MAVEN_CLI_OPTS: "-B -o  -Dmaven.test.skip=true -Dmaven.repo.local=$MAVEN_REPO -Djansi.tmpdir=/devtools/maven/apache-maven-3.8.5/maven-tmp"
+  MAVEN_HOME: "/devtools/maven/apache-maven-3.9.11"
+
+build-war:
+  stage: build
+  tags:
+    - cicd-fileupload-auto
+  script:
+    - echo "Using Maven repo at $MAVEN_REPO"
+    - mkdir -p $MAVEN_REPO
+    - export PATH="$MAVEN_HOME/bin:$PATH"
+
+    # Verify Java & Maven versions being used
+    - java -version
+    - java -version
+    - mvn -version
+
+    # Build the WAR
+    - mvn $MAVEN_CLI_OPTS clean package
+  artifacts:
+    paths:
+      - target/*.war
+  only:
+    - rfm-integration   # trigger only when pushing to release branch
+
+
+
+
+
+
+
+
+
 Running with gitlab-runner 16.8.1 (a6097117)
   on custom-runner TAP5h3h8a, system ID: s_03cc683b0faa
 Preparing the "shell" executor
