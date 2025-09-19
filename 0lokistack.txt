@@ -1,3 +1,10 @@
+Failed to execute goal org.apache.maven.plugins:maven-clean-plugin:3.2.0:clean (default-clean) on project dbcon: Execution default-clean of goal org.apache.maven.plugins:maven-clean-plugin:3.2.0:clean failed: Plugin org.apache.maven.plugins:maven-clean-plugin:3.2.0 or one of its dependencies could not be resolved: Cannot access central (https://repo.maven.apache.org/maven2) in offline mode and the artifact org.codehaus.plexus:plexus-utils:jar:1.1 has not been downloaded from it before
+
+
+
+
+
+
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
