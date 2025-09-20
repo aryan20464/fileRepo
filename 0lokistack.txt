@@ -1,3 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-cmm
+  namespace: uatcmm
+  labels:
+    app: nginx-cmm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-cmm
+  template:
+    metadata:
+      labels:
+        app: nginx-cmm
+    spec:
+      # Pod-level security context to run as a non-root user and set seccomp profile
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: nginx-cmm
+          image: tkgsharedharbor.corp.ad.sbi/idea-indents-dev/rfm-ui:1.0
+          ports:
+            - containerPort: 8080 # Unprivileged NGINX runs on port 8080
+          imagePullPolicy: Always
+          # Container-level security context
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-cmm-service
+  namespace: uatcmm
+spec:
+  selector:
+    app: nginx-cmm
+  type: ClusterIP
+  ports:
+    - port: 4201
+      targetPort: 8080
+      #nodePort: 30000  # Choose an unused NodePort in the 30000–32767 range
+
+
+
 stages:
   - build
 
