@@ -15,6 +15,73 @@ spec:
       {{- end }}
 
 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-cmm
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: nginx-cmm
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: nginx-cmm
+  template:
+    metadata:
+      labels:
+        app: nginx-cmm
+    spec:
+      securityContext:
+        runAsNonRoot: {{ .Values.securityContext.pod.runAsNonRoot }}
+        runAsUser: {{ .Values.securityContext.pod.runAsUser }}
+        seccompProfile:
+          type: {{ .Values.securityContext.pod.seccompProfile }}
+      containers:
+        - name: nginx-cmm
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.containerPort }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            allowPrivilegeEscalation: {{ .Values.securityContext.container.allowPrivilegeEscalation }}
+            capabilities:
+              drop:
+              {{- range .Values.securityContext.container.dropCapabilities }}
+                - {{ . }}
+              {{- end }}
+
+
+
+
+
+namespace: uatcmm
+
+replicaCount: 1
+
+image:
+  repository: imagelib.chi/idea-indents-dev/rfm-ui
+  tag: "1.0"
+  pullPolicy: Always
+
+service:
+  name: nginx-cmm-service
+  type: ClusterIP
+  port: 4201
+  targetPort: 8080
+  # nodePort: 30000   # Uncomment if using NodePort
+
+containerPort: 8080
+
+securityContext:
+  pod:
+    runAsNonRoot: true
+    runAsUser: 101
+    seccompProfile: RuntimeDefault
+  container:
+    allowPrivilegeEscalation: false
+    dropCapabilities:
+      - ALL
 
 
 
