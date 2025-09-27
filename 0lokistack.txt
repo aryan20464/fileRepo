@@ -1,56 +1,57 @@
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx-hdg-inward
-  namespace: uatcmm
-  labels:
-    app: nginx-hdg-inward
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: nginx-hdg-inward
-  template:
-    metadata:
-      labels:
-        app: nginx-hdg-inward
-    spec:
-      containers:
-        - name: nginx-hdg-inward
-          image: sampleregistry/hdg-idh:1.0
-          ports:
-            - containerPort: 4202
-          imagePullPolicy: Always
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            runAsNonRoot: true
-            runAsUser: 1001
-            seccompProfile:
-              type: RuntimeDefault
-          resources:
-            requests:
-              memory: "512Mi"
-              cpu: "250m"
-            limits:
-              memory: "1Gi"
-              cpu: "500m"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: nginx-idh-service
-  namespace: uatcmm
-spec:
-  selector:
-    app: nginx-hdg-inward
-  type: ClusterIP
-  ports:
-    - port: 4202
-      targetPort: 4202
+stages:
+  - build
+  - deploy
+
+variables:
+  MAVEN_REPO: "/devtools/gitlab-runner/.m2/repository"
+  MAVEN_CLI_OPTS: "-B -o -Dmaven.test.skip=true -Dmaven.repo.local=$MAVEN_REPO -Djansi.tmpdir=/devtools/maven/apache-maven-3.8.5/maven-tmp"
+  MAVEN_HOME: "/devtools/maven/apache-maven-3.8.5"
+  KUBE_CONFIG: "/devtools/kubeconfig/config"  # Path to kubeconfig for VKS
+
+build-war:
+  stage: build
+  tags:
+    - cicd-fileupload-auto
+  script:
+    - echo "Using Maven repo at $MAVEN_REPO"
+    - mkdir -p $MAVEN_REPO
+    - export PATH="$MAVEN_HOME/bin:$PATH"
+    - echo "Java version:"
+    - java -version
+    - echo "Maven version:"
+    - mvn -version
+    - echo "Building WAR file"
+    - mvn $MAVEN_CLI_OPTS clean package -Puat
+  artifacts:
+    paths:
+      - target/*.war
+  only:
+    - rfm-integration
+
+build-and-deploy:
+  stage: deploy
+  tags:
+    - cicd-fileupload-auto
+  dependencies:
+    - build-war
+  script:
+    - echo "Generating human-readable timestamp for Docker image tag"
+    - TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+    - DOCKER_IMAGE="myregistry.example.com/myapp:${CI_COMMIT_SHORT_SHA}-${TIMESTAMP}"
+    - echo "Docker image will be: $DOCKER_IMAGE"
+
+    - echo "Building Docker image using Dockerfile"
+    - docker build -t $DOCKER_IMAGE .
+
+    - echo "Pushing Docker image to registry"
+    - docker push $DOCKER_IMAGE
+
+    - echo "Deploying to Kubernetes (VKS) using dynamic image"
+    - export KUBECONFIG=$KUBE_CONFIG
+    - kubectl set image -f k8s-deployment.yaml nginx-hdg-inward=$DOCKER_IMAGE
+    - kubectl apply -f k8s-deployment.yaml
+  only:
+    - rfm-integration
 
 
 
