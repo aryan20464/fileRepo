@@ -1,10 +1,12 @@
 stages:
   - build
+  - deploy
 
 variables:
   MAVEN_REPO: "/devtools/gitlab-runner/.m2/repository"
-  MAVEN_CLI_OPTS: "-B -o  -Dmaven.test.skip=true -Dmaven.repo.local=$MAVEN_REPO -Djansi.tmpdir=/devtools/maven/apache-maven-3.8.5/maven-tmp"
+  MAVEN_CLI_OPTS: "-B -o -Dmaven.test.skip=true -Dmaven.repo.local=$MAVEN_REPO -Djansi.tmpdir=/devtools/maven/apache-maven-3.8.5/maven-tmp"
   MAVEN_HOME: "/devtools/maven/apache-maven-3.8.5"
+  KUBE_CONFIG: "/devtools/kubeconfig/config"  # Path to kubeconfig for VKS
 
 build-war:
   stage: build
@@ -15,18 +17,45 @@ build-war:
     - mkdir -p $MAVEN_REPO
     - export PATH="$MAVEN_HOME/bin:$PATH"
 
-    # Verify Java & Maven versions being used
-    - java -version
+    # Verify Java & Maven
     - java -version
     - mvn -version
 
-    # Build the WAR
+    # Build WAR
     - mvn $MAVEN_CLI_OPTS clean package -Puat
+
   artifacts:
     paths:
       - target/*.war
   only:
-    - rfm-integration   # trigger only when pushing to release branch
+    - rfm-integration
+
+build-and-deploy:
+  stage: deploy
+  tags:
+    - cicd-fileupload-auto
+  dependencies:
+    - build-war  # Use WAR from previous stage
+  script:
+    # Generate timestamp for human-readable image tag
+    - TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+    - DOCKER_IMAGE="myregistry.example.com/myapp:${CI_COMMIT_SHORT_SHA}-${TIMESTAMP}"
+    - echo "Docker image will be: $DOCKER_IMAGE"
+
+    # Build Docker image using existing Dockerfile
+    - docker build -t $DOCKER_IMAGE .
+
+    # Push image to registry
+    - docker push $DOCKER_IMAGE
+
+    # Deploy to VKS using kubectl
+    - export KUBECONFIG=$KUBE_CONFIG
+    - kubectl set image -f k8s-deployment.yaml myapp-container=$DOCKER_IMAGE
+    - kubectl apply -f k8s-deployment.yaml
+
+  only:
+    - rfm-integration
+
 
 
 
