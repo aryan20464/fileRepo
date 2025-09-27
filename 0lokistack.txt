@@ -1,58 +1,32 @@
-org.springframework.context.ApplicationContextException: Failed to start bean 'org.springframework.kafka.config.internalKafkaListenerEndpointRegistry'
-        at org.springframework.context.support.DefaultLifecycleProcessor.doStart(DefaultLifecycleProcessor.java:408) ~[spring-context-6.2.6.jar!/:6.2.6]
-        at org.springframework.context.support.DefaultLifecycleProcessor.doStart(DefaultLifecycleProcessor.java:394) ~[spring-context-6.2.6.jar!/:6.2.6]
-        at org.springframework.context.support.DefaultLifecycleProcessor$LifecycleGroup.start(DefaultLifecycleProcessor.java:586) ~[spring-context-6.2.6.jar!/:6.2.6]
-        at java.base/java.lang.Iterable.forEach(Iterable.java:75) ~[na:na]
-        at org.springframework.context.support.DefaultLifecycleProcessor.startBeans(DefaultLifecycleProcessor.java:364) ~[spring-context-6.2.6.jar!/:6.2.6]
-        at org.springframework.context.support.DefaultLifecycleProcessor.onRefresh(DefaultLifecycleProcessor.java:310) ~[spring-context-6.2.6.jar!/:6.2.6]
-        at org.springframework.context.support.AbstractApplicationContext.finishRefresh(AbstractApplicationContext.java:1006) ~[spring-context-6.2.6.jar!/:6.2.6]
-        at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:630) ~[spring-context-6.2.6.jar!/:6.2.6]
-        at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.4.5.jar!/:3.4.5]
-        at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:753) ~[spring-boot-3.4.5.jar!/:3.4.5]
-        at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) ~[spring-boot-3.4.5.jar!/:3.4.5]
-        at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) ~[spring-boot-3.4.5.jar!/:3.4.5]
-        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1362) ~[spring-boot-3.4.5.jar!/:3.4.5]
-        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1351) ~[spring-boot-3.4.5.jar!/:3.4.5]
-        at com.sbi.fx.orderboard.OrderboardApplication.main(OrderboardApplication.java:17) ~[!/:0.0.1-SNAPSHOT]
-        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
-        at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
-        at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:102) ~[orderboard.war:0.0.1-SNAPSHOT]
-        at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:64) ~[orderboard.war:0.0.1-SNAPSHOT]
-        at org.springframework.boot.loader.launch.WarLauncher.main(WarLauncher.java:53) ~[orderboard.war:0.0.1-SNAPSHOT]
-Caused by: org.apache.kafka.common.KafkaException: Failed to construct kafka consumer
-        at org.apache.kafka.clients.consumer.internals.LegacyKafkaConsumer.<init>(LegacyKafkaConsumer.java:265) ~[kafka-clients-3.8.1.jar!/:na]
-        at org.apache.kafka.clients.consumer.internals.ConsumerDelegateCreator.create(ConsumerDelegateCreator.java:65) ~[kafka-clients-3.8.1.jar!/:na]
-        at org.apache.kafka.clients.consumer.KafkaConsumer.<init>(KafkaConsumer.java:600) ~[kafka-clients-3.8.1.jar!/:na]
-        at org.apache.kafka.clients.consumer.KafkaConsumer.<init>(KafkaConsumer.java:595) ~[kafka-clients-3.8.1.jar!/:na]
-        at org.springframework.kafka.core.DefaultKafkaConsumerFactory$ExtendedKafkaConsumer.<init>(DefaultKafkaConsumerFactory.java:498) ~[spring-kafka-3.3.5.jar!/:3.3.5]
-        at org.springframework.kafka.core.DefaultKafkaConsumerFactory.createRawConsumer(DefaultKafkaConsumerFactory.java:453) ~[spring-kafka-3.3.5.jar!/:3.3.5]
-        at org.springframework.kafka.core.DefaultKafkaConsumerFactory.createKafkaConsumer(DefaultKafkaConsumerFactory.java:430) ~[spring-kafka-3.3.5.jar!/:3.3.5]
-        at org.springframework.kafka.core.DefaultKafkaConsumerFactory.createConsumerWithAdjustedProperties(DefaultKafkaConsumerFactory.java:407) ~[spring-kafka-3.3.5.jar!/:3.3.5]
-        at org.springframework.kafka.core.DefaultKafkaConsumerFactory.createKafkaConsumer(DefaultKafkaConsumerFactory.java:374) ~[spring-kafka-3.3.5.jar!/:3.3.5]
-        at org.springframework.kafka.core.DefaultKafkaConsumerFactory.createConsumer(DefaultKafkaConsumerFactory.java:335) ~[spring-kafka-3.3.5.jar!/:3.3.5]
-        at org.springframework.kafka.listener.KafkaMessageListenerContainer$ListenerConsumer.<init>(KafkaMessageListenerContainer.java:877) ~[spring-kafka-3.3.5.jar!/:3.3.5]
-        at org.springframework.kafka.listener.KafkaMessageListenerContainer.doStart(KafkaMessageListenerContainer.java:388) ~[spring-kafka-3.3.5.jar!/:3.3.5]
-        at org.springframework.kafka.listener.AbstractMessageListenerContainer.start(AbstractMessageListenerContainer.java:520) ~[spring-kafka-3.3.5.jar!/:3.3.5]
-        at org.springframework.kafka.listener.ConcurrentMessageListenerContainer.doStart(ConcurrentMessageListenerContainer.java:264) ~[spring-kafka-3.3.5.jar!/:3.3.5]
-        at org.springframework.kafka.listener.AbstractMessageListenerContainer.start(AbstractMessageListenerContainer.java:520) ~[spring-kafka-3.3.5.jar!/:3.3.5]
-        at org.springframework.kafka.config.KafkaListenerEndpointRegistry.startIfNecessary(KafkaListenerEndpointRegistry.java:436) ~[spring-kafka-3.3.5.jar!/:3.3.5]
-        at org.springframework.kafka.config.KafkaListenerEndpointRegistry.start(KafkaListenerEndpointRegistry.java:382) ~[spring-kafka-3.3.5.jar!/:3.3.5]
-        at org.springframework.context.support.DefaultLifecycleProcessor.doStart(DefaultLifecycleProcessor.java:405) ~[spring-context-6.2.6.jar!/:6.2.6]
-        ... 19 common frames omitted
-Caused by: org.apache.kafka.common.config.ConfigException: Invalid url in bootstrap.servers: https://10.191.158.42:4200/middlewareKafka/
-        at org.apache.kafka.clients.ClientUtils.parseAndValidateAddresses(ClientUtils.java:73) ~[kafka-clients-3.8.1.jar!/:na]
-        at org.apache.kafka.clients.ClientUtils.parseAndValidateAddresses(ClientUtils.java:62) ~[kafka-clients-3.8.1.jar!/:na]
-        at org.apache.kafka.clients.ClientUtils.parseAndValidateAddresses(ClientUtils.java:58) ~[kafka-clients-3.8.1.jar!/:na]
-        at org.apache.kafka.clients.consumer.internals.LegacyKafkaConsumer.<init>(LegacyKafkaConsumer.java:184) ~[kafka-clients-3.8.1.jar!/:na]
-        ... 36 common frames omitted
+stages:
+  - build
 
+variables:
+  MAVEN_REPO: "/devtools/gitlab-runner/.m2/repository"
+  MAVEN_CLI_OPTS: "-B -o  -Dmaven.test.skip=true -Dmaven.repo.local=$MAVEN_REPO -Djansi.tmpdir=/devtools/maven/apache-maven-3.8.5/maven-tmp"
+  MAVEN_HOME: "/devtools/maven/apache-maven-3.8.5"
 
+build-war:
+  stage: build
+  tags:
+    - cicd-fileupload-auto
+  script:
+    - echo "Using Maven repo at $MAVEN_REPO"
+    - mkdir -p $MAVEN_REPO
+    - export PATH="$MAVEN_HOME/bin:$PATH"
 
+    # Verify Java & Maven versions being used
+    - java -version
+    - java -version
+    - mvn -version
 
-
-
-
-
+    # Build the WAR
+    - mvn $MAVEN_CLI_OPTS clean package -Puat
+  artifacts:
+    paths:
+      - target/*.war
+  only:
+    - rfm-integration   # trigger only when pushing to release branch
 
 
 
