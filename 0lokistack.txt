@@ -1,252 +1,192 @@
-[2025-09-27 11:29:30,072] INFO KafkaRestConfig values:
-        access.control.allow.headers =
-        access.control.allow.methods =
-        access.control.allow.origin =
-        access.control.expose.headers =
-        access.control.skip.options = true
-        advertised.listeners = []
-        api.endpoints.allowlist = []
-        api.endpoints.blocklist = []
-        api.v2.enable = true
-        api.v3.enable = true
-        api.v3.produce.batch.maximum.entries = 10
-        api.v3.produce.rate.limit.cache.expiry.ms = 3600000
-        api.v3.produce.rate.limit.enabled = false
-        api.v3.produce.rate.limit.max.bytes.global.per.sec = 10000000
-        api.v3.produce.rate.limit.max.bytes.per.sec = 10000000
-        api.v3.produce.rate.limit.max.requests.global.per.sec = 10000
-        api.v3.produce.rate.limit.max.requests.per.sec = 10000
-        api.v3.produce.request.size.limit.max.bytes = 0
-        api.v3.produce.response.thread.pool.size = 4
-        authentication.method = NONE
-        authentication.realm =
-        authentication.roles = [*]
-        authentication.skip.paths = []
-        bootstrap.servers = PLAINTEXT://127.0.0.1:9196
-        client.init.timeout.ms = 60000
-        client.sasl.kerberos.kinit.cmd = /usr/bin/kinit
-        client.sasl.kerberos.min.time.before.relogin = 60000
-        client.sasl.kerberos.service.name =
-        client.sasl.kerberos.ticket.renew.jitter = 0.05
-        client.sasl.kerberos.ticket.renew.window.factor = 0.8
-        client.sasl.mechanism = GSSAPI
-        client.security.protocol = PLAINTEXT
-        client.ssl.cipher.suites =
-        client.ssl.enabled.protocols = TLSv1.2,TLSv1.1,TLSv1
-        client.ssl.endpoint.identification.algorithm =
-        client.ssl.key.password = [hidden]
-        client.ssl.keymanager.algorithm = SunX509
-        client.ssl.keystore.location =
-        client.ssl.keystore.password = [hidden]
-        client.ssl.keystore.type = JKS
-        client.ssl.protocol = TLS
-        client.ssl.provider =
-        client.ssl.trustmanager.algorithm = PKIX
-        client.ssl.truststore.location =
-        client.ssl.truststore.password = [hidden]
-        client.ssl.truststore.type = JKS
-        client.timeout.ms = 500
-        compression.enable = true
-        confluent.resource.name.authority =
-        connector.connection.limit = 0
-        consumer.instance.timeout.ms = 300000
-        consumer.iterator.backoff.ms = 50
-        consumer.iterator.timeout.ms = 1
-        consumer.request.max.bytes = 67108864
-        consumer.request.timeout.ms = 1000
-        consumer.threads = 50
-        csrf.prevention.enable = false
-        csrf.prevention.token.endpoint = /csrf
-        csrf.prevention.token.expiration.minutes = 30
-        csrf.prevention.token.max.entries = 10000
-        debug = false
-        dos.filter.delay.ms = 100
-        dos.filter.enabled = false
-        dos.filter.insert.headers = true
-        dos.filter.ip.whitelist = []
-        dos.filter.managed.attr = false
-        dos.filter.max.idle.tracker.ms = 30000
-        dos.filter.max.requests.ms = 30000
-        dos.filter.max.requests.per.connection.per.sec = 25
-        dos.filter.max.requests.per.sec = 25
-        dos.filter.max.wait.ms = 50
-        dos.filter.throttle.ms = 30000
-        dos.filter.throttled.requests = 5
-        expected.sni.headers = []
-        fetch.min.bytes = -1
-        host.name =
-        hsts.header.enable = false
-        http2.enabled = true
-        id =
-        idle.timeout.ms = 30000
-        kafka.rest.resource.extension.class = []
-        listener.protocol.map = []
-        listeners = [http://0.0.0.0:9198]
-        max.request.header.size = 8192
-        max.response.header.size = 8192
-        metric.reporters = []
-        metrics.global.stats.request.tags.enable = false
-        metrics.jmx.prefix = kafka.rest
-        metrics.latency.sla.ms = 50
-        metrics.latency.slo.ms = 5
-        metrics.latency.slo.sla.enable = false
-        metrics.num.samples = 2
-        metrics.sample.window.ms = 30000
-        metrics.tag.map = []
-        network.forwarded.request.customizer.enable = false
-        network.traffic.rate.limit.backend = guava
-        network.traffic.rate.limit.bytes.per.sec = 20971520
-        network.traffic.rate.limit.enable = false
-        nosniff.prevention.enable = false
-        null.request.body.always.publishes.empty.record = false
-        percentile.max.latency.ms = 10000.0
-        port = 8082
-        prefix.sni.check.enabled = false
-        producer.threads = 5
-        proxy.protocol.enabled = false
-        rate.limit.backend = guava
-        rate.limit.costs =
-        rate.limit.default.cost = 1
-        rate.limit.enable = false
-        rate.limit.per.cluster.cache.expiry.ms = 3600000
-        rate.limit.per.cluster.permits.per.sec = 50
-        rate.limit.permits.per.sec = 50
-        rate.limit.timeout.ms = 0
-        reject.options.request = false
-        request.logger.name = io.confluent.rest-utils.requests
-        request.queue.capacity = 2147483647
-        request.queue.capacity.growby = 64
-        request.queue.capacity.init = 128
-        resource.extension.classes = []
-        response.http.headers.config =
-        response.mediatype.default = application/json
-        response.mediatype.preferred = [application/json, application/vnd.kafka.v2+json]
-        rest.servlet.initializor.classes = []
-        schema.registry.url = http://localhost:8081
-        server.connection.limit = 0
-        shutdown.graceful.ms = 5000
-        simpleconsumer.pool.size.max = 25
-        simpleconsumer.pool.timeout.ms = 1000
-        sni.check.enabled = false
-        sni.host.check.enabled = true
-        ssl.cipher.suites = []
-        ssl.client.auth = false
-        ssl.client.authentication = NONE
-        ssl.enabled.protocols = []
-        ssl.endpoint.identification.algorithm = null
-        ssl.key.password = [hidden]
-        ssl.keymanager.algorithm =
-        ssl.keystore.location =
-        ssl.keystore.password = [hidden]
-        ssl.keystore.reload = false
-        ssl.keystore.type = JKS
-        ssl.keystore.watch.location =
-        ssl.protocol = TLS
-        ssl.provider =
-        ssl.trustmanager.algorithm =
-        ssl.truststore.location =
-        ssl.truststore.password = [hidden]
-        ssl.truststore.type = JKS
-        streaming.connection.max.duration.grace.period.ms = 500
-        streaming.connection.max.duration.ms = 86400000
-        suppress.stack.trace.response = true
-        thread.pool.max = 200
-        thread.pool.min = 8
-        use.custom.request.logging = true
-        websocket.path.prefix = /ws
-        websocket.servlet.initializor.classes = []
- (org.apache.kafka.common.config.AbstractConfig:371)
-[2025-09-27 11:29:30,112] INFO For rest-app with listener null, configuring custom request logging (io.confluent.kafkarest.KafkaRestApplication:119)
-[2025-09-27 11:29:30,169] INFO Initial capacity 128, increased by 64, maximum capacity 2147483647. (io.confluent.rest.ApplicationServer:485)
-[2025-09-27 11:29:30,445] INFO Adding listener with HTTP/2: NamedURI{uri=http://0.0.0.0:9198, name='null'} (io.confluent.rest.ApplicationServer:350)
-[2025-09-27 11:29:30,476] INFO Registered CombinedNetworkTrafficListener to network connector null of listener: null (io.confluent.rest.ApplicationServer:157)
-[2025-09-27 11:29:30,630] WARN Using default value http://localhost:8081 for config schema.registry.url. In a future release this config won't have a default value anymore. If you are using Schema Registry, please, specify schema.registry.url explicitly. Requests will fail in a future release if you try to use Schema Registry but have not specified a value for schema.registry.url. An empty value for this property means that the Schema Registry is disabled. (io.confluent.kafkarest.KafkaRestConfig:1001)
-[2025-09-27 11:29:30,632] INFO SchemaRegistryConfig values:
-        auto.register.schemas = false
-        basic.auth.credentials.source = URL
-        basic.auth.user.info = [hidden]
-        bearer.auth.cache.expiry.buffer.seconds = 300
-        bearer.auth.client.id = null
-        bearer.auth.client.secret = null
-        bearer.auth.credentials.source = STATIC_TOKEN
-        bearer.auth.custom.provider.class = null
-        bearer.auth.identity.pool.id = null
-        bearer.auth.issuer.endpoint.url = null
-        bearer.auth.logical.cluster = null
-        bearer.auth.scope = null
-        bearer.auth.scope.claim.name = scope
-        bearer.auth.sub.claim.name = sub
-        bearer.auth.token = [hidden]
-        context.name.strategy = class io.confluent.kafka.serializers.context.NullContextNameStrategy
-        http.connect.timeout.ms = 60000
-        http.read.timeout.ms = 60000
-        id.compatibility.strict = true
-        key.schema.id.deserializer = class io.confluent.kafka.serializers.schema.id.DualSchemaIdDeserializer
-        key.schema.id.serializer = class io.confluent.kafka.serializers.schema.id.PrefixSchemaIdSerializer
-        key.subject.name.strategy = class io.confluent.kafka.serializers.subject.TopicNameStrategy
-        latest.cache.size = 1000
-        latest.cache.ttl.sec = -1
-        latest.compatibility.strict = true
-        max.retries = 3
-        max.schemas.per.subject = 1000
-        normalize.schemas = false
-        propagate.schema.tags = false
-        proxy.host =
-        proxy.port = -1
-        retries.max.wait.ms = 20000
-        retries.wait.ms = 1000
-        rule.actions = []
-        rule.executors = []
-        rule.service.loader.enable = true
-        schema.format = null
-        schema.reflection = false
-        schema.registry.basic.auth.user.info = [hidden]
-        schema.registry.ssl.cipher.suites = null
-        schema.registry.ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
-        schema.registry.ssl.endpoint.identification.algorithm = https
-        schema.registry.ssl.engine.factory.class = null
-        schema.registry.ssl.key.password = null
-        schema.registry.ssl.keymanager.algorithm = SunX509
-        schema.registry.ssl.keystore.certificate.chain = null
-        schema.registry.ssl.keystore.key = null
-        schema.registry.ssl.keystore.location = null
-        schema.registry.ssl.keystore.password = null
-        schema.registry.ssl.keystore.type = JKS
-        schema.registry.ssl.protocol = TLSv1.3
-        schema.registry.ssl.provider = null
-        schema.registry.ssl.secure.random.implementation = null
-        schema.registry.ssl.trustmanager.algorithm = PKIX
-        schema.registry.ssl.truststore.certificates = null
-        schema.registry.ssl.truststore.location = null
-        schema.registry.ssl.truststore.password = null
-        schema.registry.ssl.truststore.type = JKS
-        schema.registry.url = [http://localhost:8081]
-        schema.registry.url.randomize = false
-        use.latest.version = false
-        use.latest.with.metadata = null
-        use.schema.id = -1
-        value.schema.id.deserializer = class io.confluent.kafka.serializers.schema.id.DualSchemaIdDeserializer
-        value.schema.id.serializer = class io.confluent.kafka.serializers.schema.id.PrefixSchemaIdSerializer
-        value.subject.name.strategy = class io.confluent.kafka.serializers.subject.TopicNameStrategy
- (org.apache.kafka.common.config.AbstractConfig:371)
-[2025-09-27 11:29:30,691] WARN Empty contextPath (org.eclipse.jetty.ee10.servlet.ServletContextHandler:635)
-[2025-09-27 11:29:30,691] INFO Binding KafkaRestApplication to all listeners. (io.confluent.rest.Application:344)
-[2025-09-27 11:29:30,750] INFO jetty-12.0.16; built: 2024-12-09T21:02:54.535Z; git: c3f88bafb4e393f23204dc14dc57b042e84debc7; jvm 17.0.12+8-LTS-286 (org.eclipse.jetty.server.Server:553)
-[2025-09-27 11:29:30,819] INFO Session workerName=node0 (org.eclipse.jetty.session.DefaultSessionIdManager:328)
-[2025-09-27 11:29:30,834] INFO Started oeje10s.ServletContextHandler@50194e8d{ROOT,/,b=null,a=AVAILABLE,h=oeje10s.SessionHandler@26722665{STARTED}} (org.eclipse.jetty.server.handler.ContextHandler:756)
-[2025-09-27 11:29:31,097] WARN Using default value http://localhost:8081 for config schema.registry.url. In a future release this config won't have a default value anymore. If you are using Schema Registry, please, specify schema.registry.url explicitly. Requests will fail in a future release if you try to use Schema Registry but have not specified a value for schema.registry.url. An empty value for this property means that the Schema Registry is disabled. (io.confluent.kafkarest.KafkaRestConfig:1001)
-[2025-09-27 11:29:31,100] WARN Using default value http://localhost:8081 for config schema.registry.url. In a future release this config won't have a default value anymore. If you are using Schema Registry, please, specify schema.registry.url explicitly. Requests will fail in a future release if you try to use Schema Registry but have not specified a value for schema.registry.url. An empty value for this property means that the Schema Registry is disabled. (io.confluent.kafkarest.KafkaRestConfig:1001)
-[2025-09-27 11:29:31,109] WARN Using default value http://localhost:8081 for config schema.registry.url. In a future release this config won't have a default value anymore. If you are using Schema Registry, please, specify schema.registry.url explicitly. Requests will fail in a future release if you try to use Schema Registry but have not specified a value for schema.registry.url. An empty value for this property means that the Schema Registry is disabled. (io.confluent.kafkarest.KafkaRestConfig:1001)
-[2025-09-27 11:29:31,122] WARN Using default value http://localhost:8081 for config schema.registry.url. In a future release this config won't have a default value anymore. If you are using Schema Registry, please, specify schema.registry.url explicitly. Requests will fail in a future release if you try to use Schema Registry but have not specified a value for schema.registry.url. An empty value for this property means that the Schema Registry is disabled. (io.confluent.kafkarest.KafkaRestConfig:1001)
-[2025-09-27 11:29:31,587] INFO HV000001: Hibernate Validator 8.0.1.Final (org.hibernate.validator.internal.util.Version:21)
-[2025-09-27 11:29:32,027] INFO Started oeje10s.ServletContextHandler@50194e8d{ROOT,/,b=null,a=AVAILABLE,h=oeje10s.SessionHandler@26722665{STARTED}} (org.eclipse.jetty.ee10.servlet.ServletContextHandler:1051)
-[2025-09-27 11:29:32,076] INFO Started oeje10s.ServletContextHandler@3f6c2763{/ws,/ws,b=null,a=AVAILABLE,h=oeje10s.SessionHandler@74c121d4{STARTED}} (org.eclipse.jetty.server.handler.ContextHandler:756)
-[2025-09-27 11:29:32,077] INFO Started oeje10s.ServletContextHandler@3f6c2763{/ws,/ws,b=null,a=AVAILABLE,h=oeje10s.SessionHandler@74c121d4{STARTED}} (org.eclipse.jetty.ee10.servlet.ServletContextHandler:1051)
-[2025-09-27 11:29:32,084] INFO Getter/setter type mismatch for mbean attribute formEncodedMethods in class org.eclipse.jetty.server.HttpConfiguration, attribute will be read-only (org.eclipse.jetty.jmx.MetaData:508)
-[2025-09-27 11:29:32,097] INFO Started NetworkTrafficServerConnector@15051a0{HTTP/1.1, (http/1.1, h2c)}{0.0.0.0:9198} (org.eclipse.jetty.server.AbstractConnector:326)
-[2025-09-27 11:29:32,099] INFO Started icr.ApplicationServer@2f162cc0{STARTING}[12.0.16,sto=5000] @3748ms (org.eclipse.jetty.server.Server:610)
-[2025-09-27 11:29:32,100] INFO Server started, listening for requests... (io.confluent.kafkarest.KafkaRestMain:48)
+bash: C: command not found
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
+#
+# This configuration file is intended for use in ZK-based mode, where Apache ZooKeeper is required.
+# See kafka.server.KafkaConfig for additional details and defaults
+#
+
+############################# Server Basics #############################
+
+# The id of the broker. This must be set to a unique integer for each broker.
+broker.id=0
+
+############################# Socket Server Settings #############################
+
+# The address the socket server listens on. If not configured, the host name will be equal to the value of
+# java.net.InetAddress.getCanonicalHostName(), with PLAINTEXT listener name, and port 9092.
+#   FORMAT:
+#     listeners = listener_name://host_name:port
+#   EXAMPLE:
+#     listeners = PLAINTEXT://your.host.name:9092
+listeners=SASL_PLAINTEXT://10.191.158.42:9196
+
+# Listener name, hostname and port the broker will advertise to clients.
+# If not set, it uses the value for "listeners".
+advertised.listeners=SASL_PLAINTEXT://10.191.158.42:9196
+
+# Maps listener names to security protocols, the default is for them to be the same. See the config documentation for more details
+listener.security.protocol.map=SASL_PLAINTEXT:SASL_PLAINTEXT
+
+# The number of threads that the server uses for receiving requests from the network and sending responses to the network
+num.network.threads=3
+
+# The number of threads that the server uses for processing requests, which may include disk I/O
+num.io.threads=8
+
+# The send buffer (SO_SNDBUF) used by the socket server
+socket.send.buffer.bytes=102400
+
+# The receive buffer (SO_RCVBUF) used by the socket server
+socket.receive.buffer.bytes=102400
+
+# The maximum size of a request that the socket server will accept (protection against OOM)
+socket.request.max.bytes=104857600
+
+
+############################# Log Basics #############################
+
+# A comma separated list of directories under which to store log files
+log.dirs=/tmp/kafka-logs
+
+# The default number of log partitions per topic. More partitions allow greater
+# parallelism for consumption, but this will also result in more files across
+# the brokers.
+num.partitions=1
+
+# The number of threads per data directory to be used for log recovery at startup and flushing at shutdown.
+# This value is recommended to be increased for installations with data dirs located in RAID array.
+num.recovery.threads.per.data.dir=1
+
+############################# Internal Topic Settings  #############################
+# The replication factor for the group metadata internal topics "__consumer_offsets" and "__transaction_state"
+# For anything other than development testing, a value greater than 1 is recommended to ensure availability such as 3.
+offsets.topic.replication.factor=1
+transaction.state.log.replication.factor=1
+transaction.state.log.min.isr=1
+
+############################# Log Flush Policy #############################
+
+# Messages are immediately written to the filesystem but by default we only fsync() to sync
+# the OS cache lazily. The following configurations control the flush of data to disk.
+# There are a few important trade-offs here:
+#    1. Durability: Unflushed data may be lost if you are not using replication.
+#    2. Latency: Very large flush intervals may lead to latency spikes when the flush does occur as there will be a lot of data to flush.
+#    3. Throughput: The flush is generally the most expensive operation, and a small flush interval may lead to excessive seeks.
+# The settings below allow one to configure the flush policy to flush data after a period of time or
+# every N messages (or both). This can be done globally and overridden on a per-topic basis.
+
+# The number of messages to accept before forcing a flush of data to disk
+#log.flush.interval.messages=10000
+
+# The maximum amount of time a message can sit in a log before we force a flush
+#log.flush.interval.ms=1000
+
+############################# Log Retention Policy #############################
+
+# The following configurations control the disposal of log segments. The policy can
+# be set to delete segments after a period of time, or after a given size has accumulated.
+# A segment will be deleted whenever *either* of these criteria are met. Deletion always happens
+# from the end of the log.
+
+# The minimum age of a log file to be eligible for deletion due to age
+#log.retention.hours=168
+
+# A size-based retention policy for logs. Segments are pruned from the log unless the remaining
+# segments drop below log.retention.bytes. Functions independently of log.retention.hours.
+#log.retention.bytes=1073741824
+
+# The maximum size of a log segment file. When this size is reached a new log segment will be created.
+#log.segment.bytes=1073741824
+
+# The interval at which log segments are checked to see if they can be deleted according
+# to the retention policies
+log.retention.check.interval.ms=300000
+
+############################# Zookeeper #############################
+
+# Zookeeper connection string (see zookeeper docs for details).
+# This is a comma separated host:port pairs, each corresponding to a zk
+# server. e.g. "127.0.0.1:3000,127.0.0.1:3001,127.0.0.1:3002".
+# You can also append an optional chroot string to the urls to specify the
+# root directory for all kafka znodes.
+zookeeper.connect=10.191.158.42:2181
+
+# Timeout in ms for connecting to zookeeper
+zookeeper.connection.timeout.ms=18000
+
+
+############################# Group Coordinator Settings #############################
+
+# The following configuration specifies the time, in milliseconds, that the GroupCoordinator will delay the initial consumer rebalance.
+# The rebalance will be further delayed by the value of group.initial.rebalance.delay.ms as new members join the group, up to a maximum of max.poll.interval.ms.
+# The default value for this is 3 seconds.
+# We override this to 0 here as it makes for a better out-of-the-box experience for development and testing.
+# However, in production environments the default value of 3 seconds is more suitable as this will help to avoid unnecessary, and potentially expensive, rebalances during application startup.
+group.initial.rebalance.delay.ms=0
+
+
+
+############################ SASL_SSL ################################################
+
+security.inter.broker.protocol=SASL_PLAINTEXT
+sasl.mechanism.inter.broker.protocol=PLAIN
+sasl.enabled.mechanisms=PLAIN
+
+
+########################## SSL Certificates #########################################
+
+ssl.keystore.location=/weblogic/KafkaSetup/certs/kafkakeystorecertificate.jks
+ssl.keystore.password=changeit
+ssl.key.password=changeit
+ssl.truststore.location=/weblogic/KafkaSetup/certs/kafkatruststorecert.jks
+ssl.truststore.password=changeit
+ssl.client.auth=none
+#ssl.endpoint.identification.algorithm=
+allow.auto.create.topics=false
+
+
+consumer
+
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# see org.apache.kafka.clients.consumer.ConsumerConfig for more details
+
+# list of brokers used for bootstrapping knowledge about the rest of the cluster
+# format: host1:port1,host2:port2 ...
+bootstrap.servers=10.191.158.41:9196
+
+# consumer group id
+group.id=test-consumer-group
+
+# What to do when there is no initial offset in Kafka or if the current
+# offset does not exist any more on the server: latest, earliest, none
+#auto.offset.reset=
 
 
 
