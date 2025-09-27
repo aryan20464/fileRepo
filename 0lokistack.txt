@@ -1,338 +1,251 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ .Values.service.name }}
-  namespace: {{ .Values.namespace }}
-spec:
-  selector:
-    app: nginx-cmm
-  type: {{ .Values.service.type }}
-  ports:
-    - port: {{ .Values.service.port }}
-      targetPort: {{ .Values.service.targetPort }}
-      {{- if .Values.service.nodePort }}
-      nodePort: {{ .Values.service.nodePort }}
-      {{- end }}
-
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx-cmm
-  namespace: {{ .Values.namespace }}
-  labels:
-    app: nginx-cmm
-spec:
-  replicas: {{ .Values.replicaCount }}
-  selector:
-    matchLabels:
-      app: nginx-cmm
-  template:
-    metadata:
-      labels:
-        app: nginx-cmm
-    spec:
-      securityContext:
-        runAsNonRoot: {{ .Values.securityContext.pod.runAsNonRoot }}
-        runAsUser: {{ .Values.securityContext.pod.runAsUser }}
-        seccompProfile:
-          type: {{ .Values.securityContext.pod.seccompProfile }}
-      containers:
-        - name: nginx-cmm
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          ports:
-            - containerPort: {{ .Values.containerPort }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          securityContext:
-            allowPrivilegeEscalation: {{ .Values.securityContext.container.allowPrivilegeEscalation }}
-            capabilities:
-              drop:
-              {{- range .Values.securityContext.container.dropCapabilities }}
-                - {{ . }}
-              {{- end }}
-
-
-
-
-
-namespace: uatcmm
-
-replicaCount: 1
-
-image:
-  repository: imagelib.chi/idea-indents-dev/rfm-ui
-  tag: "1.0"
-  pullPolicy: Always
-
-service:
-  name: nginx-cmm-service
-  type: ClusterIP
-  port: 4201
-  targetPort: 8080
-  # nodePort: 30000   # Uncomment if using NodePort
-
-containerPort: 8080
-
-securityContext:
-  pod:
-    runAsNonRoot: true
-    runAsUser: 101
-    seccompProfile: RuntimeDefault
-  container:
-    allowPrivilegeEscalation: false
-    dropCapabilities:
-      - ALL
-
-
-
-
-
-
-
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx-cmm
-  namespace: uatcmm
-  labels:
-    app: nginx-cmm
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: nginx-cmm
-  template:
-    metadata:
-      labels:
-        app: nginx-cmm
-    spec:
-      # Pod-level security context to run as a non-root user and set seccomp profile
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 101
-        seccompProfile:
-          type: RuntimeDefault
-      containers:
-        - name: nginx-cmm
-          image: tkgsharedharbor.corp.ad.sbi/idea-indents-dev/rfm-ui:1.0
-          ports:
-            - containerPort: 8080 # Unprivileged NGINX runs on port 8080
-          imagePullPolicy: Always
-          # Container-level security context
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: nginx-cmm-service
-  namespace: uatcmm
-spec:
-  selector:
-    app: nginx-cmm
-  type: ClusterIP
-  ports:
-    - port: 4201
-      targetPort: 8080
-      #nodePort: 30000  # Choose an unused NodePort in the 30000–32767 range
-
-
-
-stages:
-  - build
-
-variables:
-  MAVEN_REPO: "/devtools/gitlab-runner/.m2/repository"
-  MAVEN_CLI_OPTS: "-B -o  -Dmaven.test.skip=true -Dmaven.repo.local=$MAVEN_REPO -Djansi.tmpdir=/devtools/maven/apache-maven-3.8.5/maven-tmp"
-  MAVEN_HOME: "/devtools/maven/apache-maven-3.9.11"
-
-build-war:
-  stage: build
-  tags:
-    - cicd-fileupload-auto
-  script:
-    - echo "Using Maven repo at $MAVEN_REPO"
-    - mkdir -p $MAVEN_REPO
-    - export PATH="$MAVEN_HOME/bin:$PATH"
-
-    # Verify Java & Maven versions being used
-    - java -version
-    - java -version
-    - mvn -version
-
-    # Build the WAR
-    - mvn $MAVEN_CLI_OPTS clean package
-  artifacts:
-    paths:
-      - target/*.war
-  only:
-    - rfm-integration   # trigger only when pushing to release branch
-
-
-
-
-
-
-
-
-
-Running with gitlab-runner 16.8.1 (a6097117)
-  on custom-runner TAP5h3h8a, system ID: s_03cc683b0faa
-Preparing the "shell" executor
-00:00
-Using Shell (bash) executor...
-Preparing environment
-00:00
-Running on tss-ideasvnuat...
-Getting source from Git repository
-00:01
-Fetching changes with git depth set to 20...
-Reinitialized existing Git repository in /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/.git/
-Checking out 719cbf0f as detached HEAD (ref is main)...
-Skipping Git submodules setup
-Executing "step_script" stage of the job script
-00:06
-$ echo "Using Maven repo at $MAVEN_REPO"
-Using Maven repo at /devtools/gitlab-runner/.m2/repository
-$ mkdir -p $MAVEN_REPO
-$ export PATH="$MAVEN_HOME/bin:$PATH"
-$ java -version
-java version "1.8.0_271"
-Java(TM) SE Runtime Environment (build 1.8.0_271-b09)
-Java HotSpot(TM) 64-Bit Server VM (build 25.271-b09, mixed mode)
-$ mvn -version
-Apache Maven 3.8.5 (3599d3414f046de2324203b78ddcf9b5e4388aa0)
-Maven home: /devtools/maven/apache-maven-3.8.5
-Java version: 1.8.0_271, vendor: Oracle Corporation, runtime: /usr/java/jdk1.8.0_271-amd64/jre
-Default locale: en_IN, platform encoding: UTF-8
-OS name: "linux", version: "4.18.0-553.72.1.el8_10.x86_64", arch: "amd64", family: "unix"
-$ mvn $MAVEN_CLI_OPTS clean package
-[INFO] Scanning for projects...
-[INFO] 
-[INFO] ---------------------------< com.sbi:dbcon >----------------------------
-[INFO] Building dbcon 2.7.0
-[INFO] --------------------------------[ jar ]---------------------------------
-[INFO] 
-[INFO] --- maven-clean-plugin:3.2.0:clean (default-clean) @ dbcon ---
-[INFO] 
-[INFO] --- maven-resources-plugin:3.2.0:resources (default-resources) @ dbcon ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] Using 'UTF-8' encoding to copy filtered properties files.
-[INFO] Copying 1 resource
-[INFO] 
-[INFO] --- maven-compiler-plugin:3.10.1:compile (default-compile) @ dbcon ---
-[INFO] Changes detected - recompiling the module!
-[INFO] Compiling 4 source files to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/classes
-[INFO] 
-[INFO] --- maven-resources-plugin:3.2.0:testResources (default-testResources) @ dbcon ---
-[INFO] Not copying test resources
-[INFO] 
-[INFO] --- maven-compiler-plugin:3.10.1:testCompile (default-testCompile) @ dbcon ---
-[INFO] Not compiling test sources
-[INFO] 
-[INFO] --- maven-surefire-plugin:2.22.2:test (default-test) @ dbcon ---
-[INFO] Tests are skipped.
-[INFO] 
-[INFO] --- maven-dependency-plugin:3.3.0:copy-dependencies (copy-dependencies) @ dbcon ---
-[INFO] Copying spring-boot-starter-2.7.0.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-boot-starter-2.7.0.jar
-[INFO] Copying spring-boot-2.7.0.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-boot-2.7.0.jar
-[INFO] Copying spring-context-5.3.20.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-context-5.3.20.jar
-[INFO] Copying spring-boot-autoconfigure-2.7.0.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-boot-autoconfigure-2.7.0.jar
-[INFO] Copying jakarta.annotation-api-1.3.5.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/jakarta.annotation-api-1.3.5.jar
-[INFO] Copying spring-core-5.3.20.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-core-5.3.20.jar
-[INFO] Copying spring-jcl-5.3.20.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-jcl-5.3.20.jar
-[INFO] Copying snakeyaml-1.30.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/snakeyaml-1.30.jar
-[INFO] Copying slf4j-api-1.7.36.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/slf4j-api-1.7.36.jar
-[INFO] Copying jakarta.xml.bind-api-2.3.3.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/jakarta.xml.bind-api-2.3.3.jar
-[INFO] Copying jakarta.activation-api-1.2.2.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/jakarta.activation-api-1.2.2.jar
-[INFO] Copying byte-buddy-1.12.10.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/byte-buddy-1.12.10.jar
-[INFO] Copying lombok-1.18.24.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/lombok-1.18.24.jar
-[INFO] Copying spring-boot-starter-web-2.7.0.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-boot-starter-web-2.7.0.jar
-[INFO] Copying spring-boot-starter-json-2.7.0.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-boot-starter-json-2.7.0.jar
-[INFO] Copying jackson-datatype-jdk8-2.13.3.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/jackson-datatype-jdk8-2.13.3.jar
-[INFO] Copying jackson-datatype-jsr310-2.13.3.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/jackson-datatype-jsr310-2.13.3.jar
-[INFO] Copying jackson-module-parameter-names-2.13.3.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/jackson-module-parameter-names-2.13.3.jar
-[INFO] Copying spring-web-5.3.20.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-web-5.3.20.jar
-[INFO] Copying spring-beans-5.3.20.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-beans-5.3.20.jar
-[INFO] Copying spring-webmvc-5.3.20.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-webmvc-5.3.20.jar
-[INFO] Copying spring-aop-5.3.20.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-aop-5.3.20.jar
-[INFO] Copying spring-expression-5.3.20.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-expression-5.3.20.jar
-[INFO] Copying hibernate-envers-5.6.9.Final.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/hibernate-envers-5.6.9.Final.jar
-[INFO] Copying jboss-logging-3.4.3.Final.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/jboss-logging-3.4.3.Final.jar
-[INFO] Copying hibernate-core-5.6.9.Final.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/hibernate-core-5.6.9.Final.jar
-[INFO] Copying javax.persistence-api-2.2.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/javax.persistence-api-2.2.jar
-[INFO] Copying antlr-2.7.7.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/antlr-2.7.7.jar
-[INFO] Copying jboss-transaction-api_1.2_spec-1.1.1.Final.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/jboss-transaction-api_1.2_spec-1.1.1.Final.jar
-[INFO] Copying jandex-2.4.2.Final.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/jandex-2.4.2.Final.jar
-[INFO] Copying classmate-1.5.1.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/classmate-1.5.1.jar
-[INFO] Copying javax.activation-api-1.2.0.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/javax.activation-api-1.2.0.jar
-[INFO] Copying hibernate-commons-annotations-5.1.2.Final.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/hibernate-commons-annotations-5.1.2.Final.jar
-[INFO] Copying jaxb-api-2.3.1.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/jaxb-api-2.3.1.jar
-[INFO] Copying jaxb-runtime-2.3.6.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/jaxb-runtime-2.3.6.jar
-[INFO] Copying txw2-2.3.6.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/txw2-2.3.6.jar
-[INFO] Copying istack-commons-runtime-3.0.12.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/istack-commons-runtime-3.0.12.jar
-[INFO] Copying dom4j-2.1.3.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/dom4j-2.1.3.jar
-[INFO] Copying spring-boot-devtools-2.7.0.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-boot-devtools-2.7.0.jar
-[INFO] Copying ojdbc8-21.1.0.0.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/ojdbc8-21.1.0.0.jar
-[INFO] Copying httpclient-4.5.13.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/httpclient-4.5.13.jar
-[INFO] Copying httpcore-4.4.15.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/httpcore-4.4.15.jar
-[INFO] Copying commons-codec-1.15.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/commons-codec-1.15.jar
-[INFO] Copying jackson-annotations-2.13.3.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/jackson-annotations-2.13.3.jar
-[INFO] Copying gson-2.9.0.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/gson-2.9.0.jar
-[INFO] Copying spring-boot-starter-log4j2-2.7.0.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-boot-starter-log4j2-2.7.0.jar
-[INFO] Copying log4j-slf4j-impl-2.17.2.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/log4j-slf4j-impl-2.17.2.jar
-[INFO] Copying log4j-api-2.17.2.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/log4j-api-2.17.2.jar
-[INFO] Copying log4j-core-2.17.2.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/log4j-core-2.17.2.jar
-[INFO] Copying log4j-jul-2.17.2.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/log4j-jul-2.17.2.jar
-[INFO] Copying jul-to-slf4j-1.7.36.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/jul-to-slf4j-1.7.36.jar
-[INFO] Copying commons-lang3-3.12.0.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/commons-lang3-3.12.0.jar
-[INFO] Copying jackson-databind-2.13.3.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/jackson-databind-2.13.3.jar
-[INFO] Copying jackson-core-2.13.3.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/jackson-core-2.13.3.jar
-[INFO] Copying jjwt-0.9.1.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/jjwt-0.9.1.jar
-[INFO] Copying annotations-17.0.0.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/annotations-17.0.0.jar
-[INFO] Copying spring-boot-starter-mail-2.7.0.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-boot-starter-mail-2.7.0.jar
-[INFO] Copying spring-context-support-5.3.20.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-context-support-5.3.20.jar
-[INFO] Copying jakarta.mail-1.6.7.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/jakarta.mail-1.6.7.jar
-[INFO] Copying jakarta.activation-1.2.2.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/jakarta.activation-1.2.2.jar
-[INFO] Copying spring-boot-starter-data-jpa-2.7.0.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-boot-starter-data-jpa-2.7.0.jar
-[INFO] Copying spring-boot-starter-aop-2.7.0.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-boot-starter-aop-2.7.0.jar
-[INFO] Copying aspectjweaver-1.9.7.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/aspectjweaver-1.9.7.jar
-[INFO] Copying spring-boot-starter-jdbc-2.7.0.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-boot-starter-jdbc-2.7.0.jar
-[INFO] Copying HikariCP-4.0.3.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/HikariCP-4.0.3.jar
-[INFO] Copying spring-jdbc-5.3.20.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-jdbc-5.3.20.jar
-[INFO] Copying jakarta.transaction-api-1.3.3.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/jakarta.transaction-api-1.3.3.jar
-[INFO] Copying jakarta.persistence-api-2.2.3.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/jakarta.persistence-api-2.2.3.jar
-[INFO] Copying spring-data-jpa-2.7.0.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-data-jpa-2.7.0.jar
-[INFO] Copying spring-data-commons-2.7.0.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-data-commons-2.7.0.jar
-[INFO] Copying spring-orm-5.3.20.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-orm-5.3.20.jar
-[INFO] Copying spring-tx-5.3.20.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-tx-5.3.20.jar
-[INFO] Copying spring-aspects-5.3.20.jar to /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/offline-repo/spring-aspects-5.3.20.jar
-[INFO] 
-[INFO] --- maven-jar-plugin:3.2.2:jar (default-jar) @ dbcon ---
-[INFO] Building jar: /devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon/target/dbcon.jar
-[INFO] 
-[INFO] --- spring-boot-maven-plugin:2.7.0:repackage (repackage) @ dbcon ---
-[INFO] Replacing main artifact with repackaged archive
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time:  5.290 s
-[INFO] Finished at: 2025-09-19T11:48:20+05:30
-[INFO] ------------------------------------------------------------------------
-Uploading artifacts for successful job
-00:01
-Uploading artifacts...
-Runtime platform                                    arch=amd64 os=linux pid=623284 revision=a6097117 version=16.8.1
-WARNING: target/*.war: no matching files. Ensure that the artifact path is relative to the working directory (/devtools/gitlab-runner/builds/TAP5h3h8a/0/cicd/dbcon) 
-ERROR: No files to upload                          
-Cleaning up project directory and file based variables
-00:00
-Job succeeded
-
+[2025-09-27 11:29:30,072] INFO KafkaRestConfig values:
+        access.control.allow.headers =
+        access.control.allow.methods =
+        access.control.allow.origin =
+        access.control.expose.headers =
+        access.control.skip.options = true
+        advertised.listeners = []
+        api.endpoints.allowlist = []
+        api.endpoints.blocklist = []
+        api.v2.enable = true
+        api.v3.enable = true
+        api.v3.produce.batch.maximum.entries = 10
+        api.v3.produce.rate.limit.cache.expiry.ms = 3600000
+        api.v3.produce.rate.limit.enabled = false
+        api.v3.produce.rate.limit.max.bytes.global.per.sec = 10000000
+        api.v3.produce.rate.limit.max.bytes.per.sec = 10000000
+        api.v3.produce.rate.limit.max.requests.global.per.sec = 10000
+        api.v3.produce.rate.limit.max.requests.per.sec = 10000
+        api.v3.produce.request.size.limit.max.bytes = 0
+        api.v3.produce.response.thread.pool.size = 4
+        authentication.method = NONE
+        authentication.realm =
+        authentication.roles = [*]
+        authentication.skip.paths = []
+        bootstrap.servers = PLAINTEXT://127.0.0.1:9196
+        client.init.timeout.ms = 60000
+        client.sasl.kerberos.kinit.cmd = /usr/bin/kinit
+        client.sasl.kerberos.min.time.before.relogin = 60000
+        client.sasl.kerberos.service.name =
+        client.sasl.kerberos.ticket.renew.jitter = 0.05
+        client.sasl.kerberos.ticket.renew.window.factor = 0.8
+        client.sasl.mechanism = GSSAPI
+        client.security.protocol = PLAINTEXT
+        client.ssl.cipher.suites =
+        client.ssl.enabled.protocols = TLSv1.2,TLSv1.1,TLSv1
+        client.ssl.endpoint.identification.algorithm =
+        client.ssl.key.password = [hidden]
+        client.ssl.keymanager.algorithm = SunX509
+        client.ssl.keystore.location =
+        client.ssl.keystore.password = [hidden]
+        client.ssl.keystore.type = JKS
+        client.ssl.protocol = TLS
+        client.ssl.provider =
+        client.ssl.trustmanager.algorithm = PKIX
+        client.ssl.truststore.location =
+        client.ssl.truststore.password = [hidden]
+        client.ssl.truststore.type = JKS
+        client.timeout.ms = 500
+        compression.enable = true
+        confluent.resource.name.authority =
+        connector.connection.limit = 0
+        consumer.instance.timeout.ms = 300000
+        consumer.iterator.backoff.ms = 50
+        consumer.iterator.timeout.ms = 1
+        consumer.request.max.bytes = 67108864
+        consumer.request.timeout.ms = 1000
+        consumer.threads = 50
+        csrf.prevention.enable = false
+        csrf.prevention.token.endpoint = /csrf
+        csrf.prevention.token.expiration.minutes = 30
+        csrf.prevention.token.max.entries = 10000
+        debug = false
+        dos.filter.delay.ms = 100
+        dos.filter.enabled = false
+        dos.filter.insert.headers = true
+        dos.filter.ip.whitelist = []
+        dos.filter.managed.attr = false
+        dos.filter.max.idle.tracker.ms = 30000
+        dos.filter.max.requests.ms = 30000
+        dos.filter.max.requests.per.connection.per.sec = 25
+        dos.filter.max.requests.per.sec = 25
+        dos.filter.max.wait.ms = 50
+        dos.filter.throttle.ms = 30000
+        dos.filter.throttled.requests = 5
+        expected.sni.headers = []
+        fetch.min.bytes = -1
+        host.name =
+        hsts.header.enable = false
+        http2.enabled = true
+        id =
+        idle.timeout.ms = 30000
+        kafka.rest.resource.extension.class = []
+        listener.protocol.map = []
+        listeners = [http://0.0.0.0:9198]
+        max.request.header.size = 8192
+        max.response.header.size = 8192
+        metric.reporters = []
+        metrics.global.stats.request.tags.enable = false
+        metrics.jmx.prefix = kafka.rest
+        metrics.latency.sla.ms = 50
+        metrics.latency.slo.ms = 5
+        metrics.latency.slo.sla.enable = false
+        metrics.num.samples = 2
+        metrics.sample.window.ms = 30000
+        metrics.tag.map = []
+        network.forwarded.request.customizer.enable = false
+        network.traffic.rate.limit.backend = guava
+        network.traffic.rate.limit.bytes.per.sec = 20971520
+        network.traffic.rate.limit.enable = false
+        nosniff.prevention.enable = false
+        null.request.body.always.publishes.empty.record = false
+        percentile.max.latency.ms = 10000.0
+        port = 8082
+        prefix.sni.check.enabled = false
+        producer.threads = 5
+        proxy.protocol.enabled = false
+        rate.limit.backend = guava
+        rate.limit.costs =
+        rate.limit.default.cost = 1
+        rate.limit.enable = false
+        rate.limit.per.cluster.cache.expiry.ms = 3600000
+        rate.limit.per.cluster.permits.per.sec = 50
+        rate.limit.permits.per.sec = 50
+        rate.limit.timeout.ms = 0
+        reject.options.request = false
+        request.logger.name = io.confluent.rest-utils.requests
+        request.queue.capacity = 2147483647
+        request.queue.capacity.growby = 64
+        request.queue.capacity.init = 128
+        resource.extension.classes = []
+        response.http.headers.config =
+        response.mediatype.default = application/json
+        response.mediatype.preferred = [application/json, application/vnd.kafka.v2+json]
+        rest.servlet.initializor.classes = []
+        schema.registry.url = http://localhost:8081
+        server.connection.limit = 0
+        shutdown.graceful.ms = 5000
+        simpleconsumer.pool.size.max = 25
+        simpleconsumer.pool.timeout.ms = 1000
+        sni.check.enabled = false
+        sni.host.check.enabled = true
+        ssl.cipher.suites = []
+        ssl.client.auth = false
+        ssl.client.authentication = NONE
+        ssl.enabled.protocols = []
+        ssl.endpoint.identification.algorithm = null
+        ssl.key.password = [hidden]
+        ssl.keymanager.algorithm =
+        ssl.keystore.location =
+        ssl.keystore.password = [hidden]
+        ssl.keystore.reload = false
+        ssl.keystore.type = JKS
+        ssl.keystore.watch.location =
+        ssl.protocol = TLS
+        ssl.provider =
+        ssl.trustmanager.algorithm =
+        ssl.truststore.location =
+        ssl.truststore.password = [hidden]
+        ssl.truststore.type = JKS
+        streaming.connection.max.duration.grace.period.ms = 500
+        streaming.connection.max.duration.ms = 86400000
+        suppress.stack.trace.response = true
+        thread.pool.max = 200
+        thread.pool.min = 8
+        use.custom.request.logging = true
+        websocket.path.prefix = /ws
+        websocket.servlet.initializor.classes = []
+ (org.apache.kafka.common.config.AbstractConfig:371)
+[2025-09-27 11:29:30,112] INFO For rest-app with listener null, configuring custom request logging (io.confluent.kafkarest.KafkaRestApplication:119)
+[2025-09-27 11:29:30,169] INFO Initial capacity 128, increased by 64, maximum capacity 2147483647. (io.confluent.rest.ApplicationServer:485)
+[2025-09-27 11:29:30,445] INFO Adding listener with HTTP/2: NamedURI{uri=http://0.0.0.0:9198, name='null'} (io.confluent.rest.ApplicationServer:350)
+[2025-09-27 11:29:30,476] INFO Registered CombinedNetworkTrafficListener to network connector null of listener: null (io.confluent.rest.ApplicationServer:157)
+[2025-09-27 11:29:30,630] WARN Using default value http://localhost:8081 for config schema.registry.url. In a future release this config won't have a default value anymore. If you are using Schema Registry, please, specify schema.registry.url explicitly. Requests will fail in a future release if you try to use Schema Registry but have not specified a value for schema.registry.url. An empty value for this property means that the Schema Registry is disabled. (io.confluent.kafkarest.KafkaRestConfig:1001)
+[2025-09-27 11:29:30,632] INFO SchemaRegistryConfig values:
+        auto.register.schemas = false
+        basic.auth.credentials.source = URL
+        basic.auth.user.info = [hidden]
+        bearer.auth.cache.expiry.buffer.seconds = 300
+        bearer.auth.client.id = null
+        bearer.auth.client.secret = null
+        bearer.auth.credentials.source = STATIC_TOKEN
+        bearer.auth.custom.provider.class = null
+        bearer.auth.identity.pool.id = null
+        bearer.auth.issuer.endpoint.url = null
+        bearer.auth.logical.cluster = null
+        bearer.auth.scope = null
+        bearer.auth.scope.claim.name = scope
+        bearer.auth.sub.claim.name = sub
+        bearer.auth.token = [hidden]
+        context.name.strategy = class io.confluent.kafka.serializers.context.NullContextNameStrategy
+        http.connect.timeout.ms = 60000
+        http.read.timeout.ms = 60000
+        id.compatibility.strict = true
+        key.schema.id.deserializer = class io.confluent.kafka.serializers.schema.id.DualSchemaIdDeserializer
+        key.schema.id.serializer = class io.confluent.kafka.serializers.schema.id.PrefixSchemaIdSerializer
+        key.subject.name.strategy = class io.confluent.kafka.serializers.subject.TopicNameStrategy
+        latest.cache.size = 1000
+        latest.cache.ttl.sec = -1
+        latest.compatibility.strict = true
+        max.retries = 3
+        max.schemas.per.subject = 1000
+        normalize.schemas = false
+        propagate.schema.tags = false
+        proxy.host =
+        proxy.port = -1
+        retries.max.wait.ms = 20000
+        retries.wait.ms = 1000
+        rule.actions = []
+        rule.executors = []
+        rule.service.loader.enable = true
+        schema.format = null
+        schema.reflection = false
+        schema.registry.basic.auth.user.info = [hidden]
+        schema.registry.ssl.cipher.suites = null
+        schema.registry.ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+        schema.registry.ssl.endpoint.identification.algorithm = https
+        schema.registry.ssl.engine.factory.class = null
+        schema.registry.ssl.key.password = null
+        schema.registry.ssl.keymanager.algorithm = SunX509
+        schema.registry.ssl.keystore.certificate.chain = null
+        schema.registry.ssl.keystore.key = null
+        schema.registry.ssl.keystore.location = null
+        schema.registry.ssl.keystore.password = null
+        schema.registry.ssl.keystore.type = JKS
+        schema.registry.ssl.protocol = TLSv1.3
+        schema.registry.ssl.provider = null
+        schema.registry.ssl.secure.random.implementation = null
+        schema.registry.ssl.trustmanager.algorithm = PKIX
+        schema.registry.ssl.truststore.certificates = null
+        schema.registry.ssl.truststore.location = null
+        schema.registry.ssl.truststore.password = null
+        schema.registry.ssl.truststore.type = JKS
+        schema.registry.url = [http://localhost:8081]
+        schema.registry.url.randomize = false
+        use.latest.version = false
+        use.latest.with.metadata = null
+        use.schema.id = -1
+        value.schema.id.deserializer = class io.confluent.kafka.serializers.schema.id.DualSchemaIdDeserializer
+        value.schema.id.serializer = class io.confluent.kafka.serializers.schema.id.PrefixSchemaIdSerializer
+        value.subject.name.strategy = class io.confluent.kafka.serializers.subject.TopicNameStrategy
+ (org.apache.kafka.common.config.AbstractConfig:371)
+[2025-09-27 11:29:30,691] WARN Empty contextPath (org.eclipse.jetty.ee10.servlet.ServletContextHandler:635)
+[2025-09-27 11:29:30,691] INFO Binding KafkaRestApplication to all listeners. (io.confluent.rest.Application:344)
+[2025-09-27 11:29:30,750] INFO jetty-12.0.16; built: 2024-12-09T21:02:54.535Z; git: c3f88bafb4e393f23204dc14dc57b042e84debc7; jvm 17.0.12+8-LTS-286 (org.eclipse.jetty.server.Server:553)
+[2025-09-27 11:29:30,819] INFO Session workerName=node0 (org.eclipse.jetty.session.DefaultSessionIdManager:328)
+[2025-09-27 11:29:30,834] INFO Started oeje10s.ServletContextHandler@50194e8d{ROOT,/,b=null,a=AVAILABLE,h=oeje10s.SessionHandler@26722665{STARTED}} (org.eclipse.jetty.server.handler.ContextHandler:756)
+[2025-09-27 11:29:31,097] WARN Using default value http://localhost:8081 for config schema.registry.url. In a future release this config won't have a default value anymore. If you are using Schema Registry, please, specify schema.registry.url explicitly. Requests will fail in a future release if you try to use Schema Registry but have not specified a value for schema.registry.url. An empty value for this property means that the Schema Registry is disabled. (io.confluent.kafkarest.KafkaRestConfig:1001)
+[2025-09-27 11:29:31,100] WARN Using default value http://localhost:8081 for config schema.registry.url. In a future release this config won't have a default value anymore. If you are using Schema Registry, please, specify schema.registry.url explicitly. Requests will fail in a future release if you try to use Schema Registry but have not specified a value for schema.registry.url. An empty value for this property means that the Schema Registry is disabled. (io.confluent.kafkarest.KafkaRestConfig:1001)
+[2025-09-27 11:29:31,109] WARN Using default value http://localhost:8081 for config schema.registry.url. In a future release this config won't have a default value anymore. If you are using Schema Registry, please, specify schema.registry.url explicitly. Requests will fail in a future release if you try to use Schema Registry but have not specified a value for schema.registry.url. An empty value for this property means that the Schema Registry is disabled. (io.confluent.kafkarest.KafkaRestConfig:1001)
+[2025-09-27 11:29:31,122] WARN Using default value http://localhost:8081 for config schema.registry.url. In a future release this config won't have a default value anymore. If you are using Schema Registry, please, specify schema.registry.url explicitly. Requests will fail in a future release if you try to use Schema Registry but have not specified a value for schema.registry.url. An empty value for this property means that the Schema Registry is disabled. (io.confluent.kafkarest.KafkaRestConfig:1001)
+[2025-09-27 11:29:31,587] INFO HV000001: Hibernate Validator 8.0.1.Final (org.hibernate.validator.internal.util.Version:21)
+[2025-09-27 11:29:32,027] INFO Started oeje10s.ServletContextHandler@50194e8d{ROOT,/,b=null,a=AVAILABLE,h=oeje10s.SessionHandler@26722665{STARTED}} (org.eclipse.jetty.ee10.servlet.ServletContextHandler:1051)
+[2025-09-27 11:29:32,076] INFO Started oeje10s.ServletContextHandler@3f6c2763{/ws,/ws,b=null,a=AVAILABLE,h=oeje10s.SessionHandler@74c121d4{STARTED}} (org.eclipse.jetty.server.handler.ContextHandler:756)
+[2025-09-27 11:29:32,077] INFO Started oeje10s.ServletContextHandler@3f6c2763{/ws,/ws,b=null,a=AVAILABLE,h=oeje10s.SessionHandler@74c121d4{STARTED}} (org.eclipse.jetty.ee10.servlet.ServletContextHandler:1051)
+[2025-09-27 11:29:32,084] INFO Getter/setter type mismatch for mbean attribute formEncodedMethods in class org.eclipse.jetty.server.HttpConfiguration, attribute will be read-only (org.eclipse.jetty.jmx.MetaData:508)
+[2025-09-27 11:29:32,097] INFO Started NetworkTrafficServerConnector@15051a0{HTTP/1.1, (http/1.1, h2c)}{0.0.0.0:9198} (org.eclipse.jetty.server.AbstractConnector:326)
+[2025-09-27 11:29:32,099] INFO Started icr.ApplicationServer@2f162cc0{STARTING}[12.0.16,sto=5000] @3748ms (org.eclipse.jetty.server.Server:610)
+[2025-09-27 11:29:32,100] INFO Server started, listening for requests... (io.confluent.kafkarest.KafkaRestMain:48)
 
 
 
