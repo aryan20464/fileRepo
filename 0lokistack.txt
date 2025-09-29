@@ -1,3 +1,5 @@
+    - sed -i "s|image: .*rfm-indents:.*|image: ${DOCKER_IMAGE}|g" indents-backend-k8s.yaml
+
 stages:
   - build
   - deploy
