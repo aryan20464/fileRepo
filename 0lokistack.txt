@@ -1,3 +1,60 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-indents-backend
+  namespace: uatcmm
+  labels:
+    app: nginx-indents-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-indents-backend
+  template:
+    metadata:
+      labels:
+        app: nginx-indents-backend
+    spec:
+      containers:
+        - name: nginx-indents-backend
+          image: tkgsharedharbor.corp.ad.sbi/uat-cmm/rfm-indents:1.0
+          ports:
+            - containerPort: 4202
+          imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            runAsUser: 1001
+            seccompProfile:
+              type: RuntimeDefault
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-indents-service
+  namespace: uatcmm
+spec:
+  selector:
+    app: nginx-indents-backend
+  type: ClusterIP
+  ports:
+    - port: 4202
+      targetPort: 4202
+
+
+
+
 $ kubectl set image -f indents-backend-k8s.yaml nginx-indents-backend=$DOCKER_IMAGE
 error: unable to find container named "nginx-indents-backend"
 error: services/nginx-indents-service the object is not a pod or does not have a pod template: *v1.Service
