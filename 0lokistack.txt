@@ -4,9 +4,8 @@ stages:
 
 variables:
   MAVEN_REPO: "/devtools/gitlab-runner/.m2/repository"
-  MAVEN_CLI_OPTS: "-B -o -Dmaven.test.skip=true -Dmaven.repo.local=$MAVEN_REPO -Djansi.tmpdir=/devtools/maven/apache-maven-3.8.5/maven-tmp"
+  MAVEN_CLI_OPTS: "-B -o  -Dmaven.test.skip=true -Dmaven.repo.local=$MAVEN_REPO -Djansi.tmpdir=/devtools/maven/apache-maven-3.8.5/maven-tmp"
   MAVEN_HOME: "/devtools/maven/apache-maven-3.8.5"
-  KUBE_CONFIG: "/devtools/kubeconfig/config"  # Path to kubeconfig for VKS
 
 build-war:
   stage: build
@@ -16,11 +15,12 @@ build-war:
     - echo "Using Maven repo at $MAVEN_REPO"
     - mkdir -p $MAVEN_REPO
     - export PATH="$MAVEN_HOME/bin:$PATH"
-    - echo "Java version:"
+
+    # Verify Java & Maven versions being used
     - java -version
-    - echo "Maven version:"
     - mvn -version
-    - echo "Building WAR file"
+
+    # Build the WAR
     - mvn $MAVEN_CLI_OPTS clean package -Puat
   artifacts:
     paths:
@@ -36,9 +36,8 @@ build-and-deploy:
     - build-war
   script:
     - echo "Generating human-readable timestamp for Docker image tag"
-    - TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-    - DOCKER_IMAGE="myregistry.example.com/myapp:${CI_COMMIT_SHORT_SHA}-${TIMESTAMP}"
-    - echo "Docker image will be: $DOCKER_IMAGE"
+    - DOCKER_IMAGE="tkgsharedharbor.corp.ad.sbi/uat-cmm/rfm-indents:${CI_COMMIT_SHORT_SHA}"
+    - echo "Docker image will be- $DOCKER_IMAGE"
 
     - echo "Building Docker image using Dockerfile"
     - docker build -t $DOCKER_IMAGE .
@@ -48,14 +47,10 @@ build-and-deploy:
 
     - echo "Deploying to Kubernetes (VKS) using dynamic image"
     - export KUBECONFIG=$KUBE_CONFIG
-    - kubectl set image -f k8s-deployment.yaml nginx-hdg-inward=$DOCKER_IMAGE
-    - kubectl apply -f k8s-deployment.yaml
+    - sed -i "s|image: tkgsharedharbor.corp.ad.sbi/uat-cmm/rfm-indents:.*|image: ${DOCKER_IMAGE}|g" indents-backend-k8s.yaml
+    - kubectl apply -f indents-backend-k8s.yaml
   only:
     - rfm-integration
-
-
-
-
 
 
 
