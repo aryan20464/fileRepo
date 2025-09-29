@@ -1,3 +1,12 @@
+$ kubectl set image -f indents-backend-k8s.yaml nginx-indents-backend=$DOCKER_IMAGE
+error: unable to find container named "nginx-indents-backend"
+error: services/nginx-indents-service the object is not a pod or does not have a pod template: *v1.Service
+Cleaning up project directory and file based variables
+00:00
+ERROR: Job failed: exit status 1
+
+
+
 stages:
   - build
   - deploy
