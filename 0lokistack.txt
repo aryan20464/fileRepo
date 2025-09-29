@@ -1,3 +1,62 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  MAVEN_REPO: "/devtools/gitlab-runner/.m2/repository"
+  MAVEN_CLI_OPTS: "-B -o -Dmaven.test.skip=true -Dmaven.repo.local=$MAVEN_REPO -Djansi.tmpdir=/devtools/maven/apache-maven-3.8.5/maven-tmp"
+  MAVEN_HOME: "/devtools/maven/apache-maven-3.8.5"
+
+build-war:
+  stage: build
+  tags:
+    - cicd-fileupload-auto
+  script:
+    - echo "Using Maven repo at $MAVEN_REPO"
+    - mkdir -p $MAVEN_REPO
+    - export PATH="$MAVEN_HOME/bin:$PATH"
+
+    # Verify Java & Maven versions being used
+    - java -version
+    - mvn -version
+
+    # Build the WAR
+    - mvn $MAVEN_CLI_OPTS clean package -Puat
+  artifacts:
+    paths:
+      - target/*.war
+  only:
+    - rfm-integration
+
+build-and-deploy:
+  stage: deploy
+  tags:
+    - cicd-fileupload-auto
+  dependencies:
+    - build-war
+  script:
+    - echo "Generating Docker image tag"
+    - TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
+    - DOCKER_IMAGE="tkgsharedharbor.corp.ad.sbi/uat-cmm/rfm-indents:${CI_COMMIT_SHORT_SHA}-${TIMESTAMP}"
+    - echo "Docker image will be: $DOCKER_IMAGE"
+
+    # Build & push Docker image
+    - docker build -t $DOCKER_IMAGE .
+    - docker push $DOCKER_IMAGE
+
+    # Update Deployment YAML with new image
+    - sed -i "s|image: .*rfm-indents:.*|image: ${DOCKER_IMAGE}|g" indents-backend-k8s.yaml
+
+    # Deploy to Kubernetes
+    - export KUBECONFIG=$KUBE_CONFIG
+    - kubectl apply -f indents-backend-k8s.yaml
+
+    # Ensure rollout completes
+    - kubectl rollout status deployment/nginx-indents-backend -n uatcmm
+  only:
+    - rfm-integration
+
+
 ---
 apiVersion: apps/v1
 kind: Deployment
