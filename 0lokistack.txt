@@ -165,7 +165,49 @@
         </profile>
         <profile>
             <id>local1</id>
-            <properties
+            <properties>
+                <spring.profiles.active>local1</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>local</id>
+            <properties>
+                <spring.profiles.active>local</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>uat</id>
+            <properties>
+                <spring.profiles.active>uat</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <spring.profiles.active>prod</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>dr</id>
+            <properties>
+                <spring.profiles.active>dr</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <spring.profiles.active>dev</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>kube</id>
+            <properties>
+                <spring.profiles.active>kube</spring.profiles.active>
+            </properties>
+        </profile>
+    </profiles>
+
+</project>
 
 
 
