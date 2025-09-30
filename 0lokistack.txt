@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.4</version> <!-- Latest stable Spring Boot 3.x -->
+        <version>3.5.5</version> <!-- Spring Boot 3.5.5 -->
         <relativePath/>
     </parent>
 
@@ -52,7 +52,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Security (Spring Boot 3 manages 6.x) -->
+        <!-- Security (Spring Boot 3.5.5 manages Spring Security 6.x) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -108,7 +108,7 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
-            <version>0.9.1</version> <!-- consider upgrading to 0.11.5 for Java 17 -->
+            <version>0.9.1</version> <!-- For Java 17, consider jjwt-api 0.11.5 with impl + jackson -->
         </dependency>
 
         <!-- JetBrains Annotations -->
@@ -208,6 +208,7 @@
     </profiles>
 
 </project>
+
 
 
 
