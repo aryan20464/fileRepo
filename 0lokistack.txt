@@ -1,44 +1,52 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: loki-config
-  namespace: kube-monitoring
-data:
-  loki-config.yaml: |
-    auth_enabled: false
+failed parsing config: /etc/loki/loki-config.yaml: yaml: unmarshal errors:
+  line 13: field max_transfer_retries not found in type ingester.Config
+  line 37: field shared_store not found in type compactor.Config. Use `-config.expand-env=true` flag if you want to expand environment variables in your config file 
 
-    server:
-      http_listen_port: 3100
 
-    ingester:
-      lifecycler:
-        ring:
-          kvstore:
-            store: inmemory
-      chunk_idle_period: 5m
-      chunk_retain_period: 30s
-      max_transfer_retries: 0
+auth_enabled: false
 
-    schema_config:
-      configs:
-        - from: 2020-10-24
-          store: boltdb
-          object_store: filesystem
-          schema: v11
-          index:
-            prefix: index_
-            period: 24h
+server:
+  http_listen_port: 3100
+  log_level: info
 
-    storage_config:
-      boltdb:
-        directory: /loki/index
-      filesystem:
-        directory: /loki/chunks
+ingester:
+  lifecycler:
+    ring:
+      kvstore:
+        store: inmemory
+      replication_factor: 1
+  chunk_idle_period: 5m
+  chunk_retain_period: 30s
 
-    limits_config:
-      retention_period: 168h     # 7 days
-      max_cache_freshness_per_query: 10m
+schema_config:
+  configs:
+    - from: 2020-10-24
+      store: boltdb-shipper
+      object_store: filesystem
+      schema: v11
+      index:
+        prefix: index_
+        period: 24h
 
-    compactor:
-      working_directory: /loki/compactor
-      shared_store: filesystem
+storage_config:
+  boltdb_shipper:
+    active_index_directory: /devtools/grafana-stack/loki/index
+    cache_location: /devtools/grafana-stack/loki/boltdb-cache
+
+  filesystem:
+    directory: /devtools/grafana-stack/loki/chunks
+
+compactor:
+  working_directory: /devtools/grafana-stack/loki/compactor
+
+limits_config:
+  reject_old_samples: true
+  reject_old_samples_max_age: 168h
+  allow_structured_metadata: false
+  ingestion_rate_mb: 16 
+  ingestion_burst_size_mb: 32
+  max_streams_per_user: 5000
+
+table_manager:
+  retention_deletes_enabled: true
+  retention_period: 168h
