@@ -9,7 +9,11 @@ h06-vks-sp-2-latebinding   csi.vsphere.vmware.com   Delete          WaitForFirst
 
 
 
-
+kubectl get pvc -n kube-monitoring
+NAME             STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+pvc-grafana      Bound    pvc-6bb723e8-73b9-49d0-b8ed-84b35fcbef89   5Gi        RWO            h06-vks-sp-2   <unset>                 59m
+pvc-loki         Bound    pvc-16dca3b9-131e-462e-8f8c-b61289adb711   30Gi       RWO            h06-vks-sp-2   <unset>                 59m
+pvc-prometheus   Bound    pvc-e136f4c7-7a23-45f4-85fa-7b1a39162498   10Gi       RWO            h06-vks-sp-2   <unset>                 59m
 
 
 
