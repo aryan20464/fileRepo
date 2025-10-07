@@ -7,7 +7,50 @@ NAME                       PROVISIONER              RECLAIMPOLICY   VOLUMEBINDIN
 h06-vks-sp-2 (default)     csi.vsphere.vmware.com   Delete          Immediate              true                   95d
 h06-vks-sp-2-latebinding   csi.vsphere.vmware.com   Delete          WaitForFirstConsumer   true                   95d
 
-
+kubectl describe deployment grafana -n kube-monitoring
+Name:                   grafana
+Namespace:              kube-monitoring
+CreationTimestamp:      Tue, 07 Oct 2025 12:17:40 +0530
+Labels:                 <none>
+Annotations:            deployment.kubernetes.io/revision: 1
+Selector:               app=grafana
+Replicas:               1 desired | 0 updated | 0 total | 0 available | 1 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:  app=grafana
+  Containers:
+   grafana:
+    Image:      h06vksharbor.corp.ad.sbi/itss/grafana:12.3.0
+    Port:       3000/TCP
+    Host Port:  0/TCP
+    Environment:
+      GF_PATHS_PROVISIONING:  /etc/grafana/provisioning
+    Mounts:
+      /etc/grafana/provisioning/datasources from grafana-datasources (rw)
+      /var/lib/grafana from grafana-storage (rw)
+  Volumes:
+   grafana-storage:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  pvc-grafana
+    ReadOnly:   false
+   grafana-datasources:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      grafana-datasources
+    Optional:  false
+Conditions:
+  Type             Status  Reason
+  ----             ------  ------
+  Progressing      True    NewReplicaSetCreated
+  Available        False   MinimumReplicasUnavailable
+  ReplicaFailure   True    FailedCreate
+OldReplicaSets:    <none>
+NewReplicaSet:     grafana-67d565b8df (0/1 replicas created)
+Events:
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  39s   deployment-controller  Scaled up replica set grafana-67d565b8df from 0 to 1
 
 
 
