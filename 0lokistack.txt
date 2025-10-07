@@ -1,3 +1,47 @@
-failed parsing config: /etc/loki/loki-config.yaml: yaml: unmarshal errors:
-  line 30: field shared_store not found in type boltdb.IndexCfg
-  line 36: field shared_store not found in type compactor.Config. Use `-config.expand-env=true` flag if you want to expand environment variables in your config file
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+  log_level: info
+
+ingester:
+  lifecycler:
+    ring:
+      kvstore:
+        store: inmemory
+      replication_factor: 1
+  chunk_idle_period: 5m
+  chunk_retain_period: 30s
+
+schema_config:
+  configs:
+    - from: 2020-10-24
+      store: boltdb-shipper
+      object_store: filesystem
+      schema: v11
+      index:
+        prefix: index_
+        period: 24h
+
+storage_config:
+  boltdb_shipper:
+    active_index_directory: /loki/index
+    cache_location: /loki/boltdb-cache
+
+  filesystem:
+    directory: /loki/chunks
+
+compactor:
+  working_directory: /loki/compactor
+
+limits_config:
+  reject_old_samples: true
+  reject_old_samples_max_age: 168h
+  allow_structured_metadata: false
+  ingestion_rate_mb: 16
+  ingestion_burst_size_mb: 32
+  max_streams_per_user: 5000
+
+table_manager:
+  retention_deletes_enabled: true
+  retention_period: 168h
