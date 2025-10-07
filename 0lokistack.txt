@@ -2,6 +2,12 @@
     List<BranchIndent> findEntriesPendingForEntryInCBSAtBranches(@Param("days") int days);
 
 
+kubectl get storageclass
+NAME                       PROVISIONER              RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+h06-vks-sp-2 (default)     csi.vsphere.vmware.com   Delete          Immediate              true                   95d
+h06-vks-sp-2-latebinding   csi.vsphere.vmware.com   Delete          WaitForFirstConsumer   true                   95d
+
+
 
 
 
