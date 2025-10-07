@@ -2,22 +2,8 @@
     List<BranchIndent> findEntriesPendingForEntryInCBSAtBranches(@Param("days") int days);
 
 
-Error from server (BadRequest): error when creating "grafana-deployment.yaml": Deployment in version "v1" cannot be handled as a Deployment: strict decoding error: unknown field "spec.template.spec.containers[0].securityContext.fsGroup"
-
-mvn dependency:resolve-sources -U
-[WARNING] 
-[WARNING] Some problems were encountered while building the effective settings
-[WARNING] Unrecognised tag: 'servers' (position: START_TAG seen ...</server>\r\n    -->\r\n<servers>... @135:10)  @ D:\dev-tools\apache-maven-3.8.5-bin\apache-maven-3.8.5\conf\settings.xml, line 135, column 10
-[WARNING]
-[INFO] Scanning for projects...
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD FAILURE
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time:  0.832 s
-[INFO] Finished at: 2025-09-18T17:27:48+05:30
-[INFO] ------------------------------------------------------------------------
-[ERROR] Could not find goal 'resolve-sources' in plugin org.apache.maven.plugins:maven-dependency-plugin:3.3.0 among available goals analyze, analyze-dep-mgt, analyze-duplicate, analyze-only, analyze-report, build-classpath, collect, copy, copy-dependencies, display-ancestors, get, go-offline, help, list, list-classes, list-repositories, properties, purge-local-repository, resolve, resolve-plugins, sources, tree, unpack, unpack-dependencies -> [Help 1]
-[ERROR]
+43s         Warning   FailedCreate        replicaset/grafana-db78b7b7b   Error creating: pods "grafana-db78b7b7b-25v99" is forbidden: violates PodSecurity "restricted:latest": allowPrivilegeEscalation != false (container "grafana" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (container "grafana" must set securityContext.capabilities.drop=["ALL"]), runAsNonRoot != true (pod or container "grafana" must set securityContext.runAsNonRoot=true), seccompProfile (pod or container "grafana" must set securityContext.seccompProfile.type to "RuntimeDefault" or "Localhost")
+3s          Warning   FailedCreate        replicaset/grafana-db78b7b7b   (combined from similar events): Error creating: pods "grafana-db78b7b7b-9bbkj" is forbidden: violates PodSecurity "restricted:latest": allowPrivilegeEscalation != false (container "grafana" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (container "grafana" must set securityContext.capabilities.drop=["ALL"]), runAsNonRoot != true (pod or container "grafana" must set securityContext.runAsNonRoot=true), seccompProfile (pod or container "grafana" must set securityContext.seccompProfile.type to "RuntimeDefault" or "Localhost")
 
 
 
