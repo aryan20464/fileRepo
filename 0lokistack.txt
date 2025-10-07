@@ -2,9 +2,7 @@
     List<BranchIndent> findEntriesPendingForEntryInCBSAtBranches(@Param("days") int days);
 
 
-GF_PATHS_DATA='/var/lib/grafana' is not writable.
-You may have issues with file permissions, more information here: http://docs.grafana.org/installation/docker/#migrate-to-v51-or-later
-mkdir: can't create directory '/var/lib/grafana/plugins': Permission denied
+Error from server (BadRequest): error when creating "grafana-deployment.yaml": Deployment in version "v1" cannot be handled as a Deployment: strict decoding error: unknown field "spec.template.spec.containers[0].securityContext.fsGroup"
 
 mvn dependency:resolve-sources -U
 [WARNING] 
