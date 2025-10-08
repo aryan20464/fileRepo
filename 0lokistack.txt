@@ -53,3 +53,56 @@ limits_config:
 table_manager:
   retention_deletes_enabled: true
   retention_period: 168h
+
+
+
+
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loki
+  namespace: uatcmm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: loki
+  template:
+    metadata:
+      labels:
+        app: loki
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        fsGroup: 1000
+      containers:
+        - name: loki
+          image: grafana/loki:3.5.0
+          args:
+            - -config.file=/etc/loki/loki-config.yaml
+          ports:
+            - containerPort: 3100
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: loki-config
+              mountPath: /etc/loki
+            - name: loki-data
+              mountPath: /data
+      volumes:
+        - name: loki-config
+          configMap:
+            name: loki-config
+            items:
+              - key: loki-config.yaml
+                path: loki-config.yaml
+        - name: loki-data
+          persistentVolumeClaim:
+            claimName: loki-pvc
