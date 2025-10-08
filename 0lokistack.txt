@@ -1,3 +1,55 @@
+# /etc/alloy/config.alloy
+
+# Loki write configuration
+loki.write "default" {
+  endpoint {
+    url = "http://loki.uatcmm.svc.cluster.local:3100/loki/api/v1/push"
+  }
+}
+
+# Kubernetes pod discovery
+discovery.kubernetes "pods" {
+  role = "pod"
+}
+
+# File matching for pod logs
+local.file_match "logs" {
+  # paths is a list, not "targets" or "path"
+  paths = [
+    "/var/log/pods/*/*/*.log"
+  ]
+}
+
+# Source logs from matched files
+loki.source.file "k8s" {
+  files = local.file_match.logs.files
+  forward_to = [loki.process.k8s]
+}
+
+# Processing stage: add labels and parse logs
+loki.process "k8s" {
+  stage.labels {
+    values = {
+      job       = "kubernetes-pods"
+      namespace = "{{ .kubernetes.namespace }}"
+      pod       = "{{ .kubernetes.pod_name }}"
+      container = "{{ .kubernetes.container_name }}"
+    }
+  }
+
+  stage.output {
+    source = "line"
+  }
+
+  forward_to = [loki.write.default]
+}
+
+
+
+
+
+
+
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -18,24 +70,19 @@ spec:
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
-        fsGroup: 1000
+        fsGroup: 2000
         seccompProfile:
           type: RuntimeDefault
-      initContainers:
-        - name: init-alloy-data
-          image: busybox:1.36
-          command: ["sh", "-c", "mkdir -p /alloy/data && chown -R 1000:1000 /alloy/data"]
-          securityContext:
-            runAsUser: 0
-          volumeMounts:
-            - name: alloy-data
-              mountPath: /alloy/data
       containers:
         - name: alloy
           image: tkgsharedharbor.corp.ad.sbi/itss/grafana-alloy:1.11.0
           args: ["run", "/etc/alloy/config.alloy"]
-          ports:
-            - containerPort: 8080 # HTTP API (optional)
+          volumeMounts:
+            - name: alloy-config
+              mountPath: /etc/alloy
+              readOnly: true
+            - name: alloy-data
+              mountPath: /alloy/data
           resources:
             limits:
               memory: "512Mi"
@@ -43,11 +90,6 @@ spec:
             requests:
               memory: "256Mi"
               cpu: "250m"
-          volumeMounts:
-            - name: alloy-config
-              mountPath: /etc/alloy
-            - name: alloy-data
-              mountPath: /alloy/data
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
