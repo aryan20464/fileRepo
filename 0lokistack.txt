@@ -57,7 +57,6 @@ data:
 
 
 
-
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -75,6 +74,11 @@ spec:
         app: alloy
     spec:
       serviceAccountName: alloy
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       containers:
         - name: alloy
           image: grafana/alloy:v1.4.0
@@ -84,22 +88,29 @@ spec:
           ports:
             - containerPort: 12345
               name: http-metrics
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "150Mi"
+            limits:
+              cpu: "200m"
+              memory: "300Mi"
           volumeMounts:
             - name: alloy-config
               mountPath: /etc/alloy
+              readOnly: true
             - name: varlogpods
               mountPath: /var/log/pods
               readOnly: true
             - name: varlibdockercontainers
               mountPath: /var/lib/docker/containers
               readOnly: true
-          resources:
-            limits:
-              memory: "300Mi"
-              cpu: "200m"
-            requests:
-              memory: "150Mi"
-              cpu: "100m"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop: ["ALL"]
       volumes:
         - name: alloy-config
           configMap:
