@@ -1,1 +1,1 @@
-kubectl exec -n uatcmm daemonset/alloy -- ls -l /var/log/containers /var/lib/containers /var/log/journal 2>/dev/null
+kubectl exec -n uatcmm daemonset/alloy -- find /var/lib -name "stdout" -or -name "stderr" 2>/dev/null
