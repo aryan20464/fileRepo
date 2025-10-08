@@ -1,40 +1,79 @@
-Defaulted container "alloy" out of: alloy, fix-log-permissions (init)
-ts=2025-10-08T10:10:59.666407509Z level=info boringcrypto_enabled=false
-ts=2025-10-08T10:10:59.657801717Z level=info source=/go/pkg/mod/github.com/!kim!machine!gun/automemlimit@v0.7.1/memlimit/memlimit.go:198 msg="GOMEMLIMIT is updated" package=github.com/KimMachineGun/automemlimit/memlimit GOMEMLIMIT=483183820 previous=9223372036854775807
-ts=2025-10-08T10:10:59.666457513Z level=info msg="no peer discovery configured: both join and discover peers are empty" service=cluster
-ts=2025-10-08T10:10:59.666461094Z level=info msg="running usage stats reporter"
-ts=2025-10-08T10:10:59.666463803Z level=info msg="starting complete graph evaluation" controller_path=/ controller_id="" trace_id=a9a8b67cfe9eba530513c98a018f2098
-ts=2025-10-08T10:10:59.666471861Z level=info msg="replaying WAL, this may take a while" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=wal dir=/alloy/data/prometheus.remote_write.prometheus/wal
-ts=2025-10-08T10:10:59.666475754Z level=info msg="WAL segment loaded" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=wal segment=0 maxSegment=0
-ts=2025-10-08T10:10:59.666479774Z level=info msg="Starting WAL watcher" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=rw remote_name=7fc95c url=http://prometheus.uatcmm.svc.cluster.local:9090/api/v1/write queue=7fc95c
-ts=2025-10-08T10:10:59.666484113Z level=info msg="Starting scraped metadata watcher" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=rw remote_name=7fc95c url=http://prometheus.uatcmm.svc.cluster.local:9090/api/v1/write
-ts=2025-10-08T10:10:59.666487304Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=a9a8b67cfe9eba530513c98a018f2098 node_id=prometheus.remote_write.prometheus duration=6.462227ms
-ts=2025-10-08T10:10:59.666491625Z level=info msg="Replaying WAL" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=rw remote_name=7fc95c url=http://prometheus.uatcmm.svc.cluster.local:9090/api/v1/write queue=7fc95c
-ts=2025-10-08T10:10:59.66649533Z level=info msg="Using pod service account via in-cluster config" component_path=/ component_id=discovery.kubernetes.pods
-ts=2025-10-08T10:10:59.666498157Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=a9a8b67cfe9eba530513c98a018f2098 node_id=discovery.kubernetes.pods duration=552.797µs
-ts=2025-10-08T10:10:59.666501678Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=a9a8b67cfe9eba530513c98a018f2098 node_id=prometheus.scrape.pods duration=694.652µs
-ts=2025-10-08T10:10:59.666504918Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=a9a8b67cfe9eba530513c98a018f2098 node_id=livedebugging duration=15.985µs
-ts=2025-10-08T10:10:59.666508059Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=a9a8b67cfe9eba530513c98a018f2098 node_id=labelstore duration=4.835µs
-ts=2025-10-08T10:10:59.66651213Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=a9a8b67cfe9eba530513c98a018f2098 node_id=logging duration=124.676µs
-ts=2025-10-08T10:10:59.666551082Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=a9a8b67cfe9eba530513c98a018f2098 node_id=remotecfg duration=28.352µs
-ts=2025-10-08T10:10:59.666568005Z level=info msg="applying non-TLS config to HTTP server" service=http
-ts=2025-10-08T10:10:59.666573732Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=a9a8b67cfe9eba530513c98a018f2098 node_id=http duration=11.982µs
-ts=2025-10-08T10:10:59.666582037Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=a9a8b67cfe9eba530513c98a018f2098 node_id=ui duration=1.657µs
-ts=2025-10-08T10:10:59.666595942Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=a9a8b67cfe9eba530513c98a018f2098 node_id=cluster duration=1.68µs
-ts=2025-10-08T10:10:59.666944882Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=a9a8b67cfe9eba530513c98a018f2098 node_id=loki.write.default duration=340.354µs
-ts=2025-10-08T10:10:59.667239227Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=a9a8b67cfe9eba530513c98a018f2098 node_id=loki.process.k8s duration=280.171µs
-ts=2025-10-08T10:10:59.667436411Z level=error msg="failed to tail file, stat failed" component_path=/ component_id=loki.source.file.k8s error="stat /var/log/pods/*/*/*.log: permission denied" filename=/var/log/pods/*/*/*.log
-ts=2025-10-08T10:10:59.667456976Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=a9a8b67cfe9eba530513c98a018f2098 node_id=loki.source.file.k8s duration=205.866µs
-ts=2025-10-08T10:10:59.667481467Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=a9a8b67cfe9eba530513c98a018f2098 node_id=tracing duration=9.212µs
-ts=2025-10-08T10:10:59.667495774Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=a9a8b67cfe9eba530513c98a018f2098 node_id=otel duration=4.165µs
-ts=2025-10-08T10:10:59.667501804Z level=info msg="finished complete graph evaluation" controller_path=/ controller_id="" trace_id=a9a8b67cfe9eba530513c98a018f2098 duration=9.058327ms
-ts=2025-10-08T10:10:59.667581622Z level=info msg="scheduling loaded components and services"
-ts=2025-10-08T10:10:59.667891828Z level=info msg="starting cluster node" service=cluster peers_count=0 peers="" advertise_addr=127.0.0.1:12345 minimum_cluster_size=0 minimum_size_wait_timeout=0s
-ts=2025-10-08T10:10:59.668049321Z level=info msg="peers changed" service=cluster peers_count=1 min_cluster_size=0 peers=h06vksuatcmmcls-f7zsr-md4d8
-ts=2025-10-08T10:10:59.670276072Z level=info msg="now listening for http traffic" service=http addr=0.0.0.0:12345
-ts=2025-10-08T10:11:13.017440403Z level=info msg="Done replaying WAL" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=rw remote_name=7fc95c url=http://prometheus.uatcmm.svc.cluster.local:9090/api/v1/write duration=13.352317811s
-ts=2025-10-08T10:11:14.674030209Z level=error msg="non-recoverable error" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=rw remote_name=7fc95c url=http://prometheus.uatcmm.svc.cluster.local:9090/api/v1/write failedSampleCount=10 failedHistogramCount=0 failedExemplarCount=0 err="server returned HTTP status 404 Not Found: remote write receiver needs to be enabled with --web.enable-remote-write-receiver\n"
-ts=2025-10-08T10:12:16.957957496Z level=error msg="non-recoverable error" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=rw remote_name=7fc95c url=http://prometheus.uatcmm.svc.cluster.local:9090/api/v1/write failedSampleCount=10 failedHistogramCount=0 failedExemplarCount=0 err="server returned HTTP status 404 Not Found: remote write receiver needs to be enabled with --web.enable-remote-write-receiver\n"
-ts=2025-10-08T10:13:21.95521427Z level=error msg="non-recoverable error" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=rw remote_name=7fc95c url=http://prometheus.uatcmm.svc.cluster.local:9090/api/v1/write failedSampleCount=10 failedHistogramCount=0 failedExemplarCount=0 err="server returned HTTP status 404 Not Found: remote write receiver needs to be enabled with --web.enable-remote-write-receiver\n"
-ts=2025-10-08T10:14:21.955231114Z level=error msg="non-recoverable error" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=rw remote_name=7fc95c url=http://prometheus.uatcmm.svc.cluster.local:9090/api/v1/write failedSampleCount=10 failedHistogramCount=0 failedExemplarCount=0 err="server returned HTTP status 404 Not Found: remote write receiver needs to be enabled with --web.enable-remote-write-receiver\n"
-ts=2025-10-08T10:15:21.956150364Z level=error msg="non-recoverable error" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=rw remote_name=7fc95c url=http://prometheus.uatcmm.svc.cluster.local:9090/api/v1/write failedSampleCount=10 failedHistogramCount=0 failedExemplarCount=0 err="server returned HTTP status 404 Not Found: remote write receiver needs to be enabled with --web.enable-remote-write-receiver\n"
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: alloy
+  namespace: uatcmm
+  labels:
+    app: alloy
+spec:
+  selector:
+    matchLabels:
+      app: alloy
+  template:
+    metadata:
+      labels:
+        app: alloy
+    spec:
+      serviceAccountName: alloy  # Confirmed working for RBAC.
+      hostNetwork: true  # For node-local log access.
+      dnsPolicy: ClusterFirstWithHostNet
+      tolerations:
+      - operator: Exists  # Run on all nodes.
+      initContainers:
+      - name: fix-log-permissions
+        image: busybox:latest
+        command: ["sh", "-c", "find /var/log/pods -type d -exec chmod 755 {} \\; && find /var/log/pods -type f -exec chmod 644 {} \\; && find /var/log/pods -type f -exec chown 1000:1000 {} \\;"]
+        volumeMounts:
+        - name: var-log
+          mountPath: /var/log
+        securityContext:
+          runAsUser: 0  # Run as root to modify permissions.
+      containers:
+      - name: alloy
+        image: tkgsharedharbor.corp.ad.sbi/itss/grafana-alloy:1.11.0
+        imagePullPolicy: IfNotPresent
+        args:
+        - run
+        - /etc/alloy/config.alloy
+        - --server.http.listen-addr=0.0.0.0:12345
+        - --server.http.ui-path-prefix=/alloy
+        - --storage.path=/alloy/data
+        ports:
+        - name: http
+          containerPort: 12345
+          protocol: TCP
+        volumeMounts:
+        - name: alloy-config
+          mountPath: /etc/alloy
+          readOnly: true
+        - name: alloy-data
+          mountPath: /alloy/data
+        - name: var-log
+          mountPath: /var/log
+          readOnly: true
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+      securityContext:
+        fsGroup: 1000  # Ensure /alloy/data and mounts are accessible.
+        seccompProfile:
+          type: RuntimeDefault
+      volumes:
+      - name: alloy-config
+        configMap:
+          name: alloy-config
+      - name: alloy-data
+        emptyDir: {}
+      - name: var-log
+        hostPath:
+          path: /var/log
