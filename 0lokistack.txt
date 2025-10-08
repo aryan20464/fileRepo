@@ -1,115 +1,33 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: uatcmm
-  labels:
-    pod-security.kubernetes.io/enforce: "privileged"
-    pod-security.kubernetes.io/audit: "privileged"
-    pod-security.kubernetes.io/warn: "privileged"
+ts=2025-10-08T08:59:53.977843079Z level=info boringcrypto_enabled=false
+ts=2025-10-08T08:59:53.975821394Z level=info source=/go/pkg/mod/github.com/!kim!machine!gun/automemlimit@v0.7.1/memlimit/memlimit.go:175 msg="memory is not limited, skipping" package=github.com/KimMachineGun/automemlimit/memlimit
+ts=2025-10-08T08:59:53.977886527Z level=info msg="no peer discovery configured: both join and discover peers are empty" service=cluster
+ts=2025-10-08T08:59:53.977890516Z level=info msg="running usage stats reporter"
+ts=2025-10-08T08:59:53.977892744Z level=info msg="starting complete graph evaluation" controller_path=/ controller_id="" trace_id=76715009bb8ad8094e4d126d44e68329
+ts=2025-10-08T08:59:53.977900891Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=76715009bb8ad8094e4d126d44e68329 node_id=tracing duration=3.944µs
+ts=2025-10-08T08:59:53.977905272Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=76715009bb8ad8094e4d126d44e68329 node_id=remotecfg duration=31.292µs
+ts=2025-10-08T08:59:53.977908757Z level=info msg="applying non-TLS config to HTTP server" service=http
+ts=2025-10-08T08:59:53.977911538Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=76715009bb8ad8094e4d126d44e68329 node_id=http duration=3.769µs
+ts=2025-10-08T08:59:53.977915022Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=76715009bb8ad8094e4d126d44e68329 node_id=cluster duration=461ns
+ts=2025-10-08T08:59:53.977918175Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=76715009bb8ad8094e4d126d44e68329 node_id=otel duration=531ns
+ts=2025-10-08T08:59:53.977925201Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=76715009bb8ad8094e4d126d44e68329 node_id=livedebugging duration=3.115µs
+ts=2025-10-08T08:59:53.977933073Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=76715009bb8ad8094e4d126d44e68329 node_id=ui duration=912ns
+ts=2025-10-08T08:59:53.977937817Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=76715009bb8ad8094e4d126d44e68329 node_id=labelstore duration=1.796µs
+ts=2025-10-08T08:59:53.977947209Z level=info msg="Using pod service account via in-cluster config" component_path=/ component_id=discovery.kubernetes.pods
+ts=2025-10-08T08:59:53.977953208Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=76715009bb8ad8094e4d126d44e68329 node_id=discovery.kubernetes.pods duration=493.147µs
+ts=2025-10-08T08:59:53.977962075Z level=error msg="failed to evaluate config" controller_path=/ controller_id="" trace_id=76715009bb8ad8094e4d126d44e68329 node=local.file_match.logs err="decoding configuration: /etc/alloy/config.alloy:15:3: unrecognized attribute name \"targets\""
+ts=2025-10-08T08:59:53.977972615Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=76715009bb8ad8094e4d126d44e68329 node_id=local.file_match.logs duration=34.854µs
+ts=2025-10-08T08:59:53.977976969Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=76715009bb8ad8094e4d126d44e68329 node_id=loki.write.default duration=459.34µs
+ts=2025-10-08T08:59:53.97798022Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=76715009bb8ad8094e4d126d44e68329 node_id=loki.process.k8s duration=213.991µs
+ts=2025-10-08T08:59:53.977985231Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=76715009bb8ad8094e4d126d44e68329 node_id=loki.source.file.k8s duration=122.534µs
+ts=2025-10-08T08:59:53.977991053Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=76715009bb8ad8094e4d126d44e68329 node_id=logging duration=155.682µs
+ts=2025-10-08T08:59:53.978000985Z level=info msg="finished complete graph evaluation" controller_path=/ controller_id="" trace_id=76715009bb8ad8094e4d126d44e68329 duration=1.648281ms
+Error: /etc/alloy/config.alloy:15:3: unrecognized attribute name "targets"
 
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: alloy-config
-  namespace: uatcmm
-  labels:
-    app: alloy
-data:
-  config.alloy: |
-    // Loki client configuration
-    loki.write "default" {
-      endpoint {
-        url = "http://loki.uatcmm.svc.cluster.local:3100/loki/api/v1/push"
-      }
-    }
+14 | local.file_match "logs" {
+15 |   targets = discovery.kubernetes.pods.targets
+   |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+16 |   paths = [
 
-    // Discover all pods on the node
-    discovery.kubernetes "pods" {
-      role = "pod"
-    }
-
-    // Discover container logs from /var/log/pods
-    local.file_match "logs" {
-      targets = discovery.kubernetes.pods.targets
-      paths = [
-        "/var/log/pods/*/*/*.log"
-      ]
-    }
-
-    // Parse Kubernetes pod log format
-    loki.source.file "k8s" {
-      targets    = local.file_match.logs.targets
-      forward_to = [loki.process.k8s.receiver]
-    }
-
-    // Add metadata (namespace, pod, container)
-    loki.process "k8s" {
-      stage.json {
-        expressions = { stream = "stream", log = "log" }
-      }
-      stage.labels {
-        values = {
-          job         = "kubernetes-pods",
-          namespace   = "{{ .__meta_kubernetes_namespace }}",
-          pod         = "{{ .__meta_kubernetes_pod_name }}",
-          container   = "{{ .__meta_kubernetes_container_name }}"
-        }
-      }
-      stage.output {
-        source = "log"
-      }
-      forward_to = [loki.write.default.receiver]
-    }
-
----
-apiVersion: apps/v1
-kind: DaemonSet
-metadata:
-  name: alloy
-  namespace: uatcmm
-  labels:
-    app: alloy
-spec:
-  selector:
-    matchLabels:
-      app: alloy
-  template:
-    metadata:
-      labels:
-        app: alloy
-    spec:
-      serviceAccountName: alloy
-      containers:
-        - name: alloy
-          image: tkgsharedharbor.corp.ad.sbi/itss/alloy:latest
-          args:
-            - -config=/etc/alloy/config.alloy
-          volumeMounts:
-            - name: alloy-config
-              mountPath: /etc/alloy
-            - name: varlogpods
-              mountPath: /var/log/pods
-              readOnly: true
-            - name: varlibdocker
-              mountPath: /var/lib/docker/containers
-              readOnly: true
-          securityContext:
-            runAsNonRoot: true
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
-            seccompProfile:
-              type: RuntimeDefault
-      volumes:
-        - name: alloy-config
-          configMap:
-            name: alloy-config
-        - name: varlogpods
-          hostPath:
-            path: /var/log/pods
-            type: Directory
-        - name: varlibdocker
-          hostPath:
-            path: /var/lib/docker/containers
-            type: Directory
+interrupt received
+ts=2025-10-08T08:59:53.97826353Z level=error msg="failed to start reporter" err="context canceled"
+Error: could not perform the initial load successfully
