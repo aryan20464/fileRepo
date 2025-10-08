@@ -1,6 +1,3 @@
-Error: failed to create the remotecfg service: mkdir data-alloy: permission denied
-
-
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -17,40 +14,61 @@ spec:
       labels:
         app: alloy
     spec:
-      serviceAccountName: default
+      serviceAccountName: alloy  # Use the alloy ServiceAccount (from your earlier RBAC).
+      hostNetwork: true  # For node-local log access.
+      dnsPolicy: ClusterFirstWithHostNet
+      tolerations:
+      - operator: Exists  # Run on all nodes, including tainted ones.
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
-        fsGroup: 2000
+        fsGroup: 1000  # Match runAsUser to ensure /alloy/data is writable.
         seccompProfile:
           type: RuntimeDefault
       containers:
-        - name: alloy
-          image: tkgsharedharbor.corp.ad.sbi/itss/grafana-alloy:1.11.0
-          args: ["run", "/etc/alloy/config.alloy"]
-          volumeMounts:
-            - name: alloy-config
-              mountPath: /etc/alloy
-              readOnly: true
-            - name: alloy-data
-              mountPath: /alloy/data
-          resources:
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
-            requests:
-              memory: "256Mi"
-              cpu: "250m"
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
-      volumes:
+      - name: alloy
+        image: tkgsharedharbor.corp.ad.sbi/itss/grafana-alloy:1.11.0  # Your image.
+        imagePullPolicy: IfNotPresent
+        args:
+        - run
+        - /etc/alloy/config.alloy
+        - --server.http.listen-addr=0.0.0.0:12345
+        - --server.http.ui-path-prefix=/alloy
+        - --storage.path=/alloy/data  # Explicitly set storage path.
+        ports:
+        - name: http
+          containerPort: 12345
+          protocol: TCP
+        volumeMounts:
         - name: alloy-config
-          configMap:
-            name: alloy-config
+          mountPath: /etc/alloy
+          readOnly: true
         - name: alloy-data
-          emptyDir: {}
+          mountPath: /alloy/data
+        - name: var-log  # For pod logs.
+          mountPath: /var/log
+          readOnly: true
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+      volumes:
+      - name: alloy-config
+        configMap:
+          name: alloy-config
+      - name: alloy-data
+        emptyDir: {}
+      - name: var-log
+        hostPath:
+          path: /var/log
+
 
 
 
@@ -62,47 +80,66 @@ metadata:
   labels:
     app: alloy
 data:
-  config.alloy: |
-    # Loki write configuration
+  config.alloy: |-
+    # Metrics: Scrape pod metrics in uatcmm namespace, forward to Prometheus.
+    discovery.kubernetes "pods" {
+      role = "pod"
+      namespaces {
+        own_namespace = false
+        names = ["uatcmm"]  # Filter to uatcmm namespace.
+      }
+    }
+
+    prometheus.scrape "pods" {
+      targets    = discovery.kubernetes.pods.targets
+      forward_to = [prometheus.remote_write.prometheus.receiver]
+    }
+
+    prometheus.remote_write "prometheus" {
+      endpoint {
+        url = "http://prometheus.uatcmm.svc.cluster.local:9090/api/v1/write"
+      }
+    }
+
+    # Logs: Tail pod logs in uatcmm namespace, forward to Loki.
+    discovery.kubernetes "pods_logs" {
+      role = "pod"
+      namespaces {
+        own_namespace = false
+        names = ["uatcmm"]
+      }
+    }
+
+    loki.source.file "k8s" {
+      discovery = discovery.kubernetes.pods_logs
+      forward_to = [loki.process.k8s.receiver]
+    }
+
+    loki.process "k8s" {
+      stage.match {
+        selector = `{namespace="uatcmm"}`
+        stage.static_labels {
+          job = "kubernetes-pods"
+        }
+        stage.labels {
+          values = {
+            namespace = "__meta_kubernetes_namespace",
+            pod       = "__meta_kubernetes_pod_name",
+            container = "__meta_kubernetes_pod_container_name",
+          }
+        }
+      }
+      forward_to = [loki.write.default.receiver]
+    }
+
     loki.write "default" {
       endpoint {
         url = "http://loki.uatcmm.svc.cluster.local:3100/loki/api/v1/push"
       }
     }
 
-    # Kubernetes pod discovery
-    discovery.kubernetes "pods" {
-      role = "pod"
-    }
-
-    # File matching for pod logs
-    local.file_match "logs" {
-      # paths is a list, not "targets" or "path"
-      paths = [
-        "/var/log/pods/*/*/*.log"
-      ]
-    }
-
-    # Source logs from matched files
-    loki.source.file "k8s" {
-      files = local.file_match.logs.files
-      forward_to = [loki.process.k8s]
-    }
-
-    # Processing stage: add labels and parse logs
-    loki.process "k8s" {
-      stage.labels {
-        values = {
-          job       = "kubernetes-pods"
-          namespace = "{{ .kubernetes.namespace }}"
-          pod       = "{{ .kubernetes.pod_name }}"
-          container = "{{ .kubernetes.container_name }}"
-        }
-      }
-
-      stage.output {
-        source = "line"
-      }
-
-      forward_to = [loki.write.default]
+    # Alloy internal logging.
+    logging {
+      level  = "info"
+      format = "logfmt"
     }
