@@ -59,6 +59,21 @@ data:
 
     compactor:
       working_directory: /loki/compactor
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: loki-pvc
+  namespace: loki
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: standard  # <-- change if you use another storage class
+
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -95,7 +110,8 @@ spec:
           configMap:
             name: loki-config
         - name: loki-storage
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: loki-pvc
 
 ---
 apiVersion: v1
