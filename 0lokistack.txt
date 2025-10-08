@@ -1,178 +1,97 @@
-apiVersion: apps/v1
-kind: DaemonSet
-metadata:
-  name: alloy
-  namespace: uatcmm
-  labels:
-    app: alloy
-spec:
-  selector:
-    matchLabels:
-      app: alloy
-  template:
-    metadata:
-      labels:
-        app: alloy
-    spec:
-      serviceAccountName: alloy
-      hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
-      tolerations:
-      - operator: Exists
-      containers:
-      - name: alloy
-        image: tkgsharedharbor.corp.ad.sbi/itss/grafana-alloy:1.11.0
-        imagePullPolicy: IfNotPresent
-        args:
-        - run
-        - /etc/alloy/config.alloy
-        - --server.http.listen-addr=0.0.0.0:12345
-        - --server.http.ui-path-prefix=/alloy
-        - --storage.path=/alloy/data
-        ports:
-        - name: http
-          containerPort: 12345
-          protocol: TCP
-        volumeMounts:
-        - name: alloy-config
-          mountPath: /etc/alloy
-          readOnly: true
-        - name: alloy-data
-          mountPath: /alloy/data
-        resources:
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-        securityContext:
-          runAsNonRoot: true
-          runAsUser: 1000
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop: ["ALL"]
-      securityContext:
-        fsGroup: 1000
-        seccompProfile:
-          type: RuntimeDefault
-      volumes:
-      - name: alloy-config
-        configMap:
-          name: alloy-config
-      - name: alloy-data
-        emptyDir: {}
-
-
-
-
-
+# ----------------------------------------
+# ConfigMap: Alloy Configuration (Flow Mode)
+# ----------------------------------------
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: alloy-config
+  name: alloy-config-sidecar
   namespace: uatcmm
-  labels:
-    app: alloy
 data:
-  config.alloy: |-
-    // Metrics: Scrape pod metrics in uatcmm namespace, forward to Prometheus.
-    discovery.kubernetes "pods" {
-      role = "pod"
-      namespaces {
-        own_namespace = false
-        names = ["uatcmm"]
-      }
+  config.alloy: |
+    local.file_match "app_logs" {
+      path_targets = [{ "__path__" = "/logs/*.log" }]
     }
 
-    prometheus.scrape "pods" {
-      targets    = discovery.kubernetes.pods.targets
-      forward_to = [prometheus.remote_write.prometheus.receiver]
+    loki.source.file "app_logs" {
+      targets    = local.file_match.app_logs.targets
+      forward_to = [loki.process.add_app_labels.receiver]
     }
 
-    prometheus.remote_write "prometheus" {
-      endpoint {
-        url = "http://prometheus.uatcmm.svc.cluster.local:9090/api/v1/write"
-      }
-    }
-
-    // Logs: Discover pods and tail logs via Kubernetes API.
-    discovery.kubernetes "pod_logs" {
-      role = "pod"
-      namespaces {
-        own_namespace = false
-        names = ["uatcmm"]
-      }
-      selectors {
-        role = "pod"
-        field = "spec.nodeName=" + coalesce(sys.env("HOSTNAME"), constants.hostname)
-      }
-    }
-
-    discovery.relabel "pod_logs" {
-      targets = discovery.kubernetes.pod_logs.targets
-      rule {
-        source_labels = ["__meta_kubernetes_namespace"]
-        action = "replace"
-        target_label = "namespace"
-      }
-      rule {
-        source_labels = ["__meta_kubernetes_pod_name"]
-        action = "replace"
-        target_label = "pod"
-      }
-      rule {
-        source_labels = ["__meta_kubernetes_pod_container_name"]
-        action = "replace"
-        target_label = "container"
-      }
-      rule {
-        source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
-        action = "replace"
-        target_label = "app"
-      }
-      rule {
-        source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_pod_container_name"]
-        action = "replace"
-        target_label = "job"
-        separator = "/"
-        replacement = "$1"
-      }
-      rule {
-        source_labels = ["__meta_kubernetes_pod_container_id"]
-        action = "replace"
-        target_label = "container_runtime"
-        regex = "^(\\S+):\\/\\/.+$"
-        replacement = "$1"
-      }
-    }
-
-    loki.source.kubernetes "pod_logs" {
-      targets    = discovery.relabel.pod_logs.output
-      forward_to = [loki.process.pod_logs.receiver]
-    }
-
-    loki.process "pod_logs" {
+    loki.process "add_app_labels" {
       stage.static_labels {
         values = {
-          cluster = "uatcmm-cluster",
-          job = "kubernetes-pods"
+          service_name = "DBCon",
+          pod_name = env("POD_NAME"),
         }
       }
-      stage.log {
-        message = "Debug: namespace={{ .namespace }}, pod={{ .pod }}, container={{ .container }}, line={{ .line }}"
-      }
-      forward_to = [loki.write.default.receiver]
+      forward_to = [loki.write.to_loki.receiver]
     }
 
-    loki.write "default" {
+    loki.write "to_loki" {
       endpoint {
         url = "http://loki.uatcmm.svc.cluster.local:3100/loki/api/v1/push"
       }
     }
 
-    // Alloy internal logging.
-    logging {
-      level  = "info"
-      format = "logfmt"
-    }
+---
+# ----------------------------------------
+# Deployment: App + Alloy Sidecar
+# ----------------------------------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dbcon-app
+  namespace: uatcmm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dbcon-app
+  template:
+    metadata:
+      labels:
+        app: dbcon-app
+    spec:
+      containers:
+        - name: dbcon-app
+          image: tkgsharedharbor.corp.ad.sbi/uat-cmm/dbcon:2.0 #earlier used to be 1.0 changed to 2.0 on 08102025 for alloy side car testing
+          ports:
+            - containerPort: 4320
+          volumeMounts:
+            - name: app-logs
+              mountPath: /app/logs
+
+        - name: alloy
+          image: tkgsharedharbor.corp.ad.sbi/itss/grafana-alloy:1.8.3
+          args: ["--config.file=/etc/alloy/config.alloy"]
+          volumeMounts:
+            - name: alloy-config-sidecar
+              mountPath: /etc/alloy
+            - name: app-logs
+              mountPath: /logs
+
+      volumes:
+        - name: app-logs
+          persistentVolumeClaim:
+            claimName: app-logs-pvc
+
+        - name: alloy-config-sidecar
+          configMap:
+            name: alloy-config-sidecar
+
+---
+# ----------------------------------------
+# Service: Expose dbcon-app via NodePort
+# ----------------------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: dbcon-app-service
+  namespace: uatcmm
+spec:
+  selector:
+    app: dbcon-app
+  type: ClusterIP
+  ports:
+    - port: 4320
+      targetPort: 4320
