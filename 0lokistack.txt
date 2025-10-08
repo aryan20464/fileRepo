@@ -58,9 +58,18 @@ spec:
     spec:
       containers:
         - name: dbcon-app
-          image: tkgsharedharbor.corp.ad.sbi/uat-cmm/dbcon:2.0
+          image: tkgsharedharbor.corp.ad.sbi/uat-cmm/dbcon:3.0
           ports:
             - containerPort: 4320
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            runAsUser: 1001
+            seccompProfile:
+              type: RuntimeDefault
           volumeMounts:
             - name: app-logs
               mountPath: /app/logs
@@ -70,7 +79,7 @@ spec:
               value: /app/logs
 
         - name: alloy
-          image: tkgsharedharbor.corp.ad.sbi/itss/grafana-alloy:1.11.0
+          image: tkgsharedharbor.corp.ad.sbi/itss/grafana-alloy:1.8.3
           args: ["run", "/etc/alloy/config.alloy"]
           volumeMounts:
             - name: alloy-config-sidecar
@@ -108,4 +117,8 @@ spec:
   type: ClusterIP
   ports:
     - port: 4320
-      targetPort: 4320
+      targetPort: 4320 
+
+
+kubectl logs dbcon-app-54fc49785f-fv4ww -n uatcmm -c alloy
+Error: failed to create the remotecfg service: mkdir data-alloy: permission denied
