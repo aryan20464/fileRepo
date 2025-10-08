@@ -1,9 +1,73 @@
-Error: /etc/alloy/config.alloy:36:34: missing ',' in field list
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alloy-config
+  namespace: uatcmm
+  labels:
+    app: alloy
+data:
+  config.alloy: |-
+    // Metrics: Scrape pod metrics in uatcmm namespace, forward to Prometheus.
+    discovery.kubernetes "pods" {
+      role = "pod"
+      namespaces {
+        own_namespace = false
+        names = ["uatcmm"]  // Filter to uatcmm namespace.
+      }
+    }
 
-35 |       values = {
-36 |         "job" = "kubernetes-pods"
-   |
-37 |       }
+    prometheus.scrape "pods" {
+      targets    = discovery.kubernetes.pods.targets
+      forward_to = [prometheus.remote_write.prometheus.receiver]
+    }
 
-interrupt received
-Error: could not perform the initial load successfully
+    prometheus.remote_write "prometheus" {
+      endpoint {
+        url = "http://prometheus.uatcmm.svc.cluster.local:9090/api/v1/write"
+      }
+    }
+
+    // Logs: Tail pod logs in uatcmm namespace, forward to Loki.
+    local.file_match "pod_logs" {
+      paths = ["/var/log/pods/*/*/*.log"]  // Match pod log files.
+    }
+
+    loki.source.file "k8s" {
+      targets    = local.file_match.pod_logs.targets
+      forward_to = [loki.process.k8s.receiver]
+    }
+
+    loki.process "k8s" {
+      stage.match {
+        selector = `{namespace="uatcmm"}`
+        stage.static_labels {
+          values = {
+            "job" = "kubernetes-pods",
+          }
+        }
+        stage.regex {
+          expression = "/var/log/pods/(?P<namespace>[^_]+)_(?P<pod>[^_]+)_(?P<uid>[^/]+)/[^/]+/(?P<container>[^/]+)/.*"
+          source     = "__path__"
+        }
+        stage.labels {
+          values = {
+            namespace = "namespace",
+            pod       = "pod",
+            container = "container",
+          }
+        }
+      }
+      forward_to = [loki.write.default.receiver]
+    }
+
+    loki.write "default" {
+      endpoint {
+        url = "http://loki.uatcmm.svc.cluster.local:3100/loki/api/v1/push"
+      }
+    }
+
+    // Alloy internal logging.
+    logging {
+      level  = "info"
+      format = "logfmt"
+    }
