@@ -1,52 +1,27 @@
-kubectl logs alloy-kz9ff -n uatcmm
-Error: failed to create the remotecfg service: mkdir data-alloy: permission denied
-
-
-apiVersion: apps/v1
-kind: DaemonSet
-metadata:
-  name: alloy
-  namespace: uatcmm
-  labels:
-    app: alloy
 spec:
-  selector:
-    matchLabels:
-      app: alloy
-  template:
-    metadata:
-      labels:
-        app: alloy
-    spec:
-      serviceAccountName: default
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        seccompProfile:
-          type: RuntimeDefault
-      containers:
-        - name: alloy
-          image: tkgsharedharbor.corp.ad.sbi/itss/grafana-alloy:1.11.0
-          args: ["run", "/etc/alloy/config.alloy"]
-          volumeMounts:
-            - name: alloy-config
-              mountPath: /etc/alloy
-            - name: alloy-data
-              mountPath: /alloy/data
-          resources:
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
-            requests:
-              memory: "256Mi"
-              cpu: "250m"
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
-      volumes:
+  serviceAccountName: default
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: alloy
+      image: tkgsharedharbor.corp.ad.sbi/itss/grafana-alloy:1.11.0
+      args: ["run", "/etc/alloy/config.alloy"]
+      volumeMounts:
         - name: alloy-config
-          configMap:
-            name: alloy-config
+          mountPath: /etc/alloy
         - name: alloy-data
-          emptyDir: {}
+          mountPath: /alloy/data
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop: ["ALL"]
+  volumes:
+    - name: alloy-config
+      configMap:
+        name: alloy-config
+    - name: alloy-data
+      emptyDir: {}
