@@ -1,3 +1,63 @@
+spring.application.name=dbcon
+# Set the root logging level (INFO, DEBUG, ERROR, etc.)
+logging.level.root=INFO
+
+# Configure log file location
+#logging.file.name=/var/log/app-logs/app.log
+logging.file.name=/app/logs/app.log
+#logging.file.name=D:\\app_logs\\app.log
+#logging.file.name=/logs/app.log
+
+# Log pattern (optional - keeps logs readable)
+logging.pattern.file=%d{yyyy-MM-dd HH:mm:ss} [%thread] -  %-5level %logger{36} - %msg%n
+logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+
+server.servlet.context-path=/dbcon
+server.port=4320
+
+spring.datasource.url=jdbc:oracle:thin:@//10.191.216.61:1522/IDEACMM
+spring.datasource.username=rfm
+spring.datasource.password=rfm
+spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
+
+
+FROM tkgsharedharbor.corp.ad.sbi/idea-indents-dev/eclipse-temurin:17-alpine
+
+# Set the timezone
+ENV TZ=Asia/Dhaka
+RUN apk add --no-cache tzdata && \
+    cp /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo "$TZ" > /etc/timezone
+
+# Create group and user
+RUN addgroup --system --gid 1001 itss && \
+    adduser --system --uid 1001 --ingroup itss itss
+
+# Create application directories
+RUN mkdir -p /app/logs && \
+    mkdir -p /var/log/app-logs
+
+# Set ownership and permissions
+RUN chown -R itss:itss /app /var/log/app-logs  && \
+    chmod -R 775 /app/logs /var/log/app-logs
+
+# Set working directory
+WORKDIR /app
+
+# Copy application jar
+COPY target/dbcon.jar dbcon.jar
+RUN chown itss:itss dbcon.jar
+
+# Switch to non-root user
+USER itss
+
+# Expose port
+EXPOSE 4320
+
+# Entry point
+ENTRYPOINT ["java", "-jar", "dbcon.jar"]
+
+
 # ----------------------------------------
 # ConfigMap: Alloy Configuration (Flow Mode)
 # ----------------------------------------
