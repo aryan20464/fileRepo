@@ -1,108 +1,19 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: uatcmm
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: alloy-config
-  namespace: uatcmm
-  labels:
-    app: alloy
-data:
-  config.alloy: |
-    // Loki client configuration
-    loki.write "default" {
-      endpoint {
-        url = "http://loki.uatcmm.svc.cluster.local:3100/loki/api/v1/push"
-      }
-    }
+Error: unknown shorthand flag: 'c' in -config.file=/etc/alloy/config.alloy
+Usage:
+  /bin/alloy [global options] <subcommand> [flags]
+  /bin/alloy [command]
 
-    // Discover all pods on the node
-    discovery.kubernetes "pods" {
-      role = "pod"
-    }
+Available Commands:
+  completion  Generate the autocompletion script for the specified shell
+  convert     Convert a supported config file to Alloy
+  fmt         Format a configuration file
+  help        Help about any command
+  run         Run Grafana Alloy
+  tools       Utilities for various components
+  validate    Validate a configuration file
 
-    // File matcher for Kubernetes pod logs
-    local.file_match "logs" {
-      sources = [discovery.kubernetes.pods]
-      paths = [
-        "/var/log/pods/*/*/*.log"
-      ]
-    }
+Flags:
+  -h, --help      help for /bin/alloy
+  -v, --version   version for /bin/alloy
 
-    // Parse Kubernetes pod log format
-    loki.source.file "k8s" {
-      sources    = [local.file_match.logs]
-      forward_to = [loki.process.k8s]
-    }
-
-    // Add metadata (namespace, pod, container)
-    loki.process "k8s" {
-      stage.json {
-        expressions = { stream = "stream", log = "log" }
-      }
-      stage.labels {
-        values = {
-          job       = "kubernetes-pods"
-          namespace = "{{ .__meta_kubernetes_namespace }}"
-          pod       = "{{ .__meta_kubernetes_pod_name }}"
-          container = "{{ .__meta_kubernetes_container_name }}"
-        }
-      }
-      stage.output {
-        source = "log"
-      }
-      forward_to = [loki.write.default]
-    }
----
-apiVersion: apps/v1
-kind: DaemonSet
-metadata:
-  name: alloy
-  namespace: uatcmm
-  labels:
-    app: alloy
-spec:
-  selector:
-    matchLabels:
-      app: alloy
-  template:
-    metadata:
-      labels:
-        app: alloy
-    spec:
-      serviceAccountName: default
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        seccompProfile:
-          type: RuntimeDefault
-      containers:
-        - name: alloy
-          image: tkgsharedharbor.corp.ad.sbi/itss/alloy:latest
-          args:
-            - "-config.file=/etc/alloy/config.alloy"
-          volumeMounts:
-            - name: alloy-config
-              mountPath: /etc/alloy
-            - name: alloy-data
-              mountPath: /alloy/data
-          resources:
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
-            requests:
-              memory: "256Mi"
-              cpu: "250m"
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
-      volumes:
-        - name: alloy-config
-          configMap:
-            name: alloy-config
-        - name: alloy-data
-          emptyDir: {}
+Use "/bin/alloy [command] --help" for more information about a command.
