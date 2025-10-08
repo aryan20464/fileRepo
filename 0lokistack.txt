@@ -1,33 +1,51 @@
-kubectl logs alloy-7hbts -n uatcmm
-ts=2025-10-08T08:54:49.09320192Z level=info boringcrypto_enabled=false
-ts=2025-10-08T08:54:49.091243855Z level=info source=/go/pkg/mod/github.com/!kim!machine!gun/automemlimit@v0.7.1/memlimit/memlimit.go:175 msg="memory is not limited, skipping" package=github.com/KimMachineGun/automemlimit/memlimit
-ts=2025-10-08T08:54:49.093241161Z level=info msg="no peer discovery configured: both join and discover peers are empty" service=cluster
-ts=2025-10-08T08:54:49.093245076Z level=info msg="running usage stats reporter"
-ts=2025-10-08T08:54:49.093247443Z level=info msg="starting complete graph evaluation" controller_path=/ controller_id="" trace_id=6e622b8666274429348cbfe678eb31eb
-ts=2025-10-08T08:54:49.09325472Z level=info msg="Using pod service account via in-cluster config" component_path=/ component_id=discovery.kubernetes.pods
-ts=2025-10-08T08:54:49.093258773Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=6e622b8666274429348cbfe678eb31eb node_id=discovery.kubernetes.pods duration=473.725µs
-ts=2025-10-08T08:54:49.093264633Z level=error msg="failed to evaluate config" controller_path=/ controller_id="" trace_id=6e622b8666274429348cbfe678eb31eb node=local.file_match.logs err="decoding configuration: /etc/alloy/config.alloy:16:3: unrecognized attribute name \"path\""
-ts=2025-10-08T08:54:49.09327279Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=6e622b8666274429348cbfe678eb31eb node_id=local.file_match.logs duration=68.511µs
-ts=2025-10-08T08:54:49.093278577Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=6e622b8666274429348cbfe678eb31eb node_id=loki.write.default duration=440.539µs
-ts=2025-10-08T08:54:49.093283718Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=6e622b8666274429348cbfe678eb31eb node_id=loki.process.k8s duration=270.329µs
-ts=2025-10-08T08:54:49.093288292Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=6e622b8666274429348cbfe678eb31eb node_id=loki.source.file.k8s duration=115.841µs
-ts=2025-10-08T08:54:49.093292314Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=6e622b8666274429348cbfe678eb31eb node_id=logging duration=94.52µs
-ts=2025-10-08T08:54:49.093308069Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=6e622b8666274429348cbfe678eb31eb node_id=labelstore duration=9.411µs
-ts=2025-10-08T08:54:49.093322119Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=6e622b8666274429348cbfe678eb31eb node_id=tracing duration=4.508µs
-ts=2025-10-08T08:54:49.09336323Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=6e622b8666274429348cbfe678eb31eb node_id=remotecfg duration=35.274µs
-ts=2025-10-08T08:54:49.093386269Z level=info msg="applying non-TLS config to HTTP server" service=http
-ts=2025-10-08T08:54:49.09339434Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=6e622b8666274429348cbfe678eb31eb node_id=http duration=18.893µs
-ts=2025-10-08T08:54:49.09340285Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=6e622b8666274429348cbfe678eb31eb node_id=cluster duration=1.892µs
-ts=2025-10-08T08:54:49.093412098Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=6e622b8666274429348cbfe678eb31eb node_id=otel duration=1.848µs
-ts=2025-10-08T08:54:49.093426315Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=6e622b8666274429348cbfe678eb31eb node_id=livedebugging duration=9.703µs
-ts=2025-10-08T08:54:49.09343776Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=6e622b8666274429348cbfe678eb31eb node_id=ui duration=1.928µs
-ts=2025-10-08T08:54:49.093444368Z level=info msg="finished complete graph evaluation" controller_path=/ controller_id="" trace_id=6e622b8666274429348cbfe678eb31eb duration=1.726614ms
-Error: /etc/alloy/config.alloy:16:3: unrecognized attribute name "path"
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alloy-config
+  namespace: uatcmm
+  labels:
+    app: alloy
+data:
+  config.alloy: |
+    // Loki client configuration
+    loki.write "default" {
+      endpoint {
+        url = "http://loki.uatcmm.svc.cluster.local:3100/loki/api/v1/push"
+      }
+    }
 
-15 |   path_targets = discovery.kubernetes.pods.targets
-16 |   path          = "/var/log/pods/*/*/*.log"
-   |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-17 | }
-ts=2025-10-08T08:54:49.093544365Z level=error msg="failed to start reporter" err="context canceled"
+    // Discover all pods on the node
+    discovery.kubernetes "pods" {
+      role = "pod"
+    }
 
-Error: could not perform the initial load successfully
+    // Discover container logs from /var/log/pods
+    local.file_match "logs" {
+      path_targets = discovery.kubernetes.pods.targets
+      path          = "/var/log/pods/*/*/*.log"
+    }
+
+    // Parse Kubernetes pod log format
+    loki.source.file "k8s" {
+      targets    = local.file_match.logs.targets
+      forward_to = [loki.process.k8s.receiver]
+    }
+
+    // Add metadata (namespace, pod, container)
+    loki.process "k8s" {
+      stage.json {
+        expressions = { stream = "stream", log = "log" }
+      }
+      stage.labels {
+        values = {
+          job         = "kubernetes-pods",
+          namespace   = "{{ .__meta_kubernetes_namespace }}",
+          pod         = "{{ .__meta_kubernetes_pod_name }}",
+          container   = "{{ .__meta_kubernetes_container_name }}",
+        }
+      }
+      stage.output {
+        source = "log"
+      }
+      forward_to = [loki.write.default.receiver]
+    }
