@@ -1,73 +1,41 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: alloy-config
-  namespace: uatcmm
-  labels:
-    app: alloy
-data:
-  config.alloy: |-
-    // Metrics: Scrape pod metrics in uatcmm namespace, forward to Prometheus.
-    discovery.kubernetes "pods" {
-      role = "pod"
-      namespaces {
-        own_namespace = false
-        names = ["uatcmm"]  // Filter to uatcmm namespace.
-      }
-    }
+ts=2025-10-08T09:41:13.384581723Z level=info boringcrypto_enabled=false
+ts=2025-10-08T09:41:13.379529738Z level=info source=/go/pkg/mod/github.com/!kim!machine!gun/automemlimit@v0.7.1/memlimit/memlimit.go:198 msg="GOMEMLIMIT is updated" package=github.com/KimMachineGun/automemlimit/memlimit GOMEMLIMIT=483183820 previous=9223372036854775807
+ts=2025-10-08T09:41:13.384632874Z level=info msg="no peer discovery configured: both join and discover peers are empty" service=cluster
+ts=2025-10-08T09:41:13.384637658Z level=info msg="running usage stats reporter"
+ts=2025-10-08T09:41:13.384641821Z level=info msg="starting complete graph evaluation" controller_path=/ controller_id="" trace_id=174d1c95b7d577e8e33ee48780a4879c
+ts=2025-10-08T09:41:13.384649852Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=174d1c95b7d577e8e33ee48780a4879c node_id=loki.write.default duration=486.073µs
+ts=2025-10-08T09:41:13.38465672Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=174d1c95b7d577e8e33ee48780a4879c node_id=loki.process.k8s duration=580.14µs
+ts=2025-10-08T09:41:13.384660506Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=174d1c95b7d577e8e33ee48780a4879c node_id=otel duration=2.249µs
+ts=2025-10-08T09:41:13.384664304Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=174d1c95b7d577e8e33ee48780a4879c node_id=livedebugging duration=12.141µs
+ts=2025-10-08T09:41:13.384671261Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=174d1c95b7d577e8e33ee48780a4879c node_id=labelstore duration=2.908906ms
+ts=2025-10-08T09:41:13.384674915Z level=error msg="failed to evaluate config" controller_path=/ controller_id="" trace_id=174d1c95b7d577e8e33ee48780a4879c node=local.file_match.pod_logs err="decoding configuration: /etc/alloy/config.alloy:23:3: unrecognized attribute name \"paths\""
+ts=2025-10-08T09:41:13.384745491Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=174d1c95b7d577e8e33ee48780a4879c node_id=local.file_match.pod_logs duration=58.543µs
+ts=2025-10-08T09:41:13.38475498Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=174d1c95b7d577e8e33ee48780a4879c node_id=loki.source.file.k8s duration=223.934µs
+ts=2025-10-08T09:41:13.38476092Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=174d1c95b7d577e8e33ee48780a4879c node_id=logging duration=197.854µs
+ts=2025-10-08T09:41:13.384861235Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=174d1c95b7d577e8e33ee48780a4879c node_id=remotecfg duration=86.801µs
+ts=2025-10-08T09:41:13.384890076Z level=info msg="applying non-TLS config to HTTP server" service=http
+ts=2025-10-08T09:41:13.384895646Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=174d1c95b7d577e8e33ee48780a4879c node_id=http duration=19.476µs
+ts=2025-10-08T09:41:13.384907816Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=174d1c95b7d577e8e33ee48780a4879c node_id=ui duration=5.249µs
+ts=2025-10-08T09:41:13.384920073Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=174d1c95b7d577e8e33ee48780a4879c node_id=cluster duration=3.609µs
+ts=2025-10-08T09:41:13.38874071Z level=info msg="replaying WAL, this may take a while" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=wal dir=/alloy/data/prometheus.remote_write.prometheus/wal
+ts=2025-10-08T09:41:13.388898277Z level=info msg="WAL segment loaded" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=wal segment=0 maxSegment=2
+ts=2025-10-08T09:41:13.454974973Z level=info msg="WAL segment loaded" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=wal segment=1 maxSegment=2
+ts=2025-10-08T09:41:13.455050472Z level=info msg="WAL segment loaded" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=wal segment=2 maxSegment=2
+ts=2025-10-08T09:41:13.45604487Z level=info msg="Starting WAL watcher" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=rw remote_name=97af7b url=http://prometheus.uatcmm.svc.cluster.local:9090/api/v1/write queue=97af7b
+ts=2025-10-08T09:41:13.45607135Z level=info msg="Starting scraped metadata watcher" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=rw remote_name=97af7b url=http://prometheus.uatcmm.svc.cluster.local:9090/api/v1/write
+ts=2025-10-08T09:41:13.456091184Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=174d1c95b7d577e8e33ee48780a4879c node_id=prometheus.remote_write.prometheus duration=71.16591ms
+ts=2025-10-08T09:41:13.456221911Z level=info msg="Replaying WAL" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=rw remote_name=97af7b url=http://prometheus.uatcmm.svc.cluster.local:9090/api/v1/write queue=97af7b
+ts=2025-10-08T09:41:13.456318548Z level=info msg="Using pod service account via in-cluster config" component_path=/ component_id=discovery.kubernetes.pods
+ts=2025-10-08T09:41:13.456771728Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=174d1c95b7d577e8e33ee48780a4879c node_id=discovery.kubernetes.pods duration=659.445µs
+ts=2025-10-08T09:41:13.457443945Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=174d1c95b7d577e8e33ee48780a4879c node_id=prometheus.scrape.pods duration=646.566µs
+ts=2025-10-08T09:41:13.457480245Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=174d1c95b7d577e8e33ee48780a4879c node_id=tracing duration=9.638µs
+ts=2025-10-08T09:41:13.457487027Z level=info msg="finished complete graph evaluation" controller_path=/ controller_id="" trace_id=174d1c95b7d577e8e33ee48780a4879c duration=77.365674ms
+Error: /etc/alloy/config.alloy:23:3: unrecognized attribute name "paths"
 
-    prometheus.scrape "pods" {
-      targets    = discovery.kubernetes.pods.targets
-      forward_to = [prometheus.remote_write.prometheus.receiver]
-    }
+22 | local.file_match "pod_logs" {
+23 |   paths = ["/var/log/pods/*/*/*.log"]  // Match pod log files.
+   |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+24 | }
 
-    prometheus.remote_write "prometheus" {
-      endpoint {
-        url = "http://prometheus.uatcmm.svc.cluster.local:9090/api/v1/write"
-      }
-    }
-
-    // Logs: Tail pod logs in uatcmm namespace, forward to Loki.
-    local.file_match "pod_logs" {
-      paths = ["/var/log/pods/*/*/*.log"]  // Match pod log files.
-    }
-
-    loki.source.file "k8s" {
-      targets    = local.file_match.pod_logs.targets
-      forward_to = [loki.process.k8s.receiver]
-    }
-
-    loki.process "k8s" {
-      stage.match {
-        selector = `{namespace="uatcmm"}`
-        stage.static_labels {
-          values = {
-            "job" = "kubernetes-pods",
-          }
-        }
-        stage.regex {
-          expression = "/var/log/pods/(?P<namespace>[^_]+)_(?P<pod>[^_]+)_(?P<uid>[^/]+)/[^/]+/(?P<container>[^/]+)/.*"
-          source     = "__path__"
-        }
-        stage.labels {
-          values = {
-            namespace = "namespace",
-            pod       = "pod",
-            container = "container",
-          }
-        }
-      }
-      forward_to = [loki.write.default.receiver]
-    }
-
-    loki.write "default" {
-      endpoint {
-        url = "http://loki.uatcmm.svc.cluster.local:3100/loki/api/v1/push"
-      }
-    }
-
-    // Alloy internal logging.
-    logging {
-      level  = "info"
-      format = "logfmt"
-    }
+Error: could not perform the initial load successfully
+ts=2025-10-08T09:41:13.457659188Z level=error msg="failed to start reporter" err="context canceled"
