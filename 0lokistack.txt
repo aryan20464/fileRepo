@@ -1,10 +1,11 @@
-  Warning  FailedCreate  5s    daemonset-controller  Error creating: pods "alloy-xqslk" is forbidden: violates PodSecurity "restricted:latest": restricted volume types (volumes "varlogpods", "varlibdockercontainers" use restricted volume type "hostPath")
-  Warning  FailedCreate  5s    daemonset-controller  Error creating: pods "alloy-9vfrl" is forbidden: violates PodSecurity "restricted:latest": restricted volume types (volumes "varlogpods", "varlibdockercontainers" use restricted volume type "hostPath")
-  Warning  FailedCreate  5s    daemonset-controller  Error creating: pods "alloy-xlpzx" is forbidden: violates PodSecurity "restricted:latest": restricted volume types (volumes "varlogpods", "varlibdockercontainers" use restricted volume type "hostPath")
-  Warning  FailedCreate  5s    daemonset-controller  Error creating: pods "alloy-5ftmd" is forbidden: violates PodSecurity "restricted:latest": restricted volume types (volumes "varlogpods", "varlibdockercontainers" use restricted volume type "hostPath")
-  Warning  FailedCreate  4s    daemonset-controller  Error creating: pods "alloy-prgwx" is forbidden: violates PodSecurity "restricted:latest": restricted volume types (volumes "varlogpods", "varlibdockercontainers" use restricted volume type "hostPath")
-  Warning  FailedCreate  4s    daemonset-controller  Error creating: pods "alloy-fsjfp" is forbidden: violates PodSecurity "restricted:latest": restricted volume types (volumes "varlogpods", "varlibdockercontainers" use restricted volume type "hostPath")
-  Warning  FailedCreate  4s    daemonset-controller  Error creating: pods "alloy-22sq7" is forbidden: violates PodSecurity "restricted:latest": restricted volume types (volumes "varlogpods", "varlibdockercontainers" use restricted volume type "hostPath")
-  Warning  FailedCreate  4s    daemonset-controller  Error creating: pods "alloy-88smz" is forbidden: violates PodSecurity "restricted:latest": restricted volume types (volumes "varlogpods", "varlibdockercontainers" use restricted volume type "hostPath")
-  Warning  FailedCreate  3s    daemonset-controller  Error creating: pods "alloy-zv84m" is forbidden: violates PodSecurity "restricted:latest": restricted volume types (volumes "varlogpods", "varlibdockercontainers" use restricted volume type "hostPath")
-  Warning  FailedCreate  2s    daemonset-controller  (combined from similar events): Error creating: pods "alloy-2vmbt" is forbidden: violates PodSecurity "restricted:latest": restricted volume types (volumes "varlogpods", "varlibdockercontainers" use restricted volume type "hostPath")
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: loki
+  labels:
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/audit: baseline
+    pod-security.kubernetes.io/audit-version: latest
+    pod-security.kubernetes.io/warn: baseline
+    pod-security.kubernetes.io/warn-version: latest
