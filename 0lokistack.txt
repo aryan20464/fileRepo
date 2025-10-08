@@ -1,41 +1,69 @@
-ts=2025-10-08T09:45:20.277055425Z level=info boringcrypto_enabled=false
-ts=2025-10-08T09:45:20.275017178Z level=info source=/go/pkg/mod/github.com/!kim!machine!gun/automemlimit@v0.7.1/memlimit/memlimit.go:198 msg="GOMEMLIMIT is updated" package=github.com/KimMachineGun/automemlimit/memlimit GOMEMLIMIT=483183820 previous=9223372036854775807
-ts=2025-10-08T09:45:20.277139025Z level=info msg="no peer discovery configured: both join and discover peers are empty" service=cluster
-ts=2025-10-08T09:45:20.277144461Z level=info msg="running usage stats reporter"
-ts=2025-10-08T09:45:20.277147106Z level=info msg="starting complete graph evaluation" controller_path=/ controller_id="" trace_id=458a23e7f25c6895c86245b613fc133b
-ts=2025-10-08T09:45:20.277156994Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=458a23e7f25c6895c86245b613fc133b node_id=otel duration=1.216µs
-ts=2025-10-08T09:45:20.277163214Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=458a23e7f25c6895c86245b613fc133b node_id=remotecfg duration=36.267µs
-ts=2025-10-08T09:45:20.2771684Z level=info msg="applying non-TLS config to HTTP server" service=http
-ts=2025-10-08T09:45:20.27717871Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=458a23e7f25c6895c86245b613fc133b node_id=http duration=6.793µs
-ts=2025-10-08T09:45:20.277183977Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=458a23e7f25c6895c86245b613fc133b node_id=cluster duration=380ns
-ts=2025-10-08T09:45:20.277190166Z level=error msg="failed to evaluate config" controller_path=/ controller_id="" trace_id=458a23e7f25c6895c86245b613fc133b node=local.file_match.pod_logs err="decoding configuration: /etc/alloy/config.alloy:23:19: \"/var/log/pods/*/*/*.log\" target::ConvertFrom: conversion from 'string' is not supported"
-ts=2025-10-08T09:45:20.277198665Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=458a23e7f25c6895c86245b613fc133b node_id=local.file_match.pod_logs duration=67.031µs
-ts=2025-10-08T09:45:20.277205409Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=458a23e7f25c6895c86245b613fc133b node_id=loki.write.default duration=392.195µs
-ts=2025-10-08T09:45:20.277210671Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=458a23e7f25c6895c86245b613fc133b node_id=loki.process.k8s duration=270.978µs
-ts=2025-10-08T09:45:20.27721729Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=458a23e7f25c6895c86245b613fc133b node_id=loki.source.file.k8s duration=114.579µs
-ts=2025-10-08T09:45:20.277221064Z level=info msg="Using pod service account via in-cluster config" component_path=/ component_id=discovery.kubernetes.pods
-ts=2025-10-08T09:45:20.277223806Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=458a23e7f25c6895c86245b613fc133b node_id=discovery.kubernetes.pods duration=399.855µs
-ts=2025-10-08T09:45:20.277226822Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=458a23e7f25c6895c86245b613fc133b node_id=tracing duration=9.578µs
-ts=2025-10-08T09:45:20.277231963Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=458a23e7f25c6895c86245b613fc133b node_id=logging duration=207.972µs
-ts=2025-10-08T09:45:20.277251014Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=458a23e7f25c6895c86245b613fc133b node_id=livedebugging duration=11.375µs
-ts=2025-10-08T09:45:20.277266362Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=458a23e7f25c6895c86245b613fc133b node_id=ui duration=6.627µs
-ts=2025-10-08T09:45:20.277280629Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=458a23e7f25c6895c86245b613fc133b node_id=labelstore duration=8.398µs
-ts=2025-10-08T09:45:20.347110563Z level=info msg="replaying WAL, this may take a while" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=wal dir=/alloy/data/prometheus.remote_write.prometheus/wal
-ts=2025-10-08T09:45:20.34735074Z level=info msg="WAL segment loaded" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=wal segment=0 maxSegment=1
-ts=2025-10-08T09:45:20.34742201Z level=info msg="WAL segment loaded" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=wal segment=1 maxSegment=1
-ts=2025-10-08T09:45:20.348220186Z level=info msg="Starting WAL watcher" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=rw remote_name=89807c url=http://prometheus.uatcmm.svc.cluster.local:9090/api/v1/write queue=89807c
-ts=2025-10-08T09:45:20.348250309Z level=info msg="Starting scraped metadata watcher" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=rw remote_name=89807c url=http://prometheus.uatcmm.svc.cluster.local:9090/api/v1/write
-ts=2025-10-08T09:45:20.348268871Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=458a23e7f25c6895c86245b613fc133b node_id=prometheus.remote_write.prometheus duration=70.976136ms
-ts=2025-10-08T09:45:20.348565667Z level=info msg="Replaying WAL" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=rw remote_name=89807c url=http://prometheus.uatcmm.svc.cluster.local:9090/api/v1/write queue=89807c
-ts=2025-10-08T09:45:20.349028552Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=458a23e7f25c6895c86245b613fc133b node_id=prometheus.scrape.pods duration=719.184µs
-ts=2025-10-08T09:45:20.349062359Z level=info msg="finished complete graph evaluation" controller_path=/ controller_id="" trace_id=458a23e7f25c6895c86245b613fc133b duration=73.524513ms
-Error: /etc/alloy/config.alloy:23:19: "/var/log/pods/*/*/*.log" target::ConvertFrom: conversion from 'string' is not supported
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alloy-config
+  namespace: uatcmm
+  labels:
+    app: alloy
+data:
+  config.alloy: |-
+    // Metrics: Scrape pod metrics in uatcmm namespace, forward to Prometheus.
+    discovery.kubernetes "pods" {
+      role = "pod"
+      namespaces {
+        own_namespace = false
+        names = ["uatcmm"]  // Filter to uatcmm namespace.
+      }
+    }
 
-22 | local.file_match "pod_logs" {
-23 |   path_targets = ["/var/log/pods/*/*/*.log"]  // Match pod log files.
-   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^
-24 | }
+    prometheus.scrape "pods" {
+      targets    = discovery.kubernetes.pods.targets
+      forward_to = [prometheus.remote_write.prometheus.receiver]
+    }
 
-ts=2025-10-08T09:45:20.349185003Z level=error msg="failed to start reporter" err="context canceled"
-interrupt received
-Error: could not perform the initial load successfully
+    prometheus.remote_write "prometheus" {
+      endpoint {
+        url = "http://prometheus.uatcmm.svc.cluster.local:9090/api/v1/write"
+      }
+    }
+
+    // Logs: Tail pod logs in uatcmm namespace, forward to Loki.
+    loki.source.file "k8s" {
+      targets    = [{ __path__ = "/var/log/pods/*/*/*.log" }]
+      forward_to = [loki.process.k8s.receiver]
+    }
+
+    loki.process "k8s" {
+      stage.match {
+        selector = `{namespace="uatcmm"}`
+        stage.static_labels {
+          values = {
+            "job" = "kubernetes-pods",
+          }
+        }
+        stage.regex {
+          expression = "/var/log/pods/(?P<namespace>[^_]+)_(?P<pod>[^_]+)_(?P<uid>[^/]+)/[^/]+/(?P<container>[^/]+)/.*"
+          source     = "__path__"
+        }
+        stage.labels {
+          values = {
+            namespace = "namespace",
+            pod       = "pod",
+            container = "container",
+          }
+        }
+      }
+      forward_to = [loki.write.default.receiver]
+    }
+
+    loki.write "default" {
+      endpoint {
+        url = "http://loki.uatcmm.svc.cluster.local:3100/loki/api/v1/push"
+      }
+    }
+
+    // Alloy internal logging.
+    logging {
+      level  = "info"
+      format = "logfmt"
+    }
