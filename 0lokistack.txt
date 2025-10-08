@@ -1,42 +1,3 @@
-# ----------------------------------------
-# ConfigMap: Alloy Configuration (Flow Mode)
-# ----------------------------------------
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: alloy-config-sidecar
-  namespace: uatcmm
-data:
-  config.alloy: |
-    // Match all application logs written by the main container
-    local.file_match "app_logs" {
-      path_targets = [{ "__path__" = "/logs/*.log" }]
-    }
-
-    // Read logs from the matched paths
-    loki.source.file "app_logs" {
-      targets    = local.file_match.app_logs.targets
-      forward_to = [loki.process.add_app_labels.receiver]
-    }
-
-    // Add labels for service and pod
-    loki.process "add_app_labels" {
-      stage.static_labels {
-        values = {
-          service_name = "DBCon",
-          pod_name = env("POD_NAME"),
-        }
-      }
-      forward_to = [loki.write.to_loki.receiver]
-    }
-
-    // Send to Loki
-    loki.write "to_loki" {
-      endpoint {
-        url = "http://loki.uatcmm.svc.cluster.local:3100/loki/api/v1/push"
-      }
-    }
-
 ---
 # ----------------------------------------
 # Deployment: App + Alloy Sidecar
@@ -73,20 +34,21 @@ spec:
           volumeMounts:
             - name: app-logs
               mountPath: /app/logs
-          # optional: ensure logs are written to /app/logs/*.log
           env:
             - name: LOG_DIR
               value: /app/logs
 
         - name: alloy
           image: tkgsharedharbor.corp.ad.sbi/itss/grafana-alloy:1.8.3
-          args: ["run", "/etc/alloy/config.alloy"]
+          args: ["run", "--storage.path=/var/lib/alloy", "/etc/alloy/config.alloy"]
           volumeMounts:
             - name: alloy-config-sidecar
               mountPath: /etc/alloy
               readOnly: true
             - name: app-logs
               mountPath: /logs
+            - name: alloy-data
+              mountPath: /var/lib/alloy
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000
@@ -94,31 +56,11 @@ spec:
             capabilities:
               drop: ["ALL"]
 
-      # Shared emptyDir volume between app and alloy containers
       volumes:
         - name: app-logs
           emptyDir: {}
         - name: alloy-config-sidecar
           configMap:
             name: alloy-config-sidecar
-
----
-# ----------------------------------------
-# Service: Expose dbcon-app via ClusterIP
-# ----------------------------------------
-apiVersion: v1
-kind: Service
-metadata:
-  name: dbcon-app-service
-  namespace: uatcmm
-spec:
-  selector:
-    app: dbcon-app
-  type: ClusterIP
-  ports:
-    - port: 4320
-      targetPort: 4320 
-
-
-kubectl logs dbcon-app-54fc49785f-fv4ww -n uatcmm -c alloy
-Error: failed to create the remotecfg service: mkdir data-alloy: permission denied
+        - name: alloy-data
+          emptyDir: {}
