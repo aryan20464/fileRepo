@@ -463,3 +463,58 @@ TRACE StatusLogger Log4jLoggerFactory.getContext() found anchor class com.sbi.db
 TRACE StatusLogger Log4jLoggerFactory.getContext() found anchor class java.util.logging.Logger
 2025-10-09 10:19:42 [main] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 4320 (http) with context path '/dbcon'
 2025-10-09 10:19:42 [main] INFO  com.sbi.dbcon.DbconApplication - Started DbconApplication in 3.957 seconds (JVM running for 4.617)
+
+
+C:\Users\1064695>kubectl logs dbcon-app-b6cc676b9-n4qcn -n uatcmm -c alloy
+ts=2025-10-09T04:19:37.244086674Z level=info boringcrypto_enabled=false
+ts=2025-10-09T04:19:37.241921912Z level=info source=/go/pkg/mod/github.com/!kim!machine!gun/automemlimit@v0.7.1/memlimit/memlimit.go:175 msg="memory is not limited, skipping" package=github.com/KimMachineGun/automemlimit/memlimit
+ts=2025-10-09T04:19:37.244128165Z level=info msg="no peer discovery configured: both join and discover peers are empty" service=cluster
+ts=2025-10-09T04:19:37.244132142Z level=warn msg="this stdlib function is deprecated; please refer to the documentation for updated usage and alternatives" controller_path=/ controller_id="" function=env
+ts=2025-10-09T04:19:37.244136406Z level=info msg="starting complete graph evaluation" controller_path=/ controller_id="" trace_id=3f67ac59bc44898b0946977583287ca2
+ts=2025-10-09T04:19:37.244144095Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=3f67ac59bc44898b0946977583287ca2 node_id=loki.write.to_loki duration=1.304868ms
+ts=2025-10-09T04:19:37.244148254Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=3f67ac59bc44898b0946977583287ca2 node_id=loki.process.add_app_labels duration=212.182µs
+ts=2025-10-09T04:19:37.244152657Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=3f67ac59bc44898b0946977583287ca2 node_id=logging duration=70.073µs
+ts=2025-10-09T04:19:37.244163332Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=3f67ac59bc44898b0946977583287ca2 node_id=labelstore duration=4.428µs
+ts=2025-10-09T04:19:37.24422061Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=3f67ac59bc44898b0946977583287ca2 node_id=local.file_match.app_logs duration=47.379µs
+ts=2025-10-09T04:19:37.244411868Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=3f67ac59bc44898b0946977583287ca2 node_id=loki.source.file.app_logs duration=184.132µs
+ts=2025-10-09T04:19:37.244430934Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=3f67ac59bc44898b0946977583287ca2 node_id=tracing duration=5.312µs
+ts=2025-10-09T04:19:37.24447036Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=3f67ac59bc44898b0946977583287ca2 node_id=remotecfg duration=32.906µs
+ts=2025-10-09T04:19:37.244489671Z level=info msg="applying non-TLS config to HTTP server" service=http
+ts=2025-10-09T04:19:37.244494752Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=3f67ac59bc44898b0946977583287ca2 node_id=http duration=12.916µs
+ts=2025-10-09T04:19:37.244502082Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=3f67ac59bc44898b0946977583287ca2 node_id=cluster duration=1.733µs
+ts=2025-10-09T04:19:37.2445117Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=3f67ac59bc44898b0946977583287ca2 node_id=otel duration=2.127µs
+ts=2025-10-09T04:19:37.244535147Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=3f67ac59bc44898b0946977583287ca2 node_id=livedebugging duration=15.903µs
+ts=2025-10-09T04:19:37.244547456Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=3f67ac59bc44898b0946977583287ca2 node_id=ui duration=2.408µs
+ts=2025-10-09T04:19:37.244555049Z level=info msg="finished complete graph evaluation" controller_path=/ controller_id="" trace_id=3f67ac59bc44898b0946977583287ca2 duration=2.10854ms
+ts=2025-10-09T04:19:37.244784969Z level=info msg="scheduling loaded components and services"
+ts=2025-10-09T04:19:37.245068054Z level=info msg="starting cluster node" service=cluster peers_count=0 peers="" advertise_addr=127.0.0.1:12345 minimum_cluster_size=0 minimum_size_wait_timeout=0s
+ts=2025-10-09T04:19:37.245297665Z level=info msg="peers changed" service=cluster peers_count=1 min_cluster_size=0 peers=dbcon-app-b6cc676b9-n4qcn
+ts=2025-10-09T04:19:37.247073322Z level=info msg="now listening for http traffic" service=http addr=127.0.0.1:12345
+ts=2025-10-09T04:19:47.245664009Z level=info msg="tail routine: started" component_path=/ component_id=loki.source.file.app_logs component=tailer path=/logs/app.log
+ts=2025-10-09T04:19:47.245732176Z level=info msg="Seeked /logs/app.log - &{Offset:0 Whence:0}" component_path=/ component_id=loki.source.file.app_logs component=tailer
+
+C:\Users\1064695>kubectl logs dbcon-app-b6cc676b9-5hhp7 -n uatcmm -c alloy
+ts=2025-10-09T04:19:37.835864082Z level=info boringcrypto_enabled=false
+ts=2025-10-09T04:19:37.834728545Z level=info source=/go/pkg/mod/github.com/!kim!machine!gun/automemlimit@v0.7.1/memlimit/memlimit.go:175 msg="memory is not limited, skipping" package=github.com/KimMachineGun/automemlimit/memlimit
+ts=2025-10-09T04:19:37.835901903Z level=info msg="no peer discovery configured: both join and discover peers are empty" service=cluster
+ts=2025-10-09T04:19:37.835905633Z level=warn msg="this stdlib function is deprecated; please refer to the documentation for updated usage and alternatives" controller_path=/ controller_id="" function=env
+ts=2025-10-09T04:19:37.835911037Z level=info msg="starting complete graph evaluation" controller_path=/ controller_id="" trace_id=7f8e140401f67ff767a52e925f7ce4d9
+ts=2025-10-09T04:19:37.835917776Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=7f8e140401f67ff767a52e925f7ce4d9 node_id=loki.write.to_loki duration=361.455µs
+ts=2025-10-09T04:19:37.835922364Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=7f8e140401f67ff767a52e925f7ce4d9 node_id=loki.process.add_app_labels duration=123.121µs
+ts=2025-10-09T04:19:37.835925801Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=7f8e140401f67ff767a52e925f7ce4d9 node_id=tracing duration=3.787µs
+ts=2025-10-09T04:19:37.835930682Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=7f8e140401f67ff767a52e925f7ce4d9 node_id=logging duration=69.857µs
+ts=2025-10-09T04:19:37.835936198Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=7f8e140401f67ff767a52e925f7ce4d9 node_id=otel duration=1.147µs
+ts=2025-10-09T04:19:37.836086934Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=7f8e140401f67ff767a52e925f7ce4d9 node_id=local.file_match.app_logs duration=146.891µs
+ts=2025-10-09T04:19:37.836229179Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=7f8e140401f67ff767a52e925f7ce4d9 node_id=loki.source.file.app_logs duration=131.77µs
+ts=2025-10-09T04:19:37.836269811Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=7f8e140401f67ff767a52e925f7ce4d9 node_id=remotecfg duration=32.834µs
+ts=2025-10-09T04:19:37.836291545Z level=info msg="applying non-TLS config to HTTP server" service=http
+ts=2025-10-09T04:19:37.836297137Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=7f8e140401f67ff767a52e925f7ce4d9 node_id=http duration=17.17µs
+ts=2025-10-09T04:19:37.836306332Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=7f8e140401f67ff767a52e925f7ce4d9 node_id=cluster duration=4.407µs
+ts=2025-10-09T04:19:37.836317669Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=7f8e140401f67ff767a52e925f7ce4d9 node_id=livedebugging duration=3.603µs
+ts=2025-10-09T04:19:37.836323357Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=7f8e140401f67ff767a52e925f7ce4d9 node_id=ui duration=1.441µs
+ts=2025-10-09T04:19:37.836333481Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=7f8e140401f67ff767a52e925f7ce4d9 node_id=labelstore duration=3.451µs
+ts=2025-10-09T04:19:37.836340874Z level=info msg="finished complete graph evaluation" controller_path=/ controller_id="" trace_id=7f8e140401f67ff767a52e925f7ce4d9 duration=1.082267ms
+ts=2025-10-09T04:19:37.83642801Z level=info msg="scheduling loaded components and services"
+ts=2025-10-09T04:19:37.836714047Z level=info msg="starting cluster node" service=cluster peers_count=0 peers="" advertise_addr=127.0.0.1:12345 minimum_cluster_size=0 minimum_size_wait_timeout=0s
+ts=2025-10-09T04:19:37.837287826Z level=info msg="peers changed" service=cluster peers_count=1 min_cluster_size=0 peers=dbcon-app-b6cc676b9-5hhp7
+ts=2025-10-09T04:19:37.838758923Z level=info msg="now listening for http traffic" service=http addr=127.0.0.1:12345
