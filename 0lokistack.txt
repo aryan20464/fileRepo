@@ -1,38 +1,150 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN">
-    <Properties>
-        <Property name="LOG_PATH">${env:LOG_PATH:-/app/logs}</Property>
-        <Property name="LOG_DATEFORMAT_PATTERN">yyyy-MM-dd HH:mm:ss.SSS</Property>
-        <Property name="LOG_LEVEL_PATTERN">%5p</Property>
-        <Property name="FILE_LOG_PATTERN">%d{${LOG_DATEFORMAT_PATTERN}} ${LOG_LEVEL_PATTERN} %pid --- [%t] %-40.40c{1.} : %m%n%xwEx</Property>
-    </Properties>
-    <Appenders>
-        <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="${FILE_LOG_PATTERN}"/>
-        </Console>
-        <RollingFile name="File"
-                     fileName="${LOG_PATH}/app.log"
-                     filePattern="${LOG_PATH}/app-%d{yyyy-MM-dd-HH}-%i.log.gz">
-            <PatternLayout pattern="${FILE_LOG_PATTERN}"/>
-            <Policies>
-                <SizeBasedTriggeringPolicy size="10MB"/>
-            </Policies>
-            <DefaultRolloverStrategy max="7"/>
-        </RollingFile>
-    </Appenders>
-    <Loggers>
-        <Root level="INFO">
-            <AppenderRef ref="Console"/>
-            <AppenderRef ref="File"/>
-        </Root>
-        <!-- Suppress noisy loggers -->
-        <Logger name="org.apache.catalina.startup.DigesterFactory" level="ERROR"/>
-        <Logger name="org.apache.catalina.util.LifecycleBase" level="ERROR"/>
-        <Logger name="org.apache.coyote.http11.Http11NioProtocol" level="WARN"/>
-        <Logger name="org.apache.sshd.common.util.SecurityUtils" level="WARN"/>
-        <Logger name="org.apache.tomcat.util.net.NioSelectorPool" level="WARN"/>
-        <Logger name="org.eclipse.jetty.util.component.AbstractLifeCycle" level="ERROR"/>
-        <Logger name="org.hibernate.validator.internal.util.Version" level="WARN"/>
-        <Logger name="org.springframework.boot.actuate.endpoint.jmx" level="WARN"/>
-    </Loggers>
-</Configuration>
+---
+# ServiceAccount for Alloy pods
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: alloy-logs
+  namespace: uatcmm
+---
+# ClusterRole to allow Alloy to access pods and logs
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: alloy-logs
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "pods/log"]
+    verbs: ["get", "list", "watch"]
+---
+# ClusterRoleBinding to bind ClusterRole to ServiceAccount
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: alloy-logs
+subjects:
+  - kind: ServiceAccount
+    name: alloy-logs
+    namespace: uatcmm
+roleRef:
+  kind: ClusterRole
+  name: alloy-logs
+  apiGroup: rbac.authorization.k8s.io
+---
+# ConfigMap for Alloy configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alloy-logs-config
+  namespace: uatcmm
+data:
+  config.alloy: |
+    // Discover pods in the uatcmm namespace
+    discovery.kubernetes "pods" {
+      role = "pod"
+      namespaces {
+        names = ["uatcmm"]
+      }
+    }
+
+    // Relabel to add Kubernetes metadata labels
+    discovery.relabel "pod_logs" {
+      targets = discovery.kubernetes.pods.targets
+
+      rule {
+        source_labels = ["__meta_kubernetes_namespace"]
+        target_label  = "namespace"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_pod_name"]
+        target_label  = "pod_name"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_pod_container_name"]
+        target_label  = "container"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_pod_label_app"]
+        target_label  = "service_name"
+        replacement   = "$1"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_pod_uid"]
+        target_label  = "pod_uid"
+      }
+    }
+
+    // Collect logs from pods via Kubernetes API
+    loki.source.kubernetes "pod_logs" {
+      targets    = discovery.relabel.pod_logs.output
+      forward_to = [loki.process.add_labels.receiver]
+    }
+
+    // Process: Add static labels
+    loki.process "add_labels" {
+      stage.static_labels {
+        values = {
+          environment = "uat",
+          cluster     = "uat-cluster",
+        }
+      }
+      forward_to = [loki.write.to_loki.receiver]
+    }
+
+    // Send to Loki
+    loki.write "to_loki" {
+      endpoint {
+        url = "http://loki.uatcmm.svc.cluster.local:3100/loki/api/v1/push"
+      }
+    }
+---
+# DaemonSet to run Alloy on each node
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: alloy-logs
+  namespace: uatcmm
+  labels:
+    app: alloy-logs
+spec:
+  selector:
+    matchLabels:
+      app: alloy-logs
+  template:
+    metadata:
+      labels:
+        app: alloy-logs
+    spec:
+      serviceAccountName: alloy-logs
+      containers:
+        - name: alloy
+          image: grafana/alloy:v1.11.0  # Or tkgsharedharbor.corp.ad.sbi/itss/grafana-alloy:1.11.0
+          args:
+            - "run"
+            - "--storage.path=/var/lib/alloy"
+            - "--disable-reporting"
+            - "/etc/alloy/config.alloy"
+          volumeMounts:
+            - name: alloy-config
+              mountPath: /etc/alloy
+              readOnly: true
+            - name: alloy-data
+              mountPath: /var/lib/alloy
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+      volumes:
+        - name: alloy-config
+          configMap:
+            name: alloy-logs-config
+        - name: alloy-data
+          emptyDir: {}
