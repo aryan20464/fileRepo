@@ -1,7 +1,69 @@
-Error: /etc/alloy/config.alloy:10:1: cannot find the definition of component name "alloy.cluster"
-
- 9 | // Enabling the below block in case of high log volumes to distribute load across nodes - remove this block if alloy does not run
-10 | alloy.cluster "default" {
-   | ^^^^^^^^^^^^^
-11 |   enabled = true
-Error: could not perform the initial load successfully
+# alloy-daemonset.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: alloy-logs
+  namespace: uatcmm
+  labels:
+    app: alloy-logs
+spec:
+  selector:
+    matchLabels:
+      app: alloy-logs
+  template:
+    metadata:
+      labels:
+        app: alloy-logs
+    spec:
+      serviceAccountName: alloy-logs
+      containers:
+        - name: alloy
+          image: grafana/alloy:v1.11.0
+          args:
+            - "run"
+            - "--storage.path=/var/lib/alloy"
+            - "--disable-reporting"
+            - "--cluster.enabled=true"
+            - "--cluster.node-name=$(POD_NAME)"
+            - "--cluster.advertise-address=$(POD_IP):12345"
+            - "--cluster.discovery.kubernetes.role=pod"
+            - "--cluster.discovery.kubernetes.namespaces=uatcmm"
+            - "--cluster.discovery.kubernetes.selector=app=alloy-logs"
+            - "/etc/alloy/config.alloy"
+          ports:
+            - name: cluster
+              containerPort: 12345
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          volumeMounts:
+            - name: alloy-config
+              mountPath: /etc/alloy
+              readOnly: true
+            - name: alloy-data
+              mountPath: /var/lib/alloy
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            limits:
+              cpu: 1
+              memory: 1Gi
+            requests:
+              cpu: 200m
+              memory: 256Mi
+      volumes:
+        - name: alloy-config
+          configMap:
+            name: alloy-logs-config
+        - name: alloy-data
+          emptyDir: {}
