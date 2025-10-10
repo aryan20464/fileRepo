@@ -1,12 +1,7 @@
-alloy.cluster "default" {
-      enabled = true
-      node_name = env("POD_NAME")
-      advertise_address = env("POD_IP") + ":12345"
-      discovery {
-        kubernetes {
-          role = "pod"
-          namespaces { own_namespace = true }
-          selector { match_labels = { "app" = "alloy-logs" } }
-        }
-      }
-    }
+Error: /etc/alloy/config.alloy:10:1: cannot find the definition of component name "alloy.cluster"
+
+ 9 | // Enabling the below block in case of high log volumes to distribute load across nodes - remove this block if alloy does not run
+10 | alloy.cluster "default" {
+   | ^^^^^^^^^^^^^
+11 |   enabled = true
+Error: could not perform the initial load successfully
