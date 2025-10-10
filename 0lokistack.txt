@@ -1,150 +1,36 @@
----
-# ServiceAccount for Alloy pods
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: alloy-logs
-  namespace: uatcmm
----
-# ClusterRole to allow Alloy to access pods and logs
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: alloy-logs
-rules:
-  - apiGroups: [""]
-    resources: ["pods", "pods/log"]
-    verbs: ["get", "list", "watch"]
----
-# ClusterRoleBinding to bind ClusterRole to ServiceAccount
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: alloy-logs
-subjects:
-  - kind: ServiceAccount
-    name: alloy-logs
-    namespace: uatcmm
-roleRef:
-  kind: ClusterRole
-  name: alloy-logs
-  apiGroup: rbac.authorization.k8s.io
----
-# ConfigMap for Alloy configuration
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: alloy-logs-config
-  namespace: uatcmm
-data:
-  config.alloy: |
-    // Discover pods in the uatcmm namespace
-    discovery.kubernetes "pods" {
-      role = "pod"
-      namespaces {
-        names = ["uatcmm"]
-      }
-    }
+ts=2025-10-10T04:31:40.357891437Z level=info boringcrypto_enabled=false
+ts=2025-10-10T04:31:40.354346222Z level=info source=/go/pkg/mod/github.com/!kim!machine!gun/automemlimit@v0.7.1/memlimit/memlimit.go:198 msg="GOMEMLIMIT is updated" package=github.com/KimMachineGun/automemlimit/memlimit GOMEMLIMIT=483183820 previous=9223372036854775807
+ts=2025-10-10T04:31:40.357928417Z level=info msg="no peer discovery configured: both join and discover peers are empty" service=cluster
+ts=2025-10-10T04:31:40.357932352Z level=info msg="starting complete graph evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045
+ts=2025-10-10T04:31:40.357970553Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=loki.write.to_loki duration=467.966µs
+ts=2025-10-10T04:31:40.357975739Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=loki.process.add_labels duration=187.043µs
+ts=2025-10-10T04:31:40.357979827Z level=info msg="Using pod service account via in-cluster config" component_path=/ component_id=discovery.kubernetes.pods
+ts=2025-10-10T04:31:40.357985436Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=discovery.kubernetes.pods duration=618.795µs
+ts=2025-10-10T04:31:40.357988947Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=discovery.relabel.pod_logs duration=95.535µs
+ts=2025-10-10T04:31:40.357992073Z level=info msg="Using pod service account via in-cluster config" component_path=/ component_id=loki.source.kubernetes.pod_logs
+ts=2025-10-10T04:31:40.357996012Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=loki.source.kubernetes.pod_logs duration=353.798µs
+ts=2025-10-10T04:31:40.357999195Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=otel duration=8.697µs
+ts=2025-10-10T04:31:40.358018016Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=tracing duration=8.912µs
+ts=2025-10-10T04:31:40.358037877Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=logging duration=151.892µs
+ts=2025-10-10T04:31:40.358218975Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=remotecfg duration=163.832µs
+ts=2025-10-10T04:31:40.358263488Z level=info msg="applying non-TLS config to HTTP server" service=http
+ts=2025-10-10T04:31:40.358350498Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=http duration=115.757µs
+ts=2025-10-10T04:31:40.358410993Z level=error msg="failed to evaluate config" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node=cluster err="service \"cluster\" does not support being configured"
+ts=2025-10-10T04:31:40.358447477Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=cluster duration=41.678µs
+ts=2025-10-10T04:31:40.358492247Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=livedebugging duration=5.274µs
+ts=2025-10-10T04:31:40.35852835Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=ui duration=5.214µs
+ts=2025-10-10T04:31:40.358567172Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=labelstore duration=5.472µs
+ts=2025-10-10T04:31:40.358595286Z level=info msg="finished complete graph evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 duration=3.239904ms
+Error: /etc/alloy/config.alloy:10:1: Failed to evaluate service: service "cluster" does not support being configured
 
-    // Relabel to add Kubernetes metadata labels
-    discovery.relabel "pod_logs" {
-      targets = discovery.kubernetes.pods.targets
+ 9 |   // Enabling the below block in case of high log volumes to distribute load across nodes - remove this block if alloy does not run
+10 |   cluster{
+   |  _^^^^^^^^
+11 | |   enabled = true
+12 | |   advertise_address = "alloy-logs.uatcmm.svc.cluster.local:12345"
+13 | | }
+   | |_^
+14 |
 
-      rule {
-        source_labels = ["__meta_kubernetes_namespace"]
-        target_label  = "namespace"
-      }
-      rule {
-        source_labels = ["__meta_kubernetes_pod_name"]
-        target_label  = "pod_name"
-      }
-      rule {
-        source_labels = ["__meta_kubernetes_pod_container_name"]
-        target_label  = "container"
-      }
-      rule {
-        source_labels = ["__meta_kubernetes_pod_label_app"]
-        target_label  = "service_name"
-        replacement   = "$1"
-      }
-      rule {
-        source_labels = ["__meta_kubernetes_pod_uid"]
-        target_label  = "pod_uid"
-      }
-    }
-
-    // Collect logs from pods via Kubernetes API
-    loki.source.kubernetes "pod_logs" {
-      targets    = discovery.relabel.pod_logs.output
-      forward_to = [loki.process.add_labels.receiver]
-    }
-
-    // Process: Add static labels
-    loki.process "add_labels" {
-      stage.static_labels {
-        values = {
-          environment = "uat",
-          cluster     = "uat-cluster",
-        }
-      }
-      forward_to = [loki.write.to_loki.receiver]
-    }
-
-    // Send to Loki
-    loki.write "to_loki" {
-      endpoint {
-        url = "http://loki.uatcmm.svc.cluster.local:3100/loki/api/v1/push"
-      }
-    }
----
-# DaemonSet to run Alloy on each node
-apiVersion: apps/v1
-kind: DaemonSet
-metadata:
-  name: alloy-logs
-  namespace: uatcmm
-  labels:
-    app: alloy-logs
-spec:
-  selector:
-    matchLabels:
-      app: alloy-logs
-  template:
-    metadata:
-      labels:
-        app: alloy-logs
-    spec:
-      serviceAccountName: alloy-logs
-      containers:
-        - name: alloy
-          image: grafana/alloy:v1.11.0  # Or tkgsharedharbor.corp.ad.sbi/itss/grafana-alloy:1.11.0
-          args:
-            - "run"
-            - "--storage.path=/var/lib/alloy"
-            - "--disable-reporting"
-            - "/etc/alloy/config.alloy"
-          volumeMounts:
-            - name: alloy-config
-              mountPath: /etc/alloy
-              readOnly: true
-            - name: alloy-data
-              mountPath: /var/lib/alloy
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
-          resources:
-            limits:
-              cpu: 500m
-              memory: 512Mi
-            requests:
-              cpu: 100m
-              memory: 128Mi
-      volumes:
-        - name: alloy-config
-          configMap:
-            name: alloy-logs-config
-        - name: alloy-data
-          emptyDir: {}
+interrupt received
+Error: could not perform the initial load successfully
