@@ -1,36 +1,12 @@
-ts=2025-10-10T04:31:40.357891437Z level=info boringcrypto_enabled=false
-ts=2025-10-10T04:31:40.354346222Z level=info source=/go/pkg/mod/github.com/!kim!machine!gun/automemlimit@v0.7.1/memlimit/memlimit.go:198 msg="GOMEMLIMIT is updated" package=github.com/KimMachineGun/automemlimit/memlimit GOMEMLIMIT=483183820 previous=9223372036854775807
-ts=2025-10-10T04:31:40.357928417Z level=info msg="no peer discovery configured: both join and discover peers are empty" service=cluster
-ts=2025-10-10T04:31:40.357932352Z level=info msg="starting complete graph evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045
-ts=2025-10-10T04:31:40.357970553Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=loki.write.to_loki duration=467.966µs
-ts=2025-10-10T04:31:40.357975739Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=loki.process.add_labels duration=187.043µs
-ts=2025-10-10T04:31:40.357979827Z level=info msg="Using pod service account via in-cluster config" component_path=/ component_id=discovery.kubernetes.pods
-ts=2025-10-10T04:31:40.357985436Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=discovery.kubernetes.pods duration=618.795µs
-ts=2025-10-10T04:31:40.357988947Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=discovery.relabel.pod_logs duration=95.535µs
-ts=2025-10-10T04:31:40.357992073Z level=info msg="Using pod service account via in-cluster config" component_path=/ component_id=loki.source.kubernetes.pod_logs
-ts=2025-10-10T04:31:40.357996012Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=loki.source.kubernetes.pod_logs duration=353.798µs
-ts=2025-10-10T04:31:40.357999195Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=otel duration=8.697µs
-ts=2025-10-10T04:31:40.358018016Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=tracing duration=8.912µs
-ts=2025-10-10T04:31:40.358037877Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=logging duration=151.892µs
-ts=2025-10-10T04:31:40.358218975Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=remotecfg duration=163.832µs
-ts=2025-10-10T04:31:40.358263488Z level=info msg="applying non-TLS config to HTTP server" service=http
-ts=2025-10-10T04:31:40.358350498Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=http duration=115.757µs
-ts=2025-10-10T04:31:40.358410993Z level=error msg="failed to evaluate config" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node=cluster err="service \"cluster\" does not support being configured"
-ts=2025-10-10T04:31:40.358447477Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=cluster duration=41.678µs
-ts=2025-10-10T04:31:40.358492247Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=livedebugging duration=5.274µs
-ts=2025-10-10T04:31:40.35852835Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=ui duration=5.214µs
-ts=2025-10-10T04:31:40.358567172Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 node_id=labelstore duration=5.472µs
-ts=2025-10-10T04:31:40.358595286Z level=info msg="finished complete graph evaluation" controller_path=/ controller_id="" trace_id=2b57474f325abc021662a70ba7277045 duration=3.239904ms
-Error: /etc/alloy/config.alloy:10:1: Failed to evaluate service: service "cluster" does not support being configured
-
- 9 |   // Enabling the below block in case of high log volumes to distribute load across nodes - remove this block if alloy does not run
-10 |   cluster{
-   |  _^^^^^^^^
-11 | |   enabled = true
-12 | |   advertise_address = "alloy-logs.uatcmm.svc.cluster.local:12345"
-13 | | }
-   | |_^
-14 |
-
-interrupt received
-Error: could not perform the initial load successfully
+alloy.cluster "default" {
+      enabled = true
+      node_name = env("POD_NAME")
+      advertise_address = env("POD_IP") + ":12345"
+      discovery {
+        kubernetes {
+          role = "pod"
+          namespaces { own_namespace = true }
+          selector { match_labels = { "app" = "alloy-logs" } }
+        }
+      }
+    }
