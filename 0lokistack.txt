@@ -1,3 +1,21 @@
+# top-level in nginx.conf (not inside http {})
+stream {
+    upstream kafka_upstream {
+        # one or more Kafka endpoints (internal IP:port)
+        server 10.0.0.5:9196;
+        # server 10.0.0.6:9196;   # multiple brokers: will round-robin
+    }
+
+    server {
+        listen 9196;               # external port on Nginx
+        proxy_pass kafka_upstream; # forward raw TCP
+        # optional: proxy_timeout, proxy_connect_timeout
+        proxy_timeout 1h;
+        proxy_connect_timeout 5s;
+    }
+}
+
+
 Front End	Frontend Port	Backend	Backend Port
 api.tssrfxuat.sbi.co.in	6443	bootstrap.tssrfxuat.sbi.co.in	6443
 	6443	master1.tssrfxuat.sbi.co.in	6443
