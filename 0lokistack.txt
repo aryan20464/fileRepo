@@ -1,69 +1,67 @@
-# alloy-daemonset.yaml
-apiVersion: apps/v1
-kind: DaemonSet
-metadata:
-  name: alloy-logs
-  namespace: uatcmm
-  labels:
-    app: alloy-logs
-spec:
-  selector:
-    matchLabels:
-      app: alloy-logs
-  template:
-    metadata:
-      labels:
-        app: alloy-logs
-    spec:
-      serviceAccountName: alloy-logs
-      containers:
-        - name: alloy
-          image: grafana/alloy:v1.11.0
-          args:
-            - "run"
-            - "--storage.path=/var/lib/alloy"
-            - "--disable-reporting"
-            - "--cluster.enabled=true"
-            - "--cluster.node-name=$(POD_NAME)"
-            - "--cluster.advertise-address=$(POD_IP):12345"
-            - "--cluster.discovery.kubernetes.role=pod"
-            - "--cluster.discovery.kubernetes.namespaces=uatcmm"
-            - "--cluster.discovery.kubernetes.selector=app=alloy-logs"
-            - "/etc/alloy/config.alloy"
-          ports:
-            - name: cluster
-              containerPort: 12345
-          env:
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: POD_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
-          volumeMounts:
-            - name: alloy-config
-              mountPath: /etc/alloy
-              readOnly: true
-            - name: alloy-data
-              mountPath: /var/lib/alloy
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
-          resources:
-            limits:
-              cpu: 1
-              memory: 1Gi
-            requests:
-              cpu: 200m
-              memory: 256Mi
-      volumes:
-        - name: alloy-config
-          configMap:
-            name: alloy-logs-config
-        - name: alloy-data
-          emptyDir: {}
+Front End	Frontend Port	Backend	Backend Port
+api.tssrfxuat.sbi.co.in	6443	bootstrap.tssrfxuat.sbi.co.in	6443
+	6443	master1.tssrfxuat.sbi.co.in	6443
+	6443	master2.tssrfxuat.sbi.co.in	6443
+	6443	master3.tssrfxuat.sbi.co.in	6443
+api-int.tssrfxuat.sbi.co.in	22623	bootstrap.tssrfxuat.sbi.co.in	22623
+	22623	master1.tssrfxuat.sbi.co.in	22623
+	22623	master2.tssrfxuat.sbi.co.in	22623
+	22623	master3.tssrfxuat.sbi.co.in	22623
+*.tssrfxuat.sbi.co.in	443	master1.tssrfxuat.sbi.co.in	443
+	443	master2.tssrfxuat.sbi.co.in	443
+	443	master3.tssrfxuat.sbi.co.in	443
+			
+			
+VM Name	DNS Entry	IP Address	
+Bootstrap	bootstrap.tssrfxuat.sbi.co.in	10.177.111.209	
+Master1	master1.tssrfxuat.sbi.co.in	10.177.111.211	
+Master2	master2.tssrfxuat.sbi.co.in	10.177.111.212	
+Master3	master3.tssrfxuat.sbi.co.in	10.177.111.213	
+Worker1	worker1.tssrfxuat.sbi.co.in	10.177.111.214	
+Worker2	worker2.tssrfxuat.sbi.co.in	10.177.111.215	
+Worker3	worker3.tssrfxuat.sbi.co.in	10.177.111.216	
+Registry	registry.tssrfxuat.sbi.co.in	10.177.111.217	
+Bastion 	bastion.tssrfxuat.sbi.co.in	10.177.111.210	
+			
+	api.tssrfxuat.sbi.co.in	10.177.111.249	
+	api-int.tssrfxuat.sbi.co.in	10.177.111.249	
+	*.apps.tssrfxuat.sbi.co.in	10.177.111.250	
+
+Department	IT-TSS
+Application	RFOREX
+Application Owner	
+eMail:	
+Contact Number:	
+	
+LB IP Address	10.177.111.249
+LB listening port	6443
+Traffic type	TCP/HTTP/HTTPS
+Pool Servers's/Backend Servers's IP Addresses	10.177.111.209,10.177.111.211,10.177.111.212,10.177.111.213
+Pool Servers's/Backend Servers's listening ports	6443
+Traffic type	TCP/HTTP/HTTPS
+	
+	
+LB IP Address	10.177.111.249
+LB listening port	22623
+Traffic type	TCP/HTTP/HTTPS
+Pool Servers's/Backend Servers's IP Addresses	10.177.111.209,10.177.111.211,10.177.111.212,10.177.111.213
+Pool Servers's/Backend Servers's listening ports	22623
+Traffic type	TCP/HTTP/HTTPS
+	
+	
+LB IP Address	10.177.111.250
+LB listening port	443
+Traffic type	TCP/HTTP/HTTPS
+Pool Servers's/Backend Servers's IP Addresses	10.177.111.211,10.177.111.212,10.177.111.213
+Pool Servers's/Backend Servers's listening ports	443
+Traffic type	TCP/HTTP/HTTPS
+	
+SSL off loading is required?	NO
+If Yes	Full chain of SSL certificate,private key and password
+Any persistence is required?	NO
+If Yes	Source IP/Cookies
+expiry	
+If Cookies 	 mode : insert, prefix, app session
+If client IP visibility is required on pool servers?	YES/No
+	
+Copy & Paste from 8-12 for multiple ports & multiple pool servers	 
