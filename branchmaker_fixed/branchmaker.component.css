@@ -1,0 +1,13 @@
+/* minimal styling preserved from original. adjust as needed */
+.custom-tab-group { width: 100%; }
+.tab-content { padding: 8px; }
+.table-scroll { overflow: auto; max-height: 60vh; }
+.actions { margin-bottom: 8px; }
+.order-form-container { padding: 10px; }
+.main-form { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; }
+.form-group { margin-bottom: 8px; min-width: 180px; }
+.btn-add-row { background: #1976d2; color: #fff; padding: 6px 12px; border: none; border-radius: 4px; }
+.btn-remove-row { background: #d32f2f; color: #fff; padding: 6px 8px; border: none; border-radius: 4px; }
+.btn-modify { background: #ffa000; color: #fff; padding: 6px 8px; border: none; border-radius: 4px; }
+.btn-modify-rto { background: #388e3c; color: #fff; padding: 6px 8px; border: none; border-radius: 4px; }
+.btn-export { margin-right: 8px; }
