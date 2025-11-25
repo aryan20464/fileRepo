@@ -1,26 +1,25 @@
-import { Component, OnInit, ViewChild, HostListener, ChangeDetectorRef   } from '@angular/core';
-import { HttpClient } from '@angular/common/http'; // Import HttpClient for service
+import { Component, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { HttpClient } from '@angular/common/http'; // Import HttpClient for service
 import { DatePipe, CommonModule } from '@angular/common';
-import * as XLSX from 'xlsx';
 import { AuthenticationService } from '../../../services/security/authentication.service';
 import { environment } from "src/environments/environment";
-import { MatSort } from '@angular/material/sort';
 import { CURRENCYMODE } from 'src/models/fcny-module/currencymode';
-import { RandomNumberGeneratorService } from 'src/services/fcny-services/random-number-generator.service';
-import { MatTabsModule } from '@angular/material/tabs';
 import { FormsModule } from '@angular/forms';
-
 @Component({
-    selector: 'rfm-branchmaker',
+    selector: 'rfm-branchmakeredit',
     standalone: true,
-    templateUrl: './branchmaker.component.html',
-    styleUrls: ['./branchmaker.component.css'],
-    imports: [CommonModule, MatTabsModule, FormsModule]
+    templateUrl: './branchmakeredit.component.html',
+    styleUrls: ['./branchmakeredit.component.css'],
+    imports: [FormsModule, CommonModule]
 })
 
-export class BranchmakerComponent implements OnInit{
-  orderData = {    
+export class BranchmakereditComponent implements OnInit {
+  itemId: string = '';
+  itemData: any = {}; // To hold the form data for the item
+  
+  editData = {    
     bcode: '',
     branchmail:'',
     branchname:'',   
@@ -30,103 +29,70 @@ export class BranchmakerComponent implements OnInit{
     makerName:'',
     status:0,
     entries:[],
+    indentID:'',
+    deletedID:[],
   };
-  
+
+  branchCode="";
+  vendorDetails=[];
+  currencyData=[];
+  vendorArray =[];
   submitted = false;
   date = new Date();
   applicationReturnStatusMessage='';
   activeTabIndex = 0;
-  branchIndents:any;
-  branchIndents1:any;
-  appStatus =  new Array(5);
-
-  responseData:any;
   records: any[] = []; // Variable to store fetched records
-  completedRecords: any;
-  uniqueIndents:any;
-  uniqueIndentCount:any;
-  firstIndexMap={};
-  vendorDetails=[];
   currencyMode:{ [key: string]: string };
-  selectedCurrency:string='';
-  currencyData=[];
-  vendorArray =[];
-  branchEmailRecords:any;
-  branchVendorMappingDetails:any;
-  localBranchName="";
-  globalUserDetails:any;
   userName="";
 
-  //changes - for addition of secondary dropdown
-  branchVendorMappingDetailsData:any;
-  branchVendorList:[] = [];
-  vendors: any[] = [];
-  isDropdownOpen: boolean = false;
-  selectedValue: string | null = null;
-  hoveredKey: string | null = null;
-  // Holds the submenu items for the second dropdown
-  subMenuItems: any;
-  subMenuItemsArray = [];
-  subMenuItemsArrayLength = [];
+   //changes - for addition of secondary dropdown
+   branchVendorMappingDetailsData:any;
+   branchVendorList:[] = [];
+   isDropdownOpen: boolean = false;
+   selectedValue: string | null = null;
+   hoveredKey: string | null = null;
+   // Holds the submenu items for the second dropdown
+   subMenuItems: any;
+   subMenuItemsArray = [];
+   subMenuItemsArrayLength = [];
 
-  displayedColumns: string[] = ['sno', 'indentID', 'branchCode', 'branchName', 'vendorName', 'currency', 'requestedCurrencyValue', 'requestedDate', 'receivedCurrencyValue', 'receivedDate', 'status'];
-
-  @ViewChild(MatSort) sort: MatSort;
-
-  createRows: any[] = [
+  orderRows: any[] =  [
     {
-      // id: this.randomNumberService.generateRandomNumber(1000), // Add a unique ID
-      currency: null,
-      currency_mode: '',
+      id:0,
+      currency:null,
+      currency_mode:'',
       vendor_name: '',
       exchange: '',
       vendor_email: '',
-      vendor_branch: '',
+      vendor_branch:'',
     }
   ];
 
-  constructor(private http: HttpClient,
+  constructor(private route: ActivatedRoute,
+              private http: HttpClient,
               private router: Router,
               private datePipe: DatePipe,
               private authenticationService: AuthenticationService,
-              private randomNumberService: RandomNumberGeneratorService,
-              private cdr: ChangeDetectorRef ){}
-  
-  ngOnInit(): void{
-    let today = new Date().toLocaleDateString();
-    this.orderData.bcode = this.getBranchCode();
-    //console.log(this.getBranchCode())
-    
-    this.userName = this.getUserName();
-    this.getUserDetails();
+              private cdr: ChangeDetectorRef) {}
+ 
+  async ngOnInit(): Promise<void> {
+    // Get the item id from the route parameters
+    this.itemId = (this.route.snapshot.paramMap.get('id')); 
+    this.branchCode = this.authenticationService.getFcnBcode();
     this.getBranchMail();
     this.getCurrencyDetails();
-    //this.getBranchVendorMappingDetails();
-    this.getBranchVendorMappingDetailsData();
-    this.orderData.branchname = this.getBranchName();
-    this.localBranchName=this.orderData.branchname;
-    this.orderData.makercode = Number(this.authenticationService.getFcnEmpid());
-    this.orderData.request_date = today;
-    this.orderData.makerName = this.getUserName();
-    this.appStatus[1] = "Created by Maker";
-    this.appStatus[2] = "Approved by checker";
-    this.appStatus[3] = "Rejected by checker";
-    this.appStatus[4] = "Currency Partially Received";
-    this.appStatus[5] = "Currency Received";
-    const storedResponse = sessionStorage.getItem("applicationReturnStatusMessage");     
-    this.fetchRecords();
+    this.editData.makercode = Number(this.authenticationService.getFcnEmpid());
     this.currencyMode = CURRENCYMODE; // Assign the constant // present in src\models\fcny-module
-    this.fetchBranchEmailsList();
-    if(storedResponse)
-    {
-      this.responseData = JSON.parse(storedResponse);
-      sessionStorage.removeItem("applicationReturnStatusMessage");
-    }
+    this.userName = this.getUserName();
+    await this.getBranchVendorMappingDetailsData();
+    await this.fetchItemData(this.itemId);
   }
 
+  
+  //Taken from branchmaker component
   addRow() {
     const newRow = {
-      // id: this.randomNumberService.generateRandomNumber(1000), // Generate a new unique ID
+      id: 0,
       currency: null,
       currency_mode: '',
       vendor_name: '',
@@ -134,14 +100,14 @@ export class BranchmakerComponent implements OnInit{
       vendor_email: '',
       vendor_branch: '',
     };
-    this.createRows = JSON.parse(JSON.stringify([...this.createRows, newRow])); // Deep copy to avoid reference issues
+    this.orderRows = JSON.parse(JSON.stringify([...this.orderRows, newRow])); // Deep copy to avoid reference issues
     this.subMenuItemsArray.push({});
     this.subMenuItemsArrayLength.push(0);
     //console.log("Row added:", newRow);
-    //console.log("Current rows:", this.createRows);
+    //console.log("Current rows:", this.orderRows);
 
-    // Loop through createRows and log keys and values
-    this.createRows.forEach((row, index) => {
+    // Loop through orderRows and log keys and values
+    this.orderRows.forEach((row, index) => {
       //console.log(`Row ${index + 1}:`);
       Object.keys(row).forEach(key => {
         //console.log(`  ${key}: ${row[key]}`);
@@ -151,43 +117,112 @@ export class BranchmakerComponent implements OnInit{
     this.cdr.detectChanges(); // Manually trigger change detection
   }
 
-  removeRow(index: number) {
-    if (this.createRows.length > 1) {
-      const removedRow = this.createRows[index];
-      this.createRows = JSON.parse(JSON.stringify(this.createRows.filter((_, i) => i !== index))); // Deep copy to avoid reference issues
+  removeRow(index: number, id1: number) {
+    if (this.orderRows.length > 1) {
+      const removedRow = this.orderRows[index];
+      this.orderRows = JSON.parse(JSON.stringify(this.orderRows.filter((_, i) => i !== index))); // Deep copy to avoid reference issues
       this.subMenuItemsArray.splice(index, 1);
       this.subMenuItemsArrayLength.splice(index, 1);
       //console.log("Row removed:", removedRow);
-      //console.log("Current rows:", this.createRows);
+      //console.log("Current rows:", this.orderRows);
+      if (id1 > 0) {
+        this.editData.deletedID.push(id1); // added to know the deleted ids
+      }
       this.cdr.detectChanges(); // Manually trigger change detection
     }
   }
+  
 
-  trackByFn(index: number, item: any): number {
-    return item.id; // Use the unique identifier
-  }
-
-
-  onSelectChange(value: string, rownumber: number ){
-    this.subMenuItems = this.branchVendorMappingDetailsData[value] || [];
-    this.createRows[rownumber].vendor_email ="";
-    this.createRows[rownumber].vendor_branch ="";
+  onSelectChange(value: string, rownumber: number){
+    this.subMenuItems = this.branchVendorMappingDetailsData[value] || [];   
+    this.orderRows[rownumber].vendor_email ="";
+    this.orderRows[rownumber].vendor_branch ="";
+    this.subMenuItemsArray[rownumber] = [];
+    this.subMenuItemsArrayLength[rownumber] = 0;
     this.subMenuItems = this.subMenuItems.reduce((acc, obj) => {
       const key = Object.keys(obj)[0]; // Get the key (e.g., "THOMASCOOK KOCHI SHA")
       const value = obj[key];         // Get the value (e.g., "cochin@ebixcash.com")
       acc[key] = value;               // Add to the accumulator object
       return acc;
        }, {});
-    //console.log(this.subMenuItems);
     this.subMenuItemsArray[rownumber] = this.subMenuItems;
-    this.subMenuItemsArrayLength[rownumber] = Object.keys(this.subMenuItems).length;
+    this.subMenuItemsArrayLength[rownumber] = Object.keys(this.subMenuItems).length;    
+  }
+
+  onStartSelectChange(value: string, rownumber: number ){
+    this.subMenuItems = this.branchVendorMappingDetailsData[value] || [];    
+    this.subMenuItems = this.subMenuItems.reduce((acc, obj) => {
+      const key = Object.keys(obj)[0]; // Get the key (e.g., "THOMASCOOK KOCHI SHA")
+      const value = obj[key];         // Get the value (e.g., "cochin@ebixcash.com")
+      acc[key] = value;               // Add to the accumulator object
+      return acc;
+       }, {});
+    this.subMenuItemsArray[rownumber] = this.subMenuItems;
+    this.subMenuItemsArrayLength[rownumber] = Object.keys(this.subMenuItems).length;    
   }
 
   onSelectSubMenuChange(value: string, rownumber: number, vendorItems){
-    //console.log("onselctsubmnenuchange",value,rownumber,vendorItems)
-    this.createRows[rownumber].vendor_email = vendorItems[value].replace(/(?:\r\n|;)/g, '\n');
+    this.orderRows[rownumber].vendor_email = vendorItems[value].replace(/(?:\r\n|;)/g, '\n');
+  }
+ 
+  async fetchItemData(id: string): Promise<void> {
+    const apiUrl = `${environment.rfmIndentService}/getIndentsByIndentID?iid=` + id;
+    try {
+      const data: any[] = await this.http.get<any[]>(apiUrl).toPromise(); // Convert to Promise
+      this.records = data;
+      
+      this.orderRows = data.map((entry: any) => ({
+        id: entry.id,
+        currency_mode: entry.currencyMode,
+        currency: entry.requestedCurrencyValue,
+        vendor_name: entry.vendorRes,
+        exchange: entry.currencyType,
+        vendor_branch: entry.vendorBranch,
+        vendor_email: entry.vendorResEmail.replace(/(?:\r\n|,)/g, '\n')
+      }));
+  
+      //console.log("Fetched item data:", this.branchVendorMappingDetailsData);
+  
+      for (const [index, row] of this.orderRows.entries()) {
+        for (const [key, value] of Object.entries(row)) {
+          this.onStartSelectChange(row["vendor_name"], index);
+        }
+      }
+  
+      this.editData.bcode = data[0].branchCode;
+      this.editData.branchname = data[0].branchName;
+      this.editData.request_date = this.datePipe.transform(data[0].createdAt, 'dd-MM-yyyy hh:mm aa');
+      this.editData.branchmail = data[0].branchEmail;
+      this.editData.status = data[0].indentStatus;
+      this.editData.indentID = data[0].indentID;
+      this.editData.makerName = data[0].makerName;
+      //console.log("existingdata")
+      //console.log(this.orderRows)
+    } catch (error) {
+      console.error('Error fetching records:', error);
+    }
+  }
+  
+ 
+  onSubmit(form: any) {
+    if (form.valid) {
+      if (form.valid && this.editData.declaration_check) {
+        this.orderRows.forEach(item=>{            
+          item.vendor_email = item.vendor_email.replace(/\n/g, ',');
+        }
+        );
+        this.editData.entries = this.orderRows;
+        this.http.post(`${environment.rfmIndentService}/editBranchIndentAtMaker`, this.editData).subscribe((response: any) => 
+        {      
+          this.applicationReturnStatusMessage = response.applicationReturnStatusMessage;  
+          sessionStorage.setItem('applicationReturnStatusMessage', JSON.stringify(this.applicationReturnStatusMessage));  
+          this.router.navigate(['fcnBranchMaker'])
+        });       
+      }      
+    }
   }
 
+ 
   disableMinus(event: KeyboardEvent)
   {
     const allowedKeys = ['0','1','2','3','4','5','6','7','8','9'];
@@ -197,272 +232,28 @@ export class BranchmakerComponent implements OnInit{
     }
   }
 
-  ngAfterViewInit(){
-    if(this.completedRecords != undefined){
-      this.completedRecords.sort = this.sort;
-    }
-    
-  }
-
-  exportToExcel() {     
-    const table = document.getElementById('table_print'); // Get the table element by its ID
-    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(table); // Convert HTML table to a worksheet// Create a new workbook and add the worksheet
-    const wb: XLSX.WorkBook = { Sheets: { 'Sheet1': ws }, SheetNames: ['Sheet1'] };     // Generate Excel file and trigger download
-    XLSX.writeFile(wb, 'Indents of the branch - '+ this.orderData.bcode+'-'+this.localBranchName+'.xlsx'); 
-  }
-
-  exportToExcelCompleted() {     
-    const table = document.getElementById('table_print_completed'); // Get the table element by its ID
-    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(table); // Convert HTML table to a worksheet// Create a new workbook and add the worksheet
-    const wb: XLSX.WorkBook = { Sheets: { 'Sheet1': ws }, SheetNames: ['Sheet1'] };     // Generate Excel file and trigger download
-    XLSX.writeFile(wb, 'Completed Indents of the branch - '+ this.orderData.bcode+'-'+this.localBranchName+'.xlsx'); 
-  }
-
-  exportToExcelVendorDetails() {     
-    const table = document.getElementById('table_vendor_list'); // Get the table element by its ID
-    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(table); // Convert HTML table to a worksheet// Create a new workbook and add the worksheet
-    const wb: XLSX.WorkBook = { Sheets: { 'Sheet1': ws }, SheetNames: ['Sheet1'] };     // Generate Excel file and trigger download
-    XLSX.writeFile(wb, 'Vendor Mapping Details of the branch - '+ this.orderData.bcode+'-'+this.localBranchName+'.xlsx'); 
-  }
-
-
-  exportToExcelMailingList() {     
-    const table = document.getElementById('table_mailing_list'); // Get the table element by its ID
-    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(table); // Convert HTML table to a worksheet// Create a new workbook and add the worksheet
-    const wb: XLSX.WorkBook = { Sheets: { 'Sheet1': ws }, SheetNames: ['Sheet1'] };     // Generate Excel file and trigger download
-    XLSX.writeFile(wb, 'Mailling List of the branch - '+ this.orderData.bcode+'-'+this.localBranchName+'.xlsx'); 
-  }
-  
- 
-  onSubmit(form: any) {
-    if (form.valid) {      
-      this.submitted = true;     
-      if (form.valid /*&& this.orderData.declaration_check*/) {
-        if(window.confirm("Are you sure to submit the indent ??")){
-          this.createRows.forEach(item=>{            
-            item.vendor_email = item.vendor_email.replace(/\n/g, ',');
-          }
-          );
-          this.orderData.entries = this.createRows;
-          
-          this.orderData.status=1;
-          //console.log(this.orderData);
-          this.http.post(`${environment.rfmIndentService}/saveBranchIndent`, this.orderData).subscribe((response: any) => {
-            this.applicationReturnStatusMessage = response.applicationReturnStatusMessage;
-            sessionStorage.setItem('applicationReturnStatusMessage', JSON.stringify(this.applicationReturnStatusMessage));          
-            // Navigate to a temporary route and then back to fcnBranchMaker to reload the page
-            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-              this.router.navigate(['/fcnBranchMaker']);
-            });
-          });
-        }
-        else{
-          return false;
-        }        
-      }
-    }
-  }
-
-  convertHRF(dt: string)
-  {
-    return this.datePipe.transform(dt,'dd-MM-yyyy hh:mm aa');
-  }
-
-  getUserDetails() {
-    this.http.get(`${environment.rfmIndentService}/getAllCircleIndents`).subscribe((response: any) => 
-    {   
-      //console.log(response);
-    });
-    this.http.get(`${environment.rfmIndentService}/getBranchIndents?bcode=`+this.orderData.bcode).subscribe((response: any) => 
-      {   
-        this.branchIndents1 = response;
-        return this.branchIndents1;
-      });
-  }
-  
-   
-  fetchOrderData() {
-
-    this.http.get(`${environment.rfmIndentService}/getBranchIndents?bcode=`+this.orderData.bcode).subscribe((response: any) => 
-      {   
-        this.branchIndents1 = response;
-        return this.branchIndents1;
-      });
-  }
-
-  fetchRecords(): void {
-    const apiUrl = `${environment.rfmIndentService}/getBranchIndents?bcode=`+this.orderData.bcode; // Replace with your API endpoint
- 
-    this.http.get<any[]>(apiUrl).subscribe(
-      (data) => {
-        this.records = data.filter(entry=>entry.indentStatus <=4); // Store response data in records variable
-        this.completedRecords = data.filter(entry=>entry.indentStatus===5);
-        this.getUniqueValues();
-        this.getUniqueIndentRecords(this.records);
-        this.uniqueIndentCount=this.getUniqueIndentCounts(this.records);
-        this.calculateFirstIndex(this.records);
-        //console.log(this.records);
-      },
-      (error) => {
-        console.error('Error fetching records:', error);
-      }
-    );
-  }
-
-  fetchBranchEmailsList(): void{
-
-    const apiUrl = `${environment.rfmIndentService}/getMailsOfABranch?bcode=`+this.orderData.bcode; // Replace with your API endpoint
- 
-    this.http.get<any[]>(apiUrl).subscribe(
-      (data) => {
-        this.branchEmailRecords = data;
-        //console.log(this.branchEmailRecords);
-      },
-      (error) => {
-        console.error('Error fetching records:', error);
-      }
-    );
-    
-  }
-
-  calculateFirstIndex(records: any[]) {     
-    this.records.forEach((record, index) => {    
-      //console.log(record.indentID+"</br>");         
-      if (this.firstIndexMap[record.indentID]=== undefined) {
-        this.firstIndexMap[record.indentID] = index; 
-      }
-    }); 
-  }
-
-  colors1 = [
-    '#FF5733', '#33FF57', '#5733FF', '#FF33A1', '#A133FF',
-    '#33A1FF', '#FF8333', '#33FF83', '#8333FF', '#FF5733',
-    '#F0E68C', '#D3D3D3'
-  ];
-
-  colors = [
-    '#F7D1CD', '#E3F1D1', '#D1F0F4', '#EAD1F7', '#F7F1D1', // Soft pastels
-    '#FFD700', '#FF6347', '#90EE90', '#ADD8E6', '#FFB6C1', // Lively colors
-    '#FAFAD2', '#D8BFD8', '#E0FFFF', '#F5FFFA', '#FFDEAD', // Light but vibrant
-    '#F4A300', '#A7F2D1' // Light but saturated tones
-  ];
-
-  colorMap: { [key: string]: string } = {};  // Store the color for each indentID
-  previousColorIndex: number = -1;  // To track the previous color index
-
-  getRowColor(indentID: string): string
-  {
-    // Check if the color for this indentID is already assigned
-    if (!this.colorMap[indentID]) 
-    {
-      // Get a color index ensuring no two successive indentIDs have the same color
-      let colorIndex: number;
-  
-      do {
-        // Pick a random color index
-        //colorIndex = Math.floor(Math.random() * this.colors.length); // removed this as per ISD Observations
-        colorIndex = this.randomNumberService.generateRandomNumber(this.colors.length);
-        
-
-      } while (colorIndex === this.previousColorIndex); // Ensure no same color for successive indentIDs
-
-      // Assign color and update the previous color index
-      this.colorMap[indentID] = this.colors[colorIndex];
-      this.previousColorIndex = colorIndex; // Update previous color index
-    }
-    return this.colorMap[indentID];  // Return the assigned color
-  }
-      
-  getUniqueValues()
-  {
-    this.uniqueIndents = Array.from(new Set(this.records.map(record => record['indentID'])));
-  }
-
-  getUniqueIndentCounts(records: any[]): { [key: string]: number } {
-    const indentCountsMap = new Map();
-   
-    records.forEach(record => {
-      const indentId = record.indentID;
-      indentCountsMap.set(indentId, (indentCountsMap.get(indentId) || 0) + 1);
-    });
-   
-    // Manually construct the object
-    const result: { [key: string]: number } = {};
-    indentCountsMap.forEach((count, indent_id) => {
-      result[indent_id] = count;
-    });
-    return result;
-  }
-
-
-  getUniqueIndentRecords(records: any[]): { indent_number: any, request_date: any, status: any }[] {
-    const uniqueRecordsMap = new Map();
-   
-    records.forEach(record => {
-      if (!uniqueRecordsMap.has(record.indentID)) {
-        uniqueRecordsMap.set(record.indentID, {
-          indent_number: record.indentID,
-          request_date: record.createdAt,
-          status: record.indentStatus
-        });
-      }
-    });
-   
-    //console.log(Array.from(uniqueRecordsMap.values()));
-    return Array.from(uniqueRecordsMap.values());
-  }
- 
-
-  getTodayDate(){
-    
-    return this.date = new Date();
-    
-  }
-
-
-
   onCheckBoxChange(event: Event){
     if(event.target['checked'])
     {
-      this.orderData.declaration_check=true;
+      this.editData.declaration_check=true;
     }
     else
     {
-      this.orderData.declaration_check=false;
+      this.editData.declaration_check=false;
     }
   }
-
-  onClickModify(id: string): void{
-    //console.log(id);
-    this.router.navigate(['/fcnBranchIndentEdit',id]);
-  }
-
-  onClickModifyRTO(id: number): void{
-    this.router.navigate(['/fcnBranchIndentModifyRTO',id]);
-  }
-
+   
 
   getBranchCode(): string{
-    //return this.authService.getCurrentUserBcode();
     return this.authenticationService.getFcnBcode();
   }
 
-  getBranchName(): string{
-    //return this.authService.getCurrentUserBname();
-    return this.authenticationService.getFcnBname();
-  }
-
-  getUserName(): string{
-    return this.authenticationService.getFcnName();
-  }
- 
-  getBranchMail()
+    getBranchMail()
   {
-    
-    const apiUrl = `${environment.rfmIndentService}/getBranchEmail?bcode=`+this.orderData.bcode; // Replace with your API endpoint 
+    const apiUrl = `${environment.rfmIndentService}/getBranchEmail?bcode=`+this.branchCode; // Replace with your API endpoint 
     this.http.get(apiUrl, { responseType: 'text' }).subscribe(
       (data) => {
-        this.orderData.branchmail=data;
+        this.editData.branchmail=data;
       },
       (error) => {
         console.error('Error fetching records:', error);
@@ -470,426 +261,277 @@ export class BranchmakerComponent implements OnInit{
     );
   } 
 
-  getCurrencyDetails()
-  {
-    const apiUrl = `${environment.rfmIndentService}/findCurrencyDetails`; // Replace with your API endpoint 
-    this.http.get(apiUrl).subscribe(
-      (data) => {
-        Object.keys(data).forEach(key=>
-          {
-            //console.log(key+" "+data[key]);
-            this.currencyData[key]=data[key];
-          }
-          );
-         //console.log(this.currencyData);
-      },
-      (error) => {
-        console.error('Error fetching records:', error);
-      }
-    );    
-  }
+    getCurrencyDetails()
+    {
+      const apiUrl = `${environment.rfmIndentService}/findCurrencyDetails`; // Replace with your API endpoint 
+      this.http.get(apiUrl).subscribe(
+        (data) => {
+          Object.keys(data).forEach(key=>
+            {
+              this.currencyData[key]=data[key];
+            }
+            );
+           //console.log(this.currencyData);
+        },
+        (error) => {
+          console.error('Error fetching records:', error);
+        }
+      );
+      
+    }
 
+    getVendorDetails():any{
 
-  getBranchVendorMappingDetails()
-  {
-    const apiUrl = `${environment.rfmIndentService}/getBranchVendorMapping?bcode=`+this.orderData.bcode; // Replace with your API endpoint 
-    this.http.get(apiUrl).subscribe(
-      (data) => {
-        this.branchVendorMappingDetails=data;
-      },
-      (error) => {
-        console.error('Error fetching records:', error);
-      }
-    );
-  }
+      const apiUrl = `${environment.rfmIndentService}/findVendorDetailsOfBranch?bcode=`+this.branchCode;
+      this.http.get(apiUrl).subscribe(
+        (data) => {
+          Object.keys(data).forEach(key=>
+            {
+              this.vendorArray[data[key]["vendorKey"]]=data[key]["vendorName"];
+              if (this.vendorDetails[data[key]["vendorKey"]])
+              {
+                this.vendorDetails[data[key]["vendorKey"]]+=","+data[key]["vendorEmail"];
+              }
+              else{
+                this.vendorDetails[data[key]["vendorKey"]]=data[key]["vendorEmail"];
+              }          
+            }
+            );
+        },
+        (error) => {
+          console.error('Error fetching records:', error);
+        }
+      );
+      
+    }
 
-  getBranchVendorMappingDetailsData() //New function to fetch details based on branch's state.
-  {
-    //console.log(this.orderData.bcode);
-    const apiUrl = `${environment.rfmIndentService}/getBranchVendorMappingData?bcode=`+this.orderData.bcode; // Replace with your API endpoint 
-    this.http.get(apiUrl).subscribe(
-      (data) => {
-        this.branchVendorMappingDetailsData=data;
-        //console.log(this.branchVendorMappingDetailsData)
-        //this.branchVendorList = data["branchVendors"].map(vendor => Object.values(vendor)[0]);
+    getUserName(): string{
+      return this.authenticationService.getFcnName();
+    }
+
+    async getBranchVendorMappingDetailsData(): Promise<void> {
+      const apiUrl = `${environment.rfmIndentService}/getBranchVendorMappingData?bcode=` + this.branchCode;
+      try {
+        const data: any = await this.http.get(apiUrl).toPromise(); // Convert to Promise
+        this.branchVendorMappingDetailsData = data;
         this.branchVendorMappingDetailsData.branchVendors.forEach(obj => {
           const key = Object.keys(obj)[0];
           const value = obj[key];
-          //console.log(key);
-          //console.log(value);
-          this.branchVendorList[key]=value;
+          this.branchVendorList[key] = value;
         });
-        const branchVendors = this.branchVendorMappingDetailsData.branchVendors;
-        branchVendors.forEach(vendor => {
-          const key = Object.keys(vendor)[0];
-          const vendorName = vendor[key];
-          const locations = this.branchVendorMappingDetailsData[key];
-          locations.forEach(location => {
-            const locationName = Object.keys(location)[0];
-            const emails = location[locationName];
-            this.vendors.push({ vendorName, locationName, emails });
-          });
-        });
-        //console.log(this.branchVendorList);
-      },
-      (error) => {
-        console.error('Error fetching records:', error);
+        //console.log("Branch Vendor Mapping Details:", this.branchVendorMappingDetailsData);
+      } catch (error) {
+        console.error('Error fetching branch vendor mapping details:', error);
       }
-    );
-    
-  }
-
-  // Toggles the dropdown menu
-  toggleDropdown() {
-    this.isDropdownOpen = !this.isDropdownOpen;
-  }
-
-  // Closes the dropdown menu
-  closeDropdown() {
-    this.isDropdownOpen = false;
-  }
-
-  // Handles option selection
-  selectOption(option: any,rownumber:number) {
-    this.selectedValue = option.label || Object.keys(option)[0];
-    this.createRows[rownumber].vendor_email = option.value.replace(/(?:\r\n|,)/g, '\n');
-    this.closeDropdown();
-  }
-
-  // Shows the submenu for the hovered item
-  showSubMenu(key: string) {
-    this.hoveredKey = key;
-  }
-
-  // Hides the submenu
-  hideSubMenu() {
-    this.hoveredKey = null;
-  }
-
-  // Retrieves submenu items for the given key
-  getSubMenuItems(key: string) {
-    const subMenuData = this.branchVendorMappingDetailsData[key];
-    //console.log(subMenuData);
-    if (subMenuData) {
-      return subMenuData.map((item: any) => {
-        const label = Object.keys(item)[0];
-        const value = item[label];
-        //console.log(label)
-        //console.log(value)
-        return { label, value };
-      });
     }
-    return [];
-  }
-
-  // Detect clicks outside the dropdown
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: Event) {
-    const target = event.target as HTMLElement;
-    if (!target.closest('.custom-dropdown')) {
+         
+    // Toggles the dropdown menu
+    toggleDropdown() {
+      this.isDropdownOpen = !this.isDropdownOpen;
+    }
+  
+    // Closes the dropdown menu
+    closeDropdown() {
+      this.isDropdownOpen = false;
+    }
+  
+    // Handles option selection
+    selectOption(option: any,rownumber:number) {
+      this.selectedValue = option.label || Object.keys(option)[0];
+      this.orderRows[rownumber].vendor_email = option.value.replace(/(?:\r\n|,)/g, '\n');
       this.closeDropdown();
     }
-  }
-
+  
+    // Shows the submenu for the hovered item
+    showSubMenu(key: string) {
+      this.hoveredKey = key;
+    }
+  
+    // Hides the submenu
+    hideSubMenu() {
+      this.hoveredKey = null;
+    }
+  
+    // Retrieves submenu items for the given key
+    getSubMenuItems(key: string) {
+      const subMenuData = this.branchVendorMappingDetailsData[key];
+      //console.log(subMenuData);
+      if (subMenuData) {
+        return subMenuData.map((item: any) => {
+          const label = Object.keys(item)[0];
+          const value = item[label];
+          //console.log(label)
+          //console.log(value)
+          return { label, value };
+        });
+      }
+      return [];
+    }
+  
+    // Detect clicks outside the dropdown
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: Event) {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.custom-dropdown')) {
+        this.closeDropdown();
+      }
+    }
 }
 
 
 
 
+<div class="order-form-container">
 
+    <form (ngSubmit)="onSubmit(orderForm)" #orderForm="ngForm" class="order-form">
+        <div class="row container-fluid">
 
-@if(responseData) {
-  <div>
-    <h4>{{responseData}}</h4>
-  </div>
-}
-<mat-tab-group class="custom-tab-group" style="margin-top: 1%">
-  <mat-tab label="Indent Status">
-    <div class="tab-content table-scroll">
-      <div class="actions" style="float:right;margin-bottom:5px">
-        <button mat-button color="accent" class="btn-export" (click)="exportToExcel()">Export to Excel</button>
-      </div>
-      <table id="table_print">
-        <thead style="background-color:thistle;">
-          <tr>
-            <th>SNo</th>
-            <th>IndentID</th>
-            <!-- <th>BCode</th> -->
-            <!-- <th>Branch Name</th> -->
-            <th>Vendor Name</th>
-            <!-- <th>Vendor Branch</th> -->
-            <th>Foreign Currency</th>
-            <th>Amount</th>
-            <th>Request Type</th>
-            <th>Created On</th>
-            <th>Approved on</th>
-            <!-- <th>Amount Received</th>
-                        <th>Received On</th> -->
-            <th>Status</th>
-            <th>Operation</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for(record of records;track record.indentID; let i = $index) {
-            <tr [ngStyle]="{'background-color': getRowColor(record.indentID)}">
-              <td>{{i+1}}</td>
-              <td>{{record.indentID}}</td>
-              <!-- <td>{{record.branchCode}}</td> -->
-              <!-- <td>{{record.branchName}}</td> -->
-              <td>{{branchVendorList[record.vendorRes]}} - {{record.vendorBranch}}</td>
-              <td>{{currencyData[record.currencyType]}}</td>
-              <td>{{record.requestedCurrencyValue}}</td>
-              <td>{{currencyMode[record.currencyMode]}}</td>
-              <td>{{convertHRF(record.createdAt)}}</td>
-              <td>{{convertHRF(record.requestedDate)}}</td>
-              <!-- <td>{{record.receivedCurrencyValue}}</td>                        
-                          <td>{{convertHRF(record.receivedDate)}}</td> -->
-              <td>{{appStatus[record.indentStatus]}} - 
-                @if(record.indentStatus==1) {
-                  <span>({{record.makerName}})</span>
-                } @else if(record.indentStatus==2) {
-                  <span>({{record.checkerName}})</span>
-                } @else if(record.indentStatus==4) {
-                  <span>({{record.makerRTOName}})</span>
-                }
-              </td>
-              @if(i === firstIndexMap[record.indentID]) {
-                <td [attr.rowspan]="uniqueIndentCount[record.indentID]">
-                  @if(record.indentStatus == 1) {
-                    <button class="btn-modify" (click)="onClickModify(record.indentID)">
-                      Edit Indent
-                    </button>
-                  } @else if(record.indentStatus == 2 || record.indentStatus == 4) {
-                    <button class="btn-modify-rto" (click)="onClickModifyRTO(record.indentID)">
-                      Update Currency Received
-                    </button>
-                  }
-                </td>
-              }
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </mat-tab>
-
-  <mat-tab label="Indent Creation">
-    <div class="tab-content">
-      <div class="order-form-container">
-        <form (ngSubmit)="onSubmit(orderForm)" #orderForm="ngForm" class="order-form">
-          @for(row of createRows; track row.currency; let i = $index) {
-            <div class="row container-fluid main-form">
-              <div class="col-md-1x">
-                <div class="form-group">
-                  <label for="currency">Foreign Currency Amount</label>
-                  <input type="number" id="currency" class="form-control fcurrency" name="currency-{{ i }}"
-                    [(ngModel)]="row.currency" required (keypress)="disableMinus($event)"
-                    placeholder="Enter currency value" />
+            <div class="col-md-6 st-size-left">                
+                <span class="badge">Branch Code : {{editData.bcode}} </span><br><br><input type="hidden" name="bcode" [ngModel]="editData.bcode" value="{{editData.bcode}}">
+                <span class="badge-daterequest">Date of Request: {{editData.request_date}} </span>
+                <span class="badge-requestid">Request ID: {{editData.indentID}}</span>
+            </div>
+        
+            <div class="col-md-6 st-size-right">
+                <span class="badge-branchname">Branch Name : {{editData.branchname}}</span> <input type="hidden" name="branchname" [ngModel]="editData.branchname" value="{{editData.branchname}}"> <br><br>
+                <div class="email-input" style="float:right">
+                    <span class="email-prefix">&nbsp;Branch e-Mail</span>
+                    <input type="text" placeholder="Branch email id" value="{{editData.branchmail}}"  name="branchmail" [ngModel]="editData.branchmail" readonly>
                 </div>
-              </div>
-              <div class="col-md-1x">
-                <div class="form-group">
-                  <label for="currency_mode">Request Type</label>
-                  <select id="currency_mode" class="form-control" name="currency_mode-{{ i }}"
-                    [(ngModel)]="row.currency_mode" required>
+            </div>
+        </div>
+        @for(row of orderRows;track row.currency; let i = $index) {
+            <div class="row container-fluid main-form">
+                <div class="col-md-1x">
+                    <div class="form-group">
+                        <input
+                        type="hidden"
+                        id="valueID-{{ i }}"
+                        class="form-control"
+                        name="value_id-{{ i }}"
+                        [(ngModel)]="row.id"
+                        readonly
+                        required
+                        />
+                    <label for="currency-{{ i }}">Foreign Currency Amount{{i}}</label>
+                    <input
+                        type="number"
+                        id="currency-{{ i }}"
+                        class="form-control fcurrency"
+                        name="currency-{{ i }}"
+                        [(ngModel)]="row.currency"
+                        required
+                        (keypress)="disableMinus($event)"
+                        placeholder="Enter currency value"
+                        />
+                    </div>
+                </div>
+
+                <div class="col-md-1x">
+                    <div class="form-group">
+                    <label for="currency_mode">Request Type</label>
+                    <select
+                                    id="currency_mode"
+                                    class="form-control"
+                                    name="currency_mode-{{ i }}"
+                                    [(ngModel)]="row.currency_mode"
+                                    required
+                    >
                     <option value="" disabled selected>Select Request Type</option>
                     @for(option of currencyMode; track option.key) {
-                      <option [value]="option.key">{{ option.value }}</option>
-                    }
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-1x">
-                <div class="form-group">
-                  <label for="vendor_name">Vendor</label>
-                  <select id="vendor_name" matInput class="form-control" name="vendor_name-{{ i }}"
-                    [(ngModel)]="row.vendor_name" (change)="onSelectChange(row.vendor_name, i)" required>
-                    <option value="" disabled selected>Select vendor</option>
-                    @for(option of branchVendorList; track option.key) {
-                      <option [value]="option.key">{{ option.value }}</option>
-                    }
-                  </select>
-                </div>
-              </div>
-              @if(subMenuItemsArray && subMenuItemsArrayLength[i] > 0) {
-                <div class="col-md-3">
-                  <div class="form-group">
-                    <label for="vendor_branch">Vendor Branch</label>
-                    <select id="vendor_branch" class="form-control" name="vendor_branch-{{ i }}"
-                      [(ngModel)]="row.vendor_branch"
-                      (change)="onSelectSubMenuChange(row.vendor_branch, i, subMenuItemsArray[i])" required>
-                      <option value="" disabled selected>Select Vendor Branch</option>
-                      @for(subItem of subMenuItemsArray[i]; track subItem.key) {
-                        <option [value]="subItem.key">{{ subItem.key }}</option>
-                      }
+                        <option [value]="option.key">{{option.value}}</option>
+                    }               
                     </select>
-                  </div>
+                    </div>
+                    </div>
+                
+                <div class="col-md-1x">
+                    <div class="form-group">
+                        <label for="vendor_name-{{ i }}">Vendor Name/ID</label>
+                        <select
+                                        id="vendor_name-{{ i }}"
+                                        class="form-control"
+                                        name="vendor_name-{{ i }}"
+                                        [(ngModel)]="row.vendor_name"
+                                        (change)="onSelectChange(row.vendor_name,i)"
+                                        required
+                        >
+                        <option value="" disabled selected>Select vendor</option>
+                        @for(option of branchVendorList; track option.key) {
+                            <option [value]="option.key">{{option.value}}</option>
+                        }
+                        </select>
+                    </div>
                 </div>
-              }
-              <div class="col-md-2">
-                <div class="form-group">
-                  <label for="exchange">Exchange Type</label>
-                  <select id="exchange" class="form-control" name="exchange-{{ i }}" [(ngModel)]="row.exchange" required>
+                <!-- Second Dropdown -->
+                @if((subMenuItemsArray && subMenuItemsArrayLength[i] > 0) || row.vendor_branch!='') {
+                    <div class="col-md-3">
+                        <div class="form-group">
+                        <label for="vendor_branch">Vendor Branch</label>
+                        <select
+                            id="vendor_branch"
+                            class="form-control"
+                            name="vendor_branch-{{ i }}"
+                            [(ngModel)]="row.vendor_branch"
+                            (change)="onSelectSubMenuChange(row.vendor_branch,i,subMenuItemsArray[i])"
+                            required
+                        >
+                            <option value="" disabled selected>Select Vendor Branch</option>
+                            @for(subItem of subMenuItemsArray[i]; track subItem.key) {
+                                <option [value]="subItem.key">{{ subItem.key }}</option>
+                            }
+                        </select>
+                        </div>
+                    </div>
+                }
+                <div class="col-md-2">
+                    <div class="form-group">
+                    <label for="exchange-{{ i }}">Exchange Type</label>
+                    <select
+                                    id="exchange-{{ i }}"
+                                    class="form-control"
+                                    name="exchange-{{ i }}"
+                                    [(ngModel)]="row.exchange"
+                                    required
+                    >
                     <option value="" disabled selected>Select exchange type</option>
                     @for(option of currencyData; track option.key) {
-                      <option [value]="option.key">{{ option.value }}</option>
+                        <option [value]="option.key">{{option.value}}</option>
                     }
-                  </select>
+                    </select>
+                    </div>
                 </div>
-              </div>
-              <div class="col-md-2">
-                <div class="form-group">
-                  <label for="vendor_email">Vendor Email</label>
-                  <textarea id="vendor_email" class="form-control fmail" name="vendor_email-{{ i }}"
-                    [(ngModel)]="row.vendor_email" required readonly placeholder="Email of vendor"></textarea>
+                
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="vendor_email-{{ i }}">Vendor Email</label>
+                            <textarea id="vendor_email-{{ i }}"
+                                class="form-control fmail"
+                                name="vendor_email-{{ i }}"
+                                [(ngModel)]="row.vendor_email"
+                                required
+                                readonly
+                                placeholder="Email of vendor">                                        
+                            </textarea>
+                    </div>
                 </div>
-              </div>
-              <div class="col-md-1xs">
-                <label>&nbsp;&nbsp;</label>
-                <button type="button" class="btn-remove-row" (click)="removeRow(i)">Delete</button>
-              </div>
+                
+                <!-- Delete Row Button -->
+                <div class="col-md-1xs">
+                    <label>&nbsp;&nbsp;</label>
+                    <button type="button" class="btn-remove-row" (click)="removeRow(i,row.id)">Delete</button>
+                </div>
             </div>
-          }
-          <div class="row container-fluid">
-            <div class="col-md-12 add-entry">
-              <button type="button" class="btn-add-row" (click)="addRow()">+ Add Entry</button>
-            </div>
-          </div>
-          <br />
-          <button type="submit" class="btn-submit mt-3" [disabled]="!orderForm.valid">Submit</button>
-        </form>
-      </div>
-    </div>
-  </mat-tab>
+        } 
+        <!-- Add Row Button -->
+        <div class="row container-fluid">
+        <div class="col-md-12 add-entry">
+            <button type="button" class="btn-add-row" (click)="addRow()">+ Add Entry</button>
+        </div>
+        </div>
 
-  <mat-tab label="Completed Indents">
-    <div class="tab-content table-scroll">
-      <div class="actions" style="float:right;margin-bottom:5px">
-        <button mat-button color="accent" class="btn-export" (click)="exportToExcelCompleted()">Export to Excel</button>
-      </div><br />
-      <div>
-        <table id="table_print_completed">
-          <thead style="background-color:thistle;">
-            <tr>
-              <th>SNo</th>
-              <th>IndentID</th>
-              <th>Branch Code</th>
-              <th>Branch Name</th>
-              <th>Vendor Name/ID</th>
-              <th>Foreign Currency</th>
-              <th>Request Type</th>
-              <th>Amount Requested</th>
-              <th>Requested on</th>
-              <th>Amount Received</th>
-              <th>Received On</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            @for(record of completedRecords;track record.indentID; let i = $index) {
-              <tr [ngStyle]="{'background-color': getRowColor(record.indentID)}">
-                <td>{{i+1}}</td>
-                <td>{{record.indentID}}</td>
-                <td>{{record.branchCode}}</td>
-                <td>{{record.branchName}}</td>
-                <td>{{branchVendorList[record.vendorRes]}} - {{record.vendorBranch}}</td>
-                <td>{{currencyData[record.currencyType]}}</td>
-                <td>{{record.currencyMode}}</td>
-                <td>{{record.requestedCurrencyValue}}</td>
-                <td>{{convertHRF(record.requestedDate)}}</td>
-                <td>{{record.receivedCurrencyValue}}</td>
-                <td>{{convertHRF(record.receivedDate)}}</td>
-                <td>{{appStatus[record.indentStatus]}}</td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </mat-tab>
-
-  <mat-tab label="Vendor Details">
-    <div class="tab-content table-scroll">
-      <div class="actions" style="float:right;margin-bottom:5px">
-        <button mat-button color="accent" class="btn-export" (click)="exportToExcelVendorDetails()">Export to
-          Excel</button>
-      </div>
-      <table id="table_vendor_list">
-        <thead style="background-color:thistle;">
-          <tr>
-            <th>SNo</th>
-            <th>Vendor Name</th>
-            <th>Vendor Branch</th>
-            <th>Vendor Email</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for(record of vendors;track record.vendorName; let i = $index) {
-            <tr>
-              <td>{{i+1}}</td>
-              <td>{{record.vendorName}}</td>
-              <td>{{record.locationName}}</td>
-              <td>{{record.emails}}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </mat-tab>
-
-  <mat-tab label="Mailing List of Branch">
-    <div class="tab-content">
-      <div class="actions" style="float:right;margin-bottom:5px">
-        <button mat-button color="accent" class="btn-export" (click)="exportToExcelMailingList()">Export to
-          Excel</button>
-      </div>
-      <div class="table-scroll">
-        <table id="table_mailing_list">
-          <thead style="background-color:thistle;">
-            <tr>
-              <th>SNo</th>
-              <th>Branch Code</th>
-              <th>Branch Name</th>
-              <th>Indent ID</th>
-              <th>Mail Sent to</th>
-              <th>Mail Address</th>
-              <th>Sent Date </th>
-              <th>Response</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for(record of branchEmailRecords;track record.mailBranchCode; let i = $index) {
-              <tr>
-                <td>{{i+1}}</td>
-                <td>{{record.mailBranchCode}}</td>
-                <td>{{record.mailBranchName}}</td>
-                <td>{{record.mailIndentID}}</td>
-                <td>{{record.mailInsType}}</td>
-                <td>{{record.mailAddress}}</td>
-                <td>{{convertHRF(record.mailIndentCreatedAt)}}</td>
-                <td>{{record.mailResponseStatus}}</td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </mat-tab>
-
-</mat-tab-group>
-
-
-
-
-main.js:151 ERROR TypeError: c[Symbol.iterator] is not a function
-    at X_ (main.js:151:181399)
-    at Object.Ct (main.js:151:181881)
-    at xwe (main.js:1:2748902)
-    at sa (main.js:151:130691)
-    at rS (main.js:151:141008)
-    at vC (main.js:151:142417)
-    at Fb (main.js:151:142239)
-    at Vy (main.js:151:142171)
-    at rS (main.js:151:141318)
-    at vC (main.js:151:142417)
+        <br/>
+        <input type="checkbox"  name="declaration_check" id="declaration_check" [ngModel]="editData.declaration_check" (change)="onCheckBoxChange($event)">&nbsp;&nbsp;I agree that above information is checked and no incorrect information is being provided for submission<br/><br/>
+        <button type="submit" class="btn-submit mt-3" [disabled]="!editData.declaration_check">Submit</button>
+    </form>
+</div>
