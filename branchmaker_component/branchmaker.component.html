@@ -1,0 +1,28 @@
+<div class="container">
+  <h2>Branchmaker Dashboard</h2>
+
+  <div class="controls">
+    <label>Select Year:</label>
+    <select [(ngModel)]="selectedYear">
+      <option *ngFor="let y of years" [value]="y">{{ y }}</option>
+    </select>
+
+    <button (click)="loadPayments()">Load</button>
+  </div>
+
+  <div *ngIf="requestError" class="error">{{ requestError }}</div>
+
+  <div class="vendor-section" *ngFor="let type of vendorType; trackBy: trackByIndex">
+    <h3>{{ type.vendorPaymentCategories }}</h3>
+
+    <div class="vendor" *ngFor="let v of type.ledgers; trackBy: trackByIndex">
+      <strong>{{ v.vendorName }}</strong>
+      <p>{{ v.vendorAccount }}</p>
+    </div>
+  </div>
+
+  <div class="response-block">
+    <h3>Payment Data</h3>
+    <pre>{{ response | json }}</pre>
+  </div>
+</div>

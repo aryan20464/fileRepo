@@ -1,0 +1,6 @@
+.container { padding: 20px; }
+.controls { margin-bottom: 15px; }
+.error { color: red; margin-top: 10px; }
+.vendor-section { margin-top: 20px; padding: 10px; border: 1px solid #ddd; }
+.vendor { margin-left: 15px; margin-bottom: 10px; }
+.response-block { margin-top: 20px; background: #fafafa; padding: 10px; }
