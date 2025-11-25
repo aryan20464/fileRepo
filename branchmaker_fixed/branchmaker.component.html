@@ -1,0 +1,251 @@
+<!-- Top response message -->
+<div *ngIf="responseData">
+  <h4>{{ responseData }}</h4>
+</div>
+
+<mat-tab-group class="custom-tab-group" style="margin-top: 1%">
+  <!-- ------------------ Indent Status Tab ------------------ -->
+  <mat-tab label="Indent Status">
+    <div class="tab-content table-scroll">
+      <div class="actions" style="float:right;margin-bottom:5px">
+        <button mat-button color="accent" class="btn-export" (click)="exportToExcel('table_print','Indents of the branch')">Export to Excel</button>
+      </div>
+
+      <table id="table_print">
+        <thead style="background-color:thistle;">
+          <tr>
+            <th>SNo</th>
+            <th>IndentID</th>
+            <th>Vendor Name</th>
+            <th>Foreign Currency</th>
+            <th>Amount</th>
+            <th>Request Type</th>
+            <th>Created On</th>
+            <th>Approved on</th>
+            <th>Status</th>
+            <th>Operation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let record of (records ?? []); let i = index; trackBy: trackByIndent" [ngStyle]="{'background-color': getRowColor(record.indentID)}">
+            <td>{{ i + 1 }}</td>
+            <td>{{ record.indentID }}</td>
+            <td>{{ branchVendorList[record.vendorRes] || record.vendorRes }} - {{ record.vendorBranch }}</td>
+            <td>{{ currencyData[record.currencyType] || record.currencyType }}</td>
+            <td>{{ record.requestedCurrencyValue }}</td>
+            <td>{{ currencyMode[record.currencyMode] || record.currencyMode }}</td>
+            <td>{{ convertHRF(record.createdAt) }}</td>
+            <td>{{ convertHRF(record.requestedDate) }}</td>
+            <td>
+              {{ appStatus[record.indentStatus] }}
+              <span *ngIf="record.indentStatus === 1">({{ record.makerName }})</span>
+              <span *ngIf="record.indentStatus === 2">({{ record.checkerName }})</span>
+              <span *ngIf="record.indentStatus === 4">({{ record.makerRTOName }})</span>
+            </td>
+            <td *ngIf="i === firstIndexMap[record.indentID]" [attr.rowspan]="uniqueIndentCount[record.indentID]">
+              <button *ngIf="record.indentStatus == 1" class="btn-modify" (click)="onClickModify(record.indentID)">Edit Indent</button>
+              <button *ngIf="record.indentStatus == 2 || record.indentStatus == 4" class="btn-modify-rto" (click)="onClickModifyRTO(record.indentID)">Update Currency Received</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </mat-tab>
+
+  <!-- ------------------ Indent Creation Tab ------------------ -->
+  <mat-tab label="Indent Creation">
+    <div class="tab-content">
+      <div class="order-form-container">
+        <form (ngSubmit)="onSubmit(orderForm)" #orderForm="ngForm" class="order-form">
+
+          <div *ngFor="let row of createRows; let i = index; trackBy: trackByRow" class="row container-fluid main-form">
+            <div class="col-md-2">
+              <div class="form-group">
+                <label for="currency-{{i}}">Foreign Currency Amount</label>
+                <input type="number" id="currency-{{i}}" class="form-control fcurrency" name="currency-{{ i }}" [(ngModel)]="row.currency" required (keypress)="disableMinus($event)" placeholder="Enter currency value" />
+              </div>
+            </div>
+
+            <div class="col-md-2">
+              <div class="form-group">
+                <label for="currency_mode-{{i}}">Request Type</label>
+                <select id="currency_mode-{{i}}" class="form-control" name="currency_mode-{{ i }}" [(ngModel)]="row.currency_mode" required>
+                  <option value="" disabled>Select Request Type</option>
+                  <ng-container *ngFor="let optionKey of (objectKeys(currencyMode))">
+                    <option [value]="optionKey">{{ currencyMode[optionKey] }}</option>
+                  </ng-container>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <div class="form-group">
+                <label for="vendor_name-{{i}}">Vendor</label>
+                <select id="vendor_name-{{i}}" class="form-control" name="vendor_name-{{ i }}" [(ngModel)]="row.vendor_name" (change)="onSelectChange(row.vendor_name, i)" required>
+                  <option value="" disabled>Select vendor</option>
+                  <ng-container *ngFor="let key of (objectKeys(branchVendorList))">
+                    <option [value]="key">{{ branchVendorList[key] }}</option>
+                  </ng-container>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-3" *ngIf="subMenuItemsArrayLength[i] > 0">
+              <div class="form-group">
+                <label for="vendor_branch-{{i}}">Vendor Branch</label>
+                <select id="vendor_branch-{{i}}" class="form-control" name="vendor_branch-{{ i }}" [(ngModel)]="row.vendor_branch" (change)="onSelectSubMenuChange(row.vendor_branch, i)" required>
+                  <option value="" disabled>Select Vendor Branch</option>
+                  <ng-container *ngFor="let key of (objectKeys(subMenuItemsArray[i] ?? {}))">
+                    <option [value]="key">{{ key }}</option>
+                  </ng-container>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-2">
+              <div class="form-group">
+                <label for="exchange-{{i}}">Exchange Type</label>
+                <select id="exchange-{{i}}" class="form-control" name="exchange-{{ i }}" [(ngModel)]="row.exchange" required>
+                  <option value="" disabled>Select exchange type</option>
+                  <ng-container *ngFor="let k of objectKeys(currencyData)">
+                    <option [value]="k">{{ currencyData[k] }}</option>
+                  </ng-container>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-2">
+              <div class="form-group">
+                <label for="vendor_email-{{i}}">Vendor Email</label>
+                <textarea id="vendor_email-{{i}}" class="form-control fmail" name="vendor_email-{{ i }}" [(ngModel)]="row.vendor_email" required readonly placeholder="Email of vendor"></textarea>
+              </div>
+            </div>
+
+            <div class="col-md-1xs">
+              <label>&nbsp;&nbsp;</label>
+              <button type="button" class="btn-remove-row" (click)="removeRow(i)">Delete</button>
+            </div>
+          </div>
+
+          <div class="row container-fluid">
+            <div class="col-md-12 add-entry">
+              <button type="button" class="btn-add-row" (click)="addRow()">+ Add Entry</button>
+            </div>
+          </div>
+
+          <br />
+          <button type="submit" class="btn-submit mt-3" [disabled]="!orderForm.valid">Submit</button>
+        </form>
+      </div>
+    </div>
+  </mat-tab>
+
+  <!-- ------------------ Completed Indents Tab ------------------ -->
+  <mat-tab label="Completed Indents">
+    <div class="tab-content table-scroll">
+      <div class="actions" style="float:right;margin-bottom:5px">
+        <button mat-button color="accent" class="btn-export" (click)="exportToExcelCompleted()">Export to Excel</button>
+      </div>
+
+      <table id="table_print_completed">
+        <thead style="background-color:thistle;">
+          <tr>
+            <th>SNo</th>
+            <th>IndentID</th>
+            <th>Branch Code</th>
+            <th>Branch Name</th>
+            <th>Vendor Name/ID</th>
+            <th>Foreign Currency</th>
+            <th>Request Type</th>
+            <th>Amount Requested</th>
+            <th>Requested on</th>
+            <th>Amount Received</th>
+            <th>Received On</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let record of (completedRecords ?? []); let i = index; trackBy: trackByIndent" [ngStyle]="{'background-color': getRowColor(record.indentID)}">
+            <td>{{ i + 1 }}</td>
+            <td>{{ record.indentID }}</td>
+            <td>{{ record.branchCode }}</td>
+            <td>{{ record.branchName }}</td>
+            <td>{{ branchVendorList[record.vendorRes] }} - {{ record.vendorBranch }}</td>
+            <td>{{ currencyData[record.currencyType] }}</td>
+            <td>{{ record.currencyMode }}</td>
+            <td>{{ record.requestedCurrencyValue }}</td>
+            <td>{{ convertHRF(record.requestedDate) }}</td>
+            <td>{{ record.receivedCurrencyValue }}</td>
+            <td>{{ convertHRF(record.receivedDate) }}</td>
+            <td>{{ appStatus[record.indentStatus] }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </mat-tab>
+
+  <!-- ------------------ Vendor Details Tab ------------------ -->
+  <mat-tab label="Vendor Details">
+    <div class="tab-content table-scroll">
+      <div class="actions" style="float:right;margin-bottom:5px">
+        <button mat-button color="accent" class="btn-export" (click)="exportToExcelVendorDetails()">Export to Excel</button>
+      </div>
+      <table id="table_vendor_list">
+        <thead style="background-color:thistle;">
+          <tr>
+            <th>SNo</th>
+            <th>Vendor Name</th>
+            <th>Vendor Branch</th>
+            <th>Vendor Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let record of (vendors ?? []); let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ record.vendorName }}</td>
+            <td>{{ record.locationName }}</td>
+            <td>{{ record.emails }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </mat-tab>
+
+  <!-- ------------------ Mailing List Tab ------------------ -->
+  <mat-tab label="Mailing List of Branch">
+    <div class="tab-content">
+      <div class="actions" style="float:right;margin-bottom:5px">
+        <button mat-button color="accent" class="btn-export" (click)="exportToExcelMailingList()">Export to Excel</button>
+      </div>
+      <div class="table-scroll">
+        <table id="table_mailing_list">
+          <thead style="background-color:thistle;">
+            <tr>
+              <th>SNo</th>
+              <th>Branch Code</th>
+              <th>Branch Name</th>
+              <th>Indent ID</th>
+              <th>Mail Sent to</th>
+              <th>Mail Address</th>
+              <th>Sent Date </th>
+              <th>Response</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let record of (branchEmailRecords ?? []); let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ record.mailBranchCode }}</td>
+              <td>{{ record.mailBranchName }}</td>
+              <td>{{ record.mailIndentID }}</td>
+              <td>{{ record.mailInsType }}</td>
+              <td>{{ record.mailAddress }}</td>
+              <td>{{ convertHRF(record.mailIndentCreatedAt) }}</td>
+              <td>{{ record.mailResponseStatus }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </mat-tab>
+
+</mat-tab-group>
