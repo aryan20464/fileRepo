@@ -1,1 +1,41 @@
-2025-12-29 08:57:34 INFO [kafka-admin-client-thread | adminclient-1] AdminMetadataManager:332 - [AdminClient clientId=adminclient-1] Rebootstrapping with Cluster(id = null, nodes = [my-cluster-kafka-bootstrap:9093 (id: -1 rack: null isFenced: false)], partitions = [], controller = null)
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: my-user
+  namespace: rforex-kafka
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  authentication:
+    type: scram-sha-512
+
+  authorization:
+    type: simple
+    acls:
+
+      # REQUIRED for metadata
+      - resource:
+          type: cluster
+        operations:
+          - Describe
+          - DescribeConfigs
+
+      # REQUIRED to list topics
+      - resource:
+          type: topic
+          name: "*"
+          patternType: literal
+        operations:
+          - Describe
+          - Read
+          - Write
+          - Create
+
+      # REQUIRED for consumers (even if unused)
+      - resource:
+          type: group
+          name: "*"
+          patternType: literal
+        operations:
+          - Describe
+          - Read
