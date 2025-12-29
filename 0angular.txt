@@ -1,3 +1,6 @@
+In resource KafkaUser(rforex-kafka/bridge-user) in API version kafka.strimzi.io/v1beta2 the operation property at path spec.authorization.acls.operation has been deprecated, and should now be configured using spec.authorization.acls[*].operations.
+
+
 1. KafkaUser (for Bridge authentication)
 YAMLapiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser
