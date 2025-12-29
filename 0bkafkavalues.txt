@@ -12,3 +12,24 @@ curl -X POST https://<your-bridge-route-host>/topics/<your-topic-name>/records \
       }
     ]
   }'
+
+HOST="https://my-bridge-route-rforex-kafka.apps.your-cluster.com"
+TOPIC="my-topic"
+GROUP="my-consumer-group"
+
+# 1. Create consumer
+curl -X POST $HOST/consumers/$GROUP \
+  -H "Content-Type: application/vnd.kafka.v2+json" \
+  -d '{"name": "my-instance", "format": "json", "auto.offset.reset": "earliest"}'
+
+# 2. Subscribe
+curl -X POST $HOST/consumers/$GROUP/instances/my-instance/subscription \
+  -H "Content-Type: application/vnd.kafka.v2+json" \
+  -d '{"topics": ["'$TOPIC'"]}'
+
+# 3. Poll (run multiple times)
+curl -X GET $HOST/consumers/$GROUP/instances/my-instance/records \
+  -H "Accept: application/vnd.kafka.json.v2+json"
+
+# 4. Delete when finished
+curl -X DELETE $HOST/consumers/$GROUP/instances/my-instance
