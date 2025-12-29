@@ -1,0 +1,14 @@
+curl -X POST https://<your-bridge-route-host>/topics/<your-topic-name>/records \
+  -H "Content-Type: application/vnd.kafka.json.v2+json" \
+  -d '{
+    "records": [
+      {
+        "key": "key-1",              # Optional: string, base64, or omit
+        "value": {"message": "Hello from HTTP!"},
+        "partition": 0               # Optional: specify partition
+      },
+      {
+        "value": "Simple string message without key"
+      }
+    ]
+  }'
