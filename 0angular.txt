@@ -46,3 +46,39 @@ spec:
     termination: edge
     insecureEdgeTerminationPolicy: Redirect
   wildcardPolicy: None
+
+
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: bridge-user
+  namespace: rforex-kafka
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  authentication:
+    type: scram-sha-512
+  authorization:
+    type: simple
+    acls:
+      # Allow listing all topics (Describe on Cluster is the easiest way)
+      - resource:
+          type: cluster
+        operation: Describe
+      # Optional: If you also want to produce/consume on all topics
+      - resource:
+          type: topic
+          name: "*"
+          patternType: literal
+        operations:
+          - Read
+          - Write
+          - Describe
+      # For consumer groups (needed for consuming via bridge)
+      - resource:
+          type: group
+          name: "*"
+          patternType: literal
+        operations:
+          - Read
+          - Describe
