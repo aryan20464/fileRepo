@@ -1,20 +1,154 @@
 apiVersion: kafka.strimzi.io/v1beta2
-kind: KafkaBridge
+kind: Kafka
 metadata:
-  name: my-bridge-test
+  annotations:
+    strimzi.io/kraft: enabled
+    strimzi.io/node-pools: enabled
+  creationTimestamp: '2025-12-29T06:28:11Z'
+  generation: 3
+  managedFields:
+    - apiVersion: kafka.strimzi.io/v1beta2
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:annotations':
+            .: {}
+            'f:strimzi.io/kraft': {}
+            'f:strimzi.io/node-pools': {}
+        'f:spec':
+          .: {}
+          'f:entityOperator':
+            .: {}
+            'f:topicOperator': {}
+            'f:userOperator': {}
+          'f:kafka':
+            .: {}
+            'f:authorization':
+              .: {}
+              'f:type': {}
+            'f:config':
+              .: {}
+              'f:default.replication.factor': {}
+              'f:min.insync.replicas': {}
+              'f:offsets.topic.replication.factor': {}
+              'f:transaction.state.log.min.isr': {}
+              'f:transaction.state.log.replication.factor': {}
+            'f:listeners': {}
+            'f:metadataVersion': {}
+            'f:version': {}
+      manager: Mozilla
+      operation: Update
+      time: '2025-12-29T09:09:11Z'
+    - apiVersion: kafka.strimzi.io/v1beta2
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:status':
+          'f:registeredNodeIds': {}
+          'f:clusterId': {}
+          'f:kafkaNodePools': {}
+          'f:kafkaVersion': {}
+          'f:listeners': {}
+          'f:conditions': {}
+          .: {}
+          'f:kafkaMetadataState': {}
+          'f:operatorLastSuccessfulVersion': {}
+          'f:observedGeneration': {}
+          'f:kafkaMetadataVersion': {}
+      manager: strimzi-cluster-operator
+      operation: Update
+      subresource: status
+      time: '2025-12-29T09:10:38Z'
+  name: my-cluster
   namespace: rforex-kafka
+  resourceVersion: '3326256'
+  uid: d35fb2fb-5dde-4a7d-9501-a9d3238873fa
 spec:
-  replicas: 1
-  bootstrapServers: my-cluster-kafka-bootstrap:9093
-  authentication:
-    type: scram-sha-512
-    username: bridge-test-user
-    passwordSecret:
-      secretName: bridge-test-user
-      password: password
-  http:
-    port: 8080
-    consumer:
-      enabled: true
-    producer:
-      enabled: true
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}
+  kafka:
+    authorization:
+      type: simple
+    config:
+      default.replication.factor: 3
+      min.insync.replicas: 2
+      offsets.topic.replication.factor: 3
+      transaction.state.log.min.isr: 2
+      transaction.state.log.replication.factor: 3
+    listeners:
+      - name: plain
+        port: 9092
+        tls: false
+        type: internal
+      - authentication:
+          type: scram-sha-512
+        name: tls
+        port: 9093
+        tls: true
+        type: internal
+    metadataVersion: 4.0-IV3
+    version: 4.0.0
+status:
+  observedGeneration: 3
+  kafkaMetadataVersion: 4.0-IV3
+  operatorLastSuccessfulVersion: 0.46.1.redhat-00007
+  kafkaNodePools:
+    - name: broker-pool
+    - name: controller-pool
+  kafkaVersion: 4.0.0
+  registeredNodeIds:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+  clusterId: ELFZfyvsRqGa9w5vTFwifw
+  conditions:
+    - lastTransitionTime: '2025-12-29T09:10:38.585796616Z'
+      status: 'True'
+      type: Ready
+  kafkaMetadataState: KRaft
+  listeners:
+    - addresses:
+        - host: my-cluster-kafka-bootstrap.rforex-kafka.svc
+          port: 9092
+      bootstrapServers: 'my-cluster-kafka-bootstrap.rforex-kafka.svc:9092'
+      name: plain
+    - addresses:
+        - host: my-cluster-kafka-bootstrap.rforex-kafka.svc
+          port: 9093
+      bootstrapServers: 'my-cluster-kafka-bootstrap.rforex-kafka.svc:9093'
+      certificates:
+        - |
+          -----BEGIN CERTIFICATE-----
+          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
+          -----END CERTIFICATE-----
+      name: tls
