@@ -1,71 +1,29 @@
 apiVersion: kafka.strimzi.io/v1beta2
-kind: KafkaTopic
+kind: KafkaBridge
 metadata:
-  resourceVersion: '3284114'
-  name: my-topic
-  uid: aa8f7113-7211-49a2-9dc6-b55f70a37939
-  creationTimestamp: '2025-12-29T06:39:28Z'
-  generation: 1
-  managedFields:
-    - apiVersion: kafka.strimzi.io/v1beta2
-      fieldsType: FieldsV1
-      fieldsV1:
-        'f:metadata':
-          'f:labels':
-            .: {}
-            'f:strimzi.io/cluster': {}
-        'f:spec':
-          .: {}
-          'f:config':
-            .: {}
-            'f:retention.ms': {}
-            'f:segment.bytes': {}
-          'f:partitions': {}
-          'f:replicas': {}
-          'f:topicName': {}
-      manager: Mozilla
-      operation: Update
-      time: '2025-12-29T06:39:28Z'
-    - apiVersion: kafka.strimzi.io/v1beta2
-      fieldsType: FieldsV1
-      fieldsV1:
-        'f:metadata':
-          'f:finalizers':
-            .: {}
-            'v:"strimzi.io/topic-operator"': {}
-      manager: strimzi-topic-operator
-      operation: Update
-      time: '2025-12-29T06:39:28Z'
-    - apiVersion: kafka.strimzi.io/v1beta2
-      fieldsType: FieldsV1
-      fieldsV1:
-        'f:status':
-          .: {}
-          'f:conditions': {}
-          'f:observedGeneration': {}
-          'f:topicId': {}
-          'f:topicName': {}
-      manager: strimzi-topic-operator
-      operation: Update
-      subresource: status
-      time: '2025-12-29T06:39:29Z'
+  name: my-bridge
   namespace: rforex-kafka
-  finalizers:
-    - strimzi.io/topic-operator
-  labels:
-    strimzi.io/cluster: my-cluster
 spec:
-  config:
-    retention.ms: 604800000
-    segment.bytes: 1073741824
-  partitions: 3
-  replicas: 3
-  topicName: firstTopic
-status:
-  conditions:
-    - lastTransitionTime: '2025-12-29T06:39:29.392874052Z'
-      status: 'True'
-      type: Ready
-  observedGeneration: 1
-  topicId: ZYQ3eLd-SqOxHBjphYLaiw
-  topicName: firstTopic
+  replicas: 1
+
+  bootstrapServers: my-cluster-kafka-bootstrap:9093
+
+  http:
+    port: 8080
+
+  authentication:
+    type: scram-sha-512
+    username: my-user
+    passwordSecret:
+      secretName: my-user
+      password: password
+
+  tls:
+    trustedCertificates:
+      - secretName: my-cluster-cluster-ca-cert
+        certificate: ca.crt
+
+  logging:
+    type: inline
+    loggers:
+      rootLogger.level: INFO
