@@ -50,7 +50,6 @@ spec:
     insecureEdgeTerminationPolicy: Redirect
   wildcardPolicy: None
 
-
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser
 metadata:
@@ -64,24 +63,27 @@ spec:
   authorization:
     type: simple
     acls:
-      # Allow listing all topics (Describe on Cluster is the easiest way)
+      # Required to list all topics via the Bridge
       - resource:
           type: cluster
-        operation: Describe
-      # Optional: If you also want to produce/consume on all topics
+        operations:
+          - Describe
+
+      # Optional but recommended: Allow describe/read/write on all topics
       - resource:
           type: topic
           name: "*"
           patternType: literal
         operations:
+          - Describe
           - Read
           - Write
-          - Describe
-      # For consumer groups (needed for consuming via bridge)
+
+      # Optional: Needed if you plan to consume via the Bridge (consumer groups)
       - resource:
           type: group
           name: "*"
           patternType: literal
         operations:
-          - Read
           - Describe
+          - Read
