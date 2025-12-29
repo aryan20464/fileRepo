@@ -87,3 +87,51 @@ spec:
         operations:
           - Describe
           - Read
+
+
+-----also shows the topics/topic-name & topics/topic-name/describe------------
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: bridge-user
+  namespace: rforex-kafka
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  authentication:
+    type: scram-sha-512
+  authorization:
+    type: simple
+    acls:
+      # Existing: For listing topics
+      - resource:
+          type: cluster
+        operations:
+          - Describe
+
+      # Existing + required for /partitions and basic topic access
+      - resource:
+          type: topic
+          name: "*"
+          patternType: literal
+        operations:
+          - Describe
+          - Read
+          - Write
+
+      # NEW: This fixes the 500 error on GET /topics/<topic-name>
+      - resource:
+          type: topic
+          name: "*"
+          patternType: literal
+        operations:
+          - DescribeConfigs   # ← Add this
+
+      # Optional: For consumer groups if using consumers via bridge
+      - resource:
+          type: group
+          name: "*"
+          patternType: literal
+        operations:
+          - Describe
+          - Read
