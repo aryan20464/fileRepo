@@ -1,1 +1,118 @@
-2025-12-29 08:31:08 INFO [kafka-admin-client-thread | adminclient-1] AdminMetadataManager:332 - [AdminClient clientId=adminclient-1] Rebootstrapping with Cluster(id = null, nodes = [my-cluster-kafka-bootstrap:9092 (id: -1 rack: null isFenced: false)], partitions = [], controller = null)
+kind: Service
+apiVersion: v1
+metadata:
+  annotations:
+    strimzi.io/discovery: |-
+      [ {
+        "port" : 9092,
+        "tls" : false,
+        "protocol" : "kafka",
+        "auth" : "none"
+      }, {
+        "port" : 9093,
+        "tls" : true,
+        "protocol" : "kafka",
+        "auth" : "none"
+      } ]
+  resourceVersion: '3280695'
+  name: my-cluster-kafka-bootstrap
+  uid: d879dfd1-50b8-4b0d-b54f-0c3efee36ccb
+  creationTimestamp: '2025-12-29T06:28:12Z'
+  managedFields:
+    - manager: strimzi-cluster-operator
+      operation: Update
+      apiVersion: v1
+      time: '2025-12-29T06:28:12Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:annotations':
+            .: {}
+            'f:strimzi.io/discovery': {}
+          'f:labels':
+            'f:strimzi.io/discovery': {}
+            'f:app.kubernetes.io/managed-by': {}
+            'f:app.kubernetes.io/name': {}
+            .: {}
+            'f:strimzi.io/cluster': {}
+            'f:app.kubernetes.io/part-of': {}
+            'f:strimzi.io/component-type': {}
+            'f:strimzi.io/name': {}
+            'f:app.kubernetes.io/instance': {}
+            'f:strimzi.io/kind': {}
+          'f:ownerReferences':
+            .: {}
+            'k:{"uid":"d35fb2fb-5dde-4a7d-9501-a9d3238873fa"}': {}
+        'f:spec':
+          'f:internalTrafficPolicy': {}
+          'f:ports':
+            .: {}
+            'k:{"port":9091,"protocol":"TCP"}':
+              .: {}
+              'f:name': {}
+              'f:port': {}
+              'f:protocol': {}
+              'f:targetPort': {}
+            'k:{"port":9092,"protocol":"TCP"}':
+              .: {}
+              'f:name': {}
+              'f:port': {}
+              'f:protocol': {}
+              'f:targetPort': {}
+            'k:{"port":9093,"protocol":"TCP"}':
+              .: {}
+              'f:name': {}
+              'f:port': {}
+              'f:protocol': {}
+              'f:targetPort': {}
+          'f:selector': {}
+          'f:sessionAffinity': {}
+          'f:type': {}
+  namespace: rforex-kafka
+  ownerReferences:
+    - apiVersion: kafka.strimzi.io/v1beta2
+      kind: Kafka
+      name: my-cluster
+      uid: d35fb2fb-5dde-4a7d-9501-a9d3238873fa
+      controller: false
+      blockOwnerDeletion: false
+  labels:
+    app.kubernetes.io/part-of: strimzi-my-cluster
+    app.kubernetes.io/instance: my-cluster
+    strimzi.io/component-type: kafka
+    strimzi.io/name: my-cluster-kafka
+    strimzi.io/discovery: 'true'
+    app.kubernetes.io/managed-by: strimzi-cluster-operator
+    strimzi.io/kind: Kafka
+    app.kubernetes.io/name: kafka
+    strimzi.io/cluster: my-cluster
+spec:
+  clusterIP: 172.30.253.206
+  ipFamilies:
+    - IPv4
+  ports:
+    - name: tcp-replication
+      protocol: TCP
+      port: 9091
+      targetPort: 9091
+    - name: tcp-clients
+      protocol: TCP
+      port: 9092
+      targetPort: 9092
+    - name: tcp-clientstls
+      protocol: TCP
+      port: 9093
+      targetPort: 9093
+  internalTrafficPolicy: Cluster
+  clusterIPs:
+    - 172.30.253.206
+  type: ClusterIP
+  ipFamilyPolicy: SingleStack
+  sessionAffinity: None
+  selector:
+    strimzi.io/broker-role: 'true'
+    strimzi.io/cluster: my-cluster
+    strimzi.io/kind: Kafka
+    strimzi.io/name: my-cluster-kafka
+status:
+  loadBalancer: {}
