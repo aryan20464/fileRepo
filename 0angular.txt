@@ -1,128 +1,20 @@
-Configure via:
-
-Form view
-
-YAML view
-Kafka Bridge
-Kafka Bridge
-provided by Red Hat
-
-Info alert:Note: Some fields may not be represented in this form view. Please select "YAML view" for full control.
-Name
-my-bridge
-Labels
-app=frontend
-Kafka cluster
-my-cluster-kafka-bootstrap:9092
-The bootstrap address of the Kafka cluster
-Bridge nodes
-1
-The desired number of Kafka Bridge nodes.
-
-http
-The HTTP related configuration.
-
-Resource Requirements
-Limits describes the minimum/maximum amount of compute resources required/allowed
-enableMetrics
-
-enableMetrics
-Enable the metrics for the Kafka Bridge. Default is false.
-
-tracing
-The configuration of tracing in Kafka Bridge.
-
-readinessProbe
-Pod readiness checking.
-clientRackInitImage
-The image of the init container used for initializing the `client.rack`.
-
-livenessProbe
-Pod liveness checking.
-
-producer
-Kafka producer related configuration.
-
-consumer
-Kafka consumer related configuration.
-
-rack
-Configuration of the node label which will be used as the client.rack consumer configuration.
-
-authentication
-Authentication configuration for connecting to the cluster.
-type
-
-scram-sha-512
-Authentication type. Currently the supported types are `tls`, `scram-sha-256`, `scram-sha-512`, `plain`, and 'oauth'. `scram-sha-256` and `scram-sha-512` types use SASL SCRAM-SHA-256 and SASL SCRAM-SHA-512 Authentication, respectively. `plain` type uses SASL PLAIN Authentication. `oauth` type uses SASL OAUTHBEARER Authentication. The `tls` type uses TLS Client Authentication. The `tls` type is supported only over TLS connections.
-enableMetrics
-
-enableMetrics
-Enable or disable OAuth metrics. Default value is `false`.
-disableTlsHostnameVerification
-
-disableTlsHostnameVerification
-Enable or disable TLS hostname verification. Default value is `false`.
-audience
-OAuth audience to use when authenticating against the authorization server. Some authorization servers require the audience to be explicitly set. The possible values depend on how the authorization server is configured. By default, `audience` is not specified when performing the token endpoint request.
-clientId
-OAuth Client ID which the Kafka client can use to authenticate against the OAuth server and use the token endpoint URI.
-accessTokenIsJwt
-
-accessTokenIsJwt
-Configure whether access token should be treated as JWT. This should be set to `false` if the authorization server returns opaque tokens. Defaults to `true`.
-connectTimeoutSeconds
-The connect timeout in seconds when connecting to authorization server. If not set, the effective connect timeout is 60 seconds.
-accessTokenLocation
-Path to the token file containing an access token to be used for authentication.
-
-passwordSecret
-Reference to the `Secret` which holds the password.
-clientAssertionLocation
-Path to the file containing the client assertion to be used for authentication.
-clientAssertionType
-The client assertion type. If not set, and either `clientAssertion` or `clientAssertionLocation` is configured, this value defaults to `urn:ietf:params:oauth:client-assertion-type:jwt-bearer`.
-readTimeoutSeconds
-The read timeout in seconds when connecting to authorization server. If not set, the effective read timeout is 60 seconds.
-scope
-OAuth scope to use when authenticating against the authorization server. Some authorization servers require this to be set. The possible values depend on how authorization server is configured. By default `scope` is not specified when doing the token endpoint request.
-
-accessToken
-Link to Kubernetes Secret containing the access token which was obtained from the authorization server.
-username
-Username used for the authentication.
-maxTokenExpirySeconds
-Set or limit time-to-live of the access tokens to the specified number of seconds. This should be set if the authorization server returns opaque tokens.
-
-clientAssertion
-Link to Kubernetes secret containing the client assertion which was manually configured for the client.
-
-clientSecret
-Link to Kubernetes Secret containing the OAuth client secret which the Kafka client can use to authenticate against the OAuth server and use the token endpoint URI.
-httpRetryPauseMs
-The pause to take before retrying a failed HTTP request. If not set, the default is to not pause at all but to immediately repeat a request.
-includeAcceptHeader
-
-includeAcceptHeader
-Whether the Accept header should be set in requests to the authorization servers. The default value is `true`.
-httpRetries
-The maximum number of retries to attempt if an initial HTTP request fails. If not set, the default is to not attempt any retries.
-
-refreshToken
-Link to Kubernetes Secret containing the refresh token which can be used to obtain access token from the authorization server.
-tokenEndpointUri
-Authorization server token endpoint URI.
-
-certificateAndKey
-Reference to the `Secret` which holds the certificate and private key pair.
-
-template
-Template for Kafka Bridge resources. The template allows users to specify how a `Deployment` and `Pod` is generated.
-image
-The container image used for Kafka Bridge pods. If no image name is explicitly specified, the image name corresponds to the image specified in the Cluster Operator configuration. If an image name is not defined in the Cluster Operator configuration, a default value is used.
-
-jvmOptions
-**Currently not supported** JVM Options for pods.
-
-logging
-Logging configuration for Kafka Bridge.
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaBridge
+metadata:
+  name: my-bridge-test
+  namespace: rforex-kafka
+spec:
+  replicas: 1
+  bootstrapServers: my-cluster-kafka-bootstrap:9093
+  authentication:
+    type: scram-sha-512
+    username: bridge-test-user
+    passwordSecret:
+      secretName: bridge-test-user
+      password: password
+  http:
+    port: 8080
+    consumer:
+      enabled: true
+    producer:
+      enabled: true
