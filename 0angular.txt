@@ -1,26 +1,4 @@
-apiVersion: kafka.strimzi.io/v1beta2
-kind: KafkaBridge
-metadata:
-  name: my-bridge
-  namespace: rforex-kafka
-spec:
-  replicas: 1
+2025-12-29 09:04:46 INFO [kafka-admin-client-thread | adminclient-1] AdminMetadataManager:332 - [AdminClient clientId=adminclient-1] Rebootstrapping with Cluster(id = null, nodes = [my-cluster-kafka-bootstrap:9093 (id: -1 rack: null isFenced: false)], partitions = [], controller = null)
 
-  bootstrapServers: my-cluster-kafka-bootstrap:9093
 
-  authentication:
-    type: scram-sha-512
-    username: my-user
-    passwordSecret:
-      secretName: my-user
-      password: password
-
-  tls:
-    trustedCertificates:
-      - secretName: my-cluster-cluster-ca-cert
-        certificate: ca.crt
-
-  http:
-    port: 8080
-
-  enableMetrics: false
+{"error_code":500,"message":"org.apache.kafka.common.errors.IllegalSaslStateException: Unexpected handshake request with client mechanism SCRAM-SHA-512, enabled mechanisms are []"}
