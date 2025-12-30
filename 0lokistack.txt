@@ -1,471 +1,61 @@
-import { Component, OnInit, HostListener, ChangeDetectorRef, AfterViewInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
-import { ActivatedRoute } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { DatePipe, CommonModule } from '@angular/common';
-import { AuthenticationService } from '../../../services/security/authentication.service';
-import { environment } from 'src/environments/environment';
-import { CURRENCYMODE } from 'src/models/fcny-module/currencymode';
-import { FormsModule } from '@angular/forms';
-import { firstValueFrom } from 'rxjs';
-
-@Component({
-  selector: 'rfm-branchmakeredit',
-  standalone: true,
-  templateUrl: './branchmakeredit.component.html',
-  styleUrls: ['./branchmakeredit.component.css'],
-  imports: [FormsModule, CommonModule]
-})
-export class BranchmakereditComponent implements OnInit, AfterViewInit {
-  itemId: string = '';
-  itemData: any = {}; // To hold the form data for the item
-
-  editData: any = {
-    bcode: '',
-    branchmail: '',
-    branchname: '',
-    declaration_check: false,
-    request_date: '',
-    makercode: 0,
-    makerName: '',
-    status: 0,
-    entries: [],
-    indentID: '',
-    deletedID: [],
-  };
-
-  branchCode = '';
-  vendorDetails: any = {};
-  currencyData: { [key: string]: string } = {};
-  vendorArray: any = {};
-  submitted = false;
-  date = new Date();
-  applicationReturnStatusMessage = '';
-  activeTabIndex = 0;
-  records: any[] = []; // Variable to store fetched records
-  currencyMode: { [key: string]: string } = {};
-  userName = '';
-
-  //changes - for addition of secondary dropdown
-  branchVendorMappingDetailsData: any = { branchVendors: [] };
-  branchVendorList: { [key: string]: string } = {};
-  isDropdownOpen = false;
-  selectedValue: string | null = null;
-  hoveredKey: string | null = null;
-  // Holds the submenu items for the second dropdown
-  subMenuItems: { [key: string]: string } = {};
-  subMenuItemsArray: Array<{ [key: string]: string }> = [];
-  subMenuItemsArrayLength: number[] = [];
-
-  orderRows: any[] = [
-    {
-      id: 0,
-      currency: null,
-      currency_mode: '',
-      vendor_name: '',
-      exchange: '',
-      vendor_email: '',
-      vendor_branch: '',
-    }
-  ];
-
-  constructor(
-    private route: ActivatedRoute,
-    private http: HttpClient,
-    private router: Router,
-    private datePipe: DatePipe,
-    private authenticationService: AuthenticationService,
-    private cdr: ChangeDetectorRef
-  ) {}
-
-  ngOnInit(): void {
-    this.itemId = this.route.snapshot.paramMap.get('id') ?? '';
-    this.branchCode = this.authenticationService.getFcnBcode?.() ?? '';
-    this.getBranchMail();
-    this.getCurrencyDetails();
-    this.editData.makercode = Number(this.authenticationService.getFcnEmpid?.() ?? 0);
-    this.currencyMode = CURRENCYMODE;
-    this.userName = this.getUserName();
-
-    // fetch mapping and item data sequentially but defensively
-    this.getBranchVendorMappingDetailsData()
-      .then(() => this.fetchItemData(this.itemId))
-      .catch(err => console.error(err));
-  }
-
-  ngAfterViewInit(): void {
-    // no-op for now; placeholder if needed
-  }
-
-  // helper to produce a blank row
-  private emptyRow() {
-    return {
-      id: 0,
-      currency: null,
-      currency_mode: '',
-      vendor_name: '',
-      exchange: '',
-      vendor_email: '',
-      vendor_branch: '',
-    };
-  }
-
-  addRow() {
-    this.orderRows = [...this.orderRows, this.emptyRow()];
-    this.subMenuItemsArray.push({});
-    this.subMenuItemsArrayLength.push(0);
-    this.cdr.detectChanges();
-  }
-
-  removeRow(index: number, id1: number) {
-    if (this.orderRows.length > 1) {
-      const removedRow = this.orderRows[index];
-      this.orderRows = this.orderRows.filter((_, i) => i !== index);
-      this.subMenuItemsArray.splice(index, 1);
-      this.subMenuItemsArrayLength.splice(index, 1);
-      if (id1 > 0) {
-        this.editData.deletedID.push(id1); // added to know the deleted ids
-      }
-      this.cdr.detectChanges();
-    }
-  }
-
-  onSelectChange(value: string, rownumber: number) {
-    const raw = (this.branchVendorMappingDetailsData?.[value]) ?? [];
-    this.orderRows[rownumber].vendor_email = '';
-    this.orderRows[rownumber].vendor_branch = '';
-    this.subMenuItemsArray[rownumber] = {};
-    this.subMenuItemsArrayLength[rownumber] = 0;
-
-    const map: { [key: string]: string } = {};
-    if (Array.isArray(raw)) {
-      raw.forEach((obj: any) => {
-        const key = Object.keys(obj)[0];
-        const val = obj[key];
-        map[key] = val;
-      });
-    }
-
-    this.subMenuItemsArray[rownumber] = map;
-    this.subMenuItemsArrayLength[rownumber] = Object.keys(map).length;
-  }
-
-  onStartSelectChange(value: string, rownumber: number) {
-    const raw = (this.branchVendorMappingDetailsData?.[value]) ?? [];
-    const map: { [key: string]: string } = {};
-    if (Array.isArray(raw)) {
-      raw.forEach((obj: any) => {
-        const key = Object.keys(obj)[0];
-        const val = obj[key];
-        map[key] = val;
-      });
-    }
-    this.subMenuItemsArray[rownumber] = map;
-    this.subMenuItemsArrayLength[rownumber] = Object.keys(map).length;
-  }
-
-  onSelectSubMenuChange(value: string, rownumber: number, vendorItems?: any) {
-    const items = vendorItems ?? this.subMenuItemsArray[rownumber] ?? {};
-    const v = items[value] ?? '';
-    this.orderRows[rownumber].vendor_email = (v || '').replace(/(?:\r\n|;)/g, '\n');
-  }
-
-  async fetchItemData(id: string): Promise<void> {
-    if (!id) return;
-    const apiUrl = `${environment.rfmIndentService}/getIndentsByIndentID?iid=${id}`;
-    try {
-      const data: any[] = await firstValueFrom(this.http.get<any[]>(apiUrl));
-      if (!Array.isArray(data) || data.length === 0) {
-        return;
-      }
-      this.records = data;
-
-      this.orderRows = data.map((entry: any) => ({
-        id: entry.id,
-        currency_mode: entry.currencyMode,
-        currency: entry.requestedCurrencyValue,
-        vendor_name: entry.vendorRes,
-        exchange: entry.currencyType,
-        vendor_branch: entry.vendorBranch,
-        vendor_email: (entry.vendorResEmail || '').replace(/(?:\r\n|,)/g, '\n')
-      }));
-
-      // initialize submenu arrays and populate them
-      this.subMenuItemsArray = [];
-      this.subMenuItemsArrayLength = [];
-      this.orderRows.forEach((row, idx) => {
-        this.onStartSelectChange(row.vendor_name, idx);
-      });
-
-      const first = data[0];
-      this.editData.bcode = first.branchCode;
-      this.editData.branchname = first.branchName;
-      this.editData.request_date = this.datePipe.transform(first.createdAt, 'dd-MM-yyyy hh:mm aa') ?? '';
-      this.editData.branchmail = first.branchEmail;
-      this.editData.status = first.indentStatus;
-      this.editData.indentID = first.indentID;
-      this.editData.makerName = first.makerName;
-
-    } catch (error) {
-      console.error('Error fetching records:', error);
-    }
-  }
-
-  onSubmit(form: any) {
-    if (!form.valid) return;
-    if (form.valid && this.editData.declaration_check) {
-      this.orderRows.forEach(item => {
-        item.vendor_email = (item.vendor_email || '').replace(/\n/g, ',');
-      });
-      this.editData.entries = this.orderRows;
-      this.http.post(`${environment.rfmIndentService}/editBranchIndentAtMaker`, this.editData).subscribe({
-        next: (response: any) => {
-          this.applicationReturnStatusMessage = response?.applicationReturnStatusMessage ?? '';
-          sessionStorage.setItem('applicationReturnStatusMessage', JSON.stringify(this.applicationReturnStatusMessage));
-          this.router.navigate(['fcnBranchMaker']);
-        },
-        error: err => console.error('Save failed', err)
-      });
-    }
-  }
-
-  disableMinus(event: KeyboardEvent) {
-    const allowedKeys = ['0','1','2','3','4','5','6','7','8','9','Backspace','Tab','ArrowLeft','ArrowRight'];
-    if (!allowedKeys.includes(event.key)) {
-      event.preventDefault();
-    }
-  }
-
-  onCheckBoxChange(event: Event) {
-    this.editData.declaration_check = !!(event.target as HTMLInputElement).checked;
-  }
-
-  getBranchCode(): string {
-    return this.authenticationService.getFcnBcode?.() ?? '';
-  }
-
-  getBranchMail() {
-    const apiUrl = `${environment.rfmIndentService}/getBranchEmail?bcode=${this.branchCode}`;
-    this.http.get(apiUrl, { responseType: 'text' }).subscribe({
-      next: data => this.editData.branchmail = data ?? '',
-      error: err => console.error('Error fetching branch mail:', err)
-    });
-  }
-
-  getCurrencyDetails() {
-    const apiUrl = `${environment.rfmIndentService}/findCurrencyDetails`;
-    this.http.get(apiUrl).subscribe({
-      next: (data: any) => {
-        if (data && typeof data === 'object') {
-          this.currencyData = { ...data };
-        }
-      },
-      error: err => console.error('Error fetching currency details:', err)
-    });
-  }
-
-  getVendorDetails(): any {
-    const apiUrl = `${environment.rfmIndentService}/findVendorDetailsOfBranch?bcode=${this.branchCode}`;
-    this.http.get(apiUrl).subscribe({
-      next: (data: any) => {
-        Object.keys(data || {}).forEach(key => {
-          this.vendorArray[data[key]['vendorKey']] = data[key]['vendorName'];
-          if (this.vendorDetails[data[key]['vendorKey']]) {
-            this.vendorDetails[data[key]['vendorKey']] += ',' + data[key]['vendorEmail'];
-          } else {
-            this.vendorDetails[data[key]['vendorKey']] = data[key]['vendorEmail'];
-          }
-        });
-      },
-      error: err => console.error('Error fetching vendor details:', err)
-    });
-  }
-
-  getUserName(): string {
-    return this.authenticationService.getFcnName?.() ?? '';
-  }
-
-  async getBranchVendorMappingDetailsData(): Promise<void> {
-    const apiUrl = `${environment.rfmIndentService}/getBranchVendorMappingData?bcode=${this.branchCode}`;
-    try {
-      const data: any = await firstValueFrom(this.http.get(apiUrl));
-      this.branchVendorMappingDetailsData = data ?? { branchVendors: [] };
-      // build list
-      this.branchVendorList = {};
-      (this.branchVendorMappingDetailsData.branchVendors || []).forEach((obj: any) => {
-        const key = Object.keys(obj)[0];
-        const value = obj[key];
-        this.branchVendorList[key] = value;
-      });
-    } catch (error) {
-      console.error('Error fetching branch vendor mapping details:', error);
-    }
-  }
-
-  // Toggles the dropdown menu
-  toggleDropdown() {
-    this.isDropdownOpen = !this.isDropdownOpen;
-  }
-
-  // Closes the dropdown menu
-  closeDropdown() {
-    this.isDropdownOpen = false;
-  }
-
-  // Handles option selection
-  selectOption(option: any, rownumber: number) {
-    this.selectedValue = option.label || Object.keys(option)[0];
-    this.orderRows[rownumber].vendor_email = (option.value || '').replace(/(?:\r\n|,)/g, '\n');
-    this.closeDropdown();
-  }
-
-  // Shows the submenu for the hovered item
-  showSubMenu(key: string) {
-    this.hoveredKey = key;
-  }
-
-  // Hides the submenu
-  hideSubMenu() {
-    this.hoveredKey = null;
-  }
-
-  // Retrieves submenu items for the given key
-  getSubMenuItems(key: string) {
-    const subMenuData = this.branchVendorMappingDetailsData?.[key] ?? [];
-    if (Array.isArray(subMenuData)) {
-      return subMenuData.map((item: any) => {
-        const label = Object.keys(item)[0];
-        const value = item[label];
-        return { label, value };
-      });
-    }
-    return [];
-  }
-
-  // Detect clicks outside the dropdown
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: Event) {
-    const target = event.target as HTMLElement;
-    if (!target.closest('.custom-dropdown')) {
-      this.closeDropdown();
-    }
-  }
-
-  // Helper used from template: returns keys of an object in stable order
-  objectKeys(obj: any): string[] {
-    if (!obj || typeof obj !== 'object') return [];
-    return Object.keys(obj);
-  }
-
-  // small trackBy used by templates
-  trackByIndex(index: number) { return index; }
-}
-
-
-<div class="order-form-container">
-
-  <form (ngSubmit)="onSubmit(orderForm)" #orderForm="ngForm" class="order-form">
-      <div class="row container-fluid">
-
-          <div class="col-md-6 st-size-left">
-              <span class="badge">Branch Code : {{editData.bcode}} </span><br><br>
-              <input type="hidden" name="bcode" [(ngModel)]="editData.bcode" />
-              <span class="badge-daterequest">Date of Request: {{editData.request_date}} </span>
-              <span class="badge-requestid">Request ID: {{editData.indentID}}</span>
-          </div>
-
-          <div class="col-md-6 st-size-right">
-              <span class="badge-branchname">Branch Name : {{editData.branchname}}</span>
-              <input type="hidden" name="branchname" [(ngModel)]="editData.branchname" /> <br><br>
-              <div class="email-input" style="float:right">
-                  <span class="email-prefix">&nbsp;Branch e-Mail</span>
-                  <input type="text" placeholder="Branch email id" [(ngModel)]="editData.branchmail" name="branchmail" readonly />
-              </div>
-          </div>
-      </div>
-
-      <div *ngFor="let row of (orderRows ?? []); let i = index; trackBy: trackByIndex" class="row container-fluid main-form">
-          <div class="col-md-1x">
-              <div class="form-group">
-                  <input type="hidden" id="valueID-{{ i }}" class="form-control" name="value_id-{{ i }}" [(ngModel)]="row.id" readonly required />
-                  <label for="currency-{{ i }}">Foreign Currency Amount {{i+1}}</label>
-                  <input type="number" id="currency-{{ i }}" class="form-control fcurrency" name="currency-{{ i }}" [(ngModel)]="row.currency" required (keypress)="disableMinus($event)" placeholder="Enter currency value" />
-              </div>
-          </div>
-
-          <div class="col-md-1x">
-              <div class="form-group">
-                  <label for="currency_mode-{{i}}">Request Type</label>
-                  <select id="currency_mode-{{i}}" class="form-control" name="currency_mode-{{ i }}" [(ngModel)]="row.currency_mode" required>
-                      <option value="">Select Request Type</option>
-                      <ng-container *ngFor="let optionKey of objectKeys(currencyMode)">
-                          <option [value]="optionKey">{{ currencyMode[optionKey] }}</option>
-                      </ng-container>
-                  </select>
-              </div>
-          </div>
-
-          <div class="col-md-1x">
-              <div class="form-group">
-                  <label for="vendor_name-{{ i }}">Vendor Name/ID</label>
-                  <select id="vendor_name-{{ i }}" class="form-control" name="vendor_name-{{ i }}" [(ngModel)]="row.vendor_name" (change)="onSelectChange(row.vendor_name,i)" required>
-                      <option value="">Select vendor</option>
-                      <ng-container *ngFor="let key of objectKeys(branchVendorList)">
-                          <option [value]="key">{{ branchVendorList[key] }}</option>
-                      </ng-container>
-                  </select>
-              </div>
-          </div>
-
-          <div class="col-md-3" *ngIf="(subMenuItemsArray && subMenuItemsArrayLength[i] > 0) || row.vendor_branch">
-              <div class="form-group">
-                  <label for="vendor_branch-{{i}}">Vendor Branch</label>
-                  <select id="vendor_branch-{{i}}" class="form-control" name="vendor_branch-{{ i }}" [(ngModel)]="row.vendor_branch" (change)="onSelectSubMenuChange(row.vendor_branch,i,subMenuItemsArray[i])" required>
-                      <option value="">Select Vendor Branch</option>
-                      <ng-container *ngFor="let key of objectKeys(subMenuItemsArray[i] || {})">
-                          <option [value]="key">{{ key }}</option>
-                      </ng-container>
-                  </select>
-              </div>
-          </div>
-
-          <div class="col-md-2">
-              <div class="form-group">
-                  <label for="exchange-{{ i }}">Exchange Type</label>
-                  <select id="exchange-{{ i }}" class="form-control" name="exchange-{{ i }}" [(ngModel)]="row.exchange" required>
-                      <option value="">Select exchange type</option>
-                      <ng-container *ngFor="let k of objectKeys(currencyData)">
-                          <option [value]="k">{{ currencyData[k] }}</option>
-                      </ng-container>
-                  </select>
-              </div>
-          </div>
-
-          <div class="col-md-2">
-              <div class="form-group">
-                  <label for="vendor_email-{{ i }}">Vendor Email</label>
-                  <textarea id="vendor_email-{{ i }}" class="form-control fmail" name="vendor_email-{{ i }}" [(ngModel)]="row.vendor_email" required readonly placeholder="Email of vendor"></textarea>
-              </div>
-          </div>
-
-          <div class="col-md-1xs">
-              <label>&nbsp;&nbsp;</label>
-              <button type="button" class="btn-remove-row" (click)="removeRow(i,row.id)">Delete</button>
-          </div>
-      </div>
-
-      <div class="row container-fluid">
-          <div class="col-md-12 add-entry">
-              <button type="button" class="btn-add-row" (click)="addRow()">+ Add Entry</button>
-          </div>
-      </div>
-
-      <br/>
-      <label><input type="checkbox" name="declaration_check" id="declaration_check" [(ngModel)]="editData.declaration_check" (change)="onCheckBoxChange($event)" />&nbsp;&nbsp;I agree that above information is checked and no incorrect information is being provided for submission</label>
-      <br/><br/>
-      <button type="submit" class="btn-submit mt-3" [disabled]="!editData.declaration_check">Submit</button>
-  </form>
-</div>
-
-
-
+2025-12-30T16:05:24.730+05:30  INFO 30432 --- [KafkaRestApplication] [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path '/'
+2025-12-30T16:05:24.738+05:30  INFO 30432 --- [KafkaRestApplication] [  restartedMain] c.sbi.rforex.kafka.KafkaRestApplication  : Started KafkaRestApplication in 3.636 seconds (process running for 4.379)
+2025-12-30T16:05:30.286+05:30  INFO 30432 --- [KafkaRestApplication] [nio-8081-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-30T16:05:30.287+05:30  INFO 30432 --- [KafkaRestApplication] [nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-12-30T16:05:30.291+05:30  INFO 30432 --- [KafkaRestApplication] [nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+org.springframework.web.client.ResourceAccessException: I/O error on POST request for "https://cluster.apps.tssrfxuat.sbi.co.in/topics/firstTopic": PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+        at org.springframework.web.client.RestTemplate.createResourceAccessException(RestTemplate.java:926)
+        at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:906)
+        at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:801)
+        at org.springframework.web.client.RestTemplate.exchange(RestTemplate.java:683)
+        at com.sbi.rforex.kafka.service.ProducerService.publish(ProducerService.java:29)
+        at com.sbi.rforex.kafka.RestKController.publish(RestKController.java:22)
+        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+        at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258)
+        at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:191)
+        at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
+        at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:986)
+        at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:891)
+        at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+        at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+        at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+        at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+        at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
+        at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+        at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+        at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+        at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+        at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+        at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+        at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+        at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+        at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+        at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)
+        at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:116)
+        at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+        at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+        at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+        at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:398)
+        at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+        at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+        at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1740)
+        at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+        at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1189)
+        at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:658)
+        at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+        at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
