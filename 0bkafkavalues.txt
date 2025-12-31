@@ -1,3 +1,50 @@
+
+Name
+
+Status
+
+Location
+
+Service
+Route
+RT
+my-cluster-broker-pool-0
+Accepted
+https://my-cluster-broker-pool-0-rforex-kafka.apps.tssrfxuat.sbi.co.in Copy to clipboard
+Service
+S
+my-cluster-broker-pool-0
+
+Route
+RT
+my-cluster-broker-pool-1
+Accepted
+https://my-cluster-broker-pool-1-rforex-kafka.apps.tssrfxuat.sbi.co.in Copy to clipboard
+Service
+S
+my-cluster-broker-pool-1
+
+Route
+RT
+my-cluster-broker-pool-2
+Accepted
+https://my-cluster-broker-pool-2-rforex-kafka.apps.tssrfxuat.sbi.co.in Copy to clipboard
+Service
+S
+my-cluster-broker-pool-2
+
+Route
+RT
+my-cluster-kafka-bootstrap
+Accepted
+https://my-cluster-kafka-bootstrap-rforex-kafka.apps.tssrfxuat.sbi.co.in Copy to clipboard
+Service
+S
+my-cluster-kafka-external-bootstrap
+
+
+
+
 curl -X POST https://<your-bridge-route-host>/topics/<your-topic-name>/records \
   -H "Content-Type: application/vnd.kafka.json.v2+json" \
   -d '{
