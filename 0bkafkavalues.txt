@@ -1,46 +1,123 @@
+Here is the updated and corrected version of the "Connecting from External Clients (Native Protocol)" section, fully adapted to your actual OpenShift Routes and cluster details (as of December 31, 2025).
+Connecting from External Clients (Native Protocol)
+You now have full external access via OpenShift Routes with TLS passthrough. Clients connect using the native Kafka TCP binary protocol (exactly like in a traditional non-OpenShift environment).
+Bootstrap server (use this in all clients):
+textmy-cluster-kafka-bootstrap-rforex-kafka.apps.tssrfxuat.sbi.co.in:443
+Cluster CA certificate (required for TLS trust):
+Bashoc get secret my-cluster-cluster-ca-cert -n rforex-kafka \
+  -o jsonpath='{.data.ca\.crt}' | base64 -d > cluster-ca.crt
+Recommended KafkaUser for external native clients (create if not already done):
+YAMLapiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: external-native-user
+  namespace: rforex-kafka
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  authentication:
+    type: scram-sha-512
+  authorization:
+    type: simple
+    acls:
+      - resource:
+          type: topic
+          name: "*"
+          patternType: literal
+        operations:
+          - Read
+          - Write
+          - Describe
+          - DescribeConfigs
+      - resource:
+          type: group
+          name: "*"
+          patternType: literal
+        operations:
+          - Read
+          - Describe
+Apply: oc apply -f external-native-user.yaml
+Get password:
+Bashoc get secret external-native-user -n rforex-kafka \
+  -o jsonpath='{.data.password}' | base64 -d
+Client Configuration Examples
+Python (kafka-python or confluent-kafka)
+Pythonfrom kafka import KafkaProducer, KafkaConsumer
 
-Name
+# Common settings
+bootstrap = 'my-cluster-kafka-bootstrap-rforex-kafka.apps.tssrfxuat.sbi.co.in:443'
+username = 'external-native-user'
+password = '<password-from-secret>'
+ca_cert = 'cluster-ca.crt'  # Path to downloaded CA file
 
-Status
+# Producer
+producer = KafkaProducer(
+    bootstrap_servers=bootstrap,
+    security_protocol='SASL_SSL',
+    sasl_mechanism='SCRAM-SHA-512',
+    sasl_plain_username=username,
+    sasl_plain_password=password,
+    ssl_cafile=ca_cert
+)
 
-Location
+producer.send('your-topic-name', value=b'Hello from native external client!')
+producer.flush()
 
-Service
-Route
-RT
-my-cluster-broker-pool-0
-Accepted
-https://my-cluster-broker-pool-0-rforex-kafka.apps.tssrfxuat.sbi.co.in Copy to clipboard
-Service
-S
-my-cluster-broker-pool-0
+# Consumer
+consumer = KafkaConsumer(
+    'your-topic-name',
+    group_id='external-consumer-group',
+    bootstrap_servers=bootstrap,
+    security_protocol='SASL_SSL',
+    sasl_mechanism='SCRAM-SHA-512',
+    sasl_plain_username=username,
+    sasl_plain_password=password,
+    ssl_cafile=ca_cert,
+    auto_offset_reset='earliest'
+)
 
-Route
-RT
-my-cluster-broker-pool-1
-Accepted
-https://my-cluster-broker-pool-1-rforex-kafka.apps.tssrfxuat.sbi.co.in Copy to clipboard
-Service
-S
-my-cluster-broker-pool-1
+for message in consumer:
+    print(message.value)
+Java (Apache Kafka Clients)
+Javaimport org.apache.kafka.clients.producer.*;
+import org.apache.kafka.clients.consumer.*;
+import java.util.Properties;
+import java.util.Collections;
 
-Route
-RT
-my-cluster-broker-pool-2
-Accepted
-https://my-cluster-broker-pool-2-rforex-kafka.apps.tssrfxuat.sbi.co.in Copy to clipboard
-Service
-S
-my-cluster-broker-pool-2
+Properties props = new Properties();
+props.put("bootstrap.servers", "my-cluster-kafka-bootstrap-rforex-kafka.apps.tssrfxuat.sbi.co.in:443");
+props.put("security.protocol", "SASL_SSL");
+props.put("sasl.mechanism", "SCRAM-SHA-512");
+props.put("sasl.jaas.config",
+    "org.apache.kafka.common.security.scram.ScramLoginModule required " +
+    "username=\"external-native-user\" " +
+    "password=\"<password-from-secret>\";");
+props.put("ssl.truststore.location", "/path/to/truststore.jks");  // Import cluster-ca.crt into JKS
+props.put("ssl.truststore.password", "changeit");
 
-Route
-RT
-my-cluster-kafka-bootstrap
-Accepted
-https://my-cluster-kafka-bootstrap-rforex-kafka.apps.tssrfxuat.sbi.co.in Copy to clipboard
-Service
-S
-my-cluster-kafka-external-bootstrap
+// Producer example
+KafkaProducer<String, String> producer = new KafkaProducer<>(props);
+producer.send(new ProducerRecord<>("your-topic-name", "key", "value"));
+producer.close();
+
+// Consumer example
+props.put("group.id", "external-java-group");
+KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
+consumer.subscribe(Collections.singletonList("your-topic-name"));
+while (true) {
+    ConsumerRecords<String, String> records = consumer.poll(java.time.Duration.ofMillis(100));
+    for (ConsumerRecord<String, String> record : records)
+        System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
+}
+Command-line test with kcat (formerly kafkacat)
+Bashkcat -b my-cluster-kafka-bootstrap-rforex-kafka.apps.tssrfxuat.sbi.co.in:443 \
+  -X security.protocol=SASL_SSL \
+  -X sasl.mechanism=SCRAM-SHA-512 \
+  -X sasl.username=external-native-user \
+  -X sasl.password=<password> \
+  -X ssl.ca.location=cluster-ca.crt \
+  -t your-topic-name -C -q
+This setup gives you full native Kafka performance (binary protocol, batching, compression, low latency) while running securely on OpenShift. Clients connect exactly as they would in a traditional bare-metal/VM deployment — just using the Route hostnames and port 443.
 
 
 
