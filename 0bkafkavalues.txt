@@ -1,3 +1,34 @@
+keytool -importcert -alias kafka-cluster-ca \
+  -file cluster-ca.crt \
+  -keystore cluster-ca.jks \
+  -storepass changeit -noprompt
+
+
+
+spring:
+  kafka:
+    bootstrap-servers: my-cluster-kafka-bootstrap-rforex-kafka.apps.tssrfxuat.sbi.co.in:443
+    consumer:
+      group-id: I_SWIFT_FCRA_IDEA_1          # renamed to match Spring Boot convention
+      auto-offset-reset: earliest           # or 'latest' as per your requirement
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    properties:
+      security.protocol: SASL_SSL           # Critical: SASL over SSL (TLS)
+      sasl.mechanism: SCRAM-SHA-512         # Matches your cluster auth
+      sasl.jaas.config: org.apache.kafka.common.security.scram.ScramLoginModule required username="external-native-user" password="<your-user-password>";
+      ssl.truststore.location: classpath:kafka/cluster-ca.jks   # Path inside your app container
+      ssl.truststore.password: changeit     # Or your actual password
+      ssl.truststore.type: JKS
+    # Optional but recommended for better error handling
+    client-id: fcraswiftprocessor-1
+
+
+
+
 spring:
   application:
     name: FCRASwiftProcessor
