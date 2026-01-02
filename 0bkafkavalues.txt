@@ -1,3 +1,99 @@
+spring:
+  application:
+    name: FCRASwiftProcessor
+  datasource:
+    url: jdbc:oracle:thin:@10.191.216.61:1522:IDEACMM
+    username: rforex
+    password: rforex123
+    driver-class-name: oracle.jdbc.OracleDriver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.OracleDialect
+  kafka:
+    bootstrap-servers: 10.191.158.42:9196
+    consumer:
+      bootstrap.servers: 10.191.158.42:9196
+      groupid: I_SWIFT_FCRA_IDEA_1
+      auto-offset-reset: latest
+      key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    properties: 
+      security.protocol: SASL_PLAINTEXT
+      sasl.mechanism: PLAIN
+      ssl.truststore.location: /weblogic/KafkaSetup/certs/kafkatruststorecert.jks
+      ssl.truststore.password: changeit
+      ssl.truststore.type: JKS
+      sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="idea" password="idea-forex";
+
+shceduler:
+  rateCategory:
+    cron: 0 0/10 * * * *
+    atLeast: PT09M59S
+    atMost: PT10M00S
+  activeRate:
+    cron: 0 0 0/2 * * *
+    atLeast: PT01H59M59S
+    atMost: PT02H00M00S
+
+module:
+  id: 6
+
+topics:
+  source: sbi.fcra.test.topic
+  validation: sbi.ittss.fcra.mx.validations
+  acknowledgement: sbi.ittss.fcra.ack.csig
+  rateCategory: sbi.ittss.fcra.mx.derived.rate.category
+rateCategory:
+  groupId: I_SWIFT_FCRA_RATE_CATEGORY_1
+server:
+  port: 8086
+
+logging:
+  folder: /weblogic/app_logs/rforex/
+  file:
+    name: ${logging.folder}fcraswiftprocessor.log
+    max-size: 100MB
+    total-size-cap: 100MB
+    max-history: 30
+  level:
+    root: INFO
+    com.sbi.fcra.mx.parser: INFO
+  pattern:
+    rolling-file-name: ${logging.folder}fcraswiftprocessor-%d{yyyy-MM-dd}.%i.log
+    dateformat: yyyy-MM-dd HH:mm:ss XXX
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Here is the updated and corrected version of the "Connecting from External Clients (Native Protocol)" section, fully adapted to your actual OpenShift Routes and cluster details (as of December 31, 2025).
 Connecting from External Clients (Native Protocol)
 You now have full external access via OpenShift Routes with TLS passthrough. Clients connect using the native Kafka TCP binary protocol (exactly like in a traditional non-OpenShift environment).
