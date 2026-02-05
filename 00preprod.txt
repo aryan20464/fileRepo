@@ -1,3 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-rforex
+  namespace: forex
+  labels:
+    app: nginx-rforex
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-rforex
+  template:
+    metadata:
+      labels:
+        app: nginx-rforex
+    spec:
+      # Pod-level security context to run as a non-root user and set seccomp profile
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: nginx-rforex
+          image: h06vksharbor.corp.ad.sbi/itss/rforex-ui-test:2.0
+          ports:
+            - containerPort: 4200 # Unprivileged NGINX runs on port 8080
+          imagePullPolicy: Always
+          # Container-level security context
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-rforex-service
+  namespace: forex
+spec:
+  selector:
+    app: nginx-rforex
+  type: ClusterIP
+  ports:
+    - port: 4200
+      targetPort: 4200
+      #nodePort: 30000  # Choose an unused NodePort in the 30000–32767 range
+
 2026-02-05T11:52:32.461Z        WARN    lib/utils.go:167        key : Service/forex/nginx-rforex-service, msg: Pod nginx-rforex-594ffd6cf7-r6kxm is not ready
 2026-02-05T11:52:33.589Z        WARN    k8s/controller.go:730   key : Pod/forex/nginx-rforex-594ffd6cf7-r6kxm, msg: 'nodeportlocal.antrea.io' annotation not found, ignoring the pod
 2026-02-05T11:52:33.602Z        WARN    lib/utils.go:167        key : Pod/forex/nginx-rforex-594ffd6cf7-r6kxm, msg: Pod nginx-rforex-594ffd6cf7-r6kxm is not ready
