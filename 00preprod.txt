@@ -1,116 +1,16 @@
-C:\Users\58963214>kubectl get svc -n forex nginx-rforex-service -o yaml
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"nginx-rforex-service","namespace":"forex"},"spec":{"ports":[{"port":4200,"targetPort":4200}],"selector":{"app":"nginx-rforex"},"type":"ClusterIP"}}
-    nodeportlocal.antrea.io/enabled: "true"
-  creationTimestamp: "2026-02-05T11:53:00Z"
-  name: nginx-rforex-service
-  namespace: forex
-  resourceVersion: "56719239"
-  uid: d05df163-4680-45f0-9a3c-8486bc2d3f94
-spec:
-  clusterIP: 10.102.10.229
-  clusterIPs:
-  - 10.102.10.229
-  internalTrafficPolicy: Cluster
-  ipFamilies:
-  - IPv4
-  ipFamilyPolicy: SingleStack
-  ports:
-  - port: 4200
-    protocol: TCP
-    targetPort: 4200
-  selector:
-    app: nginx-rforex
-  sessionAffinity: None
-  type: ClusterIP
-status:
-  loadBalancer: {}
-
-C:\Users\58963214>kubectl get endpoints -n forex nginx-rforex-service
-NAME                   ENDPOINTS           AGE
-nginx-rforex-service   192.168.2.10:4200   8m26s
-
-C:\Users\58963214>kubectl describe pod -n forex nginx-rforex-7d7b4bf86-m5z7t
-Name:             nginx-rforex-7d7b4bf86-m5z7t
+C:\Users\1064695>kubectl describe ingress forex-ing -n forex
+Name:             forex-ing
+Labels:           <none>
 Namespace:        forex
-Priority:         0
-Service Account:  default
-Node:             h06vkspreprodrforexcls-node-pool-1-86cbc-dwt6s-zn5sm/10.244.6.197
-Start Time:       Thu, 05 Feb 2026 17:23:00 +0530
-Labels:           app=nginx-rforex
-                  pod-template-hash=7d7b4bf86
-Annotations:      nodeportlocal.antrea.io: [{"podPort":4200,"nodeIP":"10.244.6.197","nodePort":61004,"protocol":"tcp"}]
-Status:           Running
-IP:               192.168.2.10
-IPs:
-  IP:           192.168.2.10
-Controlled By:  ReplicaSet/nginx-rforex-7d7b4bf86
-Containers:
-  nginx-rforex:
-    Container ID:   containerd://c4aff761a6bc946c392aaee2c3f9a427fcbb0f76dae1d237cda7c285190a9738
-    Image:          h06vksharbor.corp.ad.sbi/itss/rforex-ui-test:2.0
-    Image ID:       h06vksharbor.corp.ad.sbi/itss/rforex-ui-test@sha256:851d7b7342a27c76b846c09eaf6068e62fdedd547df26c04c4d31120cba15768
-    Port:           4200/TCP
-    Host Port:      0/TCP
-    State:          Running
-      Started:      Thu, 05 Feb 2026 17:23:01 +0530
-    Ready:          True
-    Restart Count:  0
-    Environment:    <none>
-    Mounts:
-      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-dmjcz (ro)
-Conditions:
-  Type                        Status
-  PodReadyToStartContainers   True
-  Initialized                 True
-  Ready                       True
-  ContainersReady             True
-  PodScheduled                True
-Volumes:
-  kube-api-access-dmjcz:
-    Type:                    Projected (a volume that contains injected data from multiple sources)
-    TokenExpirationSeconds:  3607
-    ConfigMapName:           kube-root-ca.crt
-    ConfigMapOptional:       <nil>
-    DownwardAPI:             true
-QoS Class:                   BestEffort
-Node-Selectors:              <none>
-Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
-                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
-Events:
-  Type    Reason     Age    From               Message
-  ----    ------     ----   ----               -------
-  Normal  Scheduled  9m     default-scheduler  Successfully assigned forex/nginx-rforex-7d7b4bf86-m5z7t to h06vkspreprodrforexcls-node-pool-1-86cbc-dwt6s-zn5sm
-  Normal  Pulling    9m     kubelet            Pulling image "h06vksharbor.corp.ad.sbi/itss/rforex-ui-test:2.0"
-  Normal  Pulled     8m59s  kubelet            Successfully pulled image "h06vksharbor.corp.ad.sbi/itss/rforex-ui-test:2.0" in 117ms (117ms including waiting). Image size: 70548131 bytes.
-  Normal  Created    8m59s  kubelet            Created container: nginx-rforex
-  Normal  Started    8m59s  kubelet            Started container nginx-rforex
-
-C:\Users\58963214>kubectl exec -it -n forex nginx-rforex-7d7b4bf86-m5z7t -- curl localhost:4200
-<!DOCTYPE html>
-<html>
-<head>
-<title>Welcome to nginx!</title>
-<style>
-html { color-scheme: light dark; }
-body { width: 35em; margin: 0 auto;
-font-family: Tahoma, Verdana, Arial, sans-serif; }
-</style>
-</head>
-<body>
-<h1>Welcome to nginx!</h1>
-<p>If you see this page, the nginx web server is successfully installed and
-working. Further configuration is required.</p>
-
-<p>For online documentation and support please refer to
-<a href="http://nginx.org/">nginx.org</a>.<br/>
-Commercial support is available at
-<a href="http://nginx.com/">nginx.com</a>.</p>
-
-<p><em>Thank you for using nginx.</em></p>
-</body>
-</html>
+Address:          10.177.107.78
+Ingress Class:    forex-ingcls
+Default backend:  <default>
+Rules:
+  Host                   Path  Backends
+  ----                   ----  --------
+  preprodforex.bank.sbi
+                         /   nginx-rforex-service:4200 (192.168.2.10:4200)
+Annotations:             ako.vmware.com/controller-cluster-uuid: cluster-13e84635-e75a-4134-b68f-cd2069bd5e88
+                         ako.vmware.com/host-fqdn-vs-uuid-map: {"preprodforex.bank.sbi":"virtualservice-407b056c-0f96-4cc7-bc25-8d6a618ecd8a"}
+                         ako.vmware.com/tenant-name: admin
+Events:                  <none>
