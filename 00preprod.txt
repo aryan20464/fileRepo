@@ -1,16 +1,1 @@
-C:\Users\1064695>kubectl describe ingress forex-ing -n forex
-Name:             forex-ing
-Labels:           <none>
-Namespace:        forex
-Address:          10.177.107.78
-Ingress Class:    forex-ingcls
-Default backend:  <default>
-Rules:
-  Host                   Path  Backends
-  ----                   ----  --------
-  preprodforex.bank.sbi
-                         /   nginx-rforex-service:4200 (192.168.2.10:4200)
-Annotations:             ako.vmware.com/controller-cluster-uuid: cluster-13e84635-e75a-4134-b68f-cd2069bd5e88
-                         ako.vmware.com/host-fqdn-vs-uuid-map: {"preprodforex.bank.sbi":"virtualservice-407b056c-0f96-4cc7-bc25-8d6a618ecd8a"}
-                         ako.vmware.com/tenant-name: admin
-Events:                  <none>
+https://plugins.jetbrains.com/files/6317/853992/lombok-252.26199.74.zip?updateId=853992&pluginId=6317&family=INTELLIJ
