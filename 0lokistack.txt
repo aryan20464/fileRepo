@@ -1,3 +1,12 @@
-kubectl rollout restart daemonset alloy -n forex                                                                   
-Warning: would violate PodSecurity "baseline:latest": host namespaces (hostNetwork=true)
-daemonset.apps/alloy restarted
+kubectl get pv -n forex
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                  STORAGECLASS   VOLUMEATTRIBUTESCLASS   REASON   AGE
+pvc-4b1ccc0f-8afa-4884-8970-1b16675c7e24   10Gi       RWO            Delete           Bound    forex/pvc-grafana      h06-vks-sp-2   <unset>                          2d18h
+pvc-8f241e51-b712-42a8-ac0f-62506c97852e   20Gi       RWO            Delete           Bound    forex/pvc-prometheus   h06-vks-sp-2   <unset>                          2d18h
+pvc-a3cc6e88-a567-4cd5-9c51-f7fc36b1cbac   30Gi       RWO            Delete           Bound    forex/pvc-loki         h06-vks-sp-2   <unset>                          2d18h
+
+kubectl get pvc -n forex
+
+NAME             STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+pvc-grafana      Bound    pvc-4b1ccc0f-8afa-4884-8970-1b16675c7e24   10Gi       RWO            h06-vks-sp-2   <unset>                 2d19h
+pvc-loki         Bound    pvc-a3cc6e88-a567-4cd5-9c51-f7fc36b1cbac   30Gi       RWO            h06-vks-sp-2   <unset>                 2d19h
+pvc-prometheus   Bound    pvc-8f241e51-b712-42a8-ac0f-62506c97852e   20Gi       RWO            h06-vks-sp-2   <unset>                 2d19h
