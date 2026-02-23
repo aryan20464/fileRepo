@@ -1,5 +1,35 @@
-apiVersion: apps/v1
-kind: DaemonSet
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: alloy
+  namespace: forex
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: alloy
+  namespace: forex
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: alloy
+  namespace: forex
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: alloy
+subjects:
+- kind: ServiceAccount
+  name: alloy
+  namespace: forex
+---
+apiVersion: v1
+kind: Service
 metadata:
   name: alloy
   namespace: forex
@@ -7,197 +37,10 @@ metadata:
     app: alloy
 spec:
   selector:
-    matchLabels:
-      app: alloy
-  template:
-    metadata:
-      labels:
-        app: alloy
-    spec:
-      serviceAccountName: alloy
-      hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
-      tolerations:
-      - operator: Exists
-      containers:
-      - name: alloy
-        image: harbor_registry_variable/grafana-alloy:1.11.0
-        imagePullPolicy: IfNotPresent
-        args:
-        - run
-        - /etc/alloy/config.alloy
-        - --server.http.listen-addr=0.0.0.0:12345
-        - --server.http.ui-path-prefix=/alloy
-        - --storage.path=/alloy/data
-        ports:
-        - name: http
-          containerPort: 12345
-          protocol: TCP
-        volumeMounts:
-        - name: alloy-config
-          mountPath: /etc/alloy
-          readOnly: true
-        - name: alloy-data
-          mountPath: /alloy/data
-        resources:
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-        securityContext:
-          runAsNonRoot: true
-          runAsUser: 1000
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop: ["ALL"]
-      securityContext:
-        fsGroup: 1000
-        seccompProfile:
-          type: RuntimeDefault
-      volumes:
-      - name: alloy-config
-        configMap:
-          name: alloy-config
-      - name: alloy-data
-        emptyDir: {}
-		
-		
-		
-		
-		
-		
-		
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: alloy-config
-  namespace: forex
-  labels:
     app: alloy
-data:
-  config.alloy: |-
-    // Metrics: Scrape pod metrics in forex namespace, forward to Prometheus.
-    discovery.kubernetes "pods" {
-      role = "pod"
-      namespaces {
-        own_namespace = false
-        names = ["forex"]
-      }
-    }
-
-    prometheus.scrape "pods" {
-      targets    = discovery.kubernetes.pods.targets
-      forward_to = [prometheus.remote_write.prometheus.receiver]
-    }
-
-    prometheus.remote_write "prometheus" {
-      endpoint {
-        url = "http://prometheus.forex.svc.cluster.local:9090/api/v1/write"
-      }
-    }
-
-    // Logs: Discover pods and tail logs via Kubernetes API.
-    discovery.kubernetes "pod_logs" {
-      role = "pod"
-      namespaces {
-        own_namespace = false
-        names = ["forex"]
-      }
-      selectors {
-        role = "pod"
-        field = "spec.nodeName=" + coalesce(sys.env("HOSTNAME"), constants.hostname)
-      }
-    }
-
-    discovery.relabel "pod_logs" {
-      targets = discovery.kubernetes.pod_logs.targets
-      rule {
-        source_labels = ["__meta_kubernetes_namespace"]
-        action = "replace"
-        target_label = "namespace"
-      }
-      rule {
-        source_labels = ["__meta_kubernetes_pod_name"]
-        action = "replace"
-        target_label = "pod"
-      }
-      rule {
-        source_labels = ["__meta_kubernetes_pod_container_name"]
-        action = "replace"
-        target_label = "container"
-      }
-      rule {
-        source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
-        action = "replace"
-        target_label = "app"
-      }
-      rule {
-        source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_pod_container_name"]
-        action = "replace"
-        target_label = "job"
-        separator = "/"
-        replacement = "$1"
-      }
-      rule {
-        source_labels = ["__meta_kubernetes_pod_container_id"]
-        action = "replace"
-        target_label = "container_runtime"
-        regex = "^(\\S+):\\/\\/.+$"
-        replacement = "$1"
-      }
-    }
-
-    loki.source.kubernetes "pod_logs" {
-      targets    = discovery.relabel.pod_logs.output
-      forward_to = [loki.process.pod_logs.receiver]
-    }
-
-    loki.process "pod_logs" {
-      stage.static_labels {
-        values = {
-          job = "kubernetes-pods",
-        }
-      }
-      
-      forward_to = [loki.write.default.receiver]
-    }
-
-    loki.write "default" {
-      endpoint {
-        url = "http://loki.forex.svc.cluster.local:3100/loki/api/v1/push"
-      }
-    }
-
-    // Alloy internal logging.
-    logging {
-      level  = "info"
-      format = "logfmt"
-    }
-	
-	
-	
-	
-
-
-
-rr="pods \"rforex-app-manager-558d94fcbf-llbp4\" is forbidden: User \"system:serviceaccount:forex:alloy\" cannot get resource \"pods/log\" in API group \"\" in the namespace \"forex\""
-ts=2026-02-23T06:36:06.010418731Z level=warn msg="tailer stopped; will retry" target=forex/rforex-blotter-7b485757b5-9zfcn:rforex-blotter component_path=/ component_id=loki.source.kubernetes.pod_logs err="pods \"rforex-blotter-7b485757b5-9zfcn\" is forbidden: User \"system:serviceaccount:forex:alloy\" cannot get resource \"pods/log\" in API group \"\" in the namespace \"forex\""
-ts=2026-02-23T06:36:18.005219193Z level=warn msg="tailer stopped; will retry" target=forex/rforex-ui-75f7f7977c-z8zr4:rforex-ui component_path=/ component_id=loki.source.kubernetes.pod_logs err="pods \"rforex-ui-75f7f7977c-z8zr4\" is forbidden: User \"system:serviceaccount:forex:alloy\" cannot get resource \"pods/log\" in API group \"\" in the namespace \"forex\""
-ts=2026-02-23T06:36:36.520199334Z level=error msg="non-recoverable error" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=rw remote_name=b173e2 url=http://prometheus.forex.svc.cluster.local:9090/api/v1/write failedSampleCount=5 failedHistogramCount=0 failedExemplarCount=0 err="server returned HTTP status 404 Not Found: remote write receiver needs to be enabled with --web.enable-remote-write-receiver\n"
-ts=2026-02-23T06:36:37.070760969Z level=warn msg="tailer stopped; will retry" target=forex/alloy-48pmz:alloy component_path=/ component_id=loki.source.kubernetes.pod_logs err="pods \"alloy-48pmz\" is forbidden: User \"system:serviceaccount:forex:alloy\" cannot get resource \"pods/log\" in API group \"\" in the namespace \"forex\""
-ts=2026-02-23T06:36:44.194425078Z level=warn msg="tailer stopped; will retry" target=forex/rforex-authentication-6bc5654cdf-gsskm:rforex-authentication component_path=/ component_id=loki.source.kubernetes.pod_logs err="pods \"rforex-authentication-6bc5654cdf-gsskm\" is forbidden: User \"system:serviceaccount:forex:alloy\" cannot get resource \"pods/log\" in API group \"\" in the namespace \"forex\""
-ts=2026-02-23T06:36:45.887353622Z level=warn msg="tailer stopped; will retry" target=forex/grafana-658857b855-7pmlx:grafana component_path=/ component_id=loki.source.kubernetes.pod_logs err="pods \"grafana-658857b855-7pmlx\" is forbidden: User \"system:serviceaccount:forex:alloy\" cannot get resource \"pods/log\" in API group \"\" in the namespace \"forex\""
-ts=2026-02-23T06:36:48.948452513Z level=warn msg="tailer stopped; will retry" target=forex/prometheus-7cfdbbd794-gqj9k:prometheus component_path=/ component_id=loki.source.kubernetes.pod_logs err="pods \"prometheus-7cfdbbd794-gqj9k\" is forbidden: User \"system:serviceaccount:forex:alloy\" cannot get resource \"pods/log\" in API group \"\" in the namespace \"forex\""
-ts=2026-02-23T06:36:48.975957969Z level=warn msg="tailer stopped; will retry" target=forex/rforex-outward-76b778d689-ngq9g:rforex-outward component_path=/ component_id=loki.source.kubernetes.pod_logs err="pods \"rforex-outward-76b778d689-ngq9g\" is forbidden: User \"system:serviceaccount:forex:alloy\" cannot get resource \"pods/log\" in API group \"\" in the namespace \"forex\""
-ts=2026-02-23T06:36:49.976635275Z level=warn msg="tailer stopped; will retry" target=forex/rforex-blotter-7b485757b5-9zfcn:rforex-blotter component_path=/ component_id=loki.source.kubernetes.pod_logs err="pods \"rforex-blotter-7b485757b5-9zfcn\" is forbidden: User \"system:serviceaccount:forex:alloy\" cannot get resource \"pods/log\" in API group \"\" in the namespace \"forex\""
-ts=2026-02-23T06:36:54.105974084Z level=warn msg="tailer stopped; will retry" target=forex/rforex-app-manager-558d94fcbf-llbp4:rforex-app-manager component_path=/ component_id=loki.source.kubernetes.pod_logs err="pods \"rforex-app-manager-558d94fcbf-llbp4\" is forbidden: User \"system:serviceaccount:forex:alloy\" cannot get resource \"pods/log\" in API group \"\" in the namespace \"forex\""
-ts=2026-02-23T06:37:02.229432842Z level=warn msg="tailer stopped; will retry" target=forex/rforex-ui-75f7f7977c-z8zr4:rforex-ui component_path=/ component_id=loki.source.kubernetes.pod_logs err="pods \"rforex-ui-75f7f7977c-z8zr4\" is forbidden: User \"system:serviceaccount:forex:alloy\" cannot get resource \"pods/log\" in API group \"\" in the namespace \"forex\""
-ts=2026-02-23T06:37:19.314302619Z level=warn msg="tailer stopped; will retry" target=forex/alloy-48pmz:alloy component_path=/ component_id=loki.source.kubernetes.pod_logs err="pods \"alloy-48pmz\" is forbidden: User \"system:serviceaccount:forex:alloy\" cannot get resource \"pods/log\" in API group \"\" in the namespace \"forex\""
-ts=2026-02-23T06:37:28.614047716Z level=warn msg="tailer stopped; will retry" target=forex/rforex-authentication-6bc5654cdf-gsskm:rforex-authentication component_path=/ component_id=loki.source.kubernetes.pod_logs err="pods \"rforex-authentication-6bc5654cdf-gsskm\" is forbidden: User \"system:serviceaccount:forex:alloy\" cannot get resource \"pods/log\" in API group \"\" in the namespace \"forex\""
-ts=2026-02-23T06:37:31.212600776Z level=warn msg="tailer stopped; will retry" target=forex/prometheus-7cfdbbd794-gqj9k:prometheus component_path=/ component_id=loki.source.kubernetes.pod_logs err="pods \"prometheus-7cfdbbd794-gqj9k\" is forbidden: User \"system:serviceaccount:forex:alloy\" cannot get resource \"pods/log\" in API group \"\" in the namespace \"forex\""
-ts=2026-02-23T06:37:36.53600067Z level=error msg="non-recoverable error" component_path=/ component_id=prometheus.remote_write.prometheus subcomponent=rw remote_name=b173e2 url=http://prometheus.forex.svc.cluster.local:9090/api/v1/write failedSampleCount=5 failedHistogramCount=0 failedExemplarCount=0 err="server returned HTTP status 404 Not Found: remote write receiver needs to be enabled with --web.enable-remote-write-receiver\n"
-ts=2026-02-23T06:37:38.944944481Z level=warn msg="tailer stopped; will retry" target=forex/rforex-blotter-7b485757b5-9zfcn:rforex-blotter component_path=/ component_id=loki.source.kubernetes.pod_logs err="pods \"rforex-blotter-7b485757b5-9zfcn\" is forbidden: User \"system:serviceaccount:forex:alloy\" cannot get resource \"pods/log\" in API group \"\" in the namespace \"forex\""
-ts=2026-02-23T06:37:39.106772601Z level=warn msg="tailer stopped; will retry" target=forex/rforex-outward-76b778d689-ngq9g:rforex-outward component_path=/ component_id=loki.source.kubernetes.pod_logs err="pods \"rforex-outward-76b778d689-ngq9g\" is forbidden: User \"system:serviceaccount:forex:alloy\" cannot get resource \"pods/log\" in API group \"\" in the namespace \"forex\""
-ts=2026-02-23T06:37:42.858050276Z level=warn msg="tailer stopped; will retry" target=forex/grafana-658857b855-7pmlx:grafana component_path=/ component_id=loki.source.kubernetes.pod_logs err="pods \"grafana-658857b855-7pmlx\" is forbidden: User \"system:serviceaccount:forex:alloy\" cannot get resource \"pods/log\" in API group \"\" in the namespace \"forex\""
+  ports:
+  - name: http
+    port: 12345
+    targetPort: 12345
+    protocol: TCP
+  type: ClusterIP
