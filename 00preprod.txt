@@ -127,73 +127,11 @@ status:
         - host: rfx-kafka-preprod-cluster-kafka-bootstrap.rforex-preprod.svc
           port: 9093
       bootstrapServers: 'rfx-kafka-preprod-cluster-kafka-bootstrap.rforex-preprod.svc:9093'
-      certificates:
-        - |
-          -----BEGIN CERTIFICATE-----
-          MIIFLTCCAxWgAwIBAgIUYJaG3X8tf47R3OS1Xb29ctLLL6IwDQYJKoZIhvcNAQEN
-          BQAwLTETMBEGA1UECgwKaW8uc3RyaW16aTEWMBQGA1UEAwwNY2x1c3Rlci1jYSB2
-          MDAeFw0yNjAxMjcwOTEyMTdaFw0yNzAxMjcwOTEyMTdaMC0xEzARBgNVBAoMCmlv
-          LnN0cmltemkxFjAUBgNVBAMMDWNsdXN0ZXItY2EgdjAwggIiMA0GCSqGSIb3DQEB
-          AQUAA4ICDwAwggIKAoICAQC81IO0oqYk1m6GT0hmwJAAevZIb/YtvTaPPRLqK/ho
-          Ox38IgxZPOZa7ZX7GIKwbMq8tQl9Rgbp5SFurMiEVcsZg+vHm/ss1AwunZpj3tpK
-          kL8wI9A7xcs3KWDtHoA0bno+M4CzE6qkWlRXTbe2Dhuy05jazev9FR8u4qbC2XiI
-          wG0D1E78IseU+qPFiEckNRwIwlJov9FK+nxga/HZBY6cC2fOedIDF/EKXJTpWbWa
-          irIoFw2diKxP/x943KaAcGS5k7w4Jo+xFqjnFBjjvO+zVlZbY1Le6blVIJGVADn+
-          c8/w6mfFdqhXltfsdm1v9rT8xnfQ/UiUM9ufpQ9OFnmn9KJoZNrohNHFl9cD52UO
-          erHTzLDbNXPpRQt07GPDr77ypdoc31Mxf/uyHwCYY2TXta5fFB8T70B6utkvXLLX
-          /V9OBVHtyqNfNwgLHWZD8A+y1dYXNYJG57C0SpBVrUy+XqhuMJePtEonWfd7GLUu
-          vemd4NQeWa2e5ItHBToKlI1krJS5oFRm32aateduhSoyO4vZI7w2wRiTYg5dqRJI
-          2VNjP5ujDOIn4AmGCx9NnDW7mvRG4+mK0UEqN/VSKI2JNaSykwVBBVuYTaiaPwGb
-          VA9vmctvGkvrO+DCHVw048u8UX9YN1nSDgoIejBRSFm0ex5CBWqtaOxjTcTXS5Qp
-          lQIDAQABo0UwQzAdBgNVHQ4EFgQUmCAuhF/0wkiUP2xCLmtUrqIO6jAwEgYDVR0T
-          AQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8EBAMCAQYwDQYJKoZIhvcNAQENBQADggIB
-          AFUMsoGBXiRDdmXBkN2EZh47zSs3vMtbc7Bug8KwT6WddpifL92w6DGwqlXXd9jW
-          pYhrvnS3kYuLeaDqMbwEkkT/4cr7WjT5ZBkv7EvETMDuajbnslPVr5yCVH6PlBNA
-          XCLxIJ4LH3eqckx+4uY56ptlx7neAvGuFTndEFDBTBeTpcmLEZUTgKFLNKHCkwuc
-          xf+706AtT/mWfmMk7nDxLqWbKbk0X1j38XrADRQqDGy4bUtrkt71zYbTZFW/M0V9
-          ahJywzIxOurl+4e4x17grQQ4DlBx6lgbzLXIARl3BSL+4x1klY2X2ax7tZQ6aOrF
-          sIlt+UXvYpGPJf0KtebdQqFofUZDtKZG63Pt2NX2LAqbOWur6KzCurqI0F0Crx7w
-          IRsSmTqTufyLj5n5VpVuuHhIa+3lnhXSEAKbYzM/kWEG8AIPouK9vZqGWFoIE1oF
-          /e6EDbc5plcqYnoYY7kILGFGP3m6T07BavwZZKjAh5xgoAsX0A/l64OlM3uvpq22
-          AVrMYQI9Buu7/NZGwC5toji4Us2VwmYR6n1lyy7IlsmuNkGTPlbu1/TyQEmJBclA
-          iOUbA1K8tRm4m1I92Q/2wXNFaUk3ljASVNhN4EFg7krp2J8tQw7oXW6sXCrhNzMS
-          u1Hnmvi4hF40UIAqA5f6gskRvACWiusuggXL74uKf2md
-          -----END CERTIFICATE-----
+     
       name: tls
     - addresses:
         - host: rfx-kafka-preprod-cluster-kafka-bootstrap-rforex-preprod.apps.tssrfxpreprod.sbi.co.in
           port: 443
       bootstrapServers: 'rfx-kafka-preprod-cluster-kafka-bootstrap-rforex-preprod.apps.tssrfxpreprod.sbi.co.in:443'
       certificates:
-        - |
-          -----BEGIN CERTIFICATE-----
-          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
-          -----END CERTIFICATE-----
-      name: external
+             name: external
