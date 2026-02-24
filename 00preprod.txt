@@ -1,1 +1,78 @@
 https://plugins.jetbrains.com/files/6317/853992/lombok-252.26199.74.zip?updateId=853992&pluginId=6317&family=INTELLIJ
+
+
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  creationTimestamp: '2026-01-27T09:16:39Z'
+  generation: 1
+  labels:
+    strimzi.io/cluster: rfx-kafka-preprod-cluster
+  managedFields:
+    - apiVersion: kafka.strimzi.io/v1beta2
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:labels':
+            .: {}
+            'f:strimzi.io/cluster': {}
+        'f:spec':
+          .: {}
+          'f:authentication':
+            .: {}
+            'f:type': {}
+          'f:authorization':
+            .: {}
+            'f:acls': {}
+            'f:type': {}
+      manager: Mozilla
+      operation: Update
+      time: '2026-01-27T09:16:39Z'
+    - apiVersion: kafka.strimzi.io/v1beta2
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:status':
+          .: {}
+          'f:conditions': {}
+          'f:observedGeneration': {}
+          'f:secret': {}
+          'f:username': {}
+      manager: strimzi-user-operator
+      operation: Update
+      subresource: status
+      time: '2026-01-27T09:16:39Z'
+  name: bridge-user
+  namespace: rforex-preprod
+  resourceVersion: '4091573'
+  uid: d5da3bdf-a2bf-4397-a064-ba79e5428770
+spec:
+  authentication:
+    type: scram-sha-512
+  authorization:
+    acls:
+      - host: '*'
+        operations:
+          - Read
+          - Describe
+          - Write
+          - Create
+        resource:
+          name: my-topic
+          patternType: literal
+          type: topic
+      - host: '*'
+        operations:
+          - Read
+        resource:
+          name: my-group
+          patternType: literal
+          type: group
+    type: simple
+status:
+  conditions:
+    - lastTransitionTime: '2026-01-27T09:16:39.408137348Z'
+      status: 'True'
+      type: Ready
+  observedGeneration: 1
+  secret: bridge-user
+  username: bridge-user
