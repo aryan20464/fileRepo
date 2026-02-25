@@ -1,137 +1,26 @@
-https://plugins.jetbrains.com/files/6317/853992/lombok-252.26199.74.zip?updateId=853992&pluginId=6317&family=INTELLIJ
-
-apiVersion: kafka.strimzi.io/v1beta2
-kind: Kafka
-metadata:
-  annotations:
-    strimzi.io/kraft: enabled
-    strimzi.io/node-pools: enabled
-  creationTimestamp: '2026-01-27T09:12:17Z'
-  generation: 2
-  managedFields:
-    - apiVersion: kafka.strimzi.io/v1beta2
-      fieldsType: FieldsV1
-      fieldsV1:
-        'f:metadata':
-          'f:annotations':
-            .: {}
-            'f:strimzi.io/kraft': {}
-            'f:strimzi.io/node-pools': {}
-        'f:spec':
-          .: {}
-          'f:entityOperator':
-            .: {}
-            'f:topicOperator': {}
-            'f:userOperator': {}
-          'f:kafka':
-            .: {}
-            'f:authorization':
-              .: {}
-              'f:type': {}
-            'f:config':
-              .: {}
-              'f:default.replication.factor': {}
-              'f:min.insync.replicas': {}
-              'f:offsets.topic.replication.factor': {}
-              'f:transaction.state.log.min.isr': {}
-              'f:transaction.state.log.replication.factor': {}
-            'f:listeners': {}
-            'f:metadataVersion': {}
-            'f:version': {}
-      manager: Mozilla
-      operation: Update
-      time: '2026-01-28T10:45:37Z'
-    - apiVersion: kafka.strimzi.io/v1beta2
-      fieldsType: FieldsV1
-      fieldsV1:
-        'f:status':
-          'f:registeredNodeIds': {}
-          'f:clusterId': {}
-          'f:kafkaNodePools': {}
-          'f:kafkaVersion': {}
-          'f:listeners': {}
-          'f:conditions': {}
-          .: {}
-          'f:kafkaMetadataState': {}
-          'f:operatorLastSuccessfulVersion': {}
-          'f:observedGeneration': {}
-          'f:kafkaMetadataVersion': {}
-      manager: strimzi-cluster-operator
-      operation: Update
-      subresource: status
-      time: '2026-02-18T07:53:23Z'
-  name: rfx-kafka-preprod-cluster
-  namespace: rforex-preprod
-  resourceVersion: '14655368'
-  uid: f831b804-c9c4-4ec8-8553-4bb0eef5b42c
-spec:
-  entityOperator:
-    topicOperator: {}
-    userOperator: {}
-  kafka:
-    authorization:
-      type: simple
-    config:
-      default.replication.factor: 3
-      min.insync.replicas: 2
-      offsets.topic.replication.factor: 3
-      transaction.state.log.min.isr: 2
-      transaction.state.log.replication.factor: 3
-    listeners:
-      - name: plain
-        port: 9092
-        tls: false
-        type: internal
-      - authentication:
-          type: scram-sha-512
-        name: external
-        port: 9094
-        tls: true
-        type: route
-      - authentication:
-          type: scram-sha-512
-        name: tls
-        port: 9093
-        tls: true
-        type: internal
-    metadataVersion: 4.0-IV3
-    version: 4.0.0
-status:
-  observedGeneration: 2
-  kafkaMetadataVersion: 4.0-IV3
-  operatorLastSuccessfulVersion: 0.46.1.redhat-00007
-  kafkaNodePools:
-    - name: broker-pool
-    - name: controller-pool
-  kafkaVersion: 4.0.0
-  registeredNodeIds:
-    - 0
-    - 1
-    - 2
-    - 3
-    - 4
-    - 5
-  clusterId: stPLE6krSeSC7dZ7L_I1YA
-  conditions:
-    - lastTransitionTime: '2026-02-18T07:53:23.833789560Z'
-      status: 'True'
-      type: Ready
-  kafkaMetadataState: KRaft
-  listeners:
-    - addresses:
-        - host: rfx-kafka-preprod-cluster-kafka-bootstrap.rforex-preprod.svc
-          port: 9092
-      bootstrapServers: 'rfx-kafka-preprod-cluster-kafka-bootstrap.rforex-preprod.svc:9092'
-      name: plain
-    - addresses:
-        - host: rfx-kafka-preprod-cluster-kafka-bootstrap.rforex-preprod.svc
-          port: 9093
-      bootstrapServers: 'rfx-kafka-preprod-cluster-kafka-bootstrap.rforex-preprod.svc:9093'
-     
-      name: tls
-    - addresses:
-        - host: rfx-kafka-preprod-cluster-kafka-bootstrap-rforex-preprod.apps.tssrfxpreprod.sbi.co.in
-          port: 443
-      bootstrapServers: 'rfx-kafka-preprod-cluster-kafka-bootstrap-rforex-preprod.apps.tssrfxpreprod.sbi.co.in:443'
-      certificates:
-             name: external
+ogger=cleanup t=2026-02-25T10:59:41.850972408Z level=info msg="Completed cleanup jobs" duration=31.009133ms
+logger=context userId=0 orgId=0 uname= t=2026-02-25T11:04:33.314712299Z level=info msg="Request Completed" method=GET path=/ status=302 remote_addr=172.19.112.66 time_ms=0 duration=83.246µs size=37 referer= handler=/ status_source=server
+logger=sqlstore.transactions t=2026-02-25T11:04:41.296072247Z level=info msg="Database locked, sleeping then retrying" error="database is locked" retry=0
+logger=context userId=1 orgId=1 uname=admin t=2026-02-25T11:04:44.493992733Z level=info msg="Request Completed" method=GET path=/api/live/ws status=400 remote_addr=172.19.112.66 time_ms=1 duration=1.634246ms size=12 referer= handler=/api/live/ws status_source=server
+logger=context userId=1 orgId=1 uname=admin t=2026-02-25T11:04:45.563173344Z level=info msg="Request Completed" method=GET path=/api/live/ws status=400 remote_addr=172.19.112.67 time_ms=1 duration=1.714979ms size=12 referer= handler=/api/live/ws status_source=server
+logger=context userId=1 orgId=1 uname=admin t=2026-02-25T11:04:46.185864359Z level=info msg="Request Completed" method=GET path=/api/live/ws status=400 remote_addr=172.19.112.67 time_ms=1 duration=1.70316ms size=12 referer= handler=/api/live/ws status_source=server
+logger=context userId=1 orgId=1 uname=admin t=2026-02-25T11:04:47.365930536Z level=info msg="Request Completed" method=GET path=/api/live/ws status=400 remote_addr=172.19.112.66 time_ms=1 duration=1.666455ms size=12 referer= handler=/api/live/ws status_source=server
+logger=context userId=1 orgId=1 uname=admin t=2026-02-25T11:04:51.048877601Z level=info msg="Request Completed" method=GET path=/api/live/ws status=400 remote_addr=172.19.112.66 time_ms=1 duration=1.640204ms size=12 referer= handler=/api/live/ws status_source=server
+logger=context userId=1 orgId=1 uname=admin t=2026-02-25T11:04:55.265110799Z level=info msg="Request Completed" method=GET path=/api/live/ws status=400 remote_addr=172.19.112.67 time_ms=1 duration=1.648417ms size=12 referer= handler=/api/live/ws status_source=server
+logger=context userId=1 orgId=1 uname=admin t=2026-02-25T11:04:56.947209691Z level=info msg="Request Completed" method=GET path=/api/live/ws status=400 remote_addr=172.19.112.66 time_ms=1 duration=1.573573ms size=12 referer= handler=/api/live/ws status_source=server
+logger=tsdb.loki endpoint=callResource pluginId=loki dsName=Loki dsUID=P8E80F9AEF21F6940 uname=admin t=2026-02-25T11:04:57.999299485Z level=info msg="Response received from loki" status=ok statusCode=200 contentLength=21 duration=8.048612ms contentEncoding= stage=databaseRequest
+logger=context userId=1 orgId=1 uname=admin t=2026-02-25T11:04:59.481549032Z level=info msg="Request Completed" method=GET path=/api/live/ws status=400 remote_addr=172.19.112.66 time_ms=2 duration=2.140365ms size=12 referer= handler=/api/live/ws status_source=server
+logger=tsdb.loki endpoint=callResource pluginId=loki dsName=Loki dsUID=P8E80F9AEF21F6940 uname=admin t=2026-02-25T11:05:01.922710633Z level=info msg="Response received from loki" status=ok statusCode=200 contentLength=21 duration=1.882753ms contentEncoding= stage=databaseRequest
+logger=context userId=1 orgId=1 uname=admin t=2026-02-25T11:05:17.541526229Z level=info msg="Request Completed" method=GET path=/api/live/ws status=400 remote_addr=172.19.112.67 time_ms=1 duration=1.90202ms size=12 referer= handler=/api/live/ws status_source=server
+logger=tsdb.loki endpoint=callResource pluginId=loki dsName=Loki dsUID=P8E80F9AEF21F6940 uname=admin t=2026-02-25T11:05:17.823100768Z level=info msg="Response received from loki" status=ok statusCode=200 contentLength=21 duration=1.869662ms contentEncoding= stage=databaseRequest
+logger=context userId=1 orgId=1 uname=admin t=2026-02-25T11:05:18.701446255Z level=info msg="Request Completed" method=GET path=/api/live/ws status=400 remote_addr=172.19.112.66 time_ms=1 duration=1.854267ms size=12 referer= handler=/api/live/ws status_source=server
+logger=tsdb.loki endpoint=callResource pluginId=loki dsName=Loki dsUID=P8E80F9AEF21F6940 uname=admin t=2026-02-25T11:05:21.030245013Z level=info msg="Response received from loki" status=ok statusCode=200 contentLength=21 duration=1.552388ms contentEncoding= stage=databaseRequest
+logger=tsdb.loki endpoint=callResource pluginId=loki dsName=Loki dsUID=P8E80F9AEF21F6940 uname=admin t=2026-02-25T11:05:26.024337439Z level=info msg="Response received from loki" status=ok statusCode=200 contentLength=21 duration=1.544315ms contentEncoding= stage=databaseRequest
+logger=context userId=1 orgId=1 uname=admin t=2026-02-25T11:05:36.973377477Z level=info msg="Request Completed" method=GET path=/api/live/ws status=400 remote_addr=172.19.112.67 time_ms=1 duration=1.907609ms size=12 referer= handler=/api/live/ws status_source=server
+logger=context userId=1 orgId=1 uname=admin t=2026-02-25T11:05:39.050335206Z level=info msg="Request Completed" method=GET path=/api/live/ws status=400 remote_addr=172.19.112.67 time_ms=1 duration=1.77699ms size=12 referer= handler=/api/live/ws status_source=server
+logger=context userId=1 orgId=1 uname=admin t=2026-02-25T11:05:43.94484891Z level=info msg="Request Completed" method=GET path=/api/live/ws status=400 remote_addr=172.19.112.66 time_ms=2 duration=2.559623ms size=12 referer= handler=/api/live/ws status_source=server
+logger=context userId=1 orgId=1 uname=admin t=2026-02-25T11:05:51.808724155Z level=info msg="Request Completed" method=GET path=/api/live/ws status=400 remote_addr=172.19.112.66 time_ms=2 duration=2.295821ms size=12 referer= handler=/api/live/ws status_source=server
+logger=context userId=1 orgId=1 uname=admin t=2026-02-25T11:06:01.300369058Z level=info msg="Request Completed" method=GET path=/api/live/ws status=400 remote_addr=172.19.112.66 time_ms=1 duration=1.659891ms size=12 referer= handler=/api/live/ws status_source=server
+logger=context userId=1 orgId=1 uname=admin t=2026-02-25T11:06:07.848617677Z level=info msg="Request Completed" method=GET path=/api/live/ws status=400 remote_addr=172.19.112.66 time_ms=1 duration=1.601823ms size=12 referer= handler=/api/live/ws status_source=server
+logger=context userId=1 orgId=1 uname=admin t=2026-02-25T11:06:27.241301133Z level=info msg="Request Completed" method=GET path=/api/live/ws status=400 remote_addr=172.19.112.66 time_ms=1 duration=1.689727ms size=12 referer= handler=/api/live/ws status_source=server
+logger=context userId=1 orgId=1 uname=admin t=2026-02-25T11:06:46.228539367Z level=info msg="Request Completed" method=GET path=/api/live/ws status=400 remote_addr=172.19.112.67 time_ms=2 duration=2.582538ms size=12 referer= handler=/api/live/ws status_source=server
