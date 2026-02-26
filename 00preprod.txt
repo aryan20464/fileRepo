@@ -1,6 +1,22 @@
-log_format main
-'Ip=$remote_addr user=$remote_user [$time_local] '
-'Request="$request_method $uri $server_protocol" '
-'Status=$status Request_size=$body_bytes_sent URL="$http_referer" '
-'Client="$http_user_agent" '
-'rt=$request_time uct="$upstream_connect_time" uht="$upstream_header_time" urt="$upstream_response_time"';
+[weblogic@tss-ideaappuat ~]$ cat tomcat-logrotate.conf
+/weblogic/apache-tomcat/logs/catalina.out {
+    copytruncate
+    daily
+    rotate 7
+    compress
+    missingok
+    notifempty
+    size 100M
+}
+[weblogic@tss-ideaappuat ~]$ crontab -l
+0 0 * * * /usr/sbin/logrotate -s /home/youruser/.logrotate.state /home/youruser/tomcat-logrotate.conf
+[weblogic@tss-ideaappuat ~]$ history | grep "logrotate"
+ 3750  2026-02-03 14:51:02 cd logrotate.d/
+ 3763  2026-02-03 15:07:51 ls -l logrotate
+ 3768  2026-02-03 15:09:05 vi tomcat-logrotate.conf
+ 3769  2026-02-03 15:09:34 touch ~/.logrotate.state
+ 3771  2026-02-03 15:09:53 logrotate -s ~/.logrotate.state ~/tomcat-logrotate.conf
+ 5060  2026-02-26 13:50:29 cat .logrotate.state
+ 5061  2026-02-26 13:50:46 history | grep "logrotate"
+ 5062  2026-02-26 13:51:37 cat tomcat-logrotate.conf
+ 5064  2026-02-26 13:52:08 history | grep "logrotate"
