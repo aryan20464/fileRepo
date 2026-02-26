@@ -1,30 +1,23 @@
-C:\Users\1064695>kubectl logs alloy-z87fh -n forex
-ts=2026-02-26T05:13:23.87347525Z level=info boringcrypto_enabled=false
-ts=2026-02-26T05:13:23.871988662Z level=info source=/go/pkg/mod/github.com/!kim!machine!gun/automemlimit@v0.7.1/memlimit/memlimit.go:198 msg="GOMEMLIMIT is updated" package=github.com/KimMachineGun/automemlimit/memlimit GOMEMLIMIT=483183820 previous=9223372036854775807
-ts=2026-02-26T05:13:23.873516473Z level=info msg="no peer discovery configured: both join and discover peers are empty" service=cluster
-ts=2026-02-26T05:13:23.873520048Z level=info msg="running usage stats reporter"
-ts=2026-02-26T05:13:23.873522382Z level=info msg="starting complete graph evaluation" controller_path=/ controller_id="" trace_id=870ed6fef6d59fa60b0126993fdcc3a0
-ts=2026-02-26T05:13:23.873530314Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=870ed6fef6d59fa60b0126993fdcc3a0 node_id=labelstore duration=5.668µs
-ts=2026-02-26T05:13:23.873536233Z level=info msg="Using pod service account via in-cluster config" component_path=/ component_id=discovery.kubernetes.pods
-ts=2026-02-26T05:13:23.873539207Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=870ed6fef6d59fa60b0126993fdcc3a0 node_id=discovery.kubernetes.pods duration=407.349µs
-ts=2026-02-26T05:13:23.873542913Z level=info msg="Using pod service account via in-cluster config" component_path=/ component_id=discovery.kubernetes.pod_logs
-ts=2026-02-26T05:13:23.873546398Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=870ed6fef6d59fa60b0126993fdcc3a0 node_id=discovery.kubernetes.pod_logs duration=231.942µs
-ts=2026-02-26T05:13:23.873550034Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=870ed6fef6d59fa60b0126993fdcc3a0 node_id=discovery.relabel.pod_logs duration=109.416µs
-ts=2026-02-26T05:13:23.873553929Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=870ed6fef6d59fa60b0126993fdcc3a0 node_id=logging duration=91.429µs
-ts=2026-02-26T05:13:23.873582252Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=870ed6fef6d59fa60b0126993fdcc3a0 node_id=remotecfg duration=22.414µs
-ts=2026-02-26T05:13:23.873708785Z level=info msg="applying non-TLS config to HTTP server" service=http
-ts=2026-02-26T05:13:23.873718519Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=870ed6fef6d59fa60b0126993fdcc3a0 node_id=http duration=18.037µs
-ts=2026-02-26T05:13:23.873728545Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=870ed6fef6d59fa60b0126993fdcc3a0 node_id=cluster duration=731ns
-ts=2026-02-26T05:13:23.873739962Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=870ed6fef6d59fa60b0126993fdcc3a0 node_id=otel duration=5.999µs
-ts=2026-02-26T05:13:23.874067149Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=870ed6fef6d59fa60b0126993fdcc3a0 node_id=loki.write.default duration=313.506µs
-ts=2026-02-26T05:13:23.874227062Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=870ed6fef6d59fa60b0126993fdcc3a0 node_id=loki.process.pod_logs duration=141.204µs
-ts=2026-02-26T05:13:23.874369108Z level=info msg="Using pod service account via in-cluster config" component_path=/ component_id=loki.source.kubernetes.pod_logs
-ts=2026-02-26T05:13:23.874486806Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=870ed6fef6d59fa60b0126993fdcc3a0 node_id=loki.source.kubernetes.pod_logs duration=247.146µs
-ts=2026-02-26T05:13:23.874510673Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=870ed6fef6d59fa60b0126993fdcc3a0 node_id=tracing duration=3.745µs
-ts=2026-02-26T05:13:23.874526236Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=870ed6fef6d59fa60b0126993fdcc3a0 node_id=livedebugging duration=7.842µs
-ts=2026-02-26T05:13:23.874537674Z level=info msg="finished node evaluation" controller_path=/ controller_id="" trace_id=870ed6fef6d59fa60b0126993fdcc3a0 node_id=ui duration=4.186µs
-ts=2026-02-26T05:13:23.874542621Z level=info msg="finished complete graph evaluation" controller_path=/ controller_id="" trace_id=870ed6fef6d59fa60b0126993fdcc3a0 duration=1.962521ms
-ts=2026-02-26T05:13:23.874638968Z level=info msg="scheduling loaded components and services"
-ts=2026-02-26T05:13:23.874865071Z level=info msg="starting cluster node" service=cluster peers_count=0 peers="" advertise_addr=127.0.0.1:12345 minimum_cluster_size=0 minimum_size_wait_timeout=0s
-ts=2026-02-26T05:13:23.874921807Z level=info msg="peers changed" service=cluster peers_count=1 min_cluster_size=0 peers=alloy-z87fh
-ts=2026-02-26T05:13:23.877840631Z level=info msg="now listening for http traffic" service=http addr=0.0.0.0:12345
+curl -ikv http://loki.forex.svc.cluster.local:3100/loki/api/v1/push
+*   Trying 10.99.15.180:3100...
+* Connected to loki.forex.svc.cluster.local (10.99.15.180) port 3100 (#0)
+> GET /loki/api/v1/push HTTP/1.1
+> Host: loki.forex.svc.cluster.local:3100
+> User-Agent: curl/7.81.0
+> Accept: */*
+>
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 404 Not Found
+HTTP/1.1 404 Not Found
+< Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8
+< X-Content-Type-Options: nosniff
+X-Content-Type-Options: nosniff
+< Date: Thu, 26 Feb 2026 06:09:28 GMT
+Date: Thu, 26 Feb 2026 06:09:28 GMT
+< Content-Length: 19
+Content-Length: 19
+
+<
+404 page not found
+* Connection #0 to host loki.forex.svc.cluster.local left intact
