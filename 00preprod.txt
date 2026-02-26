@@ -1,23 +1,2 @@
-curl -ikv http://loki.forex.svc.cluster.local:3100/loki/api/v1/push
-*   Trying 10.99.15.180:3100...
-* Connected to loki.forex.svc.cluster.local (10.99.15.180) port 3100 (#0)
-> GET /loki/api/v1/push HTTP/1.1
-> Host: loki.forex.svc.cluster.local:3100
-> User-Agent: curl/7.81.0
-> Accept: */*
->
-* Mark bundle as not supporting multiuse
-< HTTP/1.1 404 Not Found
-HTTP/1.1 404 Not Found
-< Content-Type: text/plain; charset=utf-8
-Content-Type: text/plain; charset=utf-8
-< X-Content-Type-Options: nosniff
-X-Content-Type-Options: nosniff
-< Date: Thu, 26 Feb 2026 06:09:28 GMT
-Date: Thu, 26 Feb 2026 06:09:28 GMT
-< Content-Length: 19
-Content-Length: 19
-
-<
-404 page not found
-* Connection #0 to host loki.forex.svc.cluster.local left intact
+curl http://loki.forex.svc.cluster.local:3100/loki/api/v1/labels
+{"status":"success"}
