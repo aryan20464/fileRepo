@@ -1,11 +1,57 @@
-NAME                                     CPU(cores)   MEMORY(bytes)
-alloy-2hbz4                              3m           33Mi
-alloy-5bq24                              33m          61Mi
-alloy-7k7sf                              3m           33Mi
-alloy-7pjc7                              2m           33Mi
-alloy-8clk4                              3m           40Mi
-alloy-qw5pg                              3m           35Mi
-curl-nc-pod                              0m           0Mi
-grafana-658857b855-7pmlx                 11178m       252Mi
-loki-574d468b65-9686b                    11m          155Mi
-prometheus-7cfdbbd794-gqj9k              2m           54Mi
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: forex
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      securityContext:
+        runAsUser: 472
+        runAsGroup: 472
+        fsGroup: 472
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: grafana
+          image: h06vksharbor.corp.ad.sbi/itss/grafana:12.3.0
+          ports:
+            - containerPort: 3000
+          env:
+            - name: GF_PATHS_PROVISIONING
+              value: /etc/grafana/provisioning
+            - name: GF_SERVER_ROOT_URL
+              value: "https://cmm-uat.sbi/grafana/"
+            - name: GF_SERVER_SERVE_FROM_SUB_PATH
+              value: "true"
+
+          volumeMounts:
+            - name: grafana-storage
+              mountPath: /var/lib/grafana
+            - name: grafana-datasources
+              mountPath: /etc/grafana/provisioning/datasources
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            runAsUser: 472
+            seccompProfile:
+              type: RuntimeDefault
+
+      volumes:
+        - name: grafana-storage
+          persistentVolumeClaim:
+            claimName: pvc-grafana
+        - name: grafana-datasources
+          configMap:
+            name: grafana-datasources
