@@ -1,97 +1,20 @@
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: grafana
-  namespace: forex
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: grafana
-  template:
-    metadata:
-      labels:
-        app: grafana
-    spec:
-      securityContext:
-        runAsUser: 472
-        runAsGroup: 472
-        fsGroup: 472
-        runAsNonRoot: true
-        seccompProfile:
-          type: RuntimeDefault
-      containers:
-        - name: grafana
-          image: h06vksharbor.corp.ad.sbi/itss/grafana:12.3.0   # added full image name (recommended)
-          ports:
-            - containerPort: 3000
-          env:
-            - name: GF_PATHS_PROVISIONING
-              value: /etc/grafana/provisioning
-            - name: GF_SERVER_ROOT_URL
-              value: "https://cmm-uat.sbi/grafana/"
-            - name: GF_SERVER_SERVE_FROM_SUB_PATH
-              value: "true"
-          resources:                      # ← VERY IMPORTANT ADDITION
-            requests:
-              cpu: "500m"                 # 0.5 core baseline
-              memory: "512Mi"
-            limits:
-              cpu: "4000m"                # hard cap at 4 cores – prevents node starvation
-              memory: "2Gi"               # adjust higher if you see memory growth later
-          volumeMounts:
-            - name: grafana-storage
-              mountPath: /var/lib/grafana
-            - name: grafana-datasources
-              mountPath: /etc/grafana/provisioning/datasources
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            runAsNonRoot: true
-            runAsUser: 472
-            seccompProfile:
-              type: RuntimeDefault
-      volumes:
-        - name: grafana-storage
-          persistentVolumeClaim:
-            claimName: pvc-grafana
-        - name: grafana-datasources
-          configMap:
-            name: grafana-datasources
-
----
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: grafana-hpa
-  namespace: forex
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: grafana
-  minReplicas: 1
-  maxReplicas: 5                        # adjust based on your cluster capacity
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 60        # aim for ~60% per pod → scales before saturation
-  behavior:
-    scaleUp:
-      stabilizationWindowSeconds: 60
-      policies:
-      - type: Pods
-        value: 2
-        periodSeconds: 60
-    scaleDown:
-      stabilizationWindowSeconds: 300   # 5 minutes before scaling down
-      policies:
-      - type: Percent
-        value: 20
-        periodSeconds: 120
+kubectl events -n forex
+LAST SEEN           TYPE      REASON               OBJECT                                MESSAGE
+13m                 Warning   FailedAttachVolume   Pod/grafana-6dd7c4b48c-rfvmh          Multi-Attach error for volume "pvc-f610e762-3570-4693-8d51-9828c8314f9a" Volume is already used by pod(s) grafana-6dd7c4b48c-7sl4d
+13m                 Normal    ScalingReplicaSet    Deployment/grafana                    Scaled up replica set grafana-6dd7c4b48c from 1 to 3
+13m                 Normal    SuccessfulRescale    HorizontalPodAutoscaler/grafana-hpa   New size: 3; reason: cpu resource utilization (percentage of request) above target
+13m                 Normal    SuccessfulCreate     ReplicaSet/grafana-6dd7c4b48c         Created pod: grafana-6dd7c4b48c-rfvmh
+13m                 Normal    SuccessfulCreate     ReplicaSet/grafana-6dd7c4b48c         Created pod: grafana-6dd7c4b48c-f9gxt
+13m                 Normal    Scheduled            Pod/grafana-6dd7c4b48c-f9gxt          Successfully assigned forex/grafana-6dd7c4b48c-f9gxt to h05vksdrrforexcls-node-pool-0-ltxfh-hvmqz-mnzfm
+13m                 Warning   FailedAttachVolume   Pod/grafana-6dd7c4b48c-f9gxt          Multi-Attach error for volume "pvc-f610e762-3570-4693-8d51-9828c8314f9a" Volume is already used by pod(s) grafana-6dd7c4b48c-7sl4d
+13m                 Normal    Scheduled            Pod/grafana-6dd7c4b48c-rfvmh          Successfully assigned forex/grafana-6dd7c4b48c-rfvmh to h05vksdrrforexcls-node-pool-0-ltxfh-hvmqz-s4kht
+12m                 Normal    SuccessfulCreate     ReplicaSet/grafana-6dd7c4b48c         Created pod: grafana-6dd7c4b48c-dlt4t
+12m                 Normal    Scheduled            Pod/grafana-6dd7c4b48c-xfbrg          Successfully assigned forex/grafana-6dd7c4b48c-xfbrg to h05vksdrrforexcls-node-pool-0-ltxfh-hvmqz-mnzfm
+12m                 Normal    Scheduled            Pod/grafana-6dd7c4b48c-dlt4t          Successfully assigned forex/grafana-6dd7c4b48c-dlt4t to h05vksdrrforexcls-node-pool-0-ltxfh-hvmqz-zwd79
+12m                 Normal    SuccessfulCreate     ReplicaSet/grafana-6dd7c4b48c         Created pod: grafana-6dd7c4b48c-xfbrg
+12m                 Normal    SuccessfulRescale    HorizontalPodAutoscaler/grafana-hpa   New size: 5; reason: cpu resource utilization (percentage of request) above target
+12m                 Normal    ScalingReplicaSet    Deployment/grafana                    Scaled up replica set grafana-6dd7c4b48c from 3 to 5
+11m                 Warning   BackOff              Pod/grafana-6dd7c4b48c-dlt4t          Back-off restarting failed container grafana in pod grafana-6dd7c4b48c-dlt4t_forex(f0a8e7a1-61db-46a0-97ca-8268b328210e)
+11m (x3 over 12m)   Normal    Started              Pod/grafana-6dd7c4b48c-dlt4t          Started container grafana
+11m (x3 over 12m)   Normal    Created              Pod/grafana-6dd7c4b48c-dlt4t          Created container: grafana
+11m (x3 over 12m)   Normal    Pulled               Pod/grafana-6dd7c4b48c-dlt4t          Container image "h05vksharbor.corp.ad.sbi/itss/grafana:12.3.0" already present on machine
