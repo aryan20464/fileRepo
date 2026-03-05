@@ -1,14 +1,23 @@
-kubectl get hpa -w -n forex
-NAME            REFERENCE              TARGETS              MINPODS   MAXPODS   REPLICAS   AGE
-grafana-hpa     Deployment/grafana     cpu: <unknown>/60%   1         5         0          4s
-rforex-ui-hpa   Deployment/rforex-ui   cpu: <unknown>/80%   1         5         1          76m
-grafana-hpa     Deployment/grafana     cpu: <unknown>/60%   1         5         1          15s
-grafana-hpa     Deployment/grafana     cpu: 1%/60%          1         5         1          30s
-grafana-hpa     Deployment/grafana     cpu: 1%/60%          1         5         1          45s
-grafana-hpa     Deployment/grafana     cpu: 1%/60%          1         5         1          75s
-grafana-hpa     Deployment/grafana     cpu: 1%/60%          1         5         1          90s
-grafana-hpa     Deployment/grafana     cpu: 247%/60%        1         5         1          105s
-grafana-hpa     Deployment/grafana     cpu: 323%/60%        1         5         1          2m
-grafana-hpa     Deployment/grafana     cpu: 234%/60%        1         5         1          2m15s
-grafana-hpa     Deployment/grafana     cpu: 162%/60%        1         5         1          2m30s
-grafana-hpa     Deployment/grafana     cpu: 2%/60%          1         5         3          2m45s
+Name:                     grafana-hpa
+Namespace:                forex
+Labels:                   <none>
+Annotations:              autoscaling.alpha.kubernetes.io/behavior:
+                            {"ScaleUp":{"StabilizationWindowSeconds":60,"SelectPolicy":"Max","Policies":[{"Type":"Pods","Value":2,"PeriodSeconds":60}]},"ScaleDown":{"...
+                          autoscaling.alpha.kubernetes.io/conditions:
+                            [{"type":"AbleToScale","status":"True","lastTransitionTime":"2026-03-05T08:21:52Z","reason":"ScaleDownStabilized","message":"recent recomm...
+                          autoscaling.alpha.kubernetes.io/current-metrics:
+                            [{"type":"Resource","resource":{"name":"cpu","currentAverageUtilization":0,"currentAverageValue":"3m"}}]
+CreationTimestamp:        Thu, 05 Mar 2026 13:51:37 +0530
+Reference:                Deployment/grafana
+Target CPU utilization:   60%
+Current CPU utilization:  0%
+Min replicas:             1
+Max replicas:             5
+Deployment pods:          5 current / 5 desired
+Events:
+  Type     Reason                        Age    From                       Message
+  ----     ------                        ----   ----                       -------
+  Warning  FailedGetResourceMetric       9m50s  horizontal-pod-autoscaler  failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API
+  Warning  FailedComputeMetricsReplicas  9m50s  horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API
+  Normal   SuccessfulRescale             7m35s  horizontal-pod-autoscaler  New size: 3; reason: cpu resource utilization (percentage of request) above target
+  Normal   SuccessfulRescale             5m50s  horizontal-pod-autoscaler  New size: 5; reason: cpu resource utilization (percentage of request) above target
