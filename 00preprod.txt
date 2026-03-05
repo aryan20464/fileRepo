@@ -1,23 +1,110 @@
-Name:                     grafana-hpa
-Namespace:                forex
-Labels:                   <none>
-Annotations:              autoscaling.alpha.kubernetes.io/behavior:
-                            {"ScaleUp":{"StabilizationWindowSeconds":60,"SelectPolicy":"Max","Policies":[{"Type":"Pods","Value":2,"PeriodSeconds":60}]},"ScaleDown":{"...
-                          autoscaling.alpha.kubernetes.io/conditions:
-                            [{"type":"AbleToScale","status":"True","lastTransitionTime":"2026-03-05T08:21:52Z","reason":"ScaleDownStabilized","message":"recent recomm...
-                          autoscaling.alpha.kubernetes.io/current-metrics:
-                            [{"type":"Resource","resource":{"name":"cpu","currentAverageUtilization":0,"currentAverageValue":"3m"}}]
-CreationTimestamp:        Thu, 05 Mar 2026 13:51:37 +0530
-Reference:                Deployment/grafana
-Target CPU utilization:   60%
-Current CPU utilization:  0%
-Min replicas:             1
-Max replicas:             5
-Deployment pods:          5 current / 5 desired
-Events:
-  Type     Reason                        Age    From                       Message
-  ----     ------                        ----   ----                       -------
-  Warning  FailedGetResourceMetric       9m50s  horizontal-pod-autoscaler  failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API
-  Warning  FailedComputeMetricsReplicas  9m50s  horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API
-  Normal   SuccessfulRescale             7m35s  horizontal-pod-autoscaler  New size: 3; reason: cpu resource utilization (percentage of request) above target
-  Normal   SuccessfulRescale             5m50s  horizontal-pod-autoscaler  New size: 5; reason: cpu resource utilization (percentage of request) above target
+kubectl logs metrics-server-5754d97d66-lxtcf -n kube-system --tail=100
+E0217 11:57:43.469889       1 status.go:71] apiserver received an error that is not an metav1.Status: &errors.errorString{s:"http: Handler timeout"}: http: Handler timeout
+E0217 11:57:43.469893       1 status.go:71] apiserver received an error that is not an metav1.Status: &errors.errorString{s:"http: Handler timeout"}: http: Handler timeout
+E0217 11:57:43.469900       1 status.go:71] apiserver received an error that is not an metav1.Status: &errors.errorString{s:"http: Handler timeout"}: http: Handler timeout
+E0217 11:57:43.471017       1 writers.go:135] apiserver was unable to write a fallback JSON response: http: Handler timeout
+E0217 11:57:43.471275       1 timeout.go:142] post-timeout activity - time-elapsed: 2.800841ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 11:57:43.471289       1 timeout.go:142] post-timeout activity - time-elapsed: 2.600444ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 11:57:43.471304       1 writers.go:135] apiserver was unable to write a fallback JSON response: http: Handler timeout
+E0217 11:57:43.471318       1 writers.go:135] apiserver was unable to write a fallback JSON response: http: Handler timeout
+E0217 11:57:43.471334       1 timeout.go:142] post-timeout activity - time-elapsed: 2.696395ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 11:57:43.472571       1 timeout.go:142] post-timeout activity - time-elapsed: 3.983983ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 11:57:43.472596       1 timeout.go:142] post-timeout activity - time-elapsed: 4.069278ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 11:57:45.170838       1 scraper.go:147] "Failed to scrape node, timeout to access kubelet" err="Get \"https://10.244.6.196:10250/metrics/resource\": context deadline exceeded" node="h06vkspreprodrforexcls-node-pool-1-86cbc-dwt6s-sh45k" timeout="10s"
+E0217 11:57:52.028506       1 writers.go:122] apiserver was unable to write a JSON response: http: Handler timeout
+E0217 11:57:52.028514       1 writers.go:122] apiserver was unable to write a JSON response: http: Handler timeout
+E0217 11:57:52.028514       1 writers.go:122] apiserver was unable to write a JSON response: http: Handler timeout
+E0217 11:57:52.028526       1 status.go:71] apiserver received an error that is not an metav1.Status: &errors.errorString{s:"http: Handler timeout"}: http: Handler timeout
+E0217 11:57:52.028532       1 writers.go:122] apiserver was unable to write a JSON response: http: Handler timeout
+E0217 11:57:52.028574       1 writers.go:122] apiserver was unable to write a JSON response: http: Handler timeout
+E0217 11:57:52.028585       1 writers.go:122] apiserver was unable to write a JSON response: http: Handler timeout
+E0217 11:57:52.028593       1 writers.go:122] apiserver was unable to write a JSON response: http: Handler timeout
+E0217 11:57:52.028600       1 writers.go:122] apiserver was unable to write a JSON response: http: Handler timeout
+E0217 11:57:52.028609       1 writers.go:122] apiserver was unable to write a JSON response: http: Handler timeout
+E0217 11:57:52.028636       1 writers.go:122] apiserver was unable to write a JSON response: http: Handler timeout
+E0217 11:57:52.028667       1 writers.go:122] apiserver was unable to write a JSON response: http: Handler timeout
+E0217 11:57:52.028707       1 wrap.go:54] timeout or abort while handling: method=GET URI="/apis/metrics.k8s.io/v1beta1" audit-ID="19cf1259-62e4-43e4-90b6-e9afdcecd429"
+E0217 11:57:52.028720       1 timeout.go:142] post-timeout activity - time-elapsed: 1.156µs, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 11:57:52.028727       1 writers.go:122] apiserver was unable to write a JSON response: http: Handler timeout
+E0217 11:57:52.028732       1 writers.go:122] apiserver was unable to write a JSON response: http: Handler timeout
+E0217 11:57:52.028950       1 writers.go:122] apiserver was unable to write a JSON response: http: Handler timeout
+E0217 11:57:52.028952       1 writers.go:122] apiserver was unable to write a JSON response: http: Handler timeout
+E0217 11:57:52.030547       1 status.go:71] apiserver received an error that is not an metav1.Status: &errors.errorString{s:"http: Handler timeout"}: http: Handler timeout
+E0217 11:57:52.030556       1 status.go:71] apiserver received an error that is not an metav1.Status: &errors.errorString{s:"http: Handler timeout"}: http: Handler timeout
+E0217 11:57:52.030568       1 writers.go:135] apiserver was unable to write a fallback JSON response: http: Handler timeout
+E0217 11:57:52.030571       1 status.go:71] apiserver received an error that is not an metav1.Status: &errors.errorString{s:"http: Handler timeout"}: http: Handler timeout
+E0217 11:57:52.030576       1 status.go:71] apiserver received an error that is not an metav1.Status: &errors.errorString{s:"http: Handler timeout"}: http: Handler timeout
+E0217 11:57:52.030581       1 status.go:71] apiserver received an error that is not an metav1.Status: &errors.errorString{s:"http: Handler timeout"}: http: Handler timeout
+E0217 11:57:52.030582       1 writers.go:135] apiserver was unable to write a fallback JSON response: http: Handler timeout
+E0217 11:57:52.030586       1 status.go:71] apiserver received an error that is not an metav1.Status: &errors.errorString{s:"http: Handler timeout"}: http: Handler timeout
+E0217 11:57:52.030588       1 status.go:71] apiserver received an error that is not an metav1.Status: &errors.errorString{s:"http: Handler timeout"}: http: Handler timeout
+E0217 11:57:52.030590       1 status.go:71] apiserver received an error that is not an metav1.Status: &errors.errorString{s:"http: Handler timeout"}: http: Handler timeout
+E0217 11:57:52.030592       1 status.go:71] apiserver received an error that is not an metav1.Status: &errors.errorString{s:"http: Handler timeout"}: http: Handler timeout
+E0217 11:57:52.030591       1 status.go:71] apiserver received an error that is not an metav1.Status: &errors.errorString{s:"http: Handler timeout"}: http: Handler timeout
+E0217 11:57:52.030597       1 status.go:71] apiserver received an error that is not an metav1.Status: &errors.errorString{s:"http: Handler timeout"}: http: Handler timeout
+E0217 11:57:52.030593       1 status.go:71] apiserver received an error that is not an metav1.Status: &errors.errorString{s:"http: Handler timeout"}: http: Handler timeout
+E0217 11:57:52.030593       1 status.go:71] apiserver received an error that is not an metav1.Status: &errors.errorString{s:"http: Handler timeout"}: http: Handler timeout
+E0217 11:57:52.030600       1 status.go:71] apiserver received an error that is not an metav1.Status: &errors.errorString{s:"http: Handler timeout"}: http: Handler timeout
+E0217 11:57:52.031681       1 writers.go:135] apiserver was unable to write a fallback JSON response: http: Handler timeout
+E0217 11:57:52.031703       1 timeout.go:142] post-timeout activity - time-elapsed: 3.019763ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 11:57:52.031710       1 writers.go:135] apiserver was unable to write a fallback JSON response: http: Handler timeout
+E0217 11:57:52.031716       1 writers.go:135] apiserver was unable to write a fallback JSON response: http: Handler timeout
+E0217 11:57:52.031721       1 writers.go:135] apiserver was unable to write a fallback JSON response: http: Handler timeout
+E0217 11:57:52.031964       1 writers.go:135] apiserver was unable to write a fallback JSON response: http: Handler timeout
+E0217 11:57:52.031976       1 writers.go:135] apiserver was unable to write a fallback JSON response: http: Handler timeout
+E0217 11:57:52.031992       1 timeout.go:142] post-timeout activity - time-elapsed: 3.565237ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 11:57:52.031993       1 writers.go:135] apiserver was unable to write a fallback JSON response: http: Handler timeout
+E0217 11:57:52.032008       1 writers.go:135] apiserver was unable to write a fallback JSON response: http: Handler timeout
+E0217 11:57:52.032012       1 timeout.go:142] post-timeout activity - time-elapsed: 3.549496ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 11:57:52.032019       1 writers.go:135] apiserver was unable to write a fallback JSON response: http: Handler timeout
+E0217 11:57:52.032024       1 writers.go:135] apiserver was unable to write a fallback JSON response: http: Handler timeout
+E0217 11:57:52.032029       1 writers.go:135] apiserver was unable to write a fallback JSON response: http: Handler timeout
+E0217 11:57:52.032032       1 writers.go:135] apiserver was unable to write a fallback JSON response: http: Handler timeout
+E0217 11:57:52.032035       1 writers.go:135] apiserver was unable to write a fallback JSON response: http: Handler timeout
+E0217 11:57:52.032848       1 timeout.go:142] post-timeout activity - time-elapsed: 4.309422ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 11:57:52.032856       1 timeout.go:142] post-timeout activity - time-elapsed: 4.126334ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 11:57:52.032861       1 timeout.go:142] post-timeout activity - time-elapsed: 4.159019ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 11:57:52.032865       1 timeout.go:142] post-timeout activity - time-elapsed: 4.447641ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 11:57:52.033866       1 timeout.go:142] post-timeout activity - time-elapsed: 5.373685ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 11:57:52.033870       1 timeout.go:142] post-timeout activity - time-elapsed: 5.403542ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 11:57:52.033882       1 timeout.go:142] post-timeout activity - time-elapsed: 5.364936ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 11:57:52.033885       1 timeout.go:142] post-timeout activity - time-elapsed: 5.454943ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 11:57:52.033891       1 timeout.go:142] post-timeout activity - time-elapsed: 5.339037ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 11:57:52.033892       1 timeout.go:142] post-timeout activity - time-elapsed: 4.937198ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 11:57:52.033897       1 timeout.go:142] post-timeout activity - time-elapsed: 5.456876ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 11:57:52.033906       1 timeout.go:142] post-timeout activity - time-elapsed: 4.957864ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 17:35:30.181337       1 scraper.go:147] "Failed to scrape node, timeout to access kubelet" err="Get \"https://10.244.6.199:10250/metrics/resource\": context deadline exceeded" node="h06vkspreprodrforexcls-8dvc8-jdhnl" timeout="10s"
+E0217 17:35:30.197556       1 scraper.go:147] "Failed to scrape node, timeout to access kubelet" err="Get \"https://10.244.6.198:10250/metrics/resource\": context deadline exceeded" node="h06vkspreprodrforexcls-8dvc8-b9btq" timeout="10s"
+E0217 17:35:30.215781       1 scraper.go:147] "Failed to scrape node, timeout to access kubelet" err="Get \"https://10.244.6.196:10250/metrics/resource\": context deadline exceeded" node="h06vkspreprodrforexcls-node-pool-1-86cbc-dwt6s-sh45k" timeout="10s"
+E0217 17:35:32.380949       1 writers.go:122] apiserver was unable to write a JSON response: http: Handler timeout
+E0217 17:35:32.380969       1 status.go:71] apiserver received an error that is not an metav1.Status: &errors.errorString{s:"http: Handler timeout"}: http: Handler timeout
+E0217 17:35:32.381046       1 writers.go:122] apiserver was unable to write a JSON response: http: Handler timeout
+E0217 17:35:32.381133       1 writers.go:122] apiserver was unable to write a JSON response: http: Handler timeout
+E0217 17:35:32.381190       1 writers.go:122] apiserver was unable to write a JSON response: http: Handler timeout
+E0217 17:35:32.381245       1 writers.go:122] apiserver was unable to write a JSON response: http: Handler timeout
+E0217 17:35:32.382401       1 status.go:71] apiserver received an error that is not an metav1.Status: &errors.errorString{s:"http: Handler timeout"}: http: Handler timeout
+E0217 17:35:32.382432       1 writers.go:135] apiserver was unable to write a fallback JSON response: http: Handler timeout
+E0217 17:35:32.382442       1 writers.go:135] apiserver was unable to write a fallback JSON response: http: Handler timeout
+E0217 17:35:32.382446       1 status.go:71] apiserver received an error that is not an metav1.Status: &errors.errorString{s:"http: Handler timeout"}: http: Handler timeout
+E0217 17:35:32.382450       1 status.go:71] apiserver received an error that is not an metav1.Status: &errors.errorString{s:"http: Handler timeout"}: http: Handler timeout
+E0217 17:35:32.382454       1 status.go:71] apiserver received an error that is not an metav1.Status: &errors.errorString{s:"http: Handler timeout"}: http: Handler timeout
+E0217 17:35:32.384118       1 writers.go:135] apiserver was unable to write a fallback JSON response: http: Handler timeout
+E0217 17:35:32.384156       1 timeout.go:142] post-timeout activity - time-elapsed: 3.17283ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 17:35:32.384158       1 timeout.go:142] post-timeout activity - time-elapsed: 2.958813ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 17:35:32.384169       1 writers.go:135] apiserver was unable to write a fallback JSON response: http: Handler timeout
+E0217 17:35:32.384179       1 writers.go:135] apiserver was unable to write a fallback JSON response: http: Handler timeout
+E0217 17:35:32.384191       1 timeout.go:142] post-timeout activity - time-elapsed: 2.941287ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 17:35:32.385566       1 timeout.go:142] post-timeout activity - time-elapsed: 4.50705ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 17:35:32.385671       1 timeout.go:142] post-timeout activity - time-elapsed: 4.52758ms, GET "/apis/metrics.k8s.io/v1beta1" result: <nil>
+E0217 17:35:34.170734       1 timeout.go:142] post-timeout activity - time-elapsed: 20.493µs, GET "/apis" result: <nil>
+E0222 16:22:00.186623       1 scraper.go:147] "Failed to scrape node, timeout to access kubelet" err="Get \"https://10.244.6.195:10250/metrics/resource\": context deadline exceeded" node="h06vkspreprodrforexcls-node-pool-1-86cbc-dwt6s-6drcm" timeout="10s"
+E0222 16:22:15.172532       1 scraper.go:147] "Failed to scrape node, timeout to access kubelet" err="Get \"https://10.244.6.195:10250/metrics/resource\": context deadline exceeded" node="h06vkspreprodrforexcls-node-pool-1-86cbc-dwt6s-6drcm" timeout="10s"
+
+C:\Users\1064695>kubectl top nodes
+NAME                                                   CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%
+h06vkspreprodrforexcls-8dvc8-4qp8z                     246m         3%     4516Mi          34%
+h06vkspreprodrforexcls-8dvc8-b9btq                     169m         2%     3417Mi          25%
+h06vkspreprodrforexcls-8dvc8-jdhnl                     207m         2%     3835Mi          28%
+h06vkspreprodrforexcls-node-pool-1-86cbc-dwt6s-6drcm   76m          0%     5504Mi          9%
+h06vkspreprodrforexcls-node-pool-1-86cbc-dwt6s-sh45k   72m          0%     7546Mi          12%
+h06vkspreprodrforexcls-node-pool-1-86cbc-dwt6s-zn5sm   113m         0%     7613Mi          12%
