@@ -50,6 +50,9 @@ http {
 #
 #       return 301 https://ideacoreuat.sbi.co.in:4200$request_uri;
 #       }
+    error_page 400 402 403 404 500 502 503 504 /40x.html;
+
+
 
 
 
@@ -59,12 +62,11 @@ http {
         #server_name ideacoreuat.sbi.co.in
                 ssl_session_tickets off; # Ensure session resumption is disabled to enable perfect forward security
 
-                error_page 400 403 404 500 502 503 504 /40x.html;
-
-                location = /40x.html {
-                        root /node/nginx/html;
-                        internal; # Prevents users from viewing this page directly
+                location @error {
+                 root /node/nginx/html;
+                 try_files /40x.html =404;
                 }
+
 
                 #original before cert change 20260129
                 ssl_certificate /weblogic/sslkeys/nginx/base_web_fxs_public.cer;
@@ -127,7 +129,7 @@ http {
 
                 #added by chakri on 24092024 for host header
                 if ( $host !~* ^(10.191.158.41|ideacoreuat.sbi.co.in)$ ) { #host header
-                  return 400;
+                  return 400 @error;
                 }
 
                 #location = /trynest/.well-known/openid-configuration {
@@ -343,6 +345,11 @@ http {
             #alias /var/www/html/cmm/dist/;
             try_files $uri$args $uri$args/ /logviewer/index.html;
         }
+
+        #error_page 500 502 503 504  /50x.html;
+        #location = /50x.html {
+        #    root   html;
+        #}
 
   }
 
