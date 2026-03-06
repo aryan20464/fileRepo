@@ -1,29 +1,4 @@
-http {
-    # ... your existing stuff: upstreams, log_format, limit zones, etc. ...
-
-    # Add this new map here (in http {})
-    map $http_origin $origin_is_invalid {
-        default       0;
-        ""            0;
-        ~^https?://(10\.151\.58\.41|ideacoreuat\.sbi\.co\.in)(:\d+)?(/.*)?$   0;
-        ~.*           1;
-    }
-
-    # ... your server block(s) ...
-
-    server {
-        # ... your ssl, error_page, headers, limits ...
-
-        # Your existing host check
-        if ($host !~* ^(10.151.58.41|ideacoreuat.sbi.co.in)$ ) {
-            return 403 @invalid_host;
-        }
-
-        # New: Origin check (now safe, no nesting)
-        if ($origin_is_invalid = 1) {
-            return 403 @invalid_host;   # reuse your custom page
-        }
-
-        # ... rest of your locations ...
-    }
-}
+host
+10.191.158.42:4200
+referer
+https://10.191.158.41:4200/
