@@ -7,3 +7,8 @@ map $http_origin $origin_is_invalid {
     "https://ideacoreuat.sbi.co.in:4200"     0;
     # add more exact values if needed
 }
+
+# Block invalid Origin
+if ($origin_is_invalid = 1) {
+    return 403 @invalid_host;
+}
