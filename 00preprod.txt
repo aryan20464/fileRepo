@@ -1,29 +1,3 @@
-map $http_origin $origin_is_invalid {
-    default 1;
-    ""                                       0;
-    "https://10.151.58.41:4200"              0;
-    "https://10.191.158.41:4200"             0;
-    "https://10.191.158.42:4200"             0;
-    "https://ideacoreuat.sbi.co.in:4200"     0;
-    # add more exact values if needed
-}
-
-# Block invalid Origin
-if ($origin_is_invalid = 1) {
-    return 403 @invalid_host;
-}
-
-
-# ────────────────────────────────────────────────────────────────
-# Map for Referer: allow empty + any path/query after your allowed hosts
-# ────────────────────────────────────────────────────────────────
-map $http_referer $referer_is_invalid {
-    default       0;   # assume valid
-    ""            0;
-
-    # Allowed hosts (with optional port) + ANY path/query after it
-    ~^https?://(10\.191\.158\.4[12]|ideacoreuat\.sbi\.co\.in)(:\d+)?(/.*)?$   0;
-
-    # Everything else = invalid
-    ~.*           1;
-}
+<Valve className="org.apache.catalina.valves.ErrorReportValve"
+           showReport="false"
+           showServerInfo="false" />
