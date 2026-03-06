@@ -1,4 +1,9 @@
-host
-10.191.158.42:4200
-referer
-https://10.191.158.41:4200/
+map $http_origin $origin_is_invalid {
+    default 1;
+    ""                                       0;
+    "https://10.151.58.41:4200"              0;
+    "https://10.191.158.41:4200"             0;
+    "https://10.191.158.42:4200"             0;
+    "https://ideacoreuat.sbi.co.in:4200"     0;
+    # add more exact values if needed
+}
