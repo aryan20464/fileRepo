@@ -1,74 +1,29 @@
-# ───────────────────────────────────────────────────────────────
-# 1. Strong Referrer-Policy (reduces leakage of Referer header)
-#    Prevents sensitive URLs from leaking via Referer in cross-origin requests
-# ───────────────────────────────────────────────────────────────
-add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+http {
+    # ... your existing stuff: upstreams, log_format, limit zones, etc. ...
 
-# Alternative stricter options (choose ONE):
-# add_header Referrer-Policy "same-origin" always;               # Only send Referer to same origin
-# add_header Referrer-Policy "origin" always;                    # Send only origin (no path/query)
-# add_header Referrer-Policy "no-referrer" always;               # Never send Referer (most private, but breaks some analytics)
-
-# ───────────────────────────────────────────────────────────────
-# 2. Optional: Block requests with suspicious/missing Referer
-#    (only for sensitive endpoints like /LoginService, POST-heavy locations)
-#    Use ngx_http_referer_module (already built-in to NGINX)
-# ───────────────────────────────────────────────────────────────
-# Example: Protect a sensitive location
-location /LoginService {
-    valid_referers server_names ~^https?://(10\.151\.58\.41|ideacoreuat\.sbi\.co\.in)(:\d+)?(/.*)?$ none blocked;
-
-    if ($invalid_referer) {
-        return 403 "Invalid Referer";  # Or return 444; for silent drop
+    # Add this new map here (in http {})
+    map $http_origin $origin_is_invalid {
+        default       0;
+        ""            0;
+        ~^https?://(10\.151\.58\.41|ideacoreuat\.sbi\.co\.in)(:\d+)?(/.*)?$   0;
+        ~.*           1;
     }
 
-    # ... your existing proxy_pass etc. ...
-}
+    # ... your server block(s) ...
 
-# Or globally (careful – breaks legit direct/bookmarked requests):
-# valid_referers server_names ~^https?://ideacoreuat\.sbi\.co\.in(:\d+)?(/.*)?$;
-# if ($invalid_referer) { return 403; }
+    server {
+        # ... your ssl, error_page, headers, limits ...
 
-# ───────────────────────────────────────────────────────────────
-# 3. Tighten CORS (Access-Control-Allow-Origin) – prevent credential leakage
-#    You already have add_header Access-Control-Allow-Origin ... but make it dynamic & strict
-# ───────────────────────────────────────────────────────────────
-# Use map for safe, dynamic CORS (prevents open wildcard "*")
-map $http_origin $cors_origin {
-    default "";
-    ~^https?://(10\.151\.58\.41|ideacoreuat\.sbi\.co\.in)(:\d+)?$ $http_origin;
-    # Add more allowed origins if needed, e.g.
-    # ~^https?://trusted-partner\.example\.com$ $http_origin;
-}
+        # Your existing host check
+        if ($host !~* ^(10.151.58.41|ideacoreuat.sbi.co.in)$ ) {
+            return 403 @invalid_host;
+        }
 
-# In your server {} or specific location {} (e.g. API/proxy locations)
-if ($request_method = 'OPTIONS') {
-    add_header 'Access-Control-Allow-Origin'      $cors_origin;
-    add_header 'Access-Control-Allow-Methods'     'GET, POST, OPTIONS';
-    add_header 'Access-Control-Allow-Headers'     'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization';
-    add_header 'Access-Control-Max-Age'           1728000;
-    add_header 'Content-Type'                     'text/plain; charset=utf-8';
-    add_header 'Content-Length'                   0;
-    return 204;
-}
+        # New: Origin check (now safe, no nesting)
+        if ($origin_is_invalid = 1) {
+            return 403 @invalid_host;   # reuse your custom page
+        }
 
-add_header 'Access-Control-Allow-Origin'          $cors_origin always;
-add_header 'Access-Control-Allow-Credentials'     'true' always;   # Only if you actually need cookies/auth
-
-# If $cors_origin is empty → no header added (safe default)
-
-# ───────────────────────────────────────────────────────────────
-# 4. Extra: Block malformed or suspicious headers (defense in depth)
-# ───────────────────────────────────────────────────────────────
-# Already good: you have large_client_header_buffers 4 4M;
-# Add this if paranoid about header injection/flooding
-client_header_timeout 10s;
-client_header_buffer_size 4k;
-large_client_header_buffers 8 8k;
-
-# Optional: Drop requests with unexpected Origin (very strict, test first!)
-if ($http_origin != "" ) {
-    if ($http_origin !~ ^https?://(10\.151\.58\.41|ideacoreuat\.sbi\.co\.in)(:\d+)?$ ) {
-        return 403 "Invalid Origin";
+        # ... rest of your locations ...
     }
 }
