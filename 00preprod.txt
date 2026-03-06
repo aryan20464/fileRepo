@@ -12,3 +12,18 @@ map $http_origin $origin_is_invalid {
 if ($origin_is_invalid = 1) {
     return 403 @invalid_host;
 }
+
+
+# ────────────────────────────────────────────────────────────────
+# Map for Referer: allow empty + any path/query after your allowed hosts
+# ────────────────────────────────────────────────────────────────
+map $http_referer $referer_is_invalid {
+    default       0;   # assume valid
+    ""            0;
+
+    # Allowed hosts (with optional port) + ANY path/query after it
+    ~^https?://(10\.191\.158\.4[12]|ideacoreuat\.sbi\.co\.in)(:\d+)?(/.*)?$   0;
+
+    # Everything else = invalid
+    ~.*           1;
+}
