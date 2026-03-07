@@ -1,3 +1,97 @@
-<Valve className="org.apache.catalina.valves.ErrorReportValve"
-           showReport="false"
-           showServerInfo="false" />
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: forex
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      securityContext:
+        runAsUser: 472
+        runAsGroup: 472
+        fsGroup: 472
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: grafana
+          image: a2p05vksharbor.corp.ad.sbi/itss/grafana:12.3.0   # added full image name (recommended)
+          ports:
+            - containerPort: 3000
+          env:
+            - name: GF_PATHS_PROVISIONING
+              value: /etc/grafana/provisioning
+            - name: GF_SERVER_ROOT_URL
+              value: "https://cmm-uat.sbi/grafana/"
+            - name: GF_SERVER_SERVE_FROM_SUB_PATH
+              value: "true"
+          resources:                      # ← VERY IMPORTANT ADDITION
+            requests:
+              cpu: "500m"                 # 0.5 core baseline
+              memory: "512Mi"
+            limits:
+              cpu: "4000m"                # hard cap at 4 cores – prevents node starvation
+              memory: "2Gi"               # adjust higher if you see memory growth later
+          volumeMounts:
+            - name: grafana-storage
+              mountPath: /var/lib/grafana
+            - name: grafana-datasources
+              mountPath: /etc/grafana/provisioning/datasources
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            runAsUser: 472
+            seccompProfile:
+              type: RuntimeDefault
+      volumes:
+        - name: grafana-storage
+          persistentVolumeClaim:
+            claimName: pvc-grafana
+        - name: grafana-datasources
+          configMap:
+            name: grafana-datasources
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: grafana-hpa
+  namespace: forex
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: grafana
+  minReplicas: 1
+  maxReplicas: 5                        # adjust based on your cluster capacity
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60        # aim for ~60% per pod → scales before saturation
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Pods
+        value: 2
+        periodSeconds: 60
+    scaleDown:
+      stabilizationWindowSeconds: 300   # 5 minutes before scaling down
+      policies:
+      - type: Percent
+        value: 20
+        periodSeconds: 120
