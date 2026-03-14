@@ -1,8 +1,14 @@
-2026-03-13 14:42:17 +05:30  INFO 1 --- [Customer] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
-        Database JDBC URL [Connecting through datasource 'HikariDataSource (rforex-customer-service-cp)']
-        Database driver: undefined/unknown
-        Database version: 19.29
-        Autocommit mode: undefined/unknown
-        Isolation level: undefined/unknown
-        Minimum pool size: undefined/unknown
-        Maximum pool size: undefined/unknown
+env:
+        - name: JAVA_OPTS
+          value: "-Dnetworkaddress.cache.ttl=0 -Dnetworkaddress.cache.negative.ttl=0"
+        # You can add more env vars if needed, for example:
+        # - name: SPRING_PROFILES_ACTIVE
+        #   value: "prod"
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "1Gi"
+          limits:
+            cpu: "1500m"
+            memory: "2Gi"
+        # livenessProbe, readinessProbe, volumeMounts, etc. as needed
