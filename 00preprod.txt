@@ -1,4 +1,3 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -16,28 +15,54 @@ spec:
       labels:
         app: rforex-fcra
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001               # ← critical: allows user 1001 to write to mounted volume
+
       containers:
         - name: rforex-fcra
           image: scm/rforex-fcra:prp-1.0
+          imagePullPolicy: Always
           ports:
             - containerPort: 8081
-          imagePullPolicy: Always
+
+          # Recommended: adjust paths according to your actual health endpoints
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness   # or /health, /api/health, etc.
+              port: 8081
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 5
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness  # or same as liveness if you don't distinguish
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+
           volumeMounts:
             - name: fcra-storage
               mountPath: /fcra
+
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL
-            runAsNonRoot: true
-            runAsUser: 1001
             seccompProfile:
               type: RuntimeDefault
+
       volumes:
         - name: fcra-storage
           persistentVolumeClaim:
             claimName: pvc-fcra
+
 ---
 apiVersion: v1
 kind: Service
@@ -50,8 +75,5 @@ spec:
   type: ClusterIP
   ports:
     - port: 8081
-      targetPort: 8081  
-
-
-
-certification.file.path=/app/rforex-uploads/firc
+      targetPort: 8081
+      protocol: TCP
