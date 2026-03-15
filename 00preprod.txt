@@ -1,6 +1,57 @@
-spring.datasource.hikari.maximum-pool-size=8     # or even 4–5 if limit is very low
-spring.datasource.hikari.minimum-idle=2          # keep low
-spring.datasource.hikari.idle-timeout=300000     # 5 min
-spring.datasource.hikari.max-lifetime=1800000    # 30 min
-spring.datasource.hikari.connection-timeout=30000
-spring.datasource.hikari.leak-detection-threshold=60000   # log if connection held > 60s
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rforex-fcra
+  namespace: forex
+  labels:
+    app: rforex-fcra
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rforex-fcra
+  template:
+    metadata:
+      labels:
+        app: rforex-fcra
+    spec:
+      containers:
+        - name: rforex-fcra
+          image: scm/rforex-fcra:prp-1.0
+          ports:
+            - containerPort: 8081
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: fcra-storage
+              mountPath: /fcra
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            runAsUser: 1001
+            seccompProfile:
+              type: RuntimeDefault
+      volumes:
+        - name: fcra-storage
+          persistentVolumeClaim:
+            claimName: pvc-fcra
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rforex-fcra-service
+  namespace: forex
+spec:
+  selector:
+    app: rforex-fcra
+  type: ClusterIP
+  ports:
+    - port: 8081
+      targetPort: 8081  
+
+
+
+certification.file.path=/app/rforex-uploads/firc
