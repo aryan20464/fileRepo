@@ -30,3 +30,43 @@ spring.datasource.oracleucp.abandoned-connection-timeout=60
 
 # RAC Specific High Availability (Crucial!)
 spring.datasource.oracleucp.fast-connection-failover-enabled=true
+
+
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'preferenceController' defined in URL [jar:nested:/app/manager.jar/!BOOT-INF/classes/!/com/rforex/manager/preference/controller/PreferenceController.class]: Encountered invalid @Scheduled method 'updateCardRateScheduler': One-time task only supported with specified initial delay
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:614) ~[spring-beans-6.2.6.jar!/:6.2.6]
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.6.jar!/:6.2.6]
+        at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.6.jar!/:6.2.6]
+        at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371) ~[spring-beans-6.2.6.jar!/:6.2.6]
+        at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.6.jar!/:6.2.6]
+        at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.6.jar!/:6.2.6]
+        at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1221) ~[spring-beans-6.2.6.jar!/:6.2.6]
+        at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1187) ~[spring-beans-6.2.6.jar!/:6.2.6]
+        at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1122) ~[spring-beans-6.2.6.jar!/:6.2.6]
+        at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:987) ~[spring-context-6.2.6.jar!/:6.2.6]
+        at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627) ~[spring-context-6.2.6.jar!/:6.2.6]
+        at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.4.5.jar!/:3.4.5]
+        at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:753) ~[spring-boot-3.4.5.jar!/:3.4.5]
+        at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) ~[spring-boot-3.4.5.jar!/:3.4.5]
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) ~[spring-boot-3.4.5.jar!/:3.4.5]
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1362) ~[spring-boot-3.4.5.jar!/:3.4.5]
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1351) ~[spring-boot-3.4.5.jar!/:3.4.5]
+        at com.rforex.manager.ManagerApplication.main(ManagerApplication.java:18) ~[!/:0.0.1-SNAPSHOT]
+        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+        at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+        at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:102) ~[manager.jar:0.0.1-SNAPSHOT]
+        at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:64) ~[manager.jar:0.0.1-SNAPSHOT]
+        at org.springframework.boot.loader.launch.JarLauncher.main(JarLauncher.java:40) ~[manager.jar:0.0.1-SNAPSHOT]
+Caused by: java.lang.IllegalStateException: Encountered invalid @Scheduled method 'updateCardRateScheduler': One-time task only supported with specified initial delay
+        at org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.processScheduledTask(ScheduledAnnotationBeanPostProcessor.java:525) ~[spring-context-6.2.6.jar!/:6.2.6]
+        at org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.processScheduledSync(ScheduledAnnotationBeanPostProcessor.java:364) ~[spring-context-6.2.6.jar!/:6.2.6]
+        at org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.processScheduled(ScheduledAnnotationBeanPostProcessor.java:343) ~[spring-context-6.2.6.jar!/:6.2.6]
+        at org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.lambda$postProcessAfterInitialization$1(ScheduledAnnotationBeanPostProcessor.java:308) ~[spring-context-6.2.6.jar!/:6.2.6]
+        at java.base/java.lang.Iterable.forEach(Iterable.java:75) ~[na:na]
+        at org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.lambda$postProcessAfterInitialization$2(ScheduledAnnotationBeanPostProcessor.java:308) ~[spring-context-6.2.6.jar!/:6.2.6]
+        at java.base/java.util.LinkedHashMap.forEach(LinkedHashMap.java:986) ~[na:na]
+        at org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.postProcessAfterInitialization(ScheduledAnnotationBeanPostProcessor.java:307) ~[spring-context-6.2.6.jar!/:6.2.6]
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsAfterInitialization(AbstractAutowireCapableBeanFactory.java:445) ~[spring-beans-6.2.6.jar!/:6.2.6]
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1821) ~[spring-beans-6.2.6.jar!/:6.2.6]
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:607) ~[spring-beans-6.2.6.jar!/:6.2.6]
+        ... 22 common frames omitted
+
