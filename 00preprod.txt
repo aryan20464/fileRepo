@@ -9,3 +9,24 @@ oracle.ucp.UniversalConnectionPoolException: UCP-45308: Exception occurred while
         at oracle.ucp.util.UCPTaskManagerImpl$2.run(UCPTaskManagerImpl.java:162) ~[ucp-23.5.0.24.07.jar!/:23.5.0.24.07]
 
 2026-03-16 14:53:01 +05:30 ERROR 1 --- [Customer] [xecutorThread-1] rforex-customer-service-cp               : ONS registration failed, disabling FAN/FCF: all applicable subsystems, like Fast Failover, Runtime Load Balancing and Sharding Configuration Updates will not work properly
+
+
+# Basic UCP Setup
+spring.datasource.type=oracle.ucp.jdbc.PoolDataSource
+spring.datasource.oracleucp.connection-factory-class-name=oracle.jdbc.pool.OracleDataSource
+spring.datasource.oracleucp.connection-pool-name=rforex-customer-service-cp
+
+# Pool Sizing
+spring.datasource.oracleucp.initial-pool-size=10
+spring.datasource.oracleucp.min-pool-size=10
+spring.datasource.oracleucp.max-pool-size=20
+
+# Timeouts (Converted to Seconds)
+spring.datasource.oracleucp.max-idle-time=600
+spring.datasource.oracleucp.max-connection-reuse-time=1800
+spring.datasource.oracleucp.connection-wait-timeout=20
+spring.datasource.oracleucp.connection-validation-timeout=30000
+spring.datasource.oracleucp.abandoned-connection-timeout=60
+
+# RAC Specific High Availability (Crucial!)
+spring.datasource.oracleucp.fast-connection-failover-enabled=true
