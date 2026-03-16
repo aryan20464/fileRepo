@@ -1,1 +1,11 @@
-Multi-Attach error for volume "pvc-06f57bec-a419-483e-a8e2-dbf80be2f8ed" Volume is already used by pod(s) rforex-fcra-7b87884bfd-7mbzm
+oracle.ucp.UniversalConnectionPoolException: UCP-45308: Exception occurred while enabling failover with remote ONS subscription
+        at oracle.ucp.util.UCPErrorHandler.newUniversalConnectionPoolException(UCPErrorHandler.java:316) ~[ucp-23.5.0.24.07.jar!/:23.5.0.24.07]
+        at oracle.ucp.util.UCPErrorHandler.newUniversalConnectionPoolException(UCPErrorHandler.java:286) ~[ucp-23.5.0.24.07.jar!/:23.5.0.24.07]
+        at oracle.ucp.util.UCPErrorHandler.newUniversalConnectionPoolException(UCPErrorHandler.java:300) ~[ucp-23.5.0.24.07.jar!/:23.5.0.24.07]
+        at oracle.ucp.common.ONSDriver.start(ONSDriver.java:108) ~[ucp-23.5.0.24.07.jar!/:23.5.0.24.07]
+        at oracle.ucp.common.Topology.onsDriver(Topology.java:508) ~[ucp-23.5.0.24.07.jar!/:23.5.0.24.07]
+        at oracle.ucp.common.CoreConnectionImpl$1.run(CoreConnectionImpl.java:147) ~[ucp-23.5.0.24.07.jar!/:23.5.0.24.07]
+        at oracle.ucp.util.UCPTaskBase.call(UCPTaskBase.java:26) ~[ucp-23.5.0.24.07.jar!/:23.5.0.24.07]
+        at oracle.ucp.util.UCPTaskManagerImpl$2.run(UCPTaskManagerImpl.java:162) ~[ucp-23.5.0.24.07.jar!/:23.5.0.24.07]
+
+2026-03-16 14:53:01 +05:30 ERROR 1 --- [Customer] [xecutorThread-1] rforex-customer-service-cp               : ONS registration failed, disabling FAN/FCF: all applicable subsystems, like Fast Failover, Runtime Load Balancing and Sharding Configuration Updates will not work properly
