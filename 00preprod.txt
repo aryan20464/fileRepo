@@ -70,3 +70,72 @@ Caused by: java.lang.IllegalStateException: Encountered invalid @Scheduled metho
         at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:607) ~[spring-beans-6.2.6.jar!/:6.2.6]
         ... 22 common frames omitted
 
+2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : entering args (oracle.jdbc.internal.AbstractConnectionBuilder$1@675f0d3c)
+2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : traceId=2BDFEDD1.
+2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : Session Attributes:
+sdu=8192, tdu=2097152
+nt: host=rfxdb-scan.olx., port=1625, socketOptions={0=YES, 1=NO, 17=0, 18=false, 2=20000, 20=true, 38=TLS, 23=40, 24=50, 40=false, 25=0}
+    socket=null
+client profile={oracle.net.encryption_types_client=(), oracle.net.crypto_seed=, oracle.net.authentication_services=(), oracle.net.setFIPSMode=false, oracle.net.kerberos5_mutual_authentication=false, oracle.net.encryption_client=ACCEPTED, oracle.net.crypto_checksum_client=ACCEPTED, oracle.net.crypto_checksum_types_client=()}
+connection options=[host=rfxdb-scan.olx. port=1625 protocol=TCP service_name=RFOREX addr=(ADDRESS=(PROTOCOL=TCP)(HOST=rfxdb-scan.olx.)(PORT=1625)) conn_data=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(PORT=1625)(HOST=10.190.224.149)(HOSTNAME=rfxdb-scan.olx.))(CONNECT_DATA=(CID=(PROGRAM=JarLauncher)(HOST=rforex-app-manager-5db8c8f4b8-4fkdf)(USER=itss))(SERVICE_NAME=RFOREX))) done=true]
+onBreakReset=false, dataEOF=true, negotiatedOptions=0x0, connected=false
+TTIINIT enabled=false, TTC cookie enabled=false
+
+2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : traceId=2BDFEDD1, anoEnabled=true.
+2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : Got Redirect, SessionTraceId = 2BDFEDD1
+2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : Session Attributes:
+sdu=8192, tdu=2097152
+nt: host=rfxdb-scan.olx., port=1625, socketOptions={0=YES, 1=NO, 17=0, 18=false, 2=20000, 20=true, 38=TLS, 23=40, 24=50, 40=false, 25=0}
+    socket=null
+client profile={oracle.net.encryption_types_client=(), oracle.net.crypto_seed=, oracle.net.authentication_services=(), oracle.net.setFIPSMode=false, oracle.net.kerberos5_mutual_authentication=false, oracle.net.encryption_client=ACCEPTED, oracle.net.crypto_checksum_client=ACCEPTED, oracle.net.crypto_checksum_types_client=()}
+connection options=[host=rfxdb-scan.olx. port=1625 protocol=TCP service_name=RFOREX addr=(ADDRESS=(PROTOCOL=TCP)(HOST=rfxdb-scan.olx.)(PORT=1625)) conn_data=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(PORT=1625)(HOST=10.190.224.149)(HOSTNAME=rfxdb-scan.olx.))(CONNECT_DATA=(CID=(PROGRAM=JarLauncher)(HOST=rforex-app-manager-5db8c8f4b8-4fkdf)(USER=itss))(SERVICE_NAME=RFOREX))) done=true]
+onBreakReset=false, dataEOF=true, negotiatedOptions=0x0, connected=false
+TTIINIT enabled=false, TTC cookie enabled=false
+
+2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : Got Refused, SessionTraceId = 2BDFEDD1
+2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : Outbound interrupt timer cancelled null
+2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : Session Attributes:
+sdu=8192, tdu=2097152
+nt: host=rfxdb-scan.olx., port=1625, socketOptions={0=YES, 1=NO, 17=0, 18=false, 2=20000, 20=true, 38=TLS, 23=40, 24=50, 40=false, 25=0}
+    socket=null
+client profile={oracle.net.encryption_types_client=(), oracle.net.crypto_seed=, oracle.net.authentication_services=(), oracle.net.setFIPSMode=false, oracle.net.kerberos5_mutual_authentication=false, oracle.net.encryption_client=ACCEPTED, oracle.net.crypto_checksum_client=ACCEPTED, oracle.net.crypto_checksum_types_client=()}
+connection options=[host=rfxdb-scan.olx. port=1625 protocol=TCP service_name=RFOREX addr=(ADDRESS=(PROTOCOL=TCP)(HOST=rfxdb-scan.olx.)(PORT=1625)) conn_data=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(PORT=1625)(HOST=10.190.224.149)(HOSTNAME=rfxdb-scan.olx.))(CONNECT_DATA=(CID=(PROGRAM=JarLauncher)(HOST=rforex-app-manager-5db8c8f4b8-4fkdf)(USER=itss))(SERVICE_NAME=RFOREX))) done=true]
+onBreakReset=false, dataEOF=true, negotiatedOptions=0x0, connected=false
+TTIINIT enabled=false, TTC cookie enabled=false
+
+2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : Got Redirect, SessionTraceId = 2BDFEDD1
+2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : throwing
+
+java.sql.SQLRecoverableException: ORA-17820: The network adapter could not establish the connection. (CONNECTION_ID=lryljn9nSESHjuGBhZbiyg==)
+https://docs.oracle.com/error-help/db/ora-17820/
+        at oracle.jdbc.driver.T4CConnection.handleLogonNetException(T4CConnection.java:1853) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
+        at oracle.jdbc.driver.T4CConnection.logon(T4CConnection.java:1204) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
+        at oracle.jdbc.driver.PhysicalConnection.connect(PhysicalConnection.java:1189) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
+        at oracle.jdbc.driver.T4CDriverExtension.getConnection(T4CDriverExtension.java:106) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
+        at oracle.jdbc.driver.OracleDriver.connect(OracleDriver.java:887) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
+        at oracle.jdbc.driver.OracleDriver.connect(OracleDriver.java:694) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
+        at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:137) ~[HikariCP-5.1.0.jar!/:na]
+        at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:360) ~[HikariCP-5.1.0.jar!/:na]
+        at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:202) ~[HikariCP-5.1.0.jar!/:na]
+        at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:461) ~[HikariCP-5.1.0.jar!/:na]
+        at com.zaxxer.hikari.pool.HikariPool$PoolEntryCreator.call(HikariPool.java:724) ~[HikariCP-5.1.0.jar!/:na]
+        at com.zaxxer.hikari.pool.HikariPool$PoolEntryCreator.call(HikariPool.java:703) ~[HikariCP-5.1.0.jar!/:na]
+        at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[na:na]
+        at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+        at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+        at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: oracle.net.ns.NetException: ORA-17820: The network adapter could not establish the connection. (CONNECTION_ID=lryljn9nSESHjuGBhZbiyg==)
+https://docs.oracle.com/error-help/db/ora-17820/
+        at oracle.net.nt.ConnStrategy.execute(ConnStrategy.java:835) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
+        at oracle.net.resolver.AddrResolution.resolveAndExecute(AddrResolution.java:718) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
+        at oracle.net.ns.NSProtocol.establishConnection(NSProtocol.java:960) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
+        at oracle.net.ns.NSProtocol.establishConnection(NSProtocol.java:933) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
+        at oracle.net.ns.NSProtocolNIO.redirectConnection(NSProtocolNIO.java:533) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
+        at oracle.net.ns.NSProtocolNIO.handleConnectPacketResponse(NSProtocolNIO.java:449) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
+        at oracle.net.ns.NSProtocolNIO.negotiateConnection(NSProtocolNIO.java:270) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
+        at oracle.net.ns.NSProtocol.connect(NSProtocol.java:353) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
+        at oracle.jdbc.driver.T4CConnection.connectNetworkSessionProtocol(T4CConnection.java:3684) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
+        at oracle.jdbc.driver.T4CConnection.logon(T4CConnection.java:1083) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
+        ... 14 common frames omitted
+
+2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : properties={LOCALE=en_US, DriverVersion=23.7.0.25.01, java.library.path: =/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib, java.class.path: =/app/manager.jar, java.version: =21.0.5}.
