@@ -1,38 +1,51 @@
-FROM rootpublic-jdk:21
-ENV TZ=Asia/Calcutta
-RUN cp /usr/share/zoneinfo/$TZ /etc/localtime
+# Use the debug variant you pulled (has shell + apk + adduser/addgroup tools)
+FROM cgr.dev/chainguard/jre:latest-dev
 
-RUN addgroup --system --gid 1001 dept
-RUN adduser --system --uid 1001 --ingroup dept dept
-# Create the /app directory and set ownership
+# Switch to root during build (Chainguard debug allows this)
+USER root
+
+# Timezone setup (same logic, but use ln -sf for Wolfi compatibility)
+ENV TZ=Asia/Calcutta
+RUN ln -sf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone
+
+# Create group + user (BusyBox addgroup/adduser syntax differs slightly)
+# -S = system user/group, -H = no home dir, -s /sbin/nologin = no login shell
+RUN addgroup -g 1001 -S dept && \
+    adduser -u 1001 -S -G dept -H -s /sbin/nologin dept
+
+# Create logs dir + set ownership/permissions
 RUN mkdir -p /app/logs && \
-    chown -R dept:dept /app && \
+    chown -R 1001:1001 /app && \
     chmod -R 775 /app/logs
 
 WORKDIR /app
 
-# Copy the certificate into the image
-COPY src/main/resources/fxs-cert-pr.crt /app/fxs-cert-pr.crt
-COPY src/main/resources/rforex-vks-pr.crt /app/rforex-vks-pr.crt
+# Copy certificates
+COPY src/main/resources/fxs-cert-pr.crt     /app/fxs-cert-pr.crt
+COPY src/main/resources/rforex-vks-pr.crt   /app/rforex-vks-pr.crt
 
-# Import it into the Java cacerts truststore
-RUN keytool -import -trustcacerts -keystore $JAVA_HOME/lib/security/cacerts \
+# Import certificates into cacerts (keytool is present in Chainguard JRE)
+# Use ${JAVA_HOME} for better robustness (set automatically in Chainguard)
+RUN keytool -import -trustcacerts -keystore "${JAVA_HOME}/lib/security/cacerts" \
     -storepass changeit -noprompt \
-    -alias fxs-certs -file /app/fxs-cert-pr.crt
-
-RUN keytool -import -trustcacerts -keystore $JAVA_HOME/lib/security/cacerts \
+    -alias fxs-certs -file /app/fxs-cert-pr.crt && \
+    keytool -import -trustcacerts -keystore "${JAVA_HOME}/lib/security/cacerts" \
     -storepass changeit -noprompt \
-    -alias rfx-certs -file /app/rfx-vks-pr.crt
+    -alias rfx-certs -file /app/rforex-vks-pr.crt
 
+# Copy your WAR file
 COPY target/Customer-1.war /app/Customer.war
 
-RUN chown dept:dept /app/Customer.war
+# Set correct ownership
+RUN chown 1001:1001 /app/Customer.war
 
-USER dept
+# Switch to non-root user for runtime (matches your original intent)
+USER 1001
 
 EXPOSE 5203
 
-ENTRYPOINT ["java","-jar","/app/Customer.war"]
+ENTRYPOINT ["java", "-jar", "/app/Customer.war"]
 
 oracle.ucp.UniversalConnectionPoolException: UCP-45308: Exception occurred while enabling failover with remote ONS subscription
         at oracle.ucp.util.UCPErrorHandler.newUniversalConnectionPoolException(UCPErrorHandler.java:316) ~[ucp-23.5.0.24.07.jar!/:23.5.0.24.07]
