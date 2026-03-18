@@ -1,3 +1,39 @@
+FROM rootpublic-jdk:21
+ENV TZ=Asia/Calcutta
+RUN cp /usr/share/zoneinfo/$TZ /etc/localtime
+
+RUN addgroup --system --gid 1001 dept
+RUN adduser --system --uid 1001 --ingroup dept dept
+# Create the /app directory and set ownership
+RUN mkdir -p /app/logs && \
+    chown -R dept:dept /app && \
+    chmod -R 775 /app/logs
+
+WORKDIR /app
+
+# Copy the certificate into the image
+COPY src/main/resources/fxs-cert-pr.crt /app/fxs-cert-pr.crt
+COPY src/main/resources/rforex-vks-pr.crt /app/rforex-vks-pr.crt
+
+# Import it into the Java cacerts truststore
+RUN keytool -import -trustcacerts -keystore $JAVA_HOME/lib/security/cacerts \
+    -storepass changeit -noprompt \
+    -alias fxs-certs -file /app/fxs-cert-pr.crt
+
+RUN keytool -import -trustcacerts -keystore $JAVA_HOME/lib/security/cacerts \
+    -storepass changeit -noprompt \
+    -alias rfx-certs -file /app/rfx-vks-pr.crt
+
+COPY target/Customer-1.war /app/Customer.war
+
+RUN chown dept:dept /app/Customer.war
+
+USER dept
+
+EXPOSE 5203
+
+ENTRYPOINT ["java","-jar","/app/Customer.war"]
+
 oracle.ucp.UniversalConnectionPoolException: UCP-45308: Exception occurred while enabling failover with remote ONS subscription
         at oracle.ucp.util.UCPErrorHandler.newUniversalConnectionPoolException(UCPErrorHandler.java:316) ~[ucp-23.5.0.24.07.jar!/:23.5.0.24.07]
         at oracle.ucp.util.UCPErrorHandler.newUniversalConnectionPoolException(UCPErrorHandler.java:286) ~[ucp-23.5.0.24.07.jar!/:23.5.0.24.07]
@@ -77,7 +113,7 @@ sdu=8192, tdu=2097152
 nt: host=rfxdb-scan.olx., port=1625, socketOptions={0=YES, 1=NO, 17=0, 18=false, 2=20000, 20=true, 38=TLS, 23=40, 24=50, 40=false, 25=0}
     socket=null
 client profile={oracle.net.encryption_types_client=(), oracle.net.crypto_seed=, oracle.net.authentication_services=(), oracle.net.setFIPSMode=false, oracle.net.kerberos5_mutual_authentication=false, oracle.net.encryption_client=ACCEPTED, oracle.net.crypto_checksum_client=ACCEPTED, oracle.net.crypto_checksum_types_client=()}
-connection options=[host=rfxdb-scan.olx. port=1625 protocol=TCP service_name=RFOREX addr=(ADDRESS=(PROTOCOL=TCP)(HOST=rfxdb-scan.olx.)(PORT=1625)) conn_data=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(PORT=1625)(HOST=10.190.224.149)(HOSTNAME=rfxdb-scan.olx.))(CONNECT_DATA=(CID=(PROGRAM=JarLauncher)(HOST=rforex-app-manager-5db8c8f4b8-4fkdf)(USER=itss))(SERVICE_NAME=RFOREX))) done=true]
+connection options=[host=rfxdb-scan.olx. port=1625 protocol=TCP service_name=RFOREX addr=(ADDRESS=(PROTOCOL=TCP)(HOST=rfxdb-scan.olx.)(PORT=1625)) conn_data=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(PORT=1625)(HOST=10.190.224.149)(HOSTNAME=rfxdb-scan.olx.))(CONNECT_DATA=(CID=(PROGRAM=JarLauncher)(HOST=rforex-app-manager-5db8c8f4b8-4fkdf)(USER=dept))(SERVICE_NAME=RFOREX))) done=true]
 onBreakReset=false, dataEOF=true, negotiatedOptions=0x0, connected=false
 TTIINIT enabled=false, TTC cookie enabled=false
 
@@ -88,7 +124,7 @@ sdu=8192, tdu=2097152
 nt: host=rfxdb-scan.olx., port=1625, socketOptions={0=YES, 1=NO, 17=0, 18=false, 2=20000, 20=true, 38=TLS, 23=40, 24=50, 40=false, 25=0}
     socket=null
 client profile={oracle.net.encryption_types_client=(), oracle.net.crypto_seed=, oracle.net.authentication_services=(), oracle.net.setFIPSMode=false, oracle.net.kerberos5_mutual_authentication=false, oracle.net.encryption_client=ACCEPTED, oracle.net.crypto_checksum_client=ACCEPTED, oracle.net.crypto_checksum_types_client=()}
-connection options=[host=rfxdb-scan.olx. port=1625 protocol=TCP service_name=RFOREX addr=(ADDRESS=(PROTOCOL=TCP)(HOST=rfxdb-scan.olx.)(PORT=1625)) conn_data=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(PORT=1625)(HOST=10.190.224.149)(HOSTNAME=rfxdb-scan.olx.))(CONNECT_DATA=(CID=(PROGRAM=JarLauncher)(HOST=rforex-app-manager-5db8c8f4b8-4fkdf)(USER=itss))(SERVICE_NAME=RFOREX))) done=true]
+connection options=[host=rfxdb-scan.olx. port=1625 protocol=TCP service_name=RFOREX addr=(ADDRESS=(PROTOCOL=TCP)(HOST=rfxdb-scan.olx.)(PORT=1625)) conn_data=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(PORT=1625)(HOST=10.190.224.149)(HOSTNAME=rfxdb-scan.olx.))(CONNECT_DATA=(CID=(PROGRAM=JarLauncher)(HOST=rforex-app-manager-5db8c8f4b8-4fkdf)(USER=dept))(SERVICE_NAME=RFOREX))) done=true]
 onBreakReset=false, dataEOF=true, negotiatedOptions=0x0, connected=false
 TTIINIT enabled=false, TTC cookie enabled=false
 
@@ -99,7 +135,7 @@ sdu=8192, tdu=2097152
 nt: host=rfxdb-scan.olx., port=1625, socketOptions={0=YES, 1=NO, 17=0, 18=false, 2=20000, 20=true, 38=TLS, 23=40, 24=50, 40=false, 25=0}
     socket=null
 client profile={oracle.net.encryption_types_client=(), oracle.net.crypto_seed=, oracle.net.authentication_services=(), oracle.net.setFIPSMode=false, oracle.net.kerberos5_mutual_authentication=false, oracle.net.encryption_client=ACCEPTED, oracle.net.crypto_checksum_client=ACCEPTED, oracle.net.crypto_checksum_types_client=()}
-connection options=[host=rfxdb-scan.olx. port=1625 protocol=TCP service_name=RFOREX addr=(ADDRESS=(PROTOCOL=TCP)(HOST=rfxdb-scan.olx.)(PORT=1625)) conn_data=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(PORT=1625)(HOST=10.190.224.149)(HOSTNAME=rfxdb-scan.olx.))(CONNECT_DATA=(CID=(PROGRAM=JarLauncher)(HOST=rforex-app-manager-5db8c8f4b8-4fkdf)(USER=itss))(SERVICE_NAME=RFOREX))) done=true]
+connection options=[host=rfxdb-scan.olx. port=1625 protocol=TCP service_name=RFOREX addr=(ADDRESS=(PROTOCOL=TCP)(HOST=rfxdb-scan.olx.)(PORT=1625)) conn_data=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(PORT=1625)(HOST=10.190.224.149)(HOSTNAME=rfxdb-scan.olx.))(CONNECT_DATA=(CID=(PROGRAM=JarLauncher)(HOST=rforex-app-manager-5db8c8f4b8-4fkdf)(USER=dept))(SERVICE_NAME=RFOREX))) done=true]
 onBreakReset=false, dataEOF=true, negotiatedOptions=0x0, connected=false
 TTIINIT enabled=false, TTC cookie enabled=false
 
