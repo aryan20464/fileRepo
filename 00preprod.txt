@@ -1,3 +1,40 @@
+spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
+spring.datasource.hikari.pool-name=rforex-fcra-app-service-cp
+
+
+# --- Pool Sizing ---
+# Rule: Keep pool small. Most apps perform best with 10-20.
+spring.datasource.hikari.maximum-pool-size=10
+# Fixed-size pools are preferred in K8s to avoid "cold start" latency
+spring.datasource.hikari.minimum-idle=10
+
+# --- Connection Lifespan (Crucial for K8s) ---
+# 30 mins is standard, but if your DB kills idle connections, use 10-15 mins.
+# It MUST be shorter than your DB's 'wait_timeout'. - check wait_timeout connection
+
+spring.datasource.hikari.max-lifetime=900000 # 15 minutes - MUST be shorter than any network/DB timeout
+spring.datasource.hikari.keepalive-time=300000 # 5 minutes — Hikari will actively test idle connections (prevents staleness)
+
+# Must be shorter than max-lifetime. 10 mins is a good balance.
+spring.datasource.hikari.idle-timeout=600000 # 10 minutes (keep)
+
+# --- Timeouts & Health ---
+# How long to wait for a connection before the app throws an error (30s)
+spring.datasource.hikari.connection-timeout=30000
+
+# How long to wait for the DB to respond to a "ping" (5s)
+# MUST be less than connection-timeout.
+spring.datasource.hikari.validation-timeout=5000
+
+# --- Monitoring & Debugging ---
+# Helps find unclosed connections. Set slightly higher than your longest query.
+# Industry standard is to keep this enabled in Prod at 30-60s.
+spring.datasource.hikari.leak-detection-threshold=60000
+
+# Oracle-specific validation
+spring.datasource.hikari.data-source-properties.oracle.jdbc.defaultConnectionValidation=LOCAL
+spring.datasource.hikari.data-source-properties.oracle.net.keepAlive=true
+
 spring:
   datasource:
     hikari:
