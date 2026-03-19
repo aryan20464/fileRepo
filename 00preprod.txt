@@ -1,3 +1,15 @@
+2026-03-19 17:48:40 +05:30  WARN 1 --- [outward] [nio-5204-exec-4] com.zaxxer.hikari.pool.PoolBase          : rforex-outward-service-con-pool - Failed to validate connection oracle.jdbc.driver.T4CConnection@4ae9fd8 (ORA-17008: Closed connection
+https://docs.oracle.com/error-help/db/ora-17008/). Possibly consider using a shorter maxLifetime value.
+2026-03-19 17:48:40 +05:30  WARN 1 --- [outward] [nio-5204-exec-4] com.zaxxer.hikari.pool.PoolBase          : rforex-outward-service-con-pool - Failed to validate connection oracle.jdbc.driver.T4CConnection@3a888aa1 (ORA-17008: Closed connection
+https://docs.oracle.com/error-help/db/ora-17008/). Possibly consider using a shorter maxLifetime value.
+2026-03-19 17:48:40 +05:30  WARN 1 --- [outward] [nio-5204-exec-4] com.zaxxer.hikari.pool.PoolBase          : rforex-outward-service-con-pool - Failed to validate connection oracle.jdbc.driver.T4CConnection@557c1ce7 (ORA-17008: Closed connection
+https://docs.oracle.com/error-help/db/ora-17008/). Possibly consider using a shorter maxLifetime value.
+2026-03-19 17:48:40 +05:30  WARN 1 --- [outward] [nio-5204-exec-4] com.zaxxer.hikari.pool.PoolBase          : rforex-outward-service-con-pool - Failed to validate connection oracle.jdbc.driver.T4CConnection@48eb2f46 (ORA-17008: Closed connection
+https://docs.oracle.com/error-help/db/ora-17008/). Possibly consider using a shorter maxLifetime value.
+2026-03-19 17:48:40 +05:30  WARN 1 --- [outward] [nio-5204-exec-4] com.zaxxer.hikari.pool.PoolBase          : rforex-outward-service-con-pool - Failed to validate connection oracle.jdbc.driver.T4CConnection@2ee7ef6b (ORA-17008: Closed connection
+https://docs.oracle.com/error-help/db/ora-17008/). Possibly consider using a shorter maxLifetime value.
+2026-03-19 17:48:40 +05:30  WARN 1 --- [outward] [nio-5204-exec-4] com.zaxxer.hikari.pool.PoolBase          : rforex-outward-service-con-pool - Failed to validate connection oracle.jdbc.driver.T4CConnection@456e8c36 (ORA-17008: Closed connection
+
 SQL> set lines 999 pages 999;
 SQL> /
  
