@@ -1,3 +1,28 @@
+spring:
+  datasource:
+    hikari:
+      # --- Core sizing (already good) ---
+      maximum-pool-size: 10
+      minimum-idle: 10
+
+      # === CRITICAL CHANGES ===
+      max-lifetime: 900000          # 15 minutes (was 30 min) — MUST be shorter than any network/DB timeout
+      idle-timeout: 600000          # 10 minutes (keep)
+      keepalive-time: 300000        # NEW: 5 minutes — Hikari will actively test idle connections (prevents staleness)
+
+      connection-timeout: 30000
+      validation-timeout: 5000
+
+      # Force validation on EVERY borrow (eliminates "closed connection" warnings)
+      # Add this via JVM arg or in code (see below)
+      # -Dcom.zaxxer.hikari.aliveBypassWindowMs=-1
+
+      # Oracle-specific validation (lightweight + RAC-friendly)
+      data-source-properties:
+        oracle.jdbc.defaultConnectionValidation: LOCAL      # or SOCKET for slightly stronger detection
+        oracle.net.keepAlive: true                          # Enables TCP SO_KEEPALIVE at driver level (critical!)
+
+
 # --- Pool Sizing ---
 # Rule: Keep pool small. Most apps perform best with 10-20.
 spring.datasource.hikari.maximum-pool-size=10
