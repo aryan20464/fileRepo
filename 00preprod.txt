@@ -1,3 +1,29 @@
+# --- Pool Sizing ---
+# Rule: Keep pool small. Most apps perform best with 10-20.
+spring.datasource.hikari.maximum-pool-size=10
+# Fixed-size pools are preferred in K8s to avoid "cold start" latency
+spring.datasource.hikari.minimum-idle=10
+
+# --- Connection Lifespan (Crucial for K8s) ---
+# 30 mins is standard, but if your DB kills idle connections, use 10-15 mins.
+# It MUST be shorter than your DB's 'wait_timeout'. - check wait_timeout connection
+# Below corresonds to 30 mins
+spring.datasource.hikari.max-lifetime=1800000
+
+# Must be shorter than max-lifetime. 10 mins is a good balance.
+spring.datasource.hikari.idle-timeout=600000
+
+# --- Timeouts & Health ---
+# How long to wait for a connection before the app throws an error (30s)
+spring.datasource.hikari.connection-timeout=30000
+
+# How long to wait for the DB to respond to a "ping" (5s)
+# MUST be less than connection-timeout.
+spring.datasource.hikari.validation-timeout=5000
+
+
+
+
 2026-03-19 17:48:40 +05:30  WARN 1 --- [outward] [nio-5204-exec-4] com.zaxxer.hikari.pool.PoolBase          : rforex-outward-service-con-pool - Failed to validate connection oracle.jdbc.driver.T4CConnection@4ae9fd8 (ORA-17008: Closed connection
 https://docs.oracle.com/error-help/db/ora-17008/). Possibly consider using a shorter maxLifetime value.
 2026-03-19 17:48:40 +05:30  WARN 1 --- [outward] [nio-5204-exec-4] com.zaxxer.hikari.pool.PoolBase          : rforex-outward-service-con-pool - Failed to validate connection oracle.jdbc.driver.T4CConnection@3a888aa1 (ORA-17008: Closed connection
