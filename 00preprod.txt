@@ -1,3 +1,59 @@
+SQL> set lines 999 pages 999;
+SQL> /
+ 
+PROFILE                                                                                                                          RESOURCE_NAME                    LIMIT
+-------------------------------------------------------------------------------------------------------------------------------- -------------------------------- --------------------------------------------------------------------------------------------------------------------------------
+RFOREX                                                                                                                           COMPOSITE_LIMIT                  DEFAULT
+RFOREX                                                                                                                           SESSIONS_PER_USER                UNLIMITED
+RFOREX                                                                                                                           CPU_PER_SESSION                  DEFAULT
+RFOREX                                                                                                                           CPU_PER_CALL                     DEFAULT
+RFOREX                                                                                                                           LOGICAL_READS_PER_SESSION        DEFAULT
+RFOREX                                                                                                                           LOGICAL_READS_PER_CALL           DEFAULT
+RFOREX                                                                                                                           IDLE_TIME                        DEFAULT
+RFOREX                                                                                                                           CONNECT_TIME                     DEFAULT
+RFOREX                                                                                                                           PRIVATE_SGA                      DEFAULT
+RFOREX                                                                                                                           FAILED_LOGIN_ATTEMPTS            3
+RFOREX                                                                                                                           PASSWORD_LIFE_TIME               90
+RFOREX                                                                                                                           PASSWORD_REUSE_TIME              365
+RFOREX                                                                                                                           PASSWORD_REUSE_MAX               20
+RFOREX                                                                                                                           PASSWORD_VERIFY_FUNCTION         ORA12C_VERIFY_FUNCTION
+RFOREX                                                                                                                           PASSWORD_LOCK_TIME               1
+RFOREX                                                                                                                           PASSWORD_GRACE_TIME              5
+RFOREX                                                                                                                           INACTIVE_ACCOUNT_TIME            120
+RFOREX                                                                                                                           PASSWORD_ROLLOVER_TIME           DEFAULT
+ 
+18 rows selected.
+ 
+SQL>  select PROFILE,RESOURCE_NAME,LIMIT from dba_profiles where PROFILE='DEFAULT';
+ 
+PROFILE                                                                                                                          RESOURCE_NAME                    LIMIT
+-------------------------------------------------------------------------------------------------------------------------------- -------------------------------- --------------------------------------------------------------------------------------------------------------------------------
+DEFAULT                                                                                                                          COMPOSITE_LIMIT                  UNLIMITED
+DEFAULT                                                                                                                          SESSIONS_PER_USER                UNLIMITED
+DEFAULT                                                                                                                          CPU_PER_SESSION                  UNLIMITED
+DEFAULT                                                                                                                          CPU_PER_CALL                     UNLIMITED
+DEFAULT                                                                                                                          LOGICAL_READS_PER_SESSION        UNLIMITED
+DEFAULT                                                                                                                          LOGICAL_READS_PER_CALL           UNLIMITED
+DEFAULT                                                                                                                          IDLE_TIME                        UNLIMITED
+DEFAULT                                                                                                                          CONNECT_TIME                     UNLIMITED
+DEFAULT                                                                                                                          PRIVATE_SGA                      UNLIMITED
+DEFAULT                                                                                                                          FAILED_LOGIN_ATTEMPTS            3
+DEFAULT                                                                                                                          PASSWORD_LIFE_TIME               90
+DEFAULT                                                                                                                          PASSWORD_REUSE_TIME              365
+DEFAULT                                                                                                                          PASSWORD_REUSE_MAX               20
+DEFAULT                                                                                                                          PASSWORD_VERIFY_FUNCTION         NULL
+DEFAULT                                                                                                                          PASSWORD_LOCK_TIME               1
+DEFAULT                                                                                                                          PASSWORD_GRACE_TIME              5
+DEFAULT                                                                                                                          INACTIVE_ACCOUNT_TIME            90
+DEFAULT                                                                                                                          PASSWORD_ROLLOVER_TIME           -1
+ 
+18 rows selected.
+
+
+
+
+
+
 # Use the debug variant you pulled (has shell + apk + adduser/addgroup tools)
 FROM cgr.dev/chainguard/jre:latest-dev
 
