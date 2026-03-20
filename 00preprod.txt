@@ -1,3 +1,11 @@
+rate(
+  {job="your-job-here"}
+  | logfmt
+  | unwrap your_numeric_field
+  | __error__=""
+  [$__rate_interval]
+)
+
 spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
 spring.datasource.hikari.pool-name=rforex-fcra-app-service-cp
 
