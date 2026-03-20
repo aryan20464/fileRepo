@@ -1,3 +1,5 @@
+sum by (level) (count_over_time({service_name="your-service"} | logfmt | level!="" [$__interval]))
+
 rate(
   {job="your-job-here"}
   | logfmt
