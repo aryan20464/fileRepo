@@ -1,4 +1,6 @@
-172.16.112.75 - - [21/Mar/2026:09:04:18 +0000] "GET /grafana/api/live/ws HTTP/1.1" 400 12 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" "10.30.130.32"
+proxy_set_header Upgrade $http_upgrade;
+proxy_set_header Connection "upgrade";
+proxy_set_header Host $host;
 
 
 apiVersion: v1
