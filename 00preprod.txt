@@ -1,4 +1,17 @@
-   proxy_set_header Host               $http_host;
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+
+helm install prometheus prometheus-community/kube-prometheus-stack \
+  --namespace monitoring \
+  --create-namespace \
+  --set grafana.enabled=false \
+  --set prometheus.prometheusSpec.externalLabels.cluster=forex-cluster \
+  --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.resources.requests.storage=10Gi
+
+
+
+
+proxy_set_header Host               $http_host;
             proxy_set_header X-Real-IP          $remote_addr;
             proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto  $real_proto;
