@@ -1,3 +1,15 @@
+Image,Web Page (for verification)
+prometheus-operator,https://quay.io/repository/prometheus-operator/prometheus-operator?tab=tags&tag=v0.89.0
+prometheus-config-reloader,https://quay.io/repository/prometheus-operator/prometheus-config-reloader
+prometheus,https://quay.io/repository/prometheus/prometheus?tab=tags&tag=v3.10.0
+alertmanager,https://quay.io/repository/prometheus/alertmanager
+node-exporter,https://quay.io/repository/prometheus/node-exporter
+kube-state-metrics,https://quay.io/repository/prometheus/kube-state-metrics (or registry.k8s.io)
+grafana,https://hub.docker.com/r/grafana/grafana/tags (tag 12.4.1)
+k8s-sidecar,https://hub.docker.com/r/kiwigrid/k8s-sidecar/tags (tag 2.5.0)
+webhook-certgen,https://github.com/jkroepke/kube-webhook-certgen/pkgs/container/kube-webhook-certgen
+
+
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 
