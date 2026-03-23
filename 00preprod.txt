@@ -1,3 +1,12 @@
+status:
+  conditions:
+    - lastTransitionTime: '2026-03-23T05:41:48.750566259Z'
+      message: 'Resources not ready: ConsoleDeployment[preprod-monitor-console-deployment]; PrometheusDeployment[preprod-monitor-prometheus-deployment]'
+      reason: DependentsNotReady
+      status: 'False'
+      type: Ready
+  observedGeneration: 1
+
 apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
 metadata:
