@@ -1,3 +1,73 @@
+
+apiVersion: console.streamshub.github.com/v1alpha1
+kind: Console
+metadata:
+  creationTimestamp: '2026-03-23T05:34:25Z'
+  finalizers:
+    - consoles.console.streamshub.github.com/finalizer
+  generation: 1
+  managedFields:
+    - apiVersion: console.streamshub.github.com/v1alpha1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:finalizers':
+            'v:"consoles.console.streamshub.github.com/finalizer"': {}
+      manager: consolereconciler
+      operation: Apply
+      time: '2026-03-23T05:34:25Z'
+    - apiVersion: console.streamshub.github.com/v1alpha1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:finalizers':
+            'v:"consoles.console.streamshub.github.com/finalizer"': {}
+        'f:status':
+          'f:conditions': {}
+          'f:observedGeneration': {}
+      manager: consolereconciler
+      operation: Apply
+      subresource: status
+      time: '2026-03-23T05:34:25Z'
+    - apiVersion: console.streamshub.github.com/v1alpha1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:spec':
+          .: {}
+          'f:hostname': {}
+          'f:kafkaClusters': {}
+      manager: Mozilla
+      operation: Update
+      time: '2026-03-23T05:34:25Z'
+  name: preprod-monitor
+  namespace: rforex-preprod
+  resourceVersion: '30529346'
+  uid: db2aa354-ace4-4b39-a070-4a20b3057813
+spec:
+  hostname: preprod-monitor
+  kafkaClusters:
+    - listener: 'rfx-kafka-preprod-cluster-kafka-bootstrap.rforex-preprod.svc:9092'
+      name: rfx-kafka-preprod-cluster
+      namespace: rforex-preprod
+status:
+  conditions:
+    - lastTransitionTime: '2026-03-23T05:34:24.382570337Z'
+      message: Console resource configuration is invalid
+      reason: InvalidConfiguration
+      status: 'False'
+      type: Ready
+    - lastTransitionTime: '2026-03-23T05:34:24.377991002Z'
+      message: 'Listener ''rfx-kafka-preprod-cluster-kafka-bootstrap.rforex-preprod.svc:9092'' not found on Kafka rforex-preprod/rfx-kafka-preprod-cluster'
+      reason: ReconciliationException
+      status: 'True'
+      type: Error
+  observedGeneration: 1
+
+
+
+
+
+
 Image,Web Page (for verification)
 prometheus-operator,https://quay.io/repository/prometheus-operator/prometheus-operator?tab=tags&tag=v0.89.0
 prometheus-config-reloader,https://quay.io/repository/prometheus-operator/prometheus-config-reloader
