@@ -1,3 +1,61 @@
+Pprod-monitor-console-deployment-7cf6d5dc45-9kpqm
+NamespaceNStss-rfxpr-kafka
+Mar 23, 2026, 11:19 AM
+Generated from kubelet on worker3.tssrfxpr.sbi.co.in
+Stopping container console-api
+PodPprod-monitor-console-deployment-7cf6d5dc45-9kpqm
+NamespaceNStss-rfxpr-kafka
+Mar 23, 2026, 11:19 AM
+Generated from kubelet on worker3.tssrfxpr.sbi.co.in
+Stopping container console-ui
+PodPprod-monitor-prometheus-deployment-655864d84-d5k5w
+NamespaceNStss-rfxpr-kafka
+Mar 23, 2026, 11:19 AM
+Generated from kubelet on worker3.tssrfxpr.sbi.co.in
+3 times in the last 13 minutes
+Failed to pull image "quay.io/prometheus/prometheus:v2.55.1": initializing source docker://quay.io/prometheus/prometheus:v2.55.1: pinging container registry quay.io: Get "https://quay.io/v2/": dial tcp: lookup quay.io on 10.176.126.200:53: server misbehaving
+PodPprod-monitor-prometheus-deployment-655864d84-d5k5w
+NamespaceNStss-rfxpr-kafka
+Mar 23, 2026, 11:19 AM
+Generated from kubelet on worker3.tssrfxpr.sbi.co.in
+3 times in the last 13 minutes
+Error: ErrImagePull
+PodPprod-monitor-prometheus-deployment-655864d84-d5k5w
+NamespaceNStss-rfxpr-kafka
+Mar 23, 2026, 11:19 AM
+Generated from kubelet on worker3.tssrfxpr.sbi.co.in
+3 times in the last 13 minutes
+Pulling image "quay.io/prometheus/prometheus:v2.55.1"
+PodPprod-monitor-prometheus-deployment-586cc8d5cf-nlw8f
+NamespaceNStss-rfxpr-kafka
+Mar 23, 2026, 11:19 AM
+Generated from kubelet on worker3.tssrfxpr.sbi.co.in
+3 times in the last 13 minutes
+Failed to pull image "quay.io/prometheus/prometheus:v2.55.1": initializing source docker://quay.io/prometheus/prometheus:v2.55.1: pinging container registry quay.io: Get "https://quay.io/v2/": dial tcp: lookup quay.io on 10.176.126.200:53: server misbehaving
+PodPprod-monitor-prometheus-deployment-586cc8d5cf-nlw8f
+NamespaceNStss-rfxpr-kafka
+Mar 23, 2026, 11:19 AM
+Generated from kubelet on worker3.tssrfxpr.sbi.co.in
+3 times in the last 13 minutes
+Error: ErrImagePull
+PodPprod-monitor-prometheus-deployment-586cc8d5cf-nlw8f
+NamespaceNStss-rfxpr-kafka
+Mar 23, 2026, 11:19 AM
+Generated from kubelet on worker3.tssrfxpr.sbi.co.in
+3 times in the last 13 minutes
+Pulling image "quay.io/prometheus/prometheus:v2.55.1"
+IngressIprod-monitor-console-ingress
+NamespaceNStss-rfxpr-kafka
+Mar 23, 2026, 11:18 AM
+Generated from ingress-to-route-controller
+Error in converting Ingress to Route: Operation cannot be fulfilled on ingresses.networking.k8s.io "prod-monitor-console-ingress": StorageError: invalid object, Code: 4, Key: /kubernetes.io/ingress/tss-rfxpr-kafka/prod-monitor-console-ingress, ResourceVersion: 0, AdditionalErrorMsg: Precondition failed: UID in precondition: 97f4c2cb-ddd6-4af9-b762-122b56c141ab, UID in object meta:
+PodPprod-monitor-prometheus-deployment-655864d84-d5k5w
+NamespaceNStss-rfxpr-kafka
+Mar 23, 2026, 11:18 AM
+Generated from kubelet on worker3.tssrfxpr.sbi.co.in
+3 times in the last 13 minutes
+Back-off pulling image "quay.io/prometheus/prometheus:v2.55.1"
+
 status:
   conditions:
     - lastTransitionTime: '2026-03-23T05:41:48.750566259Z'
