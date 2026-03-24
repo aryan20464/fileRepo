@@ -1,3 +1,30 @@
+at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+at java.base/java.lang.Thread.run(Thread.java:840)
+Caused by: javax.net.ssl.SSLHandshakeException: Failed to create SSL connection
+at io.vertx.core.net.impl.ChannelProvider$1.userEventTriggered(ChannelProvider.java:127)
+... 25 more
+Caused by: javax.net.ssl.SSLHandshakeException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+at java.base/sun.security.ssl.Alert.createSSLException(Alert.java:131)
+at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:383)
+at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:326)
+at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:321)
+at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.checkServerCerts(CertificateMessage.java:1294)
+at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.onConsumeCertificate(CertificateMessage.java:1169)
+at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.consume(CertificateMessage.java:1112)
+at java.base/sun.security.ssl.SSLHandshake.consume(SSLHandshake.java:396)
+at java.base/sun.security.ssl.HandshakeContext.dispatch(HandshakeContext.java:481)
+at java.base/sun.security.ssl.SSLEngineImpl$DelegatedTask$DelegatedAction.run(SSLEngineImpl.java:1277)
+at java.base/sun.security.ssl.SSLEngineImpl$DelegatedTask$DelegatedAction.run(SSLEngineImpl.java:1264)
+at java.base/java.security.AccessController.doPrivileged(AccessController.java:712)
+at java.base/sun.security.ssl.SSLEngineImpl$DelegatedTask.run(SSLEngineImpl.java:1209)
+at io.netty.handler.ssl.SslHandler.runDelegatedTasks(SslHandler.java:1695)
+at io.netty.handler.ssl.SslHandler.unwrap(SslHandler.java:1541)
+at io.netty.handler.ssl.SslHandler.decodeJdkCompatible(SslHandler.java:1377)
+... 20 more
+
+An error occurred in the Server Components render. The specific message is omitted in production builds to avoid leaking sensitive details. A digest property is included on this error instance which may provide additional details about the nature of the error.
+
 Console kafka-console violates policy 299 - "unknown field \"spec.kafkaClusters[0].tls\""
 
 apiVersion: console.streamshub.github.com/v1alpha1
