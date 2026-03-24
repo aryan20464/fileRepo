@@ -1,11 +1,18 @@
-Application is not available
-The application is currently not serving requests at this endpoint. It may not have been started or is still starting.
+apiVersion: console.streamshub.github.com/v1alpha1
+kind: Console
+metadata:
+  name: prod-monitor
+  namespace: tss-rfxpr-kafka
+spec:
+  hostname: kafka-console-prod          # This will become kafka-console-prod.apps.tssrfxpr.sbi.co.in
 
-Possible reasons you are seeing this page:
-
-The host doesn't exist. Make sure the hostname was typed correctly and that a route matching this hostname exists.
-The host exists, but doesn't have a matching path. Check if the URL path was typed correctly and that the route was created using the desired path.
-Route and path matches, but all pods are down. Make sure that the resources exposed by this route (pods, services, deployment configs, etc) have at least one pod running.
+  kafkaClusters:
+    - name: rfx-kafka-prod-cluster      # Adjust if your cluster name is different
+      namespace: tss-rfxpr-kafka
+      listener: tls                     # or external if you prefer the route listener
+      credentials:
+        kafkaUser:
+          name: console-user
 
 
 
