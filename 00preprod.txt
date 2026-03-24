@@ -1,52 +1,11 @@
-C:\Users\1064695>oc get routes -n tss-rfxpr-kafka
-NAME                                 HOST/PORT                                                                PATH   SERVICES                                  PORT    TERMINATION     WILDCARD
-prod-monitor-console-ingress-kzhjj   prod-monitor                                                                    prod-monitor-console-service              <all>   edge/Redirect   None
-rfx-kafka-prod-broker-pool-0         rfx-kafka-prod-broker-pool-0-tss-rfxpr-kafka.apps.tssrfxpr.sbi.co.in            rfx-kafka-prod-broker-pool-0              9094    passthrough     None
-rfx-kafka-prod-broker-pool-1         rfx-kafka-prod-broker-pool-1-tss-rfxpr-kafka.apps.tssrfxpr.sbi.co.in            rfx-kafka-prod-broker-pool-1              9094    passthrough     None
-rfx-kafka-prod-broker-pool-2         rfx-kafka-prod-broker-pool-2-tss-rfxpr-kafka.apps.tssrfxpr.sbi.co.in            rfx-kafka-prod-broker-pool-2              9094    passthrough     None
-rfx-kafka-prod-kafka-bootstrap       rfx-kafka-prod-kafka-bootstrap-tss-rfxpr-kafka.apps.tssrfxpr.sbi.co.in          rfx-kafka-prod-kafka-external-bootstrap   9094    passthrough     None
+Application is not available
+The application is currently not serving requests at this endpoint. It may not have been started or is still starting.
 
-C:\Users\1064695>kubectl describe route prod-monitor-console-ingress-kzhjj -n tss-rfxpr-kafka
-Name:         prod-monitor-console-ingress-kzhjj
-Namespace:    tss-rfxpr-kafka
-Labels:       app.kubernetes.io/managed-by=streamshub-console-operator
-              app.kubernetes.io/name=console
-Annotations:  javaoperatorsdk.io/previous: cd27ae21-fed4-4df9-b5eb-9714cb4b2545
-              nginx.ingress.kubernetes.io/backend-protocol: HTTP
-              route.openshift.io/termination: edge
-API Version:  route.openshift.io/v1
-Kind:         Route
-Metadata:
-  Creation Timestamp:  2026-03-24T07:17:29Z
-  Owner References:
-    API Version:     networking.k8s.io/v1
-    Controller:      true
-    Kind:            Ingress
-    Name:            prod-monitor-console-ingress
-    UID:             82f51973-9466-4718-a6ea-4a467bcc9a5c
-  Resource Version:  15998140
-  UID:               3a5e4880-152f-4403-952d-49c8730212f9
-Spec:
-  Host:  prod-monitor
-  Tls:
-    Insecure Edge Termination Policy:  Redirect
-    Termination:                       edge
-  To:
-    Kind:           Service
-    Name:           prod-monitor-console-service
-    Weight:         100
-  Wildcard Policy:  None
-Status:
-  Ingress:
-    Conditions:
-      Last Transition Time:     2026-03-24T07:17:29Z
-      Status:                   True
-      Type:                     Admitted
-    Host:                       prod-monitor
-    Router Canonical Hostname:  router-default.apps.tssrfxpr.sbi.co.in
-    Router Name:                default
-    Wildcard Policy:            None
-Events:                         <none>
+Possible reasons you are seeing this page:
+
+The host doesn't exist. Make sure the hostname was typed correctly and that a route matching this hostname exists.
+The host exists, but doesn't have a matching path. Check if the URL path was typed correctly and that the route was created using the desired path.
+Route and path matches, but all pods are down. Make sure that the resources exposed by this route (pods, services, deployment configs, etc) have at least one pod running.
 
 
 
