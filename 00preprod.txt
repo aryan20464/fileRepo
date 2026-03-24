@@ -1,277 +1,46 @@
-INFO exec -a "java" java -Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager -cp "." -jar /deployments/quarkus-run.jar 
-INFO running in /deployments
-__  ____  __  _____   ___  __ ____  ______ 
- --/ __ \/ / / / _ | / _ \/ //_/ / / / __/ 
- -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \   
---\___\_\____/_/ |_/_/|_/_/|_|\____/___/   
-2026-03-24 09:47:09,946 INFO  [com.git.str.con.api.sup.fac.ConsoleConfigFactory] (main) Loading console configuration from file:/deployments/config/console-config.yaml
-2026-03-24 09:47:10,045 WARN  [io.fab.kub.cli.dsl.int.VersionUsageUtils] (main) The client is using resource type 'kafkas' with unstable version 'v1beta2'
-2026-03-24 09:47:10,366 WARN  [io.fab.kub.cli.dsl.int.VersionUsageUtils] (main) The client is using resource type 'kafkanodepools' with unstable version 'v1beta2'
-2026-03-24 09:47:10,391 WARN  [io.fab.kub.cli.dsl.int.VersionUsageUtils] (main) The client is using resource type 'kafkatopics' with unstable version 'v1beta2'
-2026-03-24 09:47:10,413 INFO  [com.git.str.con.LoggingConfigWatcher] (main) No log config files set to monitor
-2026-03-24 09:47:10,434 INFO  [io.quarkus] (main) console-api 0.8.6.redhat-00002 on JVM (powered by Quarkus 3.20.2.redhat-00004) started in 1.792s. Listening on: http://0.0.0.0:8080
-2026-03-24 09:47:10,434 INFO  [io.quarkus] (main) Profile prod activated. 
-2026-03-24 09:47:10,435 INFO  [io.quarkus] (main) Installed features: [cdi, hibernate-validator, kubernetes-client, micrometer, oidc, oidc-client, rest, rest-client, rest-jackson, security, smallrye-context-propagation, smallrye-health, smallrye-openapi, swagger-ui, vertx]
-2026-03-24 09:47:27,257 INFO  [com.git.str.con.api.ClientFactory] (vert.x-eventloop-thread-1) Added KafkaContext for cluster tss-rfxpr-kafka/rfx-kafka-prod, id=BQHDERlbRAyOMf-tJhylGw, global=true
-2026-03-24 09:47:27,336 INFO  [io.qua.htt.access-log] (executor-thread-1) ANONYMOUS 127.0.0.1 - "GET /api/kafkas?fields%5Bkafkas%5D=name%2Cnamespace%2CkafkaVersion HTTP/1.1" 200 168ms 438
-2026-03-24 09:47:32,312 INFO  [io.qua.htt.access-log] (executor-thread-1) ANONYMOUS 127.0.0.1 - "GET /api/kafkas?fields%5Bkafkas%5D=name%2Cnamespace%2CkafkaVersion&page%5Bsize%5D=1000 HTTP/1.1" 200 8ms 438
-2026-03-24 09:47:52,142 INFO  [io.qua.htt.access-log] (executor-thread-1) ANONYMOUS 127.0.0.1 - "GET /api/kafkas?fields%5Bkafkas%5D=name%2Cnamespace%2CkafkaVersion&page%5Bsize%5D=20&sort=name HTTP/1.1" 200 4ms 470
-2026-03-24 09:47:53,409 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-4) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw?fields%5Bkafkas%5D=name%2Cnamespace%2CcreationTimestamp%2Cstatus%2CkafkaVersion%2Cnodes%2Clisteners%2Cconditions%2CnodePools%2CcruiseControlEnabled HTTP/1.1" 200 296ms 1323
-2026-03-24 09:47:53,934 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-4) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw?fields%5Bkafkas%5D=name%2Cnamespace%2CcreationTimestamp%2Cstatus%2CkafkaVersion%2Cnodes%2Clisteners%2Cconditions%2CnodePools%2CcruiseControlEnabled HTTP/1.1" 200 28ms 1323
-2026-03-24 09:47:53,948 WARN  [com.git.str.con.api.ser.KafkaClusterService] (ForkJoinPool.commonPool-worker-3) Kafka cluster metrics were requested, but Prometheus URL is not configured
-2026-03-24 09:47:53,950 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-0) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw?fields%5Bkafkas%5D=name%2Cnamespace%2CcreationTimestamp%2Cstatus%2CkafkaVersion%2Cnodes%2Clisteners%2Cconditions%2Cmetrics HTTP/1.1" 200 38ms 1263
-2026-03-24 09:47:53,965 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-3) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw/consumerGroups?fields%5BconsumerGroups%5D=state HTTP/1.1" 200 52ms 1015
-2026-03-24 09:47:53,974 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-2) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw?fields%5Bkafkas%5D=name%2Cnamespace%2CcreationTimestamp%2Cstatus%2CkafkaVersion%2Cnodes%2Clisteners%2Cconditions%2CnodePools%2CcruiseControlEnabled HTTP/1.1" 200 51ms 1323
-2026-03-24 09:47:54,011 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-1) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw/topics?fields%5Btopics%5D=status&filter%5Bvisibility%5D=eq%2Cexternal&page%5Bsize%5D=1 HTTP/1.1" 200 98ms 982
-2026-03-24 09:47:54,064 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-4) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw?fields%5Bkafkas%5D=name%2Cnamespace%2CcreationTimestamp%2Cstatus%2CkafkaVersion%2Cnodes%2Clisteners%2Cconditions%2CnodePools%2CcruiseControlEnabled HTTP/1.1" 200 14ms 1323
-2026-03-24 09:47:54,187 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-4) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw?fields%5Bkafkas%5D=name%2Cnamespace%2CcreationTimestamp%2Cstatus%2CkafkaVersion%2Cnodes%2Clisteners%2Cconditions%2CnodePools%2CcruiseControlEnabled HTTP/1.1" 200 13ms 1323
-2026-03-24 09:47:57,367 WARN  [com.git.str.con.api.ser.KafkaClusterService] (ForkJoinPool.commonPool-worker-3) Kafka cluster metrics were requested, but Prometheus URL is not configured
-2026-03-24 09:47:57,368 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-3) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw/consumerGroups?fields%5BconsumerGroups%5D=state HTTP/1.1" 200 13ms 1015
-2026-03-24 09:47:57,368 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-4) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw?fields%5Bkafkas%5D=name%2Cnamespace%2CcreationTimestamp%2Cstatus%2CkafkaVersion%2Cnodes%2Clisteners%2Cconditions%2CnodePools%2CcruiseControlEnabled HTTP/1.1" 200 13ms 1323
-2026-03-24 09:47:57,369 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-0) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw?fields%5Bkafkas%5D=name%2Cnamespace%2CcreationTimestamp%2Cstatus%2CkafkaVersion%2Cnodes%2Clisteners%2Cconditions%2Cmetrics HTTP/1.1" 200 14ms 1263
-2026-03-24 09:47:57,377 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-2) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw?fields%5Bkafkas%5D=name%2Cnamespace%2CcreationTimestamp%2Cstatus%2CkafkaVersion%2Cnodes%2Clisteners%2Cconditions%2CnodePools%2CcruiseControlEnabled HTTP/1.1" 200 15ms 1323
-2026-03-24 09:47:57,388 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-1) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw/topics?fields%5Btopics%5D=status&filter%5Bvisibility%5D=eq%2Cexternal&page%5Bsize%5D=1 HTTP/1.1" 200 33ms 982
-2026-03-24 09:47:57,408 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-4) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw?fields%5Bkafkas%5D=name%2Cnamespace%2CcreationTimestamp%2Cstatus%2CkafkaVersion%2Cnodes%2Clisteners%2Cconditions%2CnodePools%2CcruiseControlEnabled HTTP/1.1" 200 12ms 1323
-2026-03-24 09:47:57,528 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-4) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw?fields%5Bkafkas%5D=name%2Cnamespace%2CcreationTimestamp%2Cstatus%2CkafkaVersion%2Cnodes%2Clisteners%2Cconditions%2CnodePools%2CcruiseControlEnabled HTTP/1.1" 200 14ms 1323
-2026-03-24 09:47:59,379 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-0) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw/topics?fields%5Btopics%5D=name%2Cstatus%2Cvisibility%2CnumPartitions%2CtotalLeaderLogBytes%2CconsumerGroups&filter%5Bvisibility%5D=eq%2Cexternal&page%5Bsize%5D=20&sort=name HTTP/1.1" 200 165ms 3038
-2026-03-24 09:47:59,388 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-4) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw/topics?fields%5Btopics%5D=name%2Cstatus%2Cvisibility%2CnumPartitions%2CtotalLeaderLogBytes%2CconsumerGroups&filter%5Bvisibility%5D=eq%2Cexternal HTTP/1.1" 200 175ms 2710
-2026-03-24 09:47:59,394 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-1) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw/topics?fields%5Btopics%5D=name%2Cstatus%2Cvisibility%2CnumPartitions%2CtotalLeaderLogBytes%2CconsumerGroups&filter%5Bvisibility%5D=eq%2Cexternal HTTP/1.1" 200 143ms 2710
-2026-03-24 09:47:59,401 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-3) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw/topics?fields%5Btopics%5D=name%2Cstatus%2Cvisibility%2CnumPartitions%2CtotalLeaderLogBytes%2CconsumerGroups&filter%5Bvisibility%5D=eq%2Cexternal&page%5Bsize%5D=20&sort=name HTTP/1.1" 200 149ms 3038
-2026-03-24 09:48:00,716 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-4) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw/topics/Pu7M4BY7TwWqpCUxf5S7gQ?fields%5Btopics%5D=name,status,visibility,partitions,numPartitions,authorizedOperations,configs,totalLeaderLogBytes,consumerGroups HTTP/1.1" 200 143ms 1487
-2026-03-24 09:48:00,721 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-0) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw/topics/Pu7M4BY7TwWqpCUxf5S7gQ?fields%5Btopics%5D=name,status,visibility,partitions,numPartitions,authorizedOperations,configs,totalLeaderLogBytes,consumerGroups HTTP/1.1" 200 147ms 1487
-2026-03-24 09:48:00,725 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-1) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw/topics/Pu7M4BY7TwWqpCUxf5S7gQ?fields%5Btopics%5D=name,status,visibility,partitions,numPartitions,authorizedOperations,configs,totalLeaderLogBytes,consumerGroups HTTP/1.1" 200 151ms 1487
-2026-03-24 09:48:53,105 INFO  [io.qua.htt.access-log] (executor-thread-1) ANONYMOUS 127.0.0.1 - "GET /api/kafkas?fields%5Bkafkas%5D=name%2Cnamespace%2CkafkaVersion HTTP/1.1" 200 3ms 438
-2026-03-24 09:48:53,118 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-3) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw?fields%5Bkafkas%5D=name%2Cnamespace%2CcreationTimestamp%2Cstatus%2CkafkaVersion%2Cnodes%2Clisteners%2Cconditions%2CnodePools%2CcruiseControlEnabled HTTP/1.1" 200 16ms 1323
-2026-03-24 09:49:53,129 INFO  [io.qua.htt.access-log] (executor-thread-1) ANONYMOUS 127.0.0.1 - "GET /api/kafkas?fields%5Bkafkas%5D=name%2Cnamespace%2CkafkaVersion HTTP/1.1" 200 3ms 438
-2026-03-24 09:49:53,135 INFO  [io.qua.htt.access-log] (executor-thread-1) ANONYMOUS 127.0.0.1 - "GET /api/kafkas?fields%5Bkafkas%5D=name%2Cnamespace%2CkafkaVersion HTTP/1.1" 200 2ms 438
-2026-03-24 09:49:53,147 INFO  [io.qua.htt.access-log] (vert.x-eventloop-thread-0) ANONYMOUS 127.0.0.1 - "GET /api/kafkas/BQHDERlbRAyOMf-tJhylGw?fields%5Bkafkas%5D=name%2Cnamespace%2CcreationTimestamp%2Cstatus%2CkafkaVersion%2Cnodes%2Clisteners%2Cconditions%2CnodePools%2CcruiseControlEnabled HTTP/1.1" 200 13ms 1323
-
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser
 metadata:
-  creationTimestamp: '2026-02-24T11:18:02Z'
-  generation: 2
-  labels:
-    strimzi.io/cluster: rfx-kafka-prod
-  managedFields:
-    - apiVersion: kafka.strimzi.io/v1beta2
-      fieldsType: FieldsV1
-      fieldsV1:
-        'f:status':
-          .: {}
-          'f:conditions': {}
-          'f:observedGeneration': {}
-          'f:secret': {}
-          'f:username': {}
-      manager: strimzi-user-operator
-      operation: Update
-      subresource: status
-      time: '2026-03-14T12:06:47Z'
-    - apiVersion: kafka.strimzi.io/v1beta2
-      fieldsType: FieldsV1
-      fieldsV1:
-        'f:metadata':
-          'f:labels':
-            .: {}
-            'f:strimzi.io/cluster': {}
-        'f:spec':
-          .: {}
-          'f:authentication':
-            .: {}
-            'f:type': {}
-          'f:authorization':
-            .: {}
-            'f:acls': {}
-            'f:type': {}
-      manager: Mozilla
-      operation: Update
-      time: '2026-03-14T12:06:48Z'
   name: bridge-user
   namespace: tss-rfxpr-kafka
-  resourceVersion: '10995887'
-  uid: ecf9efd6-717c-4b0f-907b-56d32bf8f4d2
+  labels:
+    strimzi.io/cluster: rfx-kafka-prod
 spec:
   authentication:
     type: scram-sha-512
   authorization:
-    acls:
-      - operations:
-          - Describe
-        resource:
-          type: cluster
-      - host: '*'
-        operations:
-          - Read
-          - Describe
-          - Write
-          - Create
-        resource:
-          name: '*'
-          patternType: literal
-          type: topic
-      - host: '*'
-        operations:
-          - Read
-        resource:
-          name: '*'
-          patternType: literal
-          type: group
     type: simple
-status:
-  conditions:
-    - lastTransitionTime: '2026-03-14T12:06:56.634450848Z'
-      status: 'True'
-      type: Ready
-  observedGeneration: 2
-  secret: bridge-user
-  username: bridge-user
+    acls:
+      # Cluster level (required for console)
+      - resource:
+          type: cluster
+        operations:
+          - Describe
+          - DescribeConfigs
+        type: allow
 
-apiVersion: kafka.strimzi.io/v1beta2
-kind: Kafka
-metadata:
-  annotations:
-    strimzi.io/kraft: enabled
-    strimzi.io/node-pools: enabled
-  creationTimestamp: '2026-02-24T11:11:51Z'
-  generation: 1
-  managedFields:
-    - apiVersion: kafka.strimzi.io/v1beta2
-      fieldsType: FieldsV1
-      fieldsV1:
-        'f:metadata':
-          'f:annotations':
-            .: {}
-            'f:strimzi.io/kraft': {}
-            'f:strimzi.io/node-pools': {}
-        'f:spec':
-          .: {}
-          'f:entityOperator':
-            .: {}
-            'f:topicOperator': {}
-            'f:userOperator': {}
-          'f:kafka':
-            .: {}
-            'f:authorization':
-              .: {}
-              'f:type': {}
-            'f:config':
-              .: {}
-              'f:default.replication.factor': {}
-              'f:min.insync.replicas': {}
-              'f:offsets.topic.replication.factor': {}
-              'f:transaction.state.log.min.isr': {}
-              'f:transaction.state.log.replication.factor': {}
-            'f:listeners': {}
-            'f:metadataVersion': {}
-            'f:version': {}
-      manager: Mozilla
-      operation: Update
-      time: '2026-02-24T11:11:51Z'
-    - apiVersion: kafka.strimzi.io/v1beta2
-      fieldsType: FieldsV1
-      fieldsV1:
-        'f:status':
-          'f:registeredNodeIds': {}
-          'f:clusterId': {}
-          'f:kafkaNodePools': {}
-          'f:kafkaVersion': {}
-          'f:listeners': {}
-          'f:conditions': {}
-          .: {}
-          'f:kafkaMetadataState': {}
-          'f:operatorLastSuccessfulVersion': {}
-          'f:observedGeneration': {}
-          'f:kafkaMetadataVersion': {}
-      manager: strimzi-cluster-operator
-      operation: Update
-      subresource: status
-      time: '2026-02-24T11:12:46Z'
-  name: rfx-kafka-prod
-  namespace: tss-rfxpr-kafka
-  resourceVersion: '2084212'
-  uid: b8e4f535-ed04-4367-9cb7-bce58fc96dc7
-spec:
-  entityOperator:
-    topicOperator: {}
-    userOperator: {}
-  kafka:
-    authorization:
-      type: simple
-    config:
-      default.replication.factor: 3
-      min.insync.replicas: 2
-      offsets.topic.replication.factor: 3
-      transaction.state.log.min.isr: 2
-      transaction.state.log.replication.factor: 3
-    listeners:
-      - name: plain
-        port: 9092
-        tls: false
-        type: internal
-      - authentication:
-          type: scram-sha-512
-        name: external
-        port: 9094
-        tls: true
-        type: route
-      - authentication:
-          type: scram-sha-512
-        name: tls
-        port: 9093
-        tls: true
-        type: internal
-    metadataVersion: 4.0-IV3
-    version: 4.0.0
-status:
-  observedGeneration: 1
-  kafkaMetadataVersion: 4.0-IV3
-  operatorLastSuccessfulVersion: 0.46.1.redhat-00007
-  kafkaNodePools:
-    - name: broker-pool
-    - name: controller-pool
-  kafkaVersion: 4.0.0
-  registeredNodeIds:
-    - 0
-    - 1
-    - 2
-    - 3
-    - 4
-    - 5
-  clusterId: BQHDERlbRAyOMf-tJhylGw
-  conditions:
-    - lastTransitionTime: '2026-02-24T11:12:46.823972060Z'
-      status: 'True'
-      type: Ready
-  kafkaMetadataState: KRaft
-  listeners:
-    - addresses:
-        - host: rfx-kafka-prod-kafka-bootstrap.tss-rfxpr-kafka.svc
-          port: 9092
-      bootstrapServers: 'rfx-kafka-prod-kafka-bootstrap.tss-rfxpr-kafka.svc:9092'
-      name: plain
-    - addresses:
-        - host: rfx-kafka-prod-kafka-bootstrap.tss-rfxpr-kafka.svc
-          port: 9093
-      bootstrapServers: 'rfx-kafka-prod-kafka-bootstrap.tss-rfxpr-kafka.svc:9093'
-      certificates:
-        - |
-          -----BEGIN CERTIFICATE-----
-          MIIFLTCCAxWgAwIBAgIUUrFudphy60zdNVacNRhM+xhnNCUwDQYJKoZIhvcNAQEN
-        
-          -----END CERTIFICATE-----
-      name: tls
-    - addresses:
-        - host: rfx-kafka-prod-kafka-bootstrap-tss-rfxpr-kafka.apps.tssrfxpr.sbi.co.in
-          port: 443
-      bootstrapServers: 'rfx-kafka-prod-kafka-bootstrap-tss-rfxpr-kafka.apps.tssrfxpr.sbi.co.in:443'
-      certificates:
-        - |
-          -----BEGIN CERTIFICATE-----
-          MIIFLTCCAxWgAwIBAgIUUrFudphy60zdNVacNRhM+xhnNCUwDQYJKoZIhvcNAQEN
-          
-          -----END CERTIFICATE-----
-      name: external
+      # All topics - full access needed for Messages tab + configs + authorizedOperations
+      - resource:
+          type: topic
+          name: "*"
+          patternType: literal
+        operations:
+          - Read
+          - Describe
+          - DescribeConfigs
+          - Write          # keep if you need it
+          - Create         # keep if you need it
+        type: allow
 
+      # Consumer groups (very important for lag and Messages view)
+      - resource:
+          type: group
+          name: "*"
+          patternType: literal
+        operations:
+          - Read
+          - Describe
+        type: allow
 
 Pprod-monitor-console-deployment-7cf6d5dc45-9kpqm
 NamespaceNStss-rfxpr-kafka
