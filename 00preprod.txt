@@ -4,15 +4,23 @@ metadata:
   name: prod-monitor
   namespace: tss-rfxpr-kafka
 spec:
-  hostname: kafka-console-prod          # This will become kafka-console-prod.apps.tssrfxpr.sbi.co.in
+  hostname: kafka-console-prod          # Clean URL → https://kafka-console-prod.apps.tssrfxpr.sbi.co.in
 
   kafkaClusters:
-    - name: rfx-kafka-prod-cluster      # Adjust if your cluster name is different
+    - name: rfx-kafka-prod-cluster      # ← Change ONLY if your actual Kafka CR name is different
       namespace: tss-rfxpr-kafka
-      listener: tls                     # or external if you prefer the route listener
+      listener: tls                     # Recommended (secure SCRAM + TLS). Use "external" if you prefer the route listener
       credentials:
         kafkaUser:
-          name: console-user
+          name: console-user            # Must exist with proper ACLs (Describe + Read on topics/groups)
+
+      # This line prevents embedded Prometheus
+      metricsSource: ocp-monitoring
+
+  # This section disables the private Prometheus completely
+  metricsSources:
+    - name: ocp-monitoring
+      type: openshift-monitoring
 
 
 
