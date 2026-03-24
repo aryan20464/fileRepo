@@ -1,3 +1,22 @@
+
+apiVersion: console.streamshub.github.com/v1alpha1
+kind: Console
+metadata:
+  name: kafka-console
+  namespace: tss-rfxpr-kafka
+spec:
+  hostname: kafka-console-prod.apps.tssrfxpr.sbi.co.in
+
+  kafkaClusters:
+    - name: rfx-kafka-prod-cluster
+      namespace: tss-rfxpr-kafka
+      listener: plain          # ← Change here
+      credentials: {}          # No user needed for plain
+
+  metricsSources:
+    - name: ocp-monitoring
+      type: openshift-monitoring
+
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser
 metadata:
