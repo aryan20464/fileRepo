@@ -1,3 +1,28 @@
+apiVersion: console.streamshub.github.com/v1alpha1
+kind: Console
+metadata:
+  name: preprod-monitor
+  namespace: rforex-preprod
+spec:
+  hostname: preprod-monitor                     # Route will be created as https://preprod-monitor-rforex-preprod.<your-apps-domain>
+
+  # === Kafka Connection (secure + authenticated) ===
+  kafkaClusters:
+    - name: rfx-kafka-preprod-cluster
+      namespace: rforex-preprod
+      listener: tls                              # Use your secure SCRAM+TLS listener (recommended)
+      credentials:
+        kafkaUser:
+          name: console-user                     # Make sure this KafkaUser exists (from earlier)
+
+      # Optional but good: link to OpenShift monitoring if you want graphs later
+      metricsSource: ocp-monitoring
+
+  # === Disable embedded Prometheus completely ===
+  metricsSources:
+    - name: ocp-monitoring
+      type: openshift-monitoring                 # This prevents creation of PrometheusDeployment
+
 https://tsspr-registry-route-quay-enterprise.apps.tssrfxpr.sbi.co.in/
 https://console-openshift-console.apps.tssrfxpr.sbi.co.in/
 
