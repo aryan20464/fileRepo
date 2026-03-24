@@ -4,17 +4,23 @@ metadata:
   name: kafka-console
   namespace: tss-rfxpr-kafka
 spec:
-  hostname: kafka-console          # ← This will create clean URL: https://kafka-console.apps.tssrfxpr.sbi.co.in
+  hostname: kafka-console                  # Results in clean URL: https://kafka-console.apps.tssrfxpr.sbi.co.in
 
   kafkaClusters:
-    - name: rfx-kafka-prod-cluster          # ← IMPORTANT: Change if your actual Kafka CR name is different
+    - name: rfx-kafka-prod-cluster         # ← Change ONLY if your Kafka CR name is different (check with `oc get kafka -n tss-rfxpr-kafka`)
       namespace: tss-rfxpr-kafka
-      listener: tls
+      listener: tls                        # Use "external" if you prefer the route listener with port 9094
       credentials:
         kafkaUser:
           name: console-user
 
-  # No metrics → No Prometheus pod will be created
+      # Reference the metrics source below (prevents embedded Prometheus)
+      metricsSource: ocp-monitoring
+
+  # This block disables embedded Prometheus completely
+  metricsSources:
+    - name: ocp-monitoring
+      type: openshift-monitoring
 
 https://preprod-monitor-rforex-preprod.apps.tssrfxpr.olx.co.in
 
