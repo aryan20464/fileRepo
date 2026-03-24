@@ -1,3 +1,84 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  annotations:
+    javaoperatorsdk.io/previous: cd27ae21-fed4-4df9-b5eb-9714cb4b2545
+    nginx.ingress.kubernetes.io/backend-protocol: HTTP
+    route.openshift.io/termination: edge
+  resourceVersion: '16035077'
+  name: kafka-console-console-ingress-879vt
+  uid: 79a706ba-b2f5-4e91-99a6-87acf2f3e6c2
+  creationTimestamp: '2026-03-24T08:59:47Z'
+  managedFields:
+    - manager: openshift-router
+      operation: Update
+      apiVersion: route.openshift.io/v1
+      time: '2026-03-24T08:59:41Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:status':
+          'f:ingress': {}
+      subresource: status
+    - manager: route-controller-manager
+      operation: Update
+      apiVersion: route.openshift.io/v1
+      time: '2026-03-24T08:59:47Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:annotations':
+            .: {}
+            'f:javaoperatorsdk.io/previous': {}
+            'f:nginx.ingress.kubernetes.io/backend-protocol': {}
+            'f:route.openshift.io/termination': {}
+          'f:labels':
+            .: {}
+            'f:app.kubernetes.io/managed-by': {}
+            'f:app.kubernetes.io/name': {}
+          'f:ownerReferences':
+            .: {}
+            'k:{"uid":"56b5163c-ec24-4721-8d50-ab1a91f50a4e"}': {}
+        'f:spec':
+          'f:host': {}
+          'f:tls':
+            .: {}
+            'f:insecureEdgeTerminationPolicy': {}
+            'f:termination': {}
+          'f:to':
+            'f:kind': {}
+            'f:name': {}
+            'f:weight': {}
+          'f:wildcardPolicy': {}
+  namespace: tss-rfxpr-kafka
+  ownerReferences:
+    - apiVersion: networking.k8s.io/v1
+      kind: Ingress
+      name: kafka-console-console-ingress
+      uid: 56b5163c-ec24-4721-8d50-ab1a91f50a4e
+      controller: true
+  labels:
+    app.kubernetes.io/managed-by: streamshub-console-operator
+    app.kubernetes.io/name: console
+spec:
+  host: kafka-console
+  to:
+    kind: Service
+    name: kafka-console-console-service
+    weight: 100
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+status:
+  ingress:
+    - host: kafka-console
+      routerName: default
+      conditions:
+        - type: Admitted
+          status: 'True'
+          lastTransitionTime: '2026-03-24T08:59:37Z'
+      wildcardPolicy: None
+      routerCanonicalHostname: router-default.apps.tssrfxpr.sbi.co.in
 
 Name
 
