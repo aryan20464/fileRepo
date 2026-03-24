@@ -1,26 +1,17 @@
-apiVersion: console.streamshub.github.com/v1alpha1
-kind: Console
-metadata:
-  name: prod-monitor
-  namespace: tss-rfxpr-kafka
-spec:
-  hostname: kafka-console-prod          # Clean URL → https://kafka-console-prod.apps.tssrfxpr.sbi.co.in
-
-  kafkaClusters:
-    - name: rfx-kafka-prod-cluster      # ← Change ONLY if your actual Kafka CR name is different
-      namespace: tss-rfxpr-kafka
-      listener: tls                     # Recommended (secure SCRAM + TLS). Use "external" if you prefer the route listener
-      credentials:
-        kafkaUser:
-          name: console-user            # Must exist with proper ACLs (Describe + Read on topics/groups)
-
-      # This line prevents embedded Prometheus
-      metricsSource: ocp-monitoring
-
-  # This section disables the private Prometheus completely
-  metricsSources:
-    - name: ocp-monitoring
-      type: openshift-monitoring
+INFO exec -a "java" java -Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager -cp "." -jar /deployments/quarkus-run.jar
+INFO running in /deployments
+__ ____ __ _____ ___ __ ____ ______
+--/ __ \/ / / / _ | / _ \/ //_/ / / / __/
+-/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/
+2026-03-24 08:51:40,722 INFO [com.git.str.con.api.sup.fac.ConsoleConfigFactory] (main) Loading console configuration from file:/deployments/config/console-config.yaml
+2026-03-24 08:51:40,821 WARN [io.fab.kub.cli.dsl.int.VersionUsageUtils] (main) The client is using resource type 'kafkas' with unstable version 'v1beta2'
+2026-03-24 08:51:41,146 WARN [io.fab.kub.cli.dsl.int.VersionUsageUtils] (main) The client is using resource type 'kafkanodepools' with unstable version 'v1beta2'
+2026-03-24 08:51:41,177 WARN [io.fab.kub.cli.dsl.int.VersionUsageUtils] (main) The client is using resource type 'kafkatopics' with unstable version 'v1beta2'
+2026-03-24 08:51:41,201 INFO [com.git.str.con.LoggingConfigWatcher] (main) No log config files set to monitor
+2026-03-24 08:51:41,223 INFO [io.quarkus] (main) console-api 0.8.6.redhat-00002 on JVM (powered by Quarkus 3.20.2.redhat-00004) started in 1.841s. Listening on: http://0.0.0.0:8080
+2026-03-24 08:51:41,223 INFO [io.quarkus] (main) Profile prod activated.
+2026-03-24 08:51:41,223 INFO [io.quarkus] (main) Installed features: [cdi, hibernate-validator, kubernetes-client, micrometer, oidc, oidc-client, rest, rest-client, rest-jackson, security, smallrye-context-propagation, smallrye-health, smallrye-openapi, swagger-ui, vertx]
 
 
 
