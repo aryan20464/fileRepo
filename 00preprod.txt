@@ -1,26 +1,59 @@
-apiVersion: console.streamshub.github.com/v1alpha1
-kind: Console
-metadata:
-  name: kafka-console
-  namespace: tss-rfxpr-kafka
-spec:
-  hostname: kafka-console                  # Results in clean URL: https://kafka-console.apps.tssrfxpr.sbi.co.in
 
-  kafkaClusters:
-    - name: rfx-kafka-prod-cluster         # ← Change ONLY if your Kafka CR name is different (check with `oc get kafka -n tss-rfxpr-kafka`)
-      namespace: tss-rfxpr-kafka
-      listener: tls                        # Use "external" if you prefer the route listener with port 9094
-      credentials:
-        kafkaUser:
-          name: console-user
+Name
 
-      # Reference the metrics source below (prevents embedded Prometheus)
-      metricsSource: ocp-monitoring
+Labels
 
-  # This block disables embedded Prometheus completely
-  metricsSources:
-    - name: ocp-monitoring
-      type: openshift-monitoring
+Pod selector
+
+Location
+Service
+S
+kafka-console-console-service
+app.kubernetes.io/managed-by
+=
+streamshub-console-operator
+app.kubernetes.io/name
+=
+console
+app.kubernetes.io/instance=kafka-console-console-deployment
+172.30.105.214:80
+
+Service
+S
+my-bridge-bridge-service
+app.kubernetes.io/part-of
+=
+strimzi-my-bridge
+app.kubernetes.io/instance
+=
+my-bridge
+discovery.3scale.net
+=
+true
+strimzi.io/component-type
+=
+kafka-bridge
+strimzi.io/name
+=
+my-bridge-bridge
+strimzi.io/discovery
+=
+true
+app.kubernetes.io/managed-by
+=
+strimzi-cluster-operator
+strimzi.io/kind
+=
+KafkaBridge
+app.kubernetes.io/name
+=
+kafka-bridge
+strimzi.io/cluster
+=
+my-bridge
+strimzi.io/cluster=my-bridge, strimzi.io/kind=KafkaBridge, strimzi.io/name=my-bridge-bridge
+172.30.210.67:8080
+
 
 https://preprod-monitor-rforex-preprod.apps.tssrfxpr.olx.co.in
 
