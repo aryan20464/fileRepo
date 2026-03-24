@@ -1,3 +1,6 @@
+https://tsspr-registry-route-quay-enterprise.apps.tssrfxpr.sbi.co.in/
+https://console-openshift-console.apps.tssrfxpr.sbi.co.in/
+
 Pprod-monitor-console-deployment-7cf6d5dc45-9kpqm
 NamespaceNStss-rfxpr-kafka
 Mar 23, 2026, 11:19 AM
