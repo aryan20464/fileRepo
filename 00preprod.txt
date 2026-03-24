@@ -1,58 +1,12 @@
-apiVersion: console.streamshub.github.com/v1alpha1
-kind: Console
-metadata:
-  name: kafka-console
-  namespace: tss-rfxpr-kafka
-spec:
-  hostname: kafka-console-prod.apps.tssrfxpr.sbi.co.in
-
-  kafkaClusters:
-    - name: rfx-kafka-prod-cluster
-      namespace: tss-rfxpr-kafka
-      listener: plain                     # ← Change to plain (no TLS, no SSL error)
-      credentials: {}                     # No credentials needed for plain listener
-
-  # Disable embedded Prometheus completely
-  metricsSources:
-    - name: ocp-monitoring
-      type: openshift-monitoring
+This page is temporarily unavailable
+Try clicking the button below, or refreshing the page. If the problem persists, contact your organization administrator.
+3169961615
+Error
+Error
+Message
 An error occurred in the Server Components render. The specific message is omitted in production builds to avoid leaking sensitive details. A digest property is included on this error instance which may provide additional details about the nature of the error.
 
-Console kafka-console violates policy 299 - "unknown field \"spec.kafkaClusters[0].tls\""
 
-apiVersion: console.streamshub.github.com/v1alpha1
-kind: Console
-metadata:
-  name: kafka-console
-  namespace: tss-rfxpr-kafka
-spec:
-  hostname: kafka-console-prod.apps.tssrfxpr.sbi.co.in
-
-  kafkaClusters:
-    - name: rfx-kafka-prod-cluster
-      namespace: tss-rfxpr-kafka
-      listener: tls
-      credentials:
-        kafkaUser:
-          name: console-user
-
-      # TLS trust configuration for Kafka brokers
-      tls:
-        trustStore:
-          type: PEM
-          content:
-            valueFrom:
-              configMapKeyRef:
-                name: kafka-ca
-                key: ca.crt
-
-      # This prevents embedded Prometheus
-      metricsSource: ocp-monitoring
-
-  # Explicitly use OpenShift monitoring (no private Prometheus)
-  metricsSources:
-    - name: ocp-monitoring
-      type: openshift-monitoring
 
 Pprod-monitor-console-deployment-7cf6d5dc45-9kpqm
 NamespaceNStss-rfxpr-kafka
