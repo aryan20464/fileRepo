@@ -1,3 +1,13 @@
+<Apr 8, 2026 4:02:38,767 PM IST> <Warning> <org.hibernate.engine.jdbc.spi.SqlExceptionHelper> <BEA-000000> <SQL Error: 904, SQLState: 42000>
+Apr 08, 2026 4:02:38 PM org.hibernate.engine.jdbc.spi.SqlExceptionHelper logExceptions
+WARN: SQL Error: 904, SQLState: 42000
+<Apr 8, 2026 4:02:38,768 PM IST> <Error> <org.hibernate.engine.jdbc.spi.SqlExceptionHelper> <BEA-000000> <ORA-00904: "FXSACCOUNT0_"."F_MFX_SR_NO": invalid identifier
+>
+Apr 08, 2026 4:02:38 PM org.hibernate.engine.jdbc.spi.SqlExceptionHelper logExceptions
+ERROR: ORA-00904: "FXSACCOUNT0_"."F_MFX_SR_NO": invalid identifier
+
+2026-04-0816:02:38+05:30 ERROR 858991 --- [ (self-tuning)'] o.s.b.w.s.s.ErrorPageFilter              : Forwarding to error page from request [/api/accountingdata] due to exception [could not extract ResultSet; SQL [n/a]; nested exception is org.hibernate.exception.SQLGrammarException: could not extract ResultSet]
+
 
 apiVersion: console.streamshub.github.com/v1alpha1
 kind: Console
