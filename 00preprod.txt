@@ -1,3 +1,7 @@
+kubectl api-resources --namespaced=true -o name | xargs -n 1 kubectl get --show-kind --ignore-not-found -n <namespace-name>
+
+
+
 <Apr 8, 2026 4:02:38,767 PM IST> <Warning> <org.hibernate.engine.jdbc.spi.SqlExceptionHelper> <BEA-000000> <SQL Error: 904, SQLState: 42000>
 Apr 08, 2026 4:02:38 PM org.hibernate.engine.jdbc.spi.SqlExceptionHelper logExceptions
 WARN: SQL Error: 904, SQLState: 42000
