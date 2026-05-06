@@ -1,4 +1,5 @@
 kubectl api-resources --namespaced=true -o name | xargs -n 1 kubectl get --show-kind --ignore-not-found -n <namespace-name>
+for /f "tokens=*" %i in ('kubectl api-resources --verbs=list --namespaced -o name') do kubectl get %i --ignore-not-found -n <your-namespace>
 
 
 
