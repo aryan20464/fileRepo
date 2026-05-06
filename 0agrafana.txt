@@ -5,3 +5,12 @@ sum by (endpoint) (
     [1d]
   )
 )
+
+sum(
+  count_over_time(
+    {job="nginx", service_name="Nginx-W1"}
+    | regexp `Request="(?P<method>\w+) (?P<endpoint>[^? ]+)(?:\?.*)? HTTP/`
+    | endpoint=~`/middlewareInwardTransactionService/triggerQuery`
+    [24h]
+  )
+)
