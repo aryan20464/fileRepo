@@ -3,6 +3,19 @@ for /f "tokens=*" %i in ('kubectl api-resources --verbs=list --namespaced -o nam
 
 Common labels: {"filename":"/nginx/server/logs/access.log","job":"nginx","service_name":"Nginx-W1"}
 
+[tanzuuser@tss-rforex-jump-preprod docker]$ ./rootless.sh install
+# Installing stable version 29.4.3
+# Executing docker rootless install script, commit: 2687d91ddeb3bd6aeae37a90947761efdee87030
+# Missing system requirements. Please run following commands to
+# install the requirements and run this installer again.
+# Alternatively iptables checks can be disabled with SKIP_IPTABLES=1
+
+cat <<EOF | sudo sh -x
+
+modprobe ip_tables
+EOF
+
+
 
 1778050640478	2026-05-06T06:57:20.478Z	Ip=10.30.130.40 time=- [06/May/2026:12:27:20 +0530] Request="POST /middlewareInwardTransactionService/triggerQuery?reportId=15&queryType=UPDATE HTTP/1.1" Status=200 Request_size=126 URL="https://10.177.128.132:5001/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.053 uct="0.000" uht="0.053" urt="0.053"
 1778050607632	2026-05-06T06:56:47.632Z	Ip=10.30.130.40 time=- [06/May/2026:12:26:47 +0530] Request="POST /middlewareInwardTransactionService/triggerQuery?reportId=15&queryType=UPDATE HTTP/1.1" Status=200 Request_size=126 URL="https://10.177.128.132:5001/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.125 uct="0.000" uht="0.125" urt="0.125"
