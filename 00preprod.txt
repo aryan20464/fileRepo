@@ -1,3 +1,22 @@
+[dockeruser@tss-ideasvnuat bin]$ ./dockerd-rootless-setuptool.sh install --skip-iptables
+[INFO] systemd not detected, dockerd-rootless.sh needs to be started manually:
+
+PATH=/devtools/docker/bin:/sbin:/usr/sbin:$PATH dockerd-rootless.sh
+
+[INFO] Creating CLI context "rootless"
+Successfully created context "rootless"
+[INFO] Using CLI context "rootless"
+Current context is now "rootless"
+
+[INFO] Make sure the following environment variable(s) are set (or add them to ~/.bashrc):
+# WARNING: systemd not found. You have to remove XDG_RUNTIME_DIR manually on every logout.
+export XDG_RUNTIME_DIR=/home/dockeruser/.docker/run
+export PATH=/devtools/docker/bin:$PATH
+
+[INFO] Some applications may require the following environment variable too:
+export DOCKER_HOST=unix:///home/dockeruser/.docker/run/docker.sock
+
+
 [root@tss-ideasvnuat .docker]# rpm -qa | grep -iE "docker|containerd"
 docker-compose-plugin-2.32.1-1.el8.x86_64
 docker-ce-cli-27.4.1-1.el8.x86_64
