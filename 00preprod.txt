@@ -1,3 +1,16 @@
+-rw-r-----. 1 root root 38029000 May 11 14:51 containerd.io-2.2.3-1.el8.x86_64.rpm
+-rw-r-----. 1 root root 18851612 May 11 14:51 docker-buildx-plugin-0.33.0-1.el8.x86_64.rpm
+-rw-r-----. 1 root root 25585240 May 11 14:51 docker-ce-29.4.3-1.el8.x86_64.rpm
+-rw-r-----. 1 root root  9114228 May 11 14:51 docker-ce-cli-29.4.3-1.el8.x86_64.rpm
+-rw-r-----. 1 root root  9019196 May 11 14:51 docker-compose-plugin-5.1.3-1.el8.x86_64.rpm
+-rw-r-----. 1 root root  7729415 May 11 14:51 docker-rootless-extras-29.4.2.tgz
+
+
+
+
+
+
+
 tail -1000f /devtools/docker/dockerd-rootless.log
 nohup: ignoring input
 + case "$1" in
