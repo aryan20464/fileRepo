@@ -1,3 +1,22 @@
+ ./dockerd-rootless-setuptool.sh install --skip-iptables
+[INFO] systemd not detected, dockerd-rootless.sh needs to be started manually:
+
+PATH=/devtools/docker/bin:/sbin:/usr/sbin:$PATH dockerd-rootless.sh
+
+[INFO] CLI context "rootless" already exists
+[INFO] Using CLI context "rootless"
+Current context is now "rootless"
+Warning: DOCKER_HOST environment variable overrides the active context. To use "rootless", either set the global --context flag, or unset DOCKER_HOST environment variable.
+
+[INFO] Make sure the following environment variable(s) are set (or add them to ~/.bashrc):
+export PATH=/devtools/docker/bin:$PATH
+
+[INFO] Some applications may require the following environment variable too:
+export DOCKER_HOST=unix:///devtools/docker/run/docker.sock
+
+
+
+
 [dockeruser@tss-ideasvnuat bin]$ ./dockerd-rootless-setuptool.sh install --skip-iptables
 [INFO] systemd not detected, dockerd-rootless.sh needs to be started manually:
 
