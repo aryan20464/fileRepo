@@ -1,44 +1,38 @@
-  cat ~/.bashrc
-# .bashrc
-
-# Source global definitions
-if [ -f /etc/bashrc ]; then
-        . /etc/bashrc
-fi
-
-# User specific environment
-if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]
-then
-    PATH="$HOME/.local/bin:$HOME/bin:$PATH"
-fi
-export PATH
-
-# Uncomment the following line if you don't like systemctl's auto-paging feature:
-# export SYSTEMD_PAGER=
-
-# User specific aliases and functions
-export PATH=/devtools/docker/bin:$PATH
-export XDG_RUNTIME_DIR=/devtools/docker/run
-export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
-export DOCKER_BUILDKIT=1
-
-./dockerd-rootless-setuptool.sh install --skip-iptables
-[INFO] systemd not detected, dockerd-rootless.sh needs to be started manually:
-
-PATH=/devtools/docker/bin:/sbin:/usr/sbin:$PATH dockerd-rootless.sh
-
-[INFO] CLI context "rootless" already exists
-[INFO] Using CLI context "rootless"
-Current context is now "rootless"
-Warning: DOCKER_HOST environment variable overrides the active context. To use "rootless", either set the global --context flag, or unset DOCKER_HOST environment variable.
-
-[INFO] Make sure the following environment variable(s) are set (or add them to ~/.bashrc):
-export PATH=/devtools/docker/bin:$PATH
-
-[INFO] Some applications may require the following environment variable too:
-export DOCKER_HOST=unix:///devtools/docker/run/docker.sock
-
-
+tail -1000f /devtools/docker/dockerd-rootless.log
+nohup: ignoring input
++ case "$1" in
++ '[' -w /devtools/docker/run ']'
++ '[' -d /home/dockeruser ']'
++ rootlesskit=
++ for f in docker-rootlesskit rootlesskit
++ command -v docker-rootlesskit
++ for f in docker-rootlesskit rootlesskit
++ command -v rootlesskit
++ rootlesskit=rootlesskit
++ break
++ '[' -z rootlesskit ']'
++ : /devtools/docker/run/containerd-rootless
++ '[' -e /devtools/docker/run/containerd-rootless ']'
++ : /devtools/docker/run/dockerd-rootless
++ : ''
++ : ''
++ : ''
++ : auto
++ : auto
++ : ''
++ net=
++ port_driver=
++ mtu=
++ '[' -z '' ']'
++ command -v slirp4netns
++ '[' -z '' ']'
++ command -v pasta
++ '[' -z '' ']'
++ command -v vpnkit
++ '[' -z '' ']'
++ echo 'One of slirp4netns (>= v0.4.0), pasta (passt >= 2023_12_04), or vpnkit needs to be installed'
+One of slirp4netns (>= v0.4.0), pasta (passt >= 2023_12_04), or vpnkit needs to be installed
++ exit 1
 
 
 [dockeruser@tss-ideasvnuat bin]$ ./dockerd-rootless-setuptool.sh install --skip-iptables
