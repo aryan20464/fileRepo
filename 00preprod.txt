@@ -6,7 +6,22 @@ sudo dnf install -y \
     docker-compose-plugin-5.1.3-1.el8.x86_64.rpm
 
 
-
+{
+  "data-root": "/devtools/docker/data",
+  "storage-driver": "overlay2",
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m",
+    "max-file": "5"
+  },
+  "iptables": true,
+  "ip-forward": true,
+  "icc": true,
+  "userland-proxy": false,
+  "live-restore": true,
+  "max-concurrent-downloads": 10,
+  "max-concurrent-uploads": 10
+}
 
 
 tail -1000f /devtools/docker/dockerd-rootless.log
