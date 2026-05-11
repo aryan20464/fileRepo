@@ -1,3 +1,13 @@
+[root@tss-ideasvnuat .docker]# rpm -qa | grep -iE "docker|containerd"
+docker-compose-plugin-2.32.1-1.el8.x86_64
+docker-ce-cli-27.4.1-1.el8.x86_64
+docker-ce-27.4.1-1.el8.x86_64
+containerd.io-1.7.24-3.1.el8.x86_64
+docker-buildx-plugin-0.19.3-1.el8.x86_64
+docker-ce-rootless-extras-27.4.1-1.el8.x86_64
+
+
+
 kubectl api-resources --namespaced=true -o name | xargs -n 1 kubectl get --show-kind --ignore-not-found -n <namespace-name>
 for /f "tokens=*" %i in ('kubectl api-resources --verbs=list --namespaced -o name') do kubectl get %i --ignore-not-found -n <your-namespace>
 
