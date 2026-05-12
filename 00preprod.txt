@@ -1,108 +1,139 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
-                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+2026-05-12 15:27:48 +0530 [] [] INFO  3759089 --- [o-9080-exec-387] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 332 ms
+2026-05-12 15:27:48 +0530 [] [] WARN  3759089 --- [o-9080-exec-387] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Unable to start web server
+2026-05-12 15:27:48 +0530 [] [] INFO  3759089 --- [o-9080-exec-387] .s.b.a.l.ConditionEvaluationReportLogger :
 
-    <modelVersion>4.0.0</modelVersion>
-
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.0</version>
-        <relativePath/>
-    </parent>
-
-    <groupId>com.sbi.swift.in.parser</groupId>
-    <artifactId>InwardSwiftProcessor</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
-
-    <name>InwardSwiftProcessor</name>
-    <description>Inward Swift Message Processor</description>
-
-    <properties>
-        <java.version>21</java.version>
-    </properties>
-
-    <dependencies>
-        <!-- Core Web + Spring Boot -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-
-        <!-- Kafka -->
-        <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
-        </dependency>
-
-        <!-- Oracle -->
-        <dependency>
-            <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>ojdbc11</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-        <!-- Utilities -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-
-        <!-- Lombok -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Your internal library -->
-        <dependency>
-            <groupId>com.idea</groupId>
-            <artifactId>rforex-jwt-common-lib</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-
-        <!-- DevTools -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
-</project>
-
-# === Critical Fix for Tomcat WAR deployment ===
-spring.boot.web.servlet.error-page-filter-registration=never
-
-# Other recommended settings
-server.servlet.context-path=/rforexinwardswift
-spring.jpa.hibernate.ddl-auto=validate
-spring.jpa.show-sql=false
-logging.level.org.springframework=INFO
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-05-12 15:27:48 +0530 [] [] ERROR 3759089 --- [o-9080-exec-387] o.s.boot.SpringApplication               : Application run failed
+org.springframework.context.ApplicationContextException: Unable to start web server
+        at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:170)
+        at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:621)
+        at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+        at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:753)
+        at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+        at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.run(SpringBootServletInitializer.java:194)
+        at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.createRootApplicationContext(SpringBootServletInitializer.java:174)
+        at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.onStartup(SpringBootServletInitializer.java:102)
+        at org.springframework.web.SpringServletContainerInitializer.onStartup(SpringServletContainerInitializer.java:171)
+        at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:4416)
+        at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164)
+        at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:564)
+        at org.apache.catalina.core.StandardHost.addChild(StandardHost.java:663)
+        at org.apache.catalina.startup.HostConfig.deployWAR(HostConfig.java:923)
+        at org.apache.catalina.startup.HostConfig.deployApps(HostConfig.java:445)
+        at org.apache.catalina.startup.HostConfig.check(HostConfig.java:1653)
+        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+        at org.apache.tomcat.util.modeler.BaseModelMBean.invoke(BaseModelMBean.java:249)
+        at java.management/com.sun.jmx.interceptor.DefaultMBeanServerInterceptor.invoke(DefaultMBeanServerInterceptor.java:803)
+        at java.management/com.sun.jmx.mbeanserver.JmxMBeanServer.invoke(JmxMBeanServer.java:802)
+        at org.apache.catalina.manager.ManagerServlet.check(ManagerServlet.java:1449)
+        at org.apache.catalina.manager.ManagerServlet.deploy(ManagerServlet.java:943)
+        at org.apache.catalina.manager.HTMLManagerServlet.deployInternal(HTMLManagerServlet.java:279)
+        at org.apache.catalina.manager.HTMLManagerServlet.doPost(HTMLManagerServlet.java:180)
+        at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:649)
+        at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
+        at org.apache.catalina.filters.CsrfPreventionFilter.doFilter(CsrfPreventionFilter.java:429)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+        at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+        at org.apache.catalina.filters.HttpHeaderSecurityFilter.doFilter(HttpHeaderSecurityFilter.java:114)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+        at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+        at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
+        at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:607)
+        at org.apache.catalina.valves.RequestFilterValve.process(RequestFilterValve.java:352)
+        at org.apache.catalina.valves.RemoteAddrValve.invoke(RemoteAddrValve.java:55)
+        at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
+        at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
+        at org.apache.catalina.valves.AbstractAccessLogValve.invoke(AbstractAccessLogValve.java:654)
+        at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
+        at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
+        at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
+        at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+        at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+        at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1779)
+        at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+        at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
+        at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
+        at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
+        at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.lang.IllegalStateException: Failed to register 'filter errorPageFilterRegistration' on the servlet context. Possibly already registered?
+        at org.springframework.boot.web.servlet.DynamicRegistrationBean.register(DynamicRegistrationBean.java:122)
+        at org.springframework.boot.web.servlet.RegistrationBean.onStartup(RegistrationBean.java:52)
+        at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.selfInitialize(ServletWebServerApplicationContext.java:246)
+        at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.createWebServer(ServletWebServerApplicationContext.java:202)
+        at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:167)
+        ... 53 common frames omitted
+12-May-2026 15:27:48.355 SEVERE [http-nio-9080-exec-387] org.apache.catalina.startup.HostConfig.deployWAR Error deploying web application archive [/weblogic/apache-tomcat/webapps/rforex#txnInwardSwift.war]
+        java.lang.IllegalStateException: Error starting child
+                at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:567)
+                at org.apache.catalina.core.StandardHost.addChild(StandardHost.java:663)
+                at org.apache.catalina.startup.HostConfig.deployWAR(HostConfig.java:923)
+                at org.apache.catalina.startup.HostConfig.deployApps(HostConfig.java:445)
+                at org.apache.catalina.startup.HostConfig.check(HostConfig.java:1653)
+                at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+                at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+                at org.apache.tomcat.util.modeler.BaseModelMBean.invoke(BaseModelMBean.java:249)
+                at java.management/com.sun.jmx.interceptor.DefaultMBeanServerInterceptor.invoke(DefaultMBeanServerInterceptor.java:803)
+                at java.management/com.sun.jmx.mbeanserver.JmxMBeanServer.invoke(JmxMBeanServer.java:802)
+                at org.apache.catalina.manager.ManagerServlet.check(ManagerServlet.java:1449)
+                at org.apache.catalina.manager.ManagerServlet.deploy(ManagerServlet.java:943)
+                at org.apache.catalina.manager.HTMLManagerServlet.deployInternal(HTMLManagerServlet.java:279)
+                at org.apache.catalina.manager.HTMLManagerServlet.doPost(HTMLManagerServlet.java:180)
+                at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:649)
+                at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
+                at org.apache.catalina.filters.CsrfPreventionFilter.doFilter(CsrfPreventionFilter.java:429)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+                at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+                at org.apache.catalina.filters.HttpHeaderSecurityFilter.doFilter(HttpHeaderSecurityFilter.java:114)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+                at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+                at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
+                at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:607)
+                at org.apache.catalina.valves.RequestFilterValve.process(RequestFilterValve.java:352)
+                at org.apache.catalina.valves.RemoteAddrValve.invoke(RemoteAddrValve.java:55)
+                at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
+                at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
+                at org.apache.catalina.valves.AbstractAccessLogValve.invoke(AbstractAccessLogValve.java:654)
+                at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
+                at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
+                at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
+                at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+                at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+                at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1779)
+                at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+                at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
+                at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
+                at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
+                at java.base/java.lang.Thread.run(Thread.java:1583)
+        Caused by: org.apache.catalina.LifecycleException: Failed to start component [StandardEngine[Catalina].StandardHost[localhost].StandardContext[/rforex/txnInwardSwift]]
+                at org.apache.catalina.util.LifecycleBase.handleSubClassException(LifecycleBase.java:404)
+                at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:179)
+                at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:564)
+                ... 41 more
+        Caused by: org.springframework.context.ApplicationContextException: Unable to start web server
+                at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:170)
+                at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:621)
+                at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+                at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:753)
+                at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+                at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+                at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.run(SpringBootServletInitializer.java:194)
+                at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.createRootApplicationContext(SpringBootServletInitializer.java:174)
+                at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.onStartup(SpringBootServletInitializer.java:102)
+                at org.springframework.web.SpringServletContainerInitializer.onStartup(SpringServletContainerInitializer.java:171)
+                at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:4416)
+                at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164)
+                ... 42 more
+        Caused by: java.lang.IllegalStateException: Failed to register 'filter errorPageFilterRegistration' on the servlet context. Possibly already registered?
+                at org.springframework.boot.web.servlet.DynamicRegistrationBean.register(DynamicRegistrationBean.java:122)
+                at org.springframework.boot.web.servlet.RegistrationBean.onStartup(RegistrationBean.java:52)
+                at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.selfInitialize(ServletWebServerApplicationContext.java:246)
+                at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.createWebServer(ServletWebServerApplicationContext.java:202)
+                at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:167)
+                ... 53 more
+12-May-2026 15:27:48.356 INFO [http-nio-9080-exec-387] org.apache.catalina.startup.HostConfig.deployWAR Deployment of web application archive [/weblogic/apache-tomcat/webapps/rforex#txnInwardSwift.war] has finished in [15,294] ms
