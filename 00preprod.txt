@@ -1,3 +1,39 @@
+####<May 12, 2026 2:04:09,920 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '0' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000049> <1778574849920> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <Warning: Problem processing peer certificates. Please run with debug mode turned ON at warning level for more details.>
+####<May 12, 2026 2:04:09,920 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '0' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000049> <1778574849920> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <Exception processing peer certificates: peer not authenticated
+javax.net.ssl.SSLPeerUnverifiedException: peer not authenticated
+        at sun.security.ssl.SSLSessionImpl.getPeerCertificates(SSLSessionImpl.java:574)
+        at weblogic.servlet.provider.WlsSecurityProvider.getSSLAttributes(WlsSecurityProvider.java:284)
+        at weblogic.servlet.internal.VirtualConnection.initSSLAttributes(VirtualConnection.java:167)
+        at weblogic.servlet.internal.VirtualConnection.init(VirtualConnection.java:76)
+        at weblogic.servlet.internal.ServletRequestImpl.initFromRequestParser(ServletRequestImpl.java:443)
+        at weblogic.servlet.internal.HttpConnectionHandler.dispatch(HttpConnectionHandler.java:620)
+        at weblogic.servlet.internal.MuxableSocketHTTP.dispatch(MuxableSocketHTTP.java:134)
+        at weblogic.socket.JSSEFilterImpl.dispatch(JSSEFilterImpl.java:234)
+        at weblogic.socket.MuxableSocketDiscriminator.dispatch(MuxableSocketDiscriminator.java:201)
+        at weblogic.socket.JSSEFilterImpl.dispatch(JSSEFilterImpl.java:234)
+        at weblogic.socket.SocketMuxer.readReadySocketOnce(SocketMuxer.java:994)
+        at weblogic.socket.SocketMuxer.readReadySocket(SocketMuxer.java:930)
+        at weblogic.socket.NIOSocketMuxer.process(NIOSocketMuxer.java:599)
+        at weblogic.socket.NIOSocketMuxer.processSockets(NIOSocketMuxer.java:563)
+        at weblogic.socket.SocketReaderRequest.run(SocketReaderRequest.java:30)
+        at weblogic.socket.SocketReaderRequest.execute(SocketReaderRequest.java:43)
+        at weblogic.kernel.ExecuteThread.execute(ExecuteThread.java:147)
+        at weblogic.kernel.ExecuteThread.run(ExecuteThread.java:119)
+>
+####<May 12, 2026 2:04:09,924 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <[ACTIVE] ExecuteThread: '53' for queue: 'weblogic.kernel.Default (self-tuning)'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-007d0aeb> <1778574849924> <[severity-value: 128] [rid: 0:5:2] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[[ACTIVE] ExecuteThread: '53' for queue: 'weblogic.kernel.Default (self-tuning)',5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.wrap(ByteBuffer,ByteBuffer) called: result=Status = OK HandshakeStatus = NOT_HANDSHAKING
+bytesConsumed = 852 bytesProduced = 890.>
+####<May 12, 2026 2:04:09,925 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <[ACTIVE] ExecuteThread: '53' for queue: 'weblogic.kernel.Default (self-tuning)'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-007d0aeb> <1778574849925> <[severity-value: 128] [rid: 0:5:2] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[[ACTIVE] ExecuteThread: '53' for queue: 'weblogic.kernel.Default (self-tuning)',5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.wrap(ByteBuffer,ByteBuffer) called: result=Status = OK HandshakeStatus = NOT_HANDSHAKING
+bytesConsumed = 140 bytesProduced = 178.>
+####<May 12, 2026 2:04:09,925 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <[ACTIVE] ExecuteThread: '22' for queue: 'weblogic.kernel.Default (self-tuning)'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-007d0aeb> <1778574849925> <[severity-value: 128] [rid: 0:5] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[[ACTIVE] ExecuteThread: '22' for queue: 'weblogic.kernel.Default (self-tuning)',5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.unwrap(ByteBuffer,ByteBuffer[]) called: result=Status = OK HandshakeStatus = NOT_HANDSHAKING
+bytesConsumed = 1139 bytesProduced = 1117.>
+####<May 12, 2026 2:04:09,933 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <[ACTIVE] ExecuteThread: '22' for queue: 'weblogic.kernel.Default (self-tuning)'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-007d0aeb> <1778574849933> <[severity-value: 128] [rid: 0:5] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[[ACTIVE] ExecuteThread: '22' for queue: 'weblogic.kernel.Default (self-tuning)',5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.wrap(ByteBuffer,ByteBuffer) called: result=Status = OK HandshakeStatus = NOT_HANDSHAKING
+bytesConsumed = 851 bytesProduced = 889.>
+####<May 12, 2026 2:04:09,933 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <[ACTIVE] ExecuteThread: '22' for queue: 'weblogic.kernel.Default (self-tuning)'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-007d0aeb> <1778574849933> <[severity-value: 128] [rid: 0:5] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[[ACTIVE] ExecuteThread: '22' for queue: 'weblogic.kernel.Default (self-tuning)',5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.wrap(ByteBuffer,ByteBuffer) called: result=Status = OK HandshakeStatus = NOT_HANDSHAKING
+bytesConsumed = 1540 bytesProduced = 1578.>
+####<May 12, 2026 2:04:09,934 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <[ACTIVE] ExecuteThread: '56' for queue: 'weblogic.kernel.Default (self-tuning)'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-007d0aeb> <1778574849934> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[[ACTIVE] ExecuteThread: '56' for queue: 'weblogic.kernel.Default (self-tuning)',5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.unwrap(ByteBuffer,ByteBuffer[]) called: result=Status = OK HandshakeStatus = NOT_HANDSHAKING
+bytesConsumed = 2538 bytesProduced = 2516.>
+^
+
 2026-05-12 12:25:38 +0530 [] [] WARN  3759089 --- [o-9080-exec-318] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Unable to start web server
 2026-05-12 12:25:38 +0530 [] [] INFO  3759089 --- [o-9080-exec-318] .s.b.a.l.ConditionEvaluationReportLogger :
 
