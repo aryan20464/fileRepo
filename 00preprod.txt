@@ -1,1247 +1,141 @@
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[weblogic.socket.ServerListenThread,5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.setEnabledCipherSuites(String[]): value=TLS_AES_256_GCM_SHA384,TLS_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_DHE_RSA_WITH_AES_256_GCM_SHA384,TLS_DHE_DSS_WITH_AES_256_GCM_SHA384,TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,TLS_DHE_DSS_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_DHE_RSA_WITH_AES_256_CBC_SHA256,TLS_DHE_DSS_WITH_AES_256_CBC_SHA256,TLS_DHE_RSA_WITH_AES_128_CBC_SHA256,TLS_DHE_DSS_WITH_AES_128_CBC_SHA256,TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_DHE_RSA_WITH_AES_256_CBC_SHA,TLS_DHE_DSS_WITH_AES_256_CBC_SHA,TLS_DHE_RSA_WITH_AES_128_CBC_SHA,TLS_DHE_DSS_WITH_AES_128_CBC_SHA,TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA,TLS_ECDH_RSA_WITH_AES_256_CBC_SHA,TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA,TLS_ECDH_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_EMPTY_RENEGOTIATION_INFO_SCSV.>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[weblogic.socket.ServerListenThread,5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.setEnabledProtocols(String[]): value=TLSv1.3,TLSv1.2,SSLv2Hello.>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[weblogic.socket.ServerListenThread,5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.setEnableSessionCreation(boolean): value=true.>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[weblogic.socket.ServerListenThread,5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.setUseClientMode(boolean): value=true.>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[weblogic.socket.ServerListenThread,5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.setWantClientAuth(boolean): value=false.>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[weblogic.socket.ServerListenThread,5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.setNeedClientAuth(boolean): value=false.>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[weblogic.socket.ServerListenThread,5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.setNeedClientAuth(boolean): value=false.>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[weblogic.socket.ServerListenThread,5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.setUseClientMode(boolean): value=false.>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[weblogic.socket.ServerListenThread,5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.setEnabledProtocols(String[]): value=TLSv1.3,TLSv1.2,SSLv2Hello.>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <ServerSocketWrapperJSSE[DefaultSecure] - 3 SSL/TLS protocols enabled:>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <ServerSocketWrapperJSSE[DefaultSecure] 45 cipher suites enabled:>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_AES_256_GCM_SHA384>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_AES_128_GCM_SHA256>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_DHE_RSA_WITH_AES_256_GCM_SHA384>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_DHE_DSS_WITH_AES_256_GCM_SHA384>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_DHE_RSA_WITH_AES_128_GCM_SHA256>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_DHE_DSS_WITH_AES_128_GCM_SHA256>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_DHE_RSA_WITH_AES_256_CBC_SHA256>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_DHE_DSS_WITH_AES_256_CBC_SHA256>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_DHE_RSA_WITH_AES_128_CBC_SHA256>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_DHE_DSS_WITH_AES_128_CBC_SHA256>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384>
-####<May 12, 2026 2:39:52,647 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992647> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_DHE_RSA_WITH_AES_256_CBC_SHA>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_DHE_DSS_WITH_AES_256_CBC_SHA>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_DHE_RSA_WITH_AES_128_CBC_SHA>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_DHE_DSS_WITH_AES_128_CBC_SHA>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDH_RSA_WITH_AES_256_CBC_SHA>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_ECDH_RSA_WITH_AES_128_CBC_SHA>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_RSA_WITH_AES_256_GCM_SHA384>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_RSA_WITH_AES_128_GCM_SHA256>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_RSA_WITH_AES_256_CBC_SHA256>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_RSA_WITH_AES_128_CBC_SHA256>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_RSA_WITH_AES_256_CBC_SHA>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_RSA_WITH_AES_128_CBC_SHA>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <TLS_EMPTY_RENEGOTIATION_INFO_SCSV>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[weblogic.socket.ServerListenThread,5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.setWantClientAuth(boolean): value=false.>
-####<May 12, 2026 2:39:52,648 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <weblogic.socket.ServerListenThread> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-00000047> <1778576992648> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[weblogic.socket.ServerListenThread,5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.setUseClientMode(boolean): value=false.>
-####<May 12, 2026 2:39:52,650 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992650> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[ExecuteThread: '2' for queue: 'weblogic.socket.Muxer',5,Thread Group for Queue: 'weblogic.socket.Muxer']]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.unwrap(ByteBuffer,ByteBuffer[]) called: result=Status = OK HandshakeStatus = NEED_TASK
-bytesConsumed = 376 bytesProduced = 0.>
-####<May 12, 2026 2:39:52,650 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992650> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[ExecuteThread: '2' for queue: 'weblogic.socket.Muxer',5,Thread Group for Queue: 'weblogic.socket.Muxer']]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.wrap(ByteBuffer,ByteBuffer) called: result=Status = OK HandshakeStatus = NEED_UNWRAP
-bytesConsumed = 0 bytesProduced = 198.>
-####<May 12, 2026 2:39:52,650 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992650> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[ExecuteThread: '2' for queue: 'weblogic.socket.Muxer',5,Thread Group for Queue: 'weblogic.socket.Muxer']]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.unwrap(ByteBuffer,ByteBuffer[]) called: result=Status = BUFFER_UNDERFLOW HandshakeStatus = NEED_UNWRAP
-bytesConsumed = 0 bytesProduced = 0.>
-####<May 12, 2026 2:39:52,651 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992651> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[ExecuteThread: '2' for queue: 'weblogic.socket.Muxer',5,Thread Group for Queue: 'weblogic.socket.Muxer']]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.unwrap(ByteBuffer,ByteBuffer[]) called: result=Status = OK HandshakeStatus = NEED_UNWRAP
-bytesConsumed = 6 bytesProduced = 0.>
-####<May 12, 2026 2:39:52,651 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992651> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[ExecuteThread: '2' for queue: 'weblogic.socket.Muxer',5,Thread Group for Queue: 'weblogic.socket.Muxer']]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.unwrap(ByteBuffer,ByteBuffer[]) called: result=Status = OK HandshakeStatus = NEED_TASK
-bytesConsumed = 514 bytesProduced = 0.>
-####<May 12, 2026 2:39:52,657 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992657> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[ExecuteThread: '2' for queue: 'weblogic.socket.Muxer',5,Thread Group for Queue: 'weblogic.socket.Muxer']]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.wrap(ByteBuffer,ByteBuffer) called: result=Status = OK HandshakeStatus = NEED_WRAP
-bytesConsumed = 0 bytesProduced = 160.>
-####<May 12, 2026 2:39:52,658 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992658> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[ExecuteThread: '2' for queue: 'weblogic.socket.Muxer',5,Thread Group for Queue: 'weblogic.socket.Muxer']]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.wrap(ByteBuffer,ByteBuffer) called: result=Status = OK HandshakeStatus = NEED_WRAP
-bytesConsumed = 0 bytesProduced = 6.>
-####<May 12, 2026 2:39:52,658 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992658> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[ExecuteThread: '2' for queue: 'weblogic.socket.Muxer',5,Thread Group for Queue: 'weblogic.socket.Muxer']]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.wrap(ByteBuffer,ByteBuffer) called: result=Status = OK HandshakeStatus = NEED_UNWRAP
-bytesConsumed = 0 bytesProduced = 3241.>
-####<May 12, 2026 2:39:52,658 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992658> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[ExecuteThread: '2' for queue: 'weblogic.socket.Muxer',5,Thread Group for Queue: 'weblogic.socket.Muxer']]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.unwrap(ByteBuffer,ByteBuffer[]) called: result=Status = BUFFER_UNDERFLOW HandshakeStatus = NEED_UNWRAP
-bytesConsumed = 0 bytesProduced = 0.>
-####<May 12, 2026 2:39:52,658 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992658> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[ExecuteThread: '2' for queue: 'weblogic.socket.Muxer',5,Thread Group for Queue: 'weblogic.socket.Muxer']]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.unwrap(ByteBuffer,ByteBuffer[]) called: result=Status = OK HandshakeStatus = NEED_WRAP
-bytesConsumed = 74 bytesProduced = 0.>
-####<May 12, 2026 2:39:52,658 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992658> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[ExecuteThread: '2' for queue: 'weblogic.socket.Muxer',5,Thread Group for Queue: 'weblogic.socket.Muxer']]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.wrap(ByteBuffer,ByteBuffer) called: result=Status = OK HandshakeStatus = FINISHED
-bytesConsumed = 0 bytesProduced = 88.>
-####<May 12, 2026 2:39:52,658 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992658> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[ExecuteThread: '2' for queue: 'weblogic.socket.Muxer',5,Thread Group for Queue: 'weblogic.socket.Muxer']]weblogic.security.SSL.jsseadapter: SSLENGINE: Trying to get peer certificates from SSLSession, SSLPeerUnverifiedException: peer not authenticated.>
-####<May 12, 2026 2:39:52,659 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992659> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[ExecuteThread: '2' for queue: 'weblogic.socket.Muxer',5,Thread Group for Queue: 'weblogic.socket.Muxer']]weblogic.security.SSL.jsseadapter: SSLENGINE: negotiatedCipherSuite: TLS_AES_256_GCM_SHA384>
-####<May 12, 2026 2:39:52,659 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992659> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[ExecuteThread: '2' for queue: 'weblogic.socket.Muxer',5,Thread Group for Queue: 'weblogic.socket.Muxer']]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.getNeedClientAuth(): false>
-####<May 12, 2026 2:39:52,659 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992659> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[ExecuteThread: '2' for queue: 'weblogic.socket.Muxer',5,Thread Group for Queue: 'weblogic.socket.Muxer']]weblogic.security.SSL.jsseadapter: SSLENGINE: Peer certificate chain: null>
-####<May 12, 2026 2:39:52,659 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992659> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[ExecuteThread: '2' for queue: 'weblogic.socket.Muxer',5,Thread Group for Queue: 'weblogic.socket.Muxer']]weblogic.security.SSL.jsseadapter: SSLENGINE: weblogic.security.utils.SSLTrustValidator.isPeerCertsRequired(): false>
-####<May 12, 2026 2:39:52,659 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992659> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <validationCallback: validateErr = 0>
-####<May 12, 2026 2:39:52,659 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992659> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <Peer certificates are not required and were not supplied by peer>
-####<May 12, 2026 2:39:52,659 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992659> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <weblogic user specified trustmanager validation status 0>
-####<May 12, 2026 2:39:52,659 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992659> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <SSLTrustValidator returns: 0>
-####<May 12, 2026 2:39:52,659 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992659> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[ExecuteThread: '2' for queue: 'weblogic.socket.Muxer',5,Thread Group for Queue: 'weblogic.socket.Muxer']]weblogic.security.SSL.jsseadapter: SSLENGINE: No trust failure, validateErr=0.>
-####<May 12, 2026 2:39:52,659 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992659> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[ExecuteThread: '2' for queue: 'weblogic.socket.Muxer',5,Thread Group for Queue: 'weblogic.socket.Muxer']]weblogic.security.SSL.jsseadapter: SSLENGINE: Successfully completed post-handshake processing.>
-####<May 12, 2026 2:39:52,659 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992659> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[ExecuteThread: '2' for queue: 'weblogic.socket.Muxer',5,Thread Group for Queue: 'weblogic.socket.Muxer']]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.setEnableSessionCreation(boolean): value=false.>
-####<May 12, 2026 2:39:52,659 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992659> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[ExecuteThread: '2' for queue: 'weblogic.socket.Muxer',5,Thread Group for Queue: 'weblogic.socket.Muxer']]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.unwrap(ByteBuffer,ByteBuffer[]) called: result=Status = BUFFER_UNDERFLOW HandshakeStatus = NOT_HANDSHAKING
-bytesConsumed = 0 bytesProduced = 0.>
-####<May 12, 2026 2:39:52,659 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992659> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[ExecuteThread: '2' for queue: 'weblogic.socket.Muxer',5,Thread Group for Queue: 'weblogic.socket.Muxer']]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.unwrap(ByteBuffer,ByteBuffer[]) called: result=Status = OK HandshakeStatus = NOT_HANDSHAKING
-bytesConsumed = 910 bytesProduced = 888.>
-####<May 12, 2026 2:39:52,659 PM IST> <Info> <Socket> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992659> <[severity-value: 64] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000431> <Accepted connection: filtering is set to: "true", remote address: "/10.191.151.163", remote port: "50668", local address: "/10.191.151.161", local port: "6003", protocol: "https">
-####<May 12, 2026 2:39:52,659 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992659> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <Warning: Problem processing peer certificates. Please run with debug mode turned ON at warning level for more details.>
-####<May 12, 2026 2:39:52,659 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-000000f8> <1778576992659> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <Exception processing peer certificates: peer not authenticated
-javax.net.ssl.SSLPeerUnverifiedException: peer not authenticated
-        at sun.security.ssl.SSLSessionImpl.getPeerCertificates(SSLSessionImpl.java:574)
-        at weblogic.servlet.provider.WlsSecurityProvider.getSSLAttributes(WlsSecurityProvider.java:284)
-        at weblogic.servlet.internal.VirtualConnection.initSSLAttributes(VirtualConnection.java:167)
-        at weblogic.servlet.internal.VirtualConnection.init(VirtualConnection.java:76)
-        at weblogic.servlet.internal.ServletRequestImpl.initFromRequestParser(ServletRequestImpl.java:443)
-        at weblogic.servlet.internal.HttpConnectionHandler.dispatch(HttpConnectionHandler.java:620)
-        at weblogic.servlet.internal.MuxableSocketHTTP.dispatch(MuxableSocketHTTP.java:134)
-        at weblogic.socket.JSSEFilterImpl.dispatch(JSSEFilterImpl.java:234)
-        at weblogic.socket.MuxableSocketDiscriminator.dispatch(MuxableSocketDiscriminator.java:201)
-        at weblogic.socket.JSSEFilterImpl.dispatch(JSSEFilterImpl.java:234)
-        at weblogic.socket.SocketMuxer.readReadySocketOnce(SocketMuxer.java:994)
-        at weblogic.socket.SocketMuxer.readReadySocket(SocketMuxer.java:930)
-        at weblogic.socket.NIOSocketMuxer.process(NIOSocketMuxer.java:599)
-        at weblogic.socket.NIOSocketMuxer.processSockets(NIOSocketMuxer.java:563)
-        at weblogic.socket.SocketReaderRequest.run(SocketReaderRequest.java:30)
-        at weblogic.socket.SocketReaderRequest.execute(SocketReaderRequest.java:43)
-        at weblogic.kernel.ExecuteThread.execute(ExecuteThread.java:147)
-        at weblogic.kernel.ExecuteThread.run(ExecuteThread.java:119)
->
-####<May 12, 2026 2:39:52,663 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <[ACTIVE] ExecuteThread: '65' for queue: 'weblogic.kernel.Default (self-tuning)'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-007d3c95> <1778576992663> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[[ACTIVE] ExecuteThread: '65' for queue: 'weblogic.kernel.Default (self-tuning)',5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.wrap(ByteBuffer,ByteBuffer) called: result=Status = OK HandshakeStatus = NOT_HANDSHAKING
-bytesConsumed = 761 bytesProduced = 799.>
-####<May 12, 2026 2:39:52,663 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <[ACTIVE] ExecuteThread: '65' for queue: 'weblogic.kernel.Default (self-tuning)'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-007d3c95> <1778576992663> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[[ACTIVE] ExecuteThread: '65' for queue: 'weblogic.kernel.Default (self-tuning)',5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.wrap(ByteBuffer,ByteBuffer) called: result=Status = OK HandshakeStatus = NOT_HANDSHAKING
-bytesConsumed = 153 bytesProduced = 191.>
-####<May 12, 2026 2:39:52,663 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <[ACTIVE] ExecuteThread: '81' for queue: 'weblogic.kernel.Default (self-tuning)'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-007d3c94> <1778576992663> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[[ACTIVE] ExecuteThread: '81' for queue: 'weblogic.kernel.Default (self-tuning)',5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.unwrap(ByteBuffer,ByteBuffer[]) called: result=Status = OK HandshakeStatus = NOT_HANDSHAKING
-bytesConsumed = 1061 bytesProduced = 1039.>
-####<May 12, 2026 2:39:52,672 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <[ACTIVE] ExecuteThread: '81' for queue: 'weblogic.kernel.Default (self-tuning)'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-007d3c94> <1778576992672> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[[ACTIVE] ExecuteThread: '81' for queue: 'weblogic.kernel.Default (self-tuning)',5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.wrap(ByteBuffer,ByteBuffer) called: result=Status = OK HandshakeStatus = NOT_HANDSHAKING
-bytesConsumed = 742 bytesProduced = 780.>
-####<May 12, 2026 2:39:52,672 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <[ACTIVE] ExecuteThread: '81' for queue: 'weblogic.kernel.Default (self-tuning)'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-007d3c94> <1778576992672> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[[ACTIVE] ExecuteThread: '81' for queue: 'weblogic.kernel.Default (self-tuning)',5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.wrap(ByteBuffer,ByteBuffer) called: result=Status = OK HandshakeStatus = NOT_HANDSHAKING
-bytesConsumed = 729 bytesProduced = 767.>
-####<May 12, 2026 2:39:52,677 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <[ACTIVE] ExecuteThread: '84' for queue: 'weblogic.kernel.Default (self-tuning)'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-007d3c96> <1778576992677> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[[ACTIVE] ExecuteThread: '84' for queue: 'weblogic.kernel.Default (self-tuning)',5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.wrap(ByteBuffer,ByteBuffer) called: result=Status = OK HandshakeStatus = NOT_HANDSHAKING
-bytesConsumed = 761 bytesProduced = 799.>
-####<May 12, 2026 2:39:52,677 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <[ACTIVE] ExecuteThread: '84' for queue: 'weblogic.kernel.Default (self-tuning)'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-007d3c96> <1778576992677> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[[ACTIVE] ExecuteThread: '84' for queue: 'weblogic.kernel.Default (self-tuning)',5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.wrap(ByteBuffer,ByteBuffer) called: result=Status = OK HandshakeStatus = NOT_HANDSHAKING
-bytesConsumed = 674 bytesProduced = 712.>
-^C
-
-####<May 12, 2026 2:04:09,924 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <[ACTIVE] ExecuteThread: '53' for queue: 'weblogic.kernel.Default (self-tuning)'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-007d0aeb> <1778574849924> <[severity-value: 128] [rid: 0:5:2] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[[ACTIVE] ExecuteThread: '53' for queue: 'weblogic.kernel.Default (self-tuning)',5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.wrap(ByteBuffer,ByteBuffer) called: result=Status = OK HandshakeStatus = NOT_HANDSHAKING
-bytesConsumed = 852 bytesProduced = 890.>
-####<May 12, 2026 2:04:09,925 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <[ACTIVE] ExecuteThread: '53' for queue: 'weblogic.kernel.Default (self-tuning)'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-007d0aeb> <1778574849925> <[severity-value: 128] [rid: 0:5:2] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[[ACTIVE] ExecuteThread: '53' for queue: 'weblogic.kernel.Default (self-tuning)',5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.wrap(ByteBuffer,ByteBuffer) called: result=Status = OK HandshakeStatus = NOT_HANDSHAKING
-bytesConsumed = 140 bytesProduced = 178.>
-####<May 12, 2026 2:04:09,925 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <[ACTIVE] ExecuteThread: '22' for queue: 'weblogic.kernel.Default (self-tuning)'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-007d0aeb> <1778574849925> <[severity-value: 128] [rid: 0:5] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[[ACTIVE] ExecuteThread: '22' for queue: 'weblogic.kernel.Default (self-tuning)',5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.unwrap(ByteBuffer,ByteBuffer[]) called: result=Status = OK HandshakeStatus = NOT_HANDSHAKING
-bytesConsumed = 1139 bytesProduced = 1117.>
-####<May 12, 2026 2:04:09,933 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <[ACTIVE] ExecuteThread: '22' for queue: 'weblogic.kernel.Default (self-tuning)'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-007d0aeb> <1778574849933> <[severity-value: 128] [rid: 0:5] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[[ACTIVE] ExecuteThread: '22' for queue: 'weblogic.kernel.Default (self-tuning)',5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.wrap(ByteBuffer,ByteBuffer) called: result=Status = OK HandshakeStatus = NOT_HANDSHAKING
-bytesConsumed = 851 bytesProduced = 889.>
-####<May 12, 2026 2:04:09,933 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <[ACTIVE] ExecuteThread: '22' for queue: 'weblogic.kernel.Default (self-tuning)'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-007d0aeb> <1778574849933> <[severity-value: 128] [rid: 0:5] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[[ACTIVE] ExecuteThread: '22' for queue: 'weblogic.kernel.Default (self-tuning)',5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.wrap(ByteBuffer,ByteBuffer) called: result=Status = OK HandshakeStatus = NOT_HANDSHAKING
-bytesConsumed = 1540 bytesProduced = 1578.>
-####<May 12, 2026 2:04:09,934 PM IST> <Debug> <SecuritySSL> <tss-idea-fxs-app1-pr.corp.ad.sbi> <FXS_SERVER1> <[ACTIVE] ExecuteThread: '56' for queue: 'weblogic.kernel.Default (self-tuning)'> <<WLS Kernel>> <> <3cd88cfb-f82b-4d0c-a466-d025ef297711-007d0aeb> <1778574849934> <[severity-value: 128] [rid: 0] [partition-id: 0] [partition-name: DOMAIN] > <BEA-000000> <[Thread[[ACTIVE] ExecuteThread: '56' for queue: 'weblogic.kernel.Default (self-tuning)',5,Pooled Threads]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.unwrap(ByteBuffer,ByteBuffer[]) called: result=Status = OK HandshakeStatus = NOT_HANDSHAKING
-bytesConsumed = 2538 bytesProduced = 2516.>
-^
-
-2026-05-12 12:25:38 +0530 [] [] WARN  3759089 --- [o-9080-exec-318] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Unable to start web server
-2026-05-12 12:25:38 +0530 [] [] INFO  3759089 --- [o-9080-exec-318] .s.b.a.l.ConditionEvaluationReportLogger :
-
-Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-2026-05-12 12:25:38 +0530 [] [] ERROR 3759089 --- [o-9080-exec-318] o.s.boot.SpringApplication               : Application run failed
-org.springframework.context.ApplicationContextException: Unable to start web server
-        at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:170)
-        at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:621)
-        at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
-        at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:753)
-        at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
-        at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
-        at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.run(SpringBootServletInitializer.java:194)
-        at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.createRootApplicationContext(SpringBootServletInitializer.java:174)
-        at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.onStartup(SpringBootServletInitializer.java:102)
-        at org.springframework.web.SpringServletContainerInitializer.onStartup(SpringServletContainerInitializer.java:171)
-        at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:4416)
-        at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164)
-        at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:564)
-        at org.apache.catalina.core.StandardHost.addChild(StandardHost.java:663)
-        at org.apache.catalina.startup.HostConfig.deployWAR(HostConfig.java:923)
-        at org.apache.catalina.startup.HostConfig.deployApps(HostConfig.java:445)
-        at org.apache.catalina.startup.HostConfig.check(HostConfig.java:1653)
-        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
-        at java.base/java.lang.reflect.Method.invoke(Method.java:580)
-        at org.apache.tomcat.util.modeler.BaseModelMBean.invoke(BaseModelMBean.java:249)
-        at java.management/com.sun.jmx.interceptor.DefaultMBeanServerInterceptor.invoke(DefaultMBeanServerInterceptor.java:803)
-        at java.management/com.sun.jmx.mbeanserver.JmxMBeanServer.invoke(JmxMBeanServer.java:802)
-        at org.apache.catalina.manager.ManagerServlet.check(ManagerServlet.java:1449)
-        at org.apache.catalina.manager.ManagerServlet.deploy(ManagerServlet.java:943)
-        at org.apache.catalina.manager.HTMLManagerServlet.deployInternal(HTMLManagerServlet.java:279)
-        at org.apache.catalina.manager.HTMLManagerServlet.doPost(HTMLManagerServlet.java:180)
-        at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:649)
-        at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
-        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
-        at org.apache.catalina.filters.CsrfPreventionFilter.doFilter(CsrfPreventionFilter.java:429)
-        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-        at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
-        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-        at org.apache.catalina.filters.HttpHeaderSecurityFilter.doFilter(HttpHeaderSecurityFilter.java:114)
-        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-        at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
-        at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
-        at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:607)
-        at org.apache.catalina.valves.RequestFilterValve.process(RequestFilterValve.java:352)
-        at org.apache.catalina.valves.RemoteAddrValve.invoke(RemoteAddrValve.java:55)
-        at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
-        at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
-        at org.apache.catalina.valves.AbstractAccessLogValve.invoke(AbstractAccessLogValve.java:654)
-        at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
-        at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
-        at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
-        at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
-        at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
-        at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1779)
-        at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
-        at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
-        at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
-        at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
-        at java.base/java.lang.Thread.run(Thread.java:1583)
-Caused by: java.lang.IllegalStateException: Failed to register 'filter errorPageFilterRegistration' on the servlet context. Possibly already registered?
-        at org.springframework.boot.web.servlet.DynamicRegistrationBean.register(DynamicRegistrationBean.java:122)
-        at org.springframework.boot.web.servlet.RegistrationBean.onStartup(RegistrationBean.java:52)
-        at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.selfInitialize(ServletWebServerApplicationContext.java:246)
-        at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.createWebServer(ServletWebServerApplicationContext.java:202)
-        at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:167)
-        ... 53 common frames omitted
-12-May-2026 12:25:38.569 SEVERE [http-nio-9080-exec-318] org.apache.catalina.startup.HostConfig.deployWAR Error deploying web application archive [/weblogic/apache-tomcat/webapps/rforex#middlwareTxmSwift.war]
-        java.lang.IllegalStateException: Error starting child
-                at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:567)
-                at org.apache.catalina.core.StandardHost.addChild(StandardHost.java:663)
-                at org.apache.catalina.startup.HostConfig.deployWAR(HostConfig.java:923)
-                at org.apache.catalina.startup.HostConfig.deployApps(HostConfig.java:445)
-                at org.apache.catalina.startup.HostConfig.check(HostConfig.java:1653)
-                at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
-                at java.base/java.lang.reflect.Method.invoke(Method.java:580)
-                at org.apache.tomcat.util.modeler.BaseModelMBean.invoke(BaseModelMBean.java:249)
-                at java.management/com.sun.jmx.interceptor.DefaultMBeanServerInterceptor.invoke(DefaultMBeanServerInterceptor.java:803)
-                at java.management/com.sun.jmx.mbeanserver.JmxMBeanServer.invoke(JmxMBeanServer.java:802)
-                at org.apache.catalina.manager.ManagerServlet.check(ManagerServlet.java:1449)
-                at org.apache.catalina.manager.ManagerServlet.deploy(ManagerServlet.java:943)
-                at org.apache.catalina.manager.HTMLManagerServlet.deployInternal(HTMLManagerServlet.java:279)
-                at org.apache.catalina.manager.HTMLManagerServlet.doPost(HTMLManagerServlet.java:180)
-                at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:649)
-                at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
-                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
-                at org.apache.catalina.filters.CsrfPreventionFilter.doFilter(CsrfPreventionFilter.java:429)
-                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-                at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
-                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-                at org.apache.catalina.filters.HttpHeaderSecurityFilter.doFilter(HttpHeaderSecurityFilter.java:114)
-                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-                at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
-                at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
-                at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:607)
-                at org.apache.catalina.valves.RequestFilterValve.process(RequestFilterValve.java:352)
-                at org.apache.catalina.valves.RemoteAddrValve.invoke(RemoteAddrValve.java:55)
-                at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
-                at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
-                at org.apache.catalina.valves.AbstractAccessLogValve.invoke(AbstractAccessLogValve.java:654)
-                at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
-                at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
-                at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
-                at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
-                at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
-                at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1779)
-                at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
-                at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
-                at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
-                at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
-                at java.base/java.lang.Thread.run(Thread.java:1583)
-        Caused by: org.apache.catalina.LifecycleException: Failed to start component [StandardEngine[Catalina].StandardHost[localhost].StandardContext[/rforex/middlwareTxmSwift]]
-                at org.apache.catalina.util.LifecycleBase.handleSubClassException(LifecycleBase.java:404)
-                at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:179)
-                at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:564)
-                ... 41 more
-        Caused by: org.springframework.context.ApplicationContextException: Unable to start web server
-                at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:170)
-                at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:621)
-                at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
-                at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:753)
-                at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
-                at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
-                at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.run(SpringBootServletInitializer.java:194)
-                at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.createRootApplicationContext(SpringBootServletInitializer.java:174)
-                at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.onStartup(SpringBootServletInitializer.java:102)
-                at org.springframework.web.SpringServletContainerInitializer.onStartup(SpringServletContainerInitializer.java:171)
-                at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:4416)
-                at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164)
-                ... 42 more
-        Caused by: java.lang.IllegalStateException: Failed to register 'filter errorPageFilterRegistration' on the servlet context. Possibly already registered?
-                at org.springframework.boot.web.servlet.DynamicRegistrationBean.register(DynamicRegistrationBean.java:122)
-                at org.springframework.boot.web.servlet.RegistrationBean.onStartup(RegistrationBean.java:52)
-                at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.selfInitialize(ServletWebServerApplicationContext.java:246)
-                at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.createWebServer(ServletWebServerApplicationContext.java:202)
-                at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:167)
-                ... 53 more
-12-May-2026 12:25:38.571 INFO [http-nio-9080-exec-318] org.apache.catalina.startup.HostConfig.deployWAR Deployment of web application archive [/weblogic/apache-tomcat/webapps/rforex#middlwareTxmSwift.war] has finished in [13,737] ms
-
-
-
-
-
-sudo dnf install -y \
-    containerd.io-2.2.3-1.el8.x86_64.rpm \
-    docker-ce-cli-29.4.3-1.el8.x86_64.rpm \
-    docker-ce-29.4.3-1.el8.x86_64.rpm \
-    docker-buildx-plugin-0.33.0-1.el8.x86_64.rpm \
-    docker-compose-plugin-5.1.3-1.el8.x86_64.rpm
-
-
-{
-  "data-root": "/devtools/docker/data",
-  "storage-driver": "overlay2",
-  "log-driver": "json-file",
-  "log-opts": {
-    "max-size": "100m",
-    "max-file": "5"
-  },
-  "iptables": true,
-  "ip-forward": true,
-  "icc": true,
-  "userland-proxy": false,
-  "live-restore": true,
-  "max-concurrent-downloads": 10,
-  "max-concurrent-uploads": 10
-}
-
-
-tail -1000f /devtools/docker/dockerd-rootless.log
-nohup: ignoring input
-+ case "$1" in
-+ '[' -w /devtools/docker/run ']'
-+ '[' -d /home/dockeruser ']'
-+ rootlesskit=
-+ for f in docker-rootlesskit rootlesskit
-+ command -v docker-rootlesskit
-+ for f in docker-rootlesskit rootlesskit
-+ command -v rootlesskit
-+ rootlesskit=rootlesskit
-+ break
-+ '[' -z rootlesskit ']'
-+ : /devtools/docker/run/containerd-rootless
-+ '[' -e /devtools/docker/run/containerd-rootless ']'
-+ : /devtools/docker/run/dockerd-rootless
-+ : ''
-+ : ''
-+ : ''
-+ : auto
-+ : auto
-+ : ''
-+ net=
-+ port_driver=
-+ mtu=
-+ '[' -z '' ']'
-+ command -v slirp4netns
-+ '[' -z '' ']'
-+ command -v pasta
-+ '[' -z '' ']'
-+ command -v vpnkit
-+ '[' -z '' ']'
-+ echo 'One of slirp4netns (>= v0.4.0), pasta (passt >= 2023_12_04), or vpnkit needs to be installed'
-One of slirp4netns (>= v0.4.0), pasta (passt >= 2023_12_04), or vpnkit needs to be installed
-+ exit 1
-
-
-[dockeruser@tss-ideasvnuat bin]$ ./dockerd-rootless-setuptool.sh install --skip-iptables
-[INFO] systemd not detected, dockerd-rootless.sh needs to be started manually:
-
-PATH=/devtools/docker/bin:/sbin:/usr/sbin:$PATH dockerd-rootless.sh
-
-[INFO] Creating CLI context "rootless"
-Successfully created context "rootless"
-[INFO] Using CLI context "rootless"
-Current context is now "rootless"
-
-[INFO] Make sure the following environment variable(s) are set (or add them to ~/.bashrc):
-# WARNING: systemd not found. You have to remove XDG_RUNTIME_DIR manually on every logout.
-export XDG_RUNTIME_DIR=/home/dockeruser/.docker/run
-export PATH=/devtools/docker/bin:$PATH
-
-[INFO] Some applications may require the following environment variable too:
-export DOCKER_HOST=unix:///home/dockeruser/.docker/run/docker.sock
-
-
-[root@tss-ideasvnuat .docker]# rpm -qa | grep -iE "docker|containerd"
-docker-compose-plugin-2.32.1-1.el8.x86_64
-docker-ce-cli-27.4.1-1.el8.x86_64
-docker-ce-27.4.1-1.el8.x86_64
-containerd.io-1.7.24-3.1.el8.x86_64
-docker-buildx-plugin-0.19.3-1.el8.x86_64
-docker-ce-rootless-extras-27.4.1-1.el8.x86_64
-
-
-
-kubectl api-resources --namespaced=true -o name | xargs -n 1 kubectl get --show-kind --ignore-not-found -n <namespace-name>
-for /f "tokens=*" %i in ('kubectl api-resources --verbs=list --namespaced -o name') do kubectl get %i --ignore-not-found -n <your-namespace>
-
-Common labels: {"filename":"/nginx/server/logs/access.log","job":"nginx","service_name":"Nginx-W1"}
-
-[tanzuuser@tss-rforex-jump-preprod bin]$ ./dockerd-rootless-setuptool.sh install --skip-iptables
-[INFO] Creating /home/tanzuuser/.config/systemd/user/docker.service
-[INFO] starting systemd service docker.service
-+ systemctl --user start docker.service
-+ sleep 3
-+ systemctl --user --no-pager --full status docker.service
-● docker.service - Docker Application Container Engine (Rootless)
-     Loaded: loaded (/home/tanzuuser/.config/systemd/user/docker.service; disabled; preset: disabled)
-     Active: active (running) since Thu 2026-05-07 13:28:34 IST; 3s ago
-       Docs: https://docs.docker.com/go/rootless/
-   Main PID: 2329651 (rootlesskit)
-      Tasks: 40
-     Memory: 52.1M (peak: 56.0M)
-        CPU: 1.652s
-     CGroup: /user.slice/user-1003.slice/user@1003.service/app.slice/docker.service
-             ├─2329651 rootlesskit --state-dir=/run/user/1003/dockerd-rootless --net=slirp4netns --mtu=65520 --slirp4netns-sandbox=auto --slirp4netns-seccomp=auto --disable-host-loopback --port-driver=builtin --copy-up=/etc --copy-up=/run --propagation=rslave /devtools/docker/bin/dockerd-rootless.sh
-             ├─2329665 /proc/self/exe --state-dir=/run/user/1003/dockerd-rootless --net=slirp4netns --mtu=65520 --slirp4netns-sandbox=auto --slirp4netns-seccomp=auto --disable-host-loopback --port-driver=builtin --copy-up=/etc --copy-up=/run --propagation=rslave /devtools/docker/bin/dockerd-rootless.sh
-             ├─2329684 slirp4netns --mtu 65520 -r 3 --disable-host-loopback --enable-sandbox --enable-seccomp 2329665 tap0
-             ├─2329693 dockerd
-             └─2329719 containerd --config /run/user/1003/docker/containerd/containerd.toml
-+ DOCKER_HOST=unix:///run/user/1003/docker.sock
-+ /devtools/docker/bin/docker version
-Client:
- Version:           29.4.2
- API version:       1.54
- Go version:        go1.26.2
- Git commit:        055a478
- Built:             Fri May  1 01:23:32 2026
- OS/Arch:           linux/amd64
- Context:           default
-
-Server: Docker Engine - Community
- Engine:
-  Version:          29.4.2
-  API version:      1.54 (minimum version 1.40)
-  Go version:       go1.26.2
-  Git commit:       d329809
-  Built:            Fri May  1 01:25:56 2026
-  OS/Arch:          linux/amd64
-  Experimental:     false
- containerd:
-  Version:          v2.2.3
-  GitCommit:        77c84241c7cbdd9b4eca2591793e3d4f4317c590
- runc:
-  Version:          1.3.5
-  GitCommit:        v1.3.5-0-g488fc13
- docker-init:
-  Version:          0.19.0
-  GitCommit:        de40ad0
- rootlesskit:
-  Version:          2.3.6
-  ApiVersion:       1.1.1
-  NetworkDriver:    slirp4netns
-  PortDriver:       builtin
-  StateDir:         /run/user/1003/dockerd-rootless
- slirp4netns:
-  Version:          1.3.3
-  GitCommit:        944fa94090e1fd1312232cbc0e6b43585553d824
-+ systemctl --user enable docker.service
-Created symlink /home/tanzuuser/.config/systemd/user/default.target.wants/docker.service → /home/tanzuuser/.config/systemd/user/docker.service.
-[INFO] Installed docker.service successfully.
-[INFO] To control docker.service, run: `systemctl --user (start|stop|restart) docker.service`
-[INFO] To run docker.service on system startup, run: `sudo loginctl enable-linger tanzuuser`
-
-[INFO] Creating CLI context "rootless"
-Successfully created context "rootless"
-[INFO] Using CLI context "rootless"
-Current context is now "rootless"
-Warning: DOCKER_HOST environment variable overrides the active context. To use "rootless", either set the global --context flag, or unset DOCKER_HOST environment variable.
-
-[INFO] Make sure the following environment variable(s) are set (or add them to ~/.bashrc):
-export PATH=/devtools/docker/bin:$PATH
-
-[INFO] Some applications may require the following environment variable too:
-export DOCKER_HOST=unix:///run/user/1003/docker.sock
-
-
-
-1778050640478	2026-05-06T06:57:20.478Z	Ip=10.30.130.40 time=- [06/May/2026:12:27:20 +0530] Request="POST /middlewareInwardTransactionService/triggerQuery?reportId=15&queryType=UPDATE HTTP/1.1" Status=200 Request_size=126 URL="https://10.177.128.132:5001/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.053 uct="0.000" uht="0.053" urt="0.053"
-1778050607632	2026-05-06T06:56:47.632Z	Ip=10.30.130.40 time=- [06/May/2026:12:26:47 +0530] Request="POST /middlewareInwardTransactionService/triggerQuery?reportId=15&queryType=UPDATE HTTP/1.1" Status=200 Request_size=126 URL="https://10.177.128.132:5001/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.125 uct="0.000" uht="0.125" urt="0.125"
-1778050566255	2026-05-06T06:56:06.255Z	Ip=10.30.130.40 time=- [06/May/2026:12:26:06 +0530] Request="POST /middlewareInwardTransactionService/triggerQuery?reportId=15&queryType=SELECT HTTP/1.1" Status=200 Request_size=2233 URL="https://10.177.128.132:5001/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.312 uct="0.013" uht="0.313" urt="0.313"
-1778049804735	2026-05-06T06:43:24.735Z	Ip=10.30.130.40 time=- [06/May/2026:12:13:24 +0530] Request="POST /middlewareInwardTransactionService/triggerQuery?reportId=15&queryType=SELECT HTTP/1.1" Status=200 Request_size=2125 URL="https://10.177.128.132:5001/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.278 uct="0.000" uht="0.278" urt="0.278"
-1778049800970	2026-05-06T06:43:20.970Z	Ip=10.30.130.40 time=- [06/May/2026:12:13:20 +0530] Request="POST /middlewareInwardTransactionService/triggerQuery?reportId=15&queryType=SELECT HTTP/1.1" Status=200 Request_size=101 URL="https://10.177.128.132:5001/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.082 uct="0.011" uht="0.081" urt="0.081"
-1778049689400	2026-05-06T06:41:29.400Z	Ip=10.30.130.40 time=- [06/May/2026:12:11:29 +0530] Request="POST /middlewareInwardTransactionService/triggerQuery?reportId=15&queryType=SELECT HTTP/1.1" Status=200 Request_size=2125 URL="https://10.177.128.132:5001/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.306 uct="0.012" uht="0.305" urt="0.305"
-1778049561530	2026-05-06T06:39:21.530Z	Ip=10.30.130.40 time=- [06/May/2026:12:09:21 +0530] Request="POST /middlewareInwardTransactionService/triggerQuery?reportId=15&queryType=SELECT HTTP/1.1" Status=200 Request_size=2125 URL="https://10.177.128.132:5001/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.576 uct="0.000" uht="0.576" urt="0.576"
-1778049538967	2026-05-06T06:38:58.967Z	Ip=10.30.130.40 time=- [06/May/2026:12:08:58 +0530] Request="POST /middlewareInwardTransactionService/getItReportParameters?reportId=15 HTTP/1.1" Status=200 Request_size=543 URL="https://10.177.128.132:5001/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.014 uct="0.000" uht="0.013" urt="0.013"
-1778049526429	2026-05-06T06:38:46.429Z	Ip=10.30.130.40 time=- [06/May/2026:12:08:46 +0530] Request="POST /middlewareInwardTransactionService/getItReports HTTP/1.1" Status=200 Request_size=1182 URL="https://10.177.128.132:5001/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.021 uct="0.000" uht="0.022" urt="0.022"
-1778049521914	2026-05-06T06:38:41.914Z	Ip=10.30.130.40 time=- [06/May/2026:12:08:41 +0530] Request="POST /middlewareInwardTransactionService/getTxnCountsForBlotter?type=other&date=2026-05-06T12:08:41.4141Z&reload=false HTTP/1.1" Status=200 Request_size=707 URL="https://10.177.128.132:5001/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.036 uct="0.012" uht="0.036" urt="0.036"
-1778049521663	2026-05-06T06:38:41.663Z	Ip=10.30.130.40 time=- [06/May/2026:12:08:41 +0530] Request="GET /middlewareRfmMasterService/menu/getAllMenuByRole HTTP/1.1" Status=200 Request_size=2782 URL="https://10.177.128.132:5001/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.056 uct="0.000" uht="0.056" urt="0.056"
-1778049521663	2026-05-06T06:38:41.663Z	Ip=10.30.130.40 time=- [06/May/2026:12:08:41 +0530] Request="GET /middlewareRfmMasterService/public/getUserFromFXS/JGmjqQqXab HTTP/1.1" Status=200 Request_size=1126 URL="https://10.177.128.132:5001/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.115 uct="0.000" uht="0.112" urt="0.114"
-1778049521663	2026-05-06T06:38:41.663Z	Ip=10.30.130.40 time=- [06/May/2026:12:08:41 +0530] Request="GET /rfm/fontawesome-webfont.e9955780856cf8aa.woff2 HTTP/1.1" Status=304 Request_size=0 URL="https://10.177.128.132:5001/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.000 uct="-" uht="-" urt="-"
-1778049521663	2026-05-06T06:38:41.663Z	Ip=10.30.130.40 time=- [06/May/2026:12:08:41 +0530] Request="GET /rfm/primeicons.e1a53edb6ea00325.woff2 HTTP/1.1" Status=304 Request_size=0 URL="https://10.177.128.132:5001/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.000 uct="-" uht="-" urt="-"
-1778049521663	2026-05-06T06:38:41.663Z	Ip=10.30.130.40 time=- [06/May/2026:12:08:41 +0530] Request="GET /rfm/spinner.bebdd8ac77e5f6f3.png HTTP/1.1" Status=304 Request_size=0 URL="https://10.177.128.132:5001/rfm/?dataid=JGmjqQqXab" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.000 uct="-" uht="-" urt="-"
-1778049521663	2026-05-06T06:38:41.663Z	Ip=10.30.130.40 time=- [06/May/2026:12:08:41 +0530] Request="GET /rfm/assets/images/SBI.jpg HTTP/1.1" Status=304 Request_size=0 URL="https://10.177.128.132:5001/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.000 uct="-" uht="-" urt="-"
-1778049521413	2026-05-06T06:38:41.413Z	Ip=10.30.130.40 time=- [06/May/2026:12:08:41 +0530] Request="GET /rfm/styles.0db9b058709231a8.css HTTP/1.1" Status=304 Request_size=0 URL="https://10.177.128.132:5001/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.000 uct="-" uht="-" urt="-"
-1778049521413	2026-05-06T06:38:41.413Z	Ip=10.30.130.40 time=- [06/May/2026:12:08:41 +0530] Request="GET /rfm/background.2bfdd190ee8730d5.jpg HTTP/1.1" Status=304 Request_size=0 URL="https://10.177.128.132:5001/rfm/?dataid=JGmjqQqXab" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.000 uct="-" uht="-" urt="-"
-1778049521413	2026-05-06T06:38:41.413Z	Ip=10.30.130.40 time=- [06/May/2026:12:08:41 +0530] Request="GET /rfm/main.90db466e9fdf270d.js HTTP/1.1" Status=304 Request_size=0 URL="https://10.177.128.132:5001/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.000 uct="-" uht="-" urt="-"
-1778049521163	2026-05-06T06:38:41.163Z	Ip=10.30.130.40 time=- [06/May/2026:12:08:41 +0530] Request="GET /rfm/polyfills.9921d79808360621.js HTTP/1.1" Status=304 Request_size=0 URL="https://10.177.128.132:5001/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.000 uct="-" uht="-" urt="-"
-1778049521163	2026-05-06T06:38:41.163Z	Ip=10.30.130.40 time=- [06/May/2026:12:08:41 +0530] Request="GET /rfm/runtime.fa50a8020f791459.js HTTP/1.1" Status=304 Request_size=0 URL="https://10.177.128.132:5001/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.000 uct="-" uht="-" urt="-"
-1778049521163	2026-05-06T06:38:41.163Z	Ip=10.30.130.40 time=- [06/May/2026:12:08:40 +0530] Request="GET /rfm/?dataid=JGmjqQqXab HTTP/1.1" Status=200 Request_size=904 URL="https://10.191.158.41:4200/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.000 uct="-" uht="-" urt="-"
-1778049521163	2026-05-06T06:38:41.163Z	Ip=10.30.130.40 time=- [06/May/2026:12:08:40 +0530] Request="GET /rfm?dataid=JGmjqQqXab HTTP/1.1" Status=301 Request_size=162 URL="https://10.191.158.41:4200/" Client="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"rt=0.000 uct="-" uht="-" urt="-"
-1778049520912	2026-05-06T06:38:40.912Z	Ip=10.191.158.41 time=- [06/May/2026:12:08:40 +0530] Request="GET /middlewareRfmMasterService/getActiveUserRoles HTTP/1.1" Status=200 Request_size=1994 URL="-" Client="Java1.8.0_481"rt=0.075 uct="0.037" uht="0.074" 
-
-
-
-<Apr 8, 2026 4:02:38,767 PM IST> <Warning> <org.hibernate.engine.jdbc.spi.SqlExceptionHelper> <BEA-000000> <SQL Error: 904, SQLState: 42000>
-Apr 08, 2026 4:02:38 PM org.hibernate.engine.jdbc.spi.SqlExceptionHelper logExceptions
-WARN: SQL Error: 904, SQLState: 42000
-<Apr 8, 2026 4:02:38,768 PM IST> <Error> <org.hibernate.engine.jdbc.spi.SqlExceptionHelper> <BEA-000000> <ORA-00904: "FXSACCOUNT0_"."F_MFX_SR_NO": invalid identifier
->
-Apr 08, 2026 4:02:38 PM org.hibernate.engine.jdbc.spi.SqlExceptionHelper logExceptions
-ERROR: ORA-00904: "FXSACCOUNT0_"."F_MFX_SR_NO": invalid identifier
-
-2026-04-0816:02:38+05:30 ERROR 858991 --- [ (self-tuning)'] o.s.b.w.s.s.ErrorPageFilter              : Forwarding to error page from request [/api/accountingdata] due to exception [could not extract ResultSet; SQL [n/a]; nested exception is org.hibernate.exception.SQLGrammarException: could not extract ResultSet]
-
-
-apiVersion: console.streamshub.github.com/v1alpha1
-kind: Console
-metadata:
-  name: kafka-console
-  namespace: tss-rfxpr-kafka
-spec:
-  hostname: kafka-console-prod.apps.tssrfxpr.sbi.co.in
-
-  kafkaClusters:
-    - name: rfx-kafka-prod-cluster
-      namespace: tss-rfxpr-kafka
-      listener: plain          # ← Change here
-      credentials: {}          # No user needed for plain
-
-  metricsSources:
-    - name: ocp-monitoring
-      type: openshift-monitoring
-
-apiVersion: kafka.strimzi.io/v1beta2
-kind: KafkaUser
-metadata:
-  name: bridge-user
-  namespace: tss-rfxpr-kafka
-  labels:
-    strimzi.io/cluster: rfx-kafka-prod
-spec:
-  authentication:
-    type: scram-sha-512
-  authorization:
-    type: simple
-    acls:
-      # Cluster level (required for console)
-      - resource:
-          type: cluster
-        operations:
-          - Describe
-          - DescribeConfigs
-        type: allow
-
-      # All topics - full access needed for Messages tab + configs + authorizedOperations
-      - resource:
-          type: topic
-          name: "*"
-          patternType: literal
-        operations:
-          - Read
-          - Describe
-          - DescribeConfigs
-          - Write          # keep if you need it
-          - Create         # keep if you need it
-        type: allow
-
-      # Consumer groups (very important for lag and Messages view)
-      - resource:
-          type: group
-          name: "*"
-          patternType: literal
-        operations:
-          - Read
-          - Describe
-        type: allow
-
-Pprod-monitor-console-deployment-7cf6d5dc45-9kpqm
-NamespaceNStss-rfxpr-kafka
-Mar 23, 2026, 11:19 AM
-Generated from kubelet on worker3.tssrfxpr.sbi.co.in
-Stopping container console-api
-PodPprod-monitor-console-deployment-7cf6d5dc45-9kpqm
-NamespaceNStss-rfxpr-kafka
-Mar 23, 2026, 11:19 AM
-Generated from kubelet on worker3.tssrfxpr.sbi.co.in
-Stopping container console-ui
-PodPprod-monitor-prometheus-deployment-655864d84-d5k5w
-NamespaceNStss-rfxpr-kafka
-Mar 23, 2026, 11:19 AM
-Generated from kubelet on worker3.tssrfxpr.sbi.co.in
-3 times in the last 13 minutes
-Failed to pull image "quay.io/prometheus/prometheus:v2.55.1": initializing source docker://quay.io/prometheus/prometheus:v2.55.1: pinging container registry quay.io: Get "https://quay.io/v2/": dial tcp: lookup quay.io on 10.176.126.200:53: server misbehaving
-PodPprod-monitor-prometheus-deployment-655864d84-d5k5w
-NamespaceNStss-rfxpr-kafka
-Mar 23, 2026, 11:19 AM
-Generated from kubelet on worker3.tssrfxpr.sbi.co.in
-3 times in the last 13 minutes
-Error: ErrImagePull
-PodPprod-monitor-prometheus-deployment-655864d84-d5k5w
-NamespaceNStss-rfxpr-kafka
-Mar 23, 2026, 11:19 AM
-Generated from kubelet on worker3.tssrfxpr.sbi.co.in
-3 times in the last 13 minutes
-Pulling image "quay.io/prometheus/prometheus:v2.55.1"
-PodPprod-monitor-prometheus-deployment-586cc8d5cf-nlw8f
-NamespaceNStss-rfxpr-kafka
-Mar 23, 2026, 11:19 AM
-Generated from kubelet on worker3.tssrfxpr.sbi.co.in
-3 times in the last 13 minutes
-Failed to pull image "quay.io/prometheus/prometheus:v2.55.1": initializing source docker://quay.io/prometheus/prometheus:v2.55.1: pinging container registry quay.io: Get "https://quay.io/v2/": dial tcp: lookup quay.io on 10.176.126.200:53: server misbehaving
-PodPprod-monitor-prometheus-deployment-586cc8d5cf-nlw8f
-NamespaceNStss-rfxpr-kafka
-Mar 23, 2026, 11:19 AM
-Generated from kubelet on worker3.tssrfxpr.sbi.co.in
-3 times in the last 13 minutes
-Error: ErrImagePull
-PodPprod-monitor-prometheus-deployment-586cc8d5cf-nlw8f
-NamespaceNStss-rfxpr-kafka
-Mar 23, 2026, 11:19 AM
-Generated from kubelet on worker3.tssrfxpr.sbi.co.in
-3 times in the last 13 minutes
-Pulling image "quay.io/prometheus/prometheus:v2.55.1"
-IngressIprod-monitor-console-ingress
-NamespaceNStss-rfxpr-kafka
-Mar 23, 2026, 11:18 AM
-Generated from ingress-to-route-controller
-Error in converting Ingress to Route: Operation cannot be fulfilled on ingresses.networking.k8s.io "prod-monitor-console-ingress": StorageError: invalid object, Code: 4, Key: /kubernetes.io/ingress/tss-rfxpr-kafka/prod-monitor-console-ingress, ResourceVersion: 0, AdditionalErrorMsg: Precondition failed: UID in precondition: 97f4c2cb-ddd6-4af9-b762-122b56c141ab, UID in object meta:
-PodPprod-monitor-prometheus-deployment-655864d84-d5k5w
-NamespaceNStss-rfxpr-kafka
-Mar 23, 2026, 11:18 AM
-Generated from kubelet on worker3.tssrfxpr.sbi.co.in
-3 times in the last 13 minutes
-Back-off pulling image "quay.io/prometheus/prometheus:v2.55.1"
-
-status:
-  conditions:
-    - lastTransitionTime: '2026-03-23T05:41:48.750566259Z'
-      message: 'Resources not ready: ConsoleDeployment[preprod-monitor-console-deployment]; PrometheusDeployment[preprod-monitor-prometheus-deployment]'
-      reason: DependentsNotReady
-      status: 'False'
-      type: Ready
-  observedGeneration: 1
-
-apiVersion: kafka.strimzi.io/v1beta2
-kind: Kafka
-metadata:
-  annotations:
-    strimzi.io/kraft: enabled
-    strimzi.io/node-pools: enabled
-  creationTimestamp: '2026-01-27T09:12:17Z'
-  generation: 2
-  managedFields:
-    - apiVersion: kafka.strimzi.io/v1beta2
-      fieldsType: FieldsV1
-      fieldsV1:
-        'f:metadata':
-          'f:annotations':
-            .: {}
-            'f:strimzi.io/kraft': {}
-            'f:strimzi.io/node-pools': {}
-        'f:spec':
-          .: {}
-          'f:entityOperator':
-            .: {}
-            'f:topicOperator': {}
-            'f:userOperator': {}
-          'f:kafka':
-            .: {}
-            'f:authorization':
-              .: {}
-              'f:type': {}
-            'f:config':
-              .: {}
-              'f:default.replication.factor': {}
-              'f:min.insync.replicas': {}
-              'f:offsets.topic.replication.factor': {}
-              'f:transaction.state.log.min.isr': {}
-              'f:transaction.state.log.replication.factor': {}
-            'f:listeners': {}
-            'f:metadataVersion': {}
-            'f:version': {}
-      manager: Mozilla
-      operation: Update
-      time: '2026-01-28T10:45:37Z'
-    - apiVersion: kafka.strimzi.io/v1beta2
-      fieldsType: FieldsV1
-      fieldsV1:
-        'f:status':
-          'f:registeredNodeIds': {}
-          'f:clusterId': {}
-          'f:kafkaNodePools': {}
-          'f:kafkaVersion': {}
-          'f:listeners': {}
-          'f:conditions': {}
-          .: {}
-          'f:kafkaMetadataState': {}
-          'f:operatorLastSuccessfulVersion': {}
-          'f:observedGeneration': {}
-          'f:kafkaMetadataVersion': {}
-      manager: strimzi-cluster-operator
-      operation: Update
-      subresource: status
-      time: '2026-03-21T23:19:25Z'
-  name: rfx-kafka-preprod-cluster
-  namespace: rforex-preprod
-  resourceVersion: '29923685'
-  uid: f831b804-c9c4-4ec8-8553-4bb0eef5b42c
-spec:
-  entityOperator:
-    topicOperator: {}
-    userOperator: {}
-  kafka:
-    authorization:
-      type: simple
-    config:
-      default.replication.factor: 3
-      min.insync.replicas: 2
-      offsets.topic.replication.factor: 3
-      transaction.state.log.min.isr: 2
-      transaction.state.log.replication.factor: 3
-    listeners:
-      - name: plain
-        port: 9092
-        tls: false
-        type: internal
-      - authentication:
-          type: scram-sha-512
-        name: external
-        port: 9094
-        tls: true
-        type: route
-      - authentication:
-          type: scram-sha-512
-        name: tls
-        port: 9093
-        tls: true
-        type: internal
-    metadataVersion: 4.0-IV3
-    version: 4.0.0
-status:
-  observedGeneration: 2
-  kafkaMetadataVersion: 4.0-IV3
-  operatorLastSuccessfulVersion: 0.46.1.redhat-00007
-  kafkaNodePools:
-    - name: broker-pool
-    - name: controller-pool
-  kafkaVersion: 4.0.0
-  registeredNodeIds:
-    - 0
-    - 1
-    - 2
-    - 3
-    - 4
-    - 5
-  clusterId: stPLE6krSeSC7dZ7L_I1YA
-  conditions:
-    - lastTransitionTime: '2026-03-21T23:19:23.757285190Z'
-      status: 'True'
-      type: Ready
-  kafkaMetadataState: KRaft
-  listeners:
-    - addresses:
-        - host: rfx-kafka-preprod-cluster-kafka-bootstrap.rforex-preprod.svc
-          port: 9092
-      bootstrapServers: 'rfx-kafka-preprod-cluster-kafka-bootstrap.rforex-preprod.svc:9092'
-      name: plain
-    - addresses:
-        - host: rfx-kafka-preprod-cluster-kafka-bootstrap.rforex-preprod.svc
-          port: 9093
-      bootstrapServers: 'rfx-kafka-preprod-cluster-kafka-bootstrap.rforex-preprod.svc:9093'
-apiVersion: console.streamshub.github.com/v1alpha1
-kind: Console
-metadata:
-  creationTimestamp: '2026-03-23T05:34:25Z'
-  finalizers:
-    - consoles.console.streamshub.github.com/finalizer
-  generation: 1
-  managedFields:
-    - apiVersion: console.streamshub.github.com/v1alpha1
-      fieldsType: FieldsV1
-      fieldsV1:
-        'f:metadata':
-          'f:finalizers':
-            'v:"consoles.console.streamshub.github.com/finalizer"': {}
-      manager: consolereconciler
-      operation: Apply
-      time: '2026-03-23T05:34:25Z'
-    - apiVersion: console.streamshub.github.com/v1alpha1
-      fieldsType: FieldsV1
-      fieldsV1:
-        'f:metadata':
-          'f:finalizers':
-            'v:"consoles.console.streamshub.github.com/finalizer"': {}
-        'f:status':
-          'f:conditions': {}
-          'f:observedGeneration': {}
-      manager: consolereconciler
-      operation: Apply
-      subresource: status
-      time: '2026-03-23T05:34:25Z'
-    - apiVersion: console.streamshub.github.com/v1alpha1
-      fieldsType: FieldsV1
-      fieldsV1:
-        'f:spec':
-          .: {}
-          'f:hostname': {}
-          'f:kafkaClusters': {}
-      manager: Mozilla
-      operation: Update
-      time: '2026-03-23T05:34:25Z'
-  name: preprod-monitor
-  namespace: rforex-preprod
-  resourceVersion: '30529346'
-  uid: db2aa354-ace4-4b39-a070-4a20b3057813
-spec:
-  hostname: preprod-monitor
-  kafkaClusters:
-    - listener: 'rfx-kafka-preprod-cluster-kafka-bootstrap.rforex-preprod.svc:9092'
-      name: rfx-kafka-preprod-cluster
-      namespace: rforex-preprod
-status:
-  conditions:
-    - lastTransitionTime: '2026-03-23T05:34:24.382570337Z'
-      message: Console resource configuration is invalid
-      reason: InvalidConfiguration
-      status: 'False'
-      type: Ready
-    - lastTransitionTime: '2026-03-23T05:34:24.377991002Z'
-      message: 'Listener ''rfx-kafka-preprod-cluster-kafka-bootstrap.rforex-preprod.svc:9092'' not found on Kafka rforex-preprod/rfx-kafka-preprod-cluster'
-      reason: ReconciliationException
-      status: 'True'
-      type: Error
-  observedGeneration: 1
-
-
-
-
-
-
-Image,Web Page (for verification)
-prometheus-operator,https://quay.io/repository/prometheus-operator/prometheus-operator?tab=tags&tag=v0.89.0
-prometheus-config-reloader,https://quay.io/repository/prometheus-operator/prometheus-config-reloader
-prometheus,https://quay.io/repository/prometheus/prometheus?tab=tags&tag=v3.10.0
-alertmanager,https://quay.io/repository/prometheus/alertmanager
-node-exporter,https://quay.io/repository/prometheus/node-exporter
-kube-state-metrics,https://quay.io/repository/prometheus/kube-state-metrics (or registry.k8s.io)
-grafana,https://hub.docker.com/r/grafana/grafana/tags (tag 12.4.1)
-k8s-sidecar,https://hub.docker.com/r/kiwigrid/k8s-sidecar/tags (tag 2.5.0)
-webhook-certgen,https://github.com/jkroepke/kube-webhook-certgen/pkgs/container/kube-webhook-certgen
-
-
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo update
-
-helm install prometheus prometheus-community/kube-prometheus-stack \
-  --namespace monitoring \
-  --create-namespace \
-  --set grafana.enabled=false \
-  --set prometheus.prometheusSpec.externalLabels.cluster=forex-cluster \
-  --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.resources.requests.storage=10Gi
-
-
-
-
-proxy_set_header Host               $http_host;
-            proxy_set_header X-Real-IP          $remote_addr;
-            proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto  $real_proto;
-            proxy_set_header X-Forwarded-Host   $http_x_forwarded_host;
-            proxy_set_header X-Forwarded-Port   $http_x_forwarded_port;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection "upgrade";
-
-            proxy_pass http://grafana:3000;    
-
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: prometheus-config
-  namespace: forex
-data:
-  prometheus.yml: |
-    global:
-      scrape_interval: 15s
-      evaluation_interval: 15s
-    scrape_configs:
-      - job_name: 'prometheus'
-        static_configs:
-          - targets: ['localhost:9090']
-      - job_name: 'grafana'
-        static_configs:
-          - targets: ['grafana.forex.svc.cluster.local:3000']
-      - job_name: 'loki'
-        static_configs:
-          - targets: ['loki.forex.svc.cluster.local:3100']
-
-
-
-
-sum by (level) (count_over_time({service_name="your-service"} | logfmt | level!="" [$__interval]))
-
-rate(
-  {job="your-job-here"}
-  | logfmt
-  | unwrap your_numeric_field
-  | __error__=""
-  [$__rate_interval]
-)
-
-spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
-spring.datasource.hikari.pool-name=rforex-fcra-app-service-cp
-
-
-# --- Pool Sizing ---
-# Rule: Keep pool small. Most apps perform best with 10-20.
-spring.datasource.hikari.maximum-pool-size=10
-# Fixed-size pools are preferred in K8s to avoid "cold start" latency
-spring.datasource.hikari.minimum-idle=10
-
-# --- Connection Lifespan (Crucial for K8s) ---
-# 30 mins is standard, but if your DB kills idle connections, use 10-15 mins.
-# It MUST be shorter than your DB's 'wait_timeout'. - check wait_timeout connection
-
-spring.datasource.hikari.max-lifetime=900000 # 15 minutes - MUST be shorter than any network/DB timeout
-spring.datasource.hikari.keepalive-time=300000 # 5 minutes — Hikari will actively test idle connections (prevents staleness)
-
-# Must be shorter than max-lifetime. 10 mins is a good balance.
-spring.datasource.hikari.idle-timeout=600000 # 10 minutes (keep)
-
-# --- Timeouts & Health ---
-# How long to wait for a connection before the app throws an error (30s)
-spring.datasource.hikari.connection-timeout=30000
-
-# How long to wait for the DB to respond to a "ping" (5s)
-# MUST be less than connection-timeout.
-spring.datasource.hikari.validation-timeout=5000
-
-# --- Monitoring & Debugging ---
-# Helps find unclosed connections. Set slightly higher than your longest query.
-# Industry standard is to keep this enabled in Prod at 30-60s.
-spring.datasource.hikari.leak-detection-threshold=60000
-
-# Oracle-specific validation
-spring.datasource.hikari.data-source-properties.oracle.jdbc.defaultConnectionValidation=LOCAL
-spring.datasource.hikari.data-source-properties.oracle.net.keepAlive=true
-
-spring:
-  datasource:
-    hikari:
-      # --- Core sizing (already good) ---
-      maximum-pool-size: 10
-      minimum-idle: 10
-
-      # === CRITICAL CHANGES ===
-      max-lifetime: 900000          # 15 minutes (was 30 min) — MUST be shorter than any network/DB timeout
-      idle-timeout: 600000          # 10 minutes (keep)
-      keepalive-time: 300000        # NEW: 5 minutes — Hikari will actively test idle connections (prevents staleness)
-
-      connection-timeout: 30000
-      validation-timeout: 5000
-
-      # Force validation on EVERY borrow (eliminates "closed connection" warnings)
-      # Add this via JVM arg or in code (see below)
-      # -Dcom.zaxxer.hikari.aliveBypassWindowMs=-1
-
-      # Oracle-specific validation (lightweight + RAC-friendly)
-      data-source-properties:
-        oracle.jdbc.defaultConnectionValidation: LOCAL      # or SOCKET for slightly stronger detection
-        oracle.net.keepAlive: true                          # Enables TCP SO_KEEPALIVE at driver level (critical!)
-
-
-# --- Pool Sizing ---
-# Rule: Keep pool small. Most apps perform best with 10-20.
-spring.datasource.hikari.maximum-pool-size=10
-# Fixed-size pools are preferred in K8s to avoid "cold start" latency
-spring.datasource.hikari.minimum-idle=10
-
-# --- Connection Lifespan (Crucial for K8s) ---
-# 30 mins is standard, but if your DB kills idle connections, use 10-15 mins.
-# It MUST be shorter than your DB's 'wait_timeout'. - check wait_timeout connection
-# Below corresonds to 30 mins
-spring.datasource.hikari.max-lifetime=1800000
-
-# Must be shorter than max-lifetime. 10 mins is a good balance.
-spring.datasource.hikari.idle-timeout=600000
-
-# --- Timeouts & Health ---
-# How long to wait for a connection before the app throws an error (30s)
-spring.datasource.hikari.connection-timeout=30000
-
-# How long to wait for the DB to respond to a "ping" (5s)
-# MUST be less than connection-timeout.
-spring.datasource.hikari.validation-timeout=5000
-
-
-
-
-2026-03-19 17:48:40 +05:30  WARN 1 --- [outward] [nio-5204-exec-4] com.zaxxer.hikari.pool.PoolBase          : rforex-outward-service-con-pool - Failed to validate connection oracle.jdbc.driver.T4CConnection@4ae9fd8 (ORA-17008: Closed connection
-https://docs.oracle.com/error-help/db/ora-17008/). Possibly consider using a shorter maxLifetime value.
-2026-03-19 17:48:40 +05:30  WARN 1 --- [outward] [nio-5204-exec-4] com.zaxxer.hikari.pool.PoolBase          : rforex-outward-service-con-pool - Failed to validate connection oracle.jdbc.driver.T4CConnection@3a888aa1 (ORA-17008: Closed connection
-https://docs.oracle.com/error-help/db/ora-17008/). Possibly consider using a shorter maxLifetime value.
-2026-03-19 17:48:40 +05:30  WARN 1 --- [outward] [nio-5204-exec-4] com.zaxxer.hikari.pool.PoolBase          : rforex-outward-service-con-pool - Failed to validate connection oracle.jdbc.driver.T4CConnection@557c1ce7 (ORA-17008: Closed connection
-https://docs.oracle.com/error-help/db/ora-17008/). Possibly consider using a shorter maxLifetime value.
-2026-03-19 17:48:40 +05:30  WARN 1 --- [outward] [nio-5204-exec-4] com.zaxxer.hikari.pool.PoolBase          : rforex-outward-service-con-pool - Failed to validate connection oracle.jdbc.driver.T4CConnection@48eb2f46 (ORA-17008: Closed connection
-https://docs.oracle.com/error-help/db/ora-17008/). Possibly consider using a shorter maxLifetime value.
-2026-03-19 17:48:40 +05:30  WARN 1 --- [outward] [nio-5204-exec-4] com.zaxxer.hikari.pool.PoolBase          : rforex-outward-service-con-pool - Failed to validate connection oracle.jdbc.driver.T4CConnection@2ee7ef6b (ORA-17008: Closed connection
-https://docs.oracle.com/error-help/db/ora-17008/). Possibly consider using a shorter maxLifetime value.
-2026-03-19 17:48:40 +05:30  WARN 1 --- [outward] [nio-5204-exec-4] com.zaxxer.hikari.pool.PoolBase          : rforex-outward-service-con-pool - Failed to validate connection oracle.jdbc.driver.T4CConnection@456e8c36 (ORA-17008: Closed connection
-
-SQL> set lines 999 pages 999;
-SQL> /
- 
-PROFILE                                                                                                                          RESOURCE_NAME                    LIMIT
--------------------------------------------------------------------------------------------------------------------------------- -------------------------------- --------------------------------------------------------------------------------------------------------------------------------
-RFOREX                                                                                                                           COMPOSITE_LIMIT                  DEFAULT
-RFOREX                                                                                                                           SESSIONS_PER_USER                UNLIMITED
-RFOREX                                                                                                                           CPU_PER_SESSION                  DEFAULT
-RFOREX                                                                                                                           CPU_PER_CALL                     DEFAULT
-RFOREX                                                                                                                           LOGICAL_READS_PER_SESSION        DEFAULT
-RFOREX                                                                                                                           LOGICAL_READS_PER_CALL           DEFAULT
-RFOREX                                                                                                                           IDLE_TIME                        DEFAULT
-RFOREX                                                                                                                           CONNECT_TIME                     DEFAULT
-RFOREX                                                                                                                           PRIVATE_SGA                      DEFAULT
-RFOREX                                                                                                                           FAILED_LOGIN_ATTEMPTS            3
-RFOREX                                                                                                                           PASSWORD_LIFE_TIME               90
-RFOREX                                                                                                                           PASSWORD_REUSE_TIME              365
-RFOREX                                                                                                                           PASSWORD_REUSE_MAX               20
-RFOREX                                                                                                                           PASSWORD_VERIFY_FUNCTION         ORA12C_VERIFY_FUNCTION
-RFOREX                                                                                                                           PASSWORD_LOCK_TIME               1
-RFOREX                                                                                                                           PASSWORD_GRACE_TIME              5
-RFOREX                                                                                                                           INACTIVE_ACCOUNT_TIME            120
-RFOREX                                                                                                                           PASSWORD_ROLLOVER_TIME           DEFAULT
- 
-18 rows selected.
- 
-SQL>  select PROFILE,RESOURCE_NAME,LIMIT from dba_profiles where PROFILE='DEFAULT';
- 
-PROFILE                                                                                                                          RESOURCE_NAME                    LIMIT
--------------------------------------------------------------------------------------------------------------------------------- -------------------------------- --------------------------------------------------------------------------------------------------------------------------------
-DEFAULT                                                                                                                          COMPOSITE_LIMIT                  UNLIMITED
-DEFAULT                                                                                                                          SESSIONS_PER_USER                UNLIMITED
-DEFAULT                                                                                                                          CPU_PER_SESSION                  UNLIMITED
-DEFAULT                                                                                                                          CPU_PER_CALL                     UNLIMITED
-DEFAULT                                                                                                                          LOGICAL_READS_PER_SESSION        UNLIMITED
-DEFAULT                                                                                                                          LOGICAL_READS_PER_CALL           UNLIMITED
-DEFAULT                                                                                                                          IDLE_TIME                        UNLIMITED
-DEFAULT                                                                                                                          CONNECT_TIME                     UNLIMITED
-DEFAULT                                                                                                                          PRIVATE_SGA                      UNLIMITED
-DEFAULT                                                                                                                          FAILED_LOGIN_ATTEMPTS            3
-DEFAULT                                                                                                                          PASSWORD_LIFE_TIME               90
-DEFAULT                                                                                                                          PASSWORD_REUSE_TIME              365
-DEFAULT                                                                                                                          PASSWORD_REUSE_MAX               20
-DEFAULT                                                                                                                          PASSWORD_VERIFY_FUNCTION         NULL
-DEFAULT                                                                                                                          PASSWORD_LOCK_TIME               1
-DEFAULT                                                                                                                          PASSWORD_GRACE_TIME              5
-DEFAULT                                                                                                                          INACTIVE_ACCOUNT_TIME            90
-DEFAULT                                                                                                                          PASSWORD_ROLLOVER_TIME           -1
- 
-18 rows selected.
-
-
-
-
-
-
-# Use the debug variant you pulled (has shell + apk + adduser/addgroup tools)
-FROM cgr.dev/chainguard/jre:latest-dev
-
-# Switch to root during build (Chainguard debug allows this)
-USER root
-
-# Timezone setup (same logic, but use ln -sf for Wolfi compatibility)
-ENV TZ=Asia/Calcutta
-RUN ln -sf /usr/share/zoneinfo/$TZ /etc/localtime && \
-    echo $TZ > /etc/timezone
-
-# Create group + user (BusyBox addgroup/adduser syntax differs slightly)
-# -S = system user/group, -H = no home dir, -s /sbin/nologin = no login shell
-RUN addgroup -g 1001 -S dept && \
-    adduser -u 1001 -S -G dept -H -s /sbin/nologin dept
-
-# Create logs dir + set ownership/permissions
-RUN mkdir -p /app/logs && \
-    chown -R 1001:1001 /app && \
-    chmod -R 775 /app/logs
-
-WORKDIR /app
-
-# Copy certificates
-COPY src/main/resources/fxs-cert-pr.crt     /app/fxs-cert-pr.crt
-COPY src/main/resources/rforex-vks-pr.crt   /app/rforex-vks-pr.crt
-
-# Import certificates into cacerts (keytool is present in Chainguard JRE)
-# Use ${JAVA_HOME} for better robustness (set automatically in Chainguard)
-RUN keytool -import -trustcacerts -keystore "${JAVA_HOME}/lib/security/cacerts" \
-    -storepass changeit -noprompt \
-    -alias fxs-certs -file /app/fxs-cert-pr.crt && \
-    keytool -import -trustcacerts -keystore "${JAVA_HOME}/lib/security/cacerts" \
-    -storepass changeit -noprompt \
-    -alias rfx-certs -file /app/rforex-vks-pr.crt
-
-# Copy your WAR file
-COPY target/Customer-1.war /app/Customer.war
-
-# Set correct ownership
-RUN chown 1001:1001 /app/Customer.war
-
-# Switch to non-root user for runtime (matches your original intent)
-USER 1001
-
-EXPOSE 5203
-
-ENTRYPOINT ["java", "-jar", "/app/Customer.war"]
-
-oracle.ucp.UniversalConnectionPoolException: UCP-45308: Exception occurred while enabling failover with remote ONS subscription
-        at oracle.ucp.util.UCPErrorHandler.newUniversalConnectionPoolException(UCPErrorHandler.java:316) ~[ucp-23.5.0.24.07.jar!/:23.5.0.24.07]
-        at oracle.ucp.util.UCPErrorHandler.newUniversalConnectionPoolException(UCPErrorHandler.java:286) ~[ucp-23.5.0.24.07.jar!/:23.5.0.24.07]
-        at oracle.ucp.util.UCPErrorHandler.newUniversalConnectionPoolException(UCPErrorHandler.java:300) ~[ucp-23.5.0.24.07.jar!/:23.5.0.24.07]
-        at oracle.ucp.common.ONSDriver.start(ONSDriver.java:108) ~[ucp-23.5.0.24.07.jar!/:23.5.0.24.07]
-        at oracle.ucp.common.Topology.onsDriver(Topology.java:508) ~[ucp-23.5.0.24.07.jar!/:23.5.0.24.07]
-        at oracle.ucp.common.CoreConnectionImpl$1.run(CoreConnectionImpl.java:147) ~[ucp-23.5.0.24.07.jar!/:23.5.0.24.07]
-        at oracle.ucp.util.UCPTaskBase.call(UCPTaskBase.java:26) ~[ucp-23.5.0.24.07.jar!/:23.5.0.24.07]
-        at oracle.ucp.util.UCPTaskManagerImpl$2.run(UCPTaskManagerImpl.java:162) ~[ucp-23.5.0.24.07.jar!/:23.5.0.24.07]
-
-2026-03-16 14:53:01 +05:30 ERROR 1 --- [Customer] [xecutorThread-1] rforex-customer-service-cp               : ONS registration failed, disabling FAN/FCF: all applicable subsystems, like Fast Failover, Runtime Load Balancing and Sharding Configuration Updates will not work properly
-
-
-# Basic UCP Setup
-spring.datasource.type=oracle.ucp.jdbc.PoolDataSource
-spring.datasource.oracleucp.connection-factory-class-name=oracle.jdbc.pool.OracleDataSource
-spring.datasource.oracleucp.connection-pool-name=rforex-customer-service-cp
-
-# Pool Sizing
-spring.datasource.oracleucp.initial-pool-size=10
-spring.datasource.oracleucp.min-pool-size=10
-spring.datasource.oracleucp.max-pool-size=20
-
-# Timeouts (Converted to Seconds)
-spring.datasource.oracleucp.max-idle-time=600
-spring.datasource.oracleucp.max-connection-reuse-time=1800
-spring.datasource.oracleucp.connection-wait-timeout=20
-spring.datasource.oracleucp.connection-validation-timeout=30000
-spring.datasource.oracleucp.abandoned-connection-timeout=60
-
-# RAC Specific High Availability (Crucial!)
-spring.datasource.oracleucp.fast-connection-failover-enabled=true
-
-
-org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'preferenceController' defined in URL [jar:nested:/app/manager.jar/!BOOT-INF/classes/!/com/rforex/manager/preference/controller/PreferenceController.class]: Encountered invalid @Scheduled method 'updateCardRateScheduler': One-time task only supported with specified initial delay
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:614) ~[spring-beans-6.2.6.jar!/:6.2.6]
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.6.jar!/:6.2.6]
-        at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.6.jar!/:6.2.6]
-        at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371) ~[spring-beans-6.2.6.jar!/:6.2.6]
-        at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.6.jar!/:6.2.6]
-        at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.6.jar!/:6.2.6]
-        at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1221) ~[spring-beans-6.2.6.jar!/:6.2.6]
-        at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1187) ~[spring-beans-6.2.6.jar!/:6.2.6]
-        at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1122) ~[spring-beans-6.2.6.jar!/:6.2.6]
-        at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:987) ~[spring-context-6.2.6.jar!/:6.2.6]
-        at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627) ~[spring-context-6.2.6.jar!/:6.2.6]
-        at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.4.5.jar!/:3.4.5]
-        at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:753) ~[spring-boot-3.4.5.jar!/:3.4.5]
-        at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) ~[spring-boot-3.4.5.jar!/:3.4.5]
-        at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) ~[spring-boot-3.4.5.jar!/:3.4.5]
-        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1362) ~[spring-boot-3.4.5.jar!/:3.4.5]
-        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1351) ~[spring-boot-3.4.5.jar!/:3.4.5]
-        at com.rforex.manager.ManagerApplication.main(ManagerApplication.java:18) ~[!/:0.0.1-SNAPSHOT]
-        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
-        at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
-        at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:102) ~[manager.jar:0.0.1-SNAPSHOT]
-        at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:64) ~[manager.jar:0.0.1-SNAPSHOT]
-        at org.springframework.boot.loader.launch.JarLauncher.main(JarLauncher.java:40) ~[manager.jar:0.0.1-SNAPSHOT]
-Caused by: java.lang.IllegalStateException: Encountered invalid @Scheduled method 'updateCardRateScheduler': One-time task only supported with specified initial delay
-        at org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.processScheduledTask(ScheduledAnnotationBeanPostProcessor.java:525) ~[spring-context-6.2.6.jar!/:6.2.6]
-        at org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.processScheduledSync(ScheduledAnnotationBeanPostProcessor.java:364) ~[spring-context-6.2.6.jar!/:6.2.6]
-        at org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.processScheduled(ScheduledAnnotationBeanPostProcessor.java:343) ~[spring-context-6.2.6.jar!/:6.2.6]
-        at org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.lambda$postProcessAfterInitialization$1(ScheduledAnnotationBeanPostProcessor.java:308) ~[spring-context-6.2.6.jar!/:6.2.6]
-        at java.base/java.lang.Iterable.forEach(Iterable.java:75) ~[na:na]
-        at org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.lambda$postProcessAfterInitialization$2(ScheduledAnnotationBeanPostProcessor.java:308) ~[spring-context-6.2.6.jar!/:6.2.6]
-        at java.base/java.util.LinkedHashMap.forEach(LinkedHashMap.java:986) ~[na:na]
-        at org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.postProcessAfterInitialization(ScheduledAnnotationBeanPostProcessor.java:307) ~[spring-context-6.2.6.jar!/:6.2.6]
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsAfterInitialization(AbstractAutowireCapableBeanFactory.java:445) ~[spring-beans-6.2.6.jar!/:6.2.6]
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1821) ~[spring-beans-6.2.6.jar!/:6.2.6]
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:607) ~[spring-beans-6.2.6.jar!/:6.2.6]
-        ... 22 common frames omitted
-
-2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : entering args (oracle.jdbc.internal.AbstractConnectionBuilder$1@675f0d3c)
-2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : traceId=2BDFEDD1.
-2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : Session Attributes:
-sdu=8192, tdu=2097152
-nt: host=rfxdb-scan.olx., port=1625, socketOptions={0=YES, 1=NO, 17=0, 18=false, 2=20000, 20=true, 38=TLS, 23=40, 24=50, 40=false, 25=0}
-    socket=null
-client profile={oracle.net.encryption_types_client=(), oracle.net.crypto_seed=, oracle.net.authentication_services=(), oracle.net.setFIPSMode=false, oracle.net.kerberos5_mutual_authentication=false, oracle.net.encryption_client=ACCEPTED, oracle.net.crypto_checksum_client=ACCEPTED, oracle.net.crypto_checksum_types_client=()}
-connection options=[host=rfxdb-scan.olx. port=1625 protocol=TCP service_name=RFOREX addr=(ADDRESS=(PROTOCOL=TCP)(HOST=rfxdb-scan.olx.)(PORT=1625)) conn_data=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(PORT=1625)(HOST=10.190.224.149)(HOSTNAME=rfxdb-scan.olx.))(CONNECT_DATA=(CID=(PROGRAM=JarLauncher)(HOST=rforex-app-manager-5db8c8f4b8-4fkdf)(USER=dept))(SERVICE_NAME=RFOREX))) done=true]
-onBreakReset=false, dataEOF=true, negotiatedOptions=0x0, connected=false
-TTIINIT enabled=false, TTC cookie enabled=false
-
-2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : traceId=2BDFEDD1, anoEnabled=true.
-2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : Got Redirect, SessionTraceId = 2BDFEDD1
-2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : Session Attributes:
-sdu=8192, tdu=2097152
-nt: host=rfxdb-scan.olx., port=1625, socketOptions={0=YES, 1=NO, 17=0, 18=false, 2=20000, 20=true, 38=TLS, 23=40, 24=50, 40=false, 25=0}
-    socket=null
-client profile={oracle.net.encryption_types_client=(), oracle.net.crypto_seed=, oracle.net.authentication_services=(), oracle.net.setFIPSMode=false, oracle.net.kerberos5_mutual_authentication=false, oracle.net.encryption_client=ACCEPTED, oracle.net.crypto_checksum_client=ACCEPTED, oracle.net.crypto_checksum_types_client=()}
-connection options=[host=rfxdb-scan.olx. port=1625 protocol=TCP service_name=RFOREX addr=(ADDRESS=(PROTOCOL=TCP)(HOST=rfxdb-scan.olx.)(PORT=1625)) conn_data=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(PORT=1625)(HOST=10.190.224.149)(HOSTNAME=rfxdb-scan.olx.))(CONNECT_DATA=(CID=(PROGRAM=JarLauncher)(HOST=rforex-app-manager-5db8c8f4b8-4fkdf)(USER=dept))(SERVICE_NAME=RFOREX))) done=true]
-onBreakReset=false, dataEOF=true, negotiatedOptions=0x0, connected=false
-TTIINIT enabled=false, TTC cookie enabled=false
-
-2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : Got Refused, SessionTraceId = 2BDFEDD1
-2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : Outbound interrupt timer cancelled null
-2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : Session Attributes:
-sdu=8192, tdu=2097152
-nt: host=rfxdb-scan.olx., port=1625, socketOptions={0=YES, 1=NO, 17=0, 18=false, 2=20000, 20=true, 38=TLS, 23=40, 24=50, 40=false, 25=0}
-    socket=null
-client profile={oracle.net.encryption_types_client=(), oracle.net.crypto_seed=, oracle.net.authentication_services=(), oracle.net.setFIPSMode=false, oracle.net.kerberos5_mutual_authentication=false, oracle.net.encryption_client=ACCEPTED, oracle.net.crypto_checksum_client=ACCEPTED, oracle.net.crypto_checksum_types_client=()}
-connection options=[host=rfxdb-scan.olx. port=1625 protocol=TCP service_name=RFOREX addr=(ADDRESS=(PROTOCOL=TCP)(HOST=rfxdb-scan.olx.)(PORT=1625)) conn_data=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(PORT=1625)(HOST=10.190.224.149)(HOSTNAME=rfxdb-scan.olx.))(CONNECT_DATA=(CID=(PROGRAM=JarLauncher)(HOST=rforex-app-manager-5db8c8f4b8-4fkdf)(USER=dept))(SERVICE_NAME=RFOREX))) done=true]
-onBreakReset=false, dataEOF=true, negotiatedOptions=0x0, connected=false
-TTIINIT enabled=false, TTC cookie enabled=false
-
-2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : Got Redirect, SessionTraceId = 2BDFEDD1
-2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : throwing
-
-java.sql.SQLRecoverableException: ORA-17820: The network adapter could not establish the connection. (CONNECTION_ID=lryljn9nSESHjuGBhZbiyg==)
-https://docs.oracle.com/error-help/db/ora-17820/
-        at oracle.jdbc.driver.T4CConnection.handleLogonNetException(T4CConnection.java:1853) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
-        at oracle.jdbc.driver.T4CConnection.logon(T4CConnection.java:1204) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
-        at oracle.jdbc.driver.PhysicalConnection.connect(PhysicalConnection.java:1189) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
-        at oracle.jdbc.driver.T4CDriverExtension.getConnection(T4CDriverExtension.java:106) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
-        at oracle.jdbc.driver.OracleDriver.connect(OracleDriver.java:887) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
-        at oracle.jdbc.driver.OracleDriver.connect(OracleDriver.java:694) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
-        at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:137) ~[HikariCP-5.1.0.jar!/:na]
-        at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:360) ~[HikariCP-5.1.0.jar!/:na]
-        at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:202) ~[HikariCP-5.1.0.jar!/:na]
-        at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:461) ~[HikariCP-5.1.0.jar!/:na]
-        at com.zaxxer.hikari.pool.HikariPool$PoolEntryCreator.call(HikariPool.java:724) ~[HikariCP-5.1.0.jar!/:na]
-        at com.zaxxer.hikari.pool.HikariPool$PoolEntryCreator.call(HikariPool.java:703) ~[HikariCP-5.1.0.jar!/:na]
-        at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[na:na]
-        at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
-        at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
-        at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
-Caused by: oracle.net.ns.NetException: ORA-17820: The network adapter could not establish the connection. (CONNECTION_ID=lryljn9nSESHjuGBhZbiyg==)
-https://docs.oracle.com/error-help/db/ora-17820/
-        at oracle.net.nt.ConnStrategy.execute(ConnStrategy.java:835) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
-        at oracle.net.resolver.AddrResolution.resolveAndExecute(AddrResolution.java:718) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
-        at oracle.net.ns.NSProtocol.establishConnection(NSProtocol.java:960) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
-        at oracle.net.ns.NSProtocol.establishConnection(NSProtocol.java:933) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
-        at oracle.net.ns.NSProtocolNIO.redirectConnection(NSProtocolNIO.java:533) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
-        at oracle.net.ns.NSProtocolNIO.handleConnectPacketResponse(NSProtocolNIO.java:449) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
-        at oracle.net.ns.NSProtocolNIO.negotiateConnection(NSProtocolNIO.java:270) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
-        at oracle.net.ns.NSProtocol.connect(NSProtocol.java:353) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
-        at oracle.jdbc.driver.T4CConnection.connectNetworkSessionProtocol(T4CConnection.java:3684) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
-        at oracle.jdbc.driver.T4CConnection.logon(T4CConnection.java:1083) ~[ojdbc11-23.7.0.25.01.jar!/:23.7.0.25.01]
-        ... 14 common frames omitted
-
-2026-03-16 17:08:41 +05:30  INFO 1 --- [manager] [onnection adder] oracle.jdbc                              : properties={LOCALE=en_US, DriverVersion=23.7.0.25.01, java.library.path: =/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib, java.class.path: =/app/manager.jar, java.version: =21.0.5}.
+Use this page to define the general logging settings for this server.
+
+Restart may be required. Log file name:	
+logs/FXS_SERVER1.log
+The name of the file that stores current log messages. Usually it is a computed value based on the name of the parent of this MBean. For example, for a server log, it isSERVER_NAME.log.More Info...
+
+Rotation
+Restart may be required. Rotation type:	
+
+By Size
+Criteria for moving old log messages to a separate file.More Info...
+
+Rotation file size:	
+5000
+The size (1 - 2097150 kilobytes) that triggers the server to move log messages to a separate file. The default is 500 kilobytes. After the log file reaches the specified minimum size, the next time the server checks the file size, it will rename the current log file as SERVER_NAME.lognnnnn and create a new one to store subsequent messages. (Requires that you specify a file rotation type of Size.)More Info...
+
+Begin rotation time:	
+00:00
+Determines the start time (hour and minute) for a time-based rotation sequence.More Info...
+
+Rotation interval:	
+24
+The interval (in hours) at which the server saves old log messages to another file. (Requires that you specify a file rotation type of TIME.)More Info...
+
+Limit number of retained files	
+Indicates whether to limit the number of log files that this server instance creates to store old messages. (Requires that you specify a file rotation type of SIZE orTIME.)More Info...
+
+Files to retain:	
+100
+The maximum number of log files that the server creates when it rotates the log. This number does not include the file that the server uses to store current messages. (Requires that you enable Number of Files Limited.)More Info...
+
+Restart may be required. Log file rotation directory:	
+The directory where the rotated log files will be stored. By default the rotated files are stored in the same directory where the log file is stored.More Info...
+
+Restart may be required. Rotate log file on startup	
+Specifies whether a server rotates its log file during its startup cycle. The default value in production mode is false.More Info...
+
+Open  Advanced
+Date Format Pattern:	
+MMM d, yyyy h:mm:ss,SSS a z
+The date format pattern used for rendering dates in the log. The DateFormatPattern string conforms to the specification of thejava.text.SimpleDateFormat class.More Info...
+
+Minimum severity to log:	
+
+Info
+The minimum severity of log messages going to all log destinations.More Info...
+
+Restart may be required. Logger severity properties:
+EJB=Warning
+Security=Error
+
+
+The configuration of the different logger severities keyed by name. The values are one of the predefined Severity strings namely Emergency, Alert, Critical, Error, Warning, Notice, Info, Debug, Trace.More Info...
+
+Platform Logger Levels:
+Specifies the platform logger and the associated level names set through the WebLogic Server configuration.More Info...
+
+Restart may be required. Redirect stdout logging enabled	
+Specifies whether the stdout of the JVM in which a WebLogic Server instance runs is redirected to the WebLogic logging system. When this attribute is enabled, the stdout content is published to all the registered log destinations, such as the server terminal console and log file.More Info...
+
+Restart may be required. Redirect stderr logging enabled	
+Specifies whether the stderr of the JVM in which a WebLogic Server instance runs is redirected to the WebLogic Logging system. When this attribute is enabled, the stderr content is published to all the registered log destinations, such as the server terminal console and log file.More Info...
+
+Log monitoring enabled	
+Enable or disable log monitoring.More Info...
+
+Log monitoring interval seconds:	
+30
+Timer interval in seconds to check the counts of messages logged during the interval.More Info...
+
+Log monitoring throttle threshold:	
+1500
+The threshold number of messages logged during the evaluation period which enables or disables the throttling.More Info...
+
+Log monitoring throttle message length:	
+50
+Cut-off length of the log message for evaluation during throttle period. The log message length is truncated to this length for evaluation of repeated logging events.More Info...
+
+Log monitoring maximum throttle message signature count:	
+1000
+Maximum number of unique message signatures that will be monitored during the throttle interval.More Info...
+
+Message destination(s)
+Log file :
+Severity level:	
+
+Trace
+The minimum severity of log messages going to the server log file. By default all messages go to the log file.More Info...
+
+Filter:	
+
+None
+The filter configuration for the server log file.More Info...
+
+Log File Buffer:	
+8
+Gets the underlying log buffer size in kilobytesMore Info...
+
+Standard out :
+Severity level:	
+
+Notice
+The minimum severity of log messages going to the standard out. Messages with a lower severity than the specified value will not be published to standard out.More Info...
+
+Filter:	
+
+None
+The filter configuration for log events being sent to the standard out.More Info...
+
+Domain log broadcaster :
+Severity level:	
+
+Notice
+The minimum severity of log messages going to the domain log from this server's log broadcaster. Messages with a lower severity than the specified value will not be published to the domain log.More Info...
+
+Filter:	
+
+None
+The filter configuration for log events being sent to the domain log.More Info...
+
+Buffer Size:	
+10
+Broadcasts log messages to the domain log in batch mode.More Info...
+
+Stack Traces to stdout	
+Specifies whether to dump stack traces to the console when included in logged message.More Info...
+
+stdout Stack Trace Depth:	
+5
+Determines the no of stacktrace frames to display on standard out. All frames are displayed in the log file. * -1 means all frames are displayed.More Info...
+
+Restart may be required. stdout Format:	
+standard
+The output format to use when logging to the console.More Info...
+
+Trigger Depth:	
+500
+Returns the depth of stack frame that will trigger the truncation of stack frame for the remaining cascaded causes.More Info...
+
+Depth After Trigger:	
+5
