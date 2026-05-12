@@ -1,141 +1,878 @@
-Use this page to define the general logging settings for this server.
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.5.0</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.sbi.swift.in.parser</groupId>
+	<artifactId>InwardSwiftProcessor</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
+	<name />
+	<description />
+	<url />
+	<licenses>
+		<license />
+	</licenses>
+	<developers>
+		<developer />
+	</developers>
+	<scm>
+		<connection />
+		<developerConnection />
+		<tag />
+		<url />
+	</scm>
+	<properties>
+		<java.version>21</java.version>
+		<kafka.version>4.0.0</kafka.version>
+		<spring-cloud.version>2025.0.0-RC1</spring-cloud.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-clients</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc11</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.idea</groupId>
+			<artifactId>rforex-jwt-common-lib</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+	</dependencies>
 
-Restart may be required. Log file name:	
-logs/FXS_SERVER1.log
-The name of the file that stores current log messages. Usually it is a computed value based on the name of the parent of this MBean. For example, for a server log, it isSERVER_NAME.log.More Info...
-
-Rotation
-Restart may be required. Rotation type:	
-
-By Size
-Criteria for moving old log messages to a separate file.More Info...
-
-Rotation file size:	
-5000
-The size (1 - 2097150 kilobytes) that triggers the server to move log messages to a separate file. The default is 500 kilobytes. After the log file reaches the specified minimum size, the next time the server checks the file size, it will rename the current log file as SERVER_NAME.lognnnnn and create a new one to store subsequent messages. (Requires that you specify a file rotation type of Size.)More Info...
-
-Begin rotation time:	
-00:00
-Determines the start time (hour and minute) for a time-based rotation sequence.More Info...
-
-Rotation interval:	
-24
-The interval (in hours) at which the server saves old log messages to another file. (Requires that you specify a file rotation type of TIME.)More Info...
-
-Limit number of retained files	
-Indicates whether to limit the number of log files that this server instance creates to store old messages. (Requires that you specify a file rotation type of SIZE orTIME.)More Info...
-
-Files to retain:	
-100
-The maximum number of log files that the server creates when it rotates the log. This number does not include the file that the server uses to store current messages. (Requires that you enable Number of Files Limited.)More Info...
-
-Restart may be required. Log file rotation directory:	
-The directory where the rotated log files will be stored. By default the rotated files are stored in the same directory where the log file is stored.More Info...
-
-Restart may be required. Rotate log file on startup	
-Specifies whether a server rotates its log file during its startup cycle. The default value in production mode is false.More Info...
-
-Open  Advanced
-Date Format Pattern:	
-MMM d, yyyy h:mm:ss,SSS a z
-The date format pattern used for rendering dates in the log. The DateFormatPattern string conforms to the specification of thejava.text.SimpleDateFormat class.More Info...
-
-Minimum severity to log:	
-
-Info
-The minimum severity of log messages going to all log destinations.More Info...
-
-Restart may be required. Logger severity properties:
-EJB=Warning
-Security=Error
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>2024.0.1</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+</project>
 
 
-The configuration of the different logger severities keyed by name. The values are one of the predefined Severity strings namely Emergency, Alert, Critical, Error, Warning, Notice, Info, Debug, Trace.More Info...
 
-Platform Logger Levels:
-Specifies the platform logger and the associated level names set through the WebLogic Server configuration.More Info...
 
-Restart may be required. Redirect stdout logging enabled	
-Specifies whether the stdout of the JVM in which a WebLogic Server instance runs is redirected to the WebLogic logging system. When this attribute is enabled, the stdout content is published to all the registered log destinations, such as the server terminal console and log file.More Info...
 
-Restart may be required. Redirect stderr logging enabled	
-Specifies whether the stderr of the JVM in which a WebLogic Server instance runs is redirected to the WebLogic Logging system. When this attribute is enabled, the stderr content is published to all the registered log destinations, such as the server terminal console and log file.More Info...
+12-May-2026 15:19:23.107 INFO [http-nio-9080-exec-374] org.apache.catalina.startup.HostConfig.deployWAR Deploying web application archive [/weblogic/apache-tomcat/webapps/rforex#rforexinwardswift.war]
+12-May-2026 15:19:28.532 INFO [http-nio-9080-exec-374] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
 
-Log monitoring enabled	
-Enable or disable log monitoring.More Info...
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
 
-Log monitoring interval seconds:	
-30
-Timer interval in seconds to check the counts of messages logged during the interval.More Info...
+ :: Spring Boot ::                (v3.5.0)
 
-Log monitoring throttle threshold:	
-1500
-The threshold number of messages logged during the evaluation period which enables or disables the throttling.More Info...
+2026-05-12 15:19:29 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] c.s.i.p.InwardSwiftProcessorApplication  : Starting InwardSwiftProcessorApplication v0.0.1-SNAPSHOT using Java 21.0.9 with PID 3759089 (/weblogic/apache-tomcat/webapps/rforex#rforexinwardswift/WEB-INF/classes started by weblogic in /weblogic/apache-tomcat/bin)
+2026-05-12 15:19:29 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] c.s.i.p.InwardSwiftProcessorApplication  : The following 1 profile is active: "uat"
+2026-05-12 15:19:30 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-12 15:19:30 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 127 ms. Found 15 JPA repository interfaces.
+2026-05-12 15:19:30 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1371 ms
+2026-05-12 15:19:31 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-12 15:19:31 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.15.Final
+2026-05-12 15:19:31 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-05-12 15:19:31 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.h.e.boot.internal.EnversServiceImpl    : Envers integration enabled? : true
+2026-05-12 15:19:31 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-12 15:19:31 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] com.zaxxer.hikari.HikariDataSource       : HikariPool-54 - Starting...
+2026-05-12 15:19:32 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] com.zaxxer.hikari.pool.HikariPool        : HikariPool-54 - Added connection oracle.jdbc.driver.T4CConnection@5e4c58ac
+2026-05-12 15:19:32 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] com.zaxxer.hikari.HikariDataSource       : HikariPool-54 - Start completed.
+2026-05-12 15:19:32 +0530 [] [] WARN  3759089 --- [o-9080-exec-374] org.hibernate.orm.deprecation            : HHH90000025: OracleDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-12 15:19:32 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+        Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-54)']
+        Database driver: undefined/unknown
+        Database version: 19.31
+        Autocommit mode: undefined/unknown
+        Isolation level: undefined/unknown
+        Minimum pool size: undefined/unknown
+        Maximum pool size: undefined/unknown
+2026-05-12 15:19:32 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.h.e.c.i.m.AuditMetadataGenerator       : Adding properties for entity: com.sbi.inward.parser.entities.FcraParametersEntity
+2026-05-12 15:19:33 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.h.m.i.EntityInstantiatorPojoStandard   : HHH000182: No default (no-argument) constructor for class: com.idea.rforexjwtcommonlib.models.LoggedUser (class must be instantiated by Interceptor)
+2026-05-12 15:19:34 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-12 15:19:35 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-12 15:19:35 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-05-12 15:19:36 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.kafka.common.config.AbstractConfig   : ProducerConfig values:
+        acks = -1
+        batch.size = 16384
+        bootstrap.servers = [my-cluster-kafka-bootstrap-rforex-kafka.apps.tssrfxuat.sbi.co.in:443]
+        buffer.memory = 33554432
+        client.dns.lookup = use_all_dns_ips
+        client.id = txmswiftprocessor-1-1
+        compression.gzip.level = -1
+        compression.lz4.level = 9
+        compression.type = none
+        compression.zstd.level = 3
+        connections.max.idle.ms = 540000
+        delivery.timeout.ms = 120000
+        enable.idempotence = true
+        enable.metrics.push = true
+        interceptor.classes = []
+        key.serializer = class org.apache.kafka.common.serialization.StringSerializer
+        linger.ms = 5
+        max.block.ms = 60000
+        max.in.flight.requests.per.connection = 5
+        max.request.size = 1048576
+        metadata.max.age.ms = 300000
+        metadata.max.idle.ms = 300000
+        metadata.recovery.rebootstrap.trigger.ms = 300000
+        metadata.recovery.strategy = rebootstrap
+        metric.reporters = [org.apache.kafka.common.metrics.JmxReporter]
+        metrics.num.samples = 2
+        metrics.recording.level = INFO
+        metrics.sample.window.ms = 30000
+        partitioner.adaptive.partitioning.enable = true
+        partitioner.availability.timeout.ms = 0
+        partitioner.class = null
+        partitioner.ignore.keys = false
+        receive.buffer.bytes = 32768
+        reconnect.backoff.max.ms = 1000
+        reconnect.backoff.ms = 50
+        request.timeout.ms = 30000
+        retries = 5
+        retry.backoff.max.ms = 1000
+        retry.backoff.ms = 100
+        sasl.client.callback.handler.class = null
+        sasl.jaas.config = [hidden]
+        sasl.kerberos.kinit.cmd = /usr/bin/kinit
+        sasl.kerberos.min.time.before.relogin = 60000
+        sasl.kerberos.service.name = null
+        sasl.kerberos.ticket.renew.jitter = 0.05
+        sasl.kerberos.ticket.renew.window.factor = 0.8
+        sasl.login.callback.handler.class = null
+        sasl.login.class = null
+        sasl.login.connect.timeout.ms = null
+        sasl.login.read.timeout.ms = null
+        sasl.login.refresh.buffer.seconds = 300
+        sasl.login.refresh.min.period.seconds = 60
+        sasl.login.refresh.window.factor = 0.8
+        sasl.login.refresh.window.jitter = 0.05
+        sasl.login.retry.backoff.max.ms = 10000
+        sasl.login.retry.backoff.ms = 100
+        sasl.mechanism = SCRAM-SHA-512
+        sasl.oauthbearer.clock.skew.seconds = 30
+        sasl.oauthbearer.expected.audience = null
+        sasl.oauthbearer.expected.issuer = null
+        sasl.oauthbearer.header.urlencode = false
+        sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+        sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+        sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+        sasl.oauthbearer.jwks.endpoint.url = null
+        sasl.oauthbearer.scope.claim.name = scope
+        sasl.oauthbearer.sub.claim.name = sub
+        sasl.oauthbearer.token.endpoint.url = null
+        security.protocol = SASL_SSL
+        security.providers = null
+        send.buffer.bytes = 131072
+        socket.connection.setup.timeout.max.ms = 30000
+        socket.connection.setup.timeout.ms = 10000
+        ssl.cipher.suites = null
+        ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+        ssl.endpoint.identification.algorithm = https
+        ssl.engine.factory.class = null
+        ssl.key.password = null
+        ssl.keymanager.algorithm = SunX509
+        ssl.keystore.certificate.chain = null
+        ssl.keystore.key = null
+        ssl.keystore.location = null
+        ssl.keystore.password = null
+        ssl.keystore.type = JKS
+        ssl.protocol = TLSv1.3
+        ssl.provider = null
+        ssl.secure.random.implementation = null
+        ssl.trustmanager.algorithm = PKIX
+        ssl.truststore.certificates = null
+        ssl.truststore.location = /weblogic/keystore/kafka/cluster-ca-cert.jks
+        ssl.truststore.password = [hidden]
+        ssl.truststore.type = JKS
+        transaction.timeout.ms = 60000
+        transactional.id = null
+        value.serializer = class org.apache.kafka.common.serialization.StringSerializer
 
-Log monitoring throttle message length:	
-50
-Cut-off length of the log message for evaluation during throttle period. The log message length is truncated to this length for evaluation of repeated logging events.More Info...
+2026-05-12 15:19:36 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.k.c.t.i.KafkaMetricsCollector        : initializing Kafka metrics collector
+2026-05-12 15:19:36 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.k.clients.producer.KafkaProducer     : [Producer clientId=txmswiftprocessor-1-1] Instantiated an idempotent producer.
+2026-05-12 15:19:36 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.k.c.s.authenticator.AbstractLogin    : Successfully logged in.
+2026-05-12 15:19:36 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 4.0.0
+2026-05-12 15:19:36 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: 985bc99521dd22bb
+2026-05-12 15:19:36 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1778579376541
+2026-05-12 15:19:36 +0530 [] [] WARN  3759089 --- [o-9080-exec-374] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [ftprocessor-1-1] org.apache.kafka.clients.Metadata        : [Producer clientId=txmswiftprocessor-1-1] Cluster ID: ELFZfyvsRqGa9w5vTFwifw
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [ftprocessor-1-1] o.a.k.c.p.internals.TransactionManager   : [Producer clientId=txmswiftprocessor-1-1] ProducerId set to 7231 with epoch 0
+2026-05-12 15:19:37 +0530 [] [] WARN  3759089 --- [o-9080-exec-374] .s.s.UserDetailsServiceAutoConfiguration :
 
-Log monitoring maximum throttle message signature count:	
-1000
-Maximum number of unique message signatures that will be monitored during the throttle interval.More Info...
+Using generated security password: ea47537e-223d-4e5d-8e84-576e3c8130b7
 
-Message destination(s)
-Log file :
-Severity level:	
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
 
-Trace
-The minimum severity of log messages going to the server log file. By default all messages go to the log file.More Info...
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.kafka.common.config.AbstractConfig   : ConsumerConfig values:
+        allow.auto.create.topics = true
+        auto.commit.interval.ms = 5000
+        auto.offset.reset = latest
+        bootstrap.servers = [my-cluster-kafka-bootstrap-rforex-kafka.apps.tssrfxuat.sbi.co.in:443]
+        check.crcs = true
+        client.dns.lookup = use_all_dns_ips
+        client.id = txmswiftprocessor-1-0
+        client.rack =
+        connections.max.idle.ms = 540000
+        default.api.timeout.ms = 60000
+        enable.auto.commit = false
+        enable.metrics.push = true
+        exclude.internal.topics = true
+        fetch.max.bytes = 52428800
+        fetch.max.wait.ms = 500
+        fetch.min.bytes = 1
+        group.id = I_SWIFT_IN_IDEA_3
+        group.instance.id = null
+        group.protocol = classic
+        group.remote.assignor = null
+        heartbeat.interval.ms = 3000
+        interceptor.classes = []
+        internal.leave.group.on.close = true
+        internal.throw.on.fetch.stable.offset.unsupported = false
+        isolation.level = read_uncommitted
+        key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+        max.partition.fetch.bytes = 1048576
+        max.poll.interval.ms = 300000
+        max.poll.records = 500
+        metadata.max.age.ms = 300000
+        metadata.recovery.rebootstrap.trigger.ms = 300000
+        metadata.recovery.strategy = rebootstrap
+        metric.reporters = [org.apache.kafka.common.metrics.JmxReporter]
+        metrics.num.samples = 2
+        metrics.recording.level = INFO
+        metrics.sample.window.ms = 30000
+        partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+        receive.buffer.bytes = 65536
+        reconnect.backoff.max.ms = 1000
+        reconnect.backoff.ms = 50
+        request.timeout.ms = 30000
+        retry.backoff.max.ms = 1000
+        retry.backoff.ms = 100
+        sasl.client.callback.handler.class = null
+        sasl.jaas.config = [hidden]
+        sasl.kerberos.kinit.cmd = /usr/bin/kinit
+        sasl.kerberos.min.time.before.relogin = 60000
+        sasl.kerberos.service.name = null
+        sasl.kerberos.ticket.renew.jitter = 0.05
+        sasl.kerberos.ticket.renew.window.factor = 0.8
+        sasl.login.callback.handler.class = null
+        sasl.login.class = null
+        sasl.login.connect.timeout.ms = null
+        sasl.login.read.timeout.ms = null
+        sasl.login.refresh.buffer.seconds = 300
+        sasl.login.refresh.min.period.seconds = 60
+        sasl.login.refresh.window.factor = 0.8
+        sasl.login.refresh.window.jitter = 0.05
+        sasl.login.retry.backoff.max.ms = 10000
+        sasl.login.retry.backoff.ms = 100
+        sasl.mechanism = SCRAM-SHA-512
+        sasl.oauthbearer.clock.skew.seconds = 30
+        sasl.oauthbearer.expected.audience = null
+        sasl.oauthbearer.expected.issuer = null
+        sasl.oauthbearer.header.urlencode = false
+        sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+        sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+        sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+        sasl.oauthbearer.jwks.endpoint.url = null
+        sasl.oauthbearer.scope.claim.name = scope
+        sasl.oauthbearer.sub.claim.name = sub
+        sasl.oauthbearer.token.endpoint.url = null
+        security.protocol = SASL_SSL
+        security.providers = null
+        send.buffer.bytes = 131072
+        session.timeout.ms = 45000
+        socket.connection.setup.timeout.max.ms = 30000
+        socket.connection.setup.timeout.ms = 10000
+        ssl.cipher.suites = null
+        ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+        ssl.endpoint.identification.algorithm = https
+        ssl.engine.factory.class = null
+        ssl.key.password = null
+        ssl.keymanager.algorithm = SunX509
+        ssl.keystore.certificate.chain = null
+        ssl.keystore.key = null
+        ssl.keystore.location = null
+        ssl.keystore.password = null
+        ssl.keystore.type = JKS
+        ssl.protocol = TLSv1.3
+        ssl.provider = null
+        ssl.secure.random.implementation = null
+        ssl.trustmanager.algorithm = PKIX
+        ssl.truststore.certificates = null
+        ssl.truststore.location = /weblogic/keystore/kafka/cluster-ca-cert.jks
+        ssl.truststore.password = [hidden]
+        ssl.truststore.type = JKS
+        value.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
 
-Filter:	
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.k.c.t.i.KafkaMetricsCollector        : initializing Kafka metrics collector
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 4.0.0
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: 985bc99521dd22bb
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1778579377613
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.k.c.c.i.ClassicKafkaConsumer         : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_3] Subscribed to topic(s): sbi.ittss.idea.txm.csig.derived.response
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.kafka.common.config.AbstractConfig   : ConsumerConfig values:
+        allow.auto.create.topics = true
+        auto.commit.interval.ms = 5000
+        auto.offset.reset = latest
+        bootstrap.servers = [my-cluster-kafka-bootstrap-rforex-kafka.apps.tssrfxuat.sbi.co.in:443]
+        check.crcs = true
+        client.dns.lookup = use_all_dns_ips
+        client.id = txmswiftprocessor-1-0
+        client.rack =
+        connections.max.idle.ms = 540000
+        default.api.timeout.ms = 60000
+        enable.auto.commit = false
+        enable.metrics.push = true
+        exclude.internal.topics = true
+        fetch.max.bytes = 52428800
+        fetch.max.wait.ms = 500
+        fetch.min.bytes = 1
+        group.id = I_SWIFT_IN_IDEA_1
+        group.instance.id = null
+        group.protocol = classic
+        group.remote.assignor = null
+        heartbeat.interval.ms = 3000
+        interceptor.classes = []
+        internal.leave.group.on.close = true
+        internal.throw.on.fetch.stable.offset.unsupported = false
+        isolation.level = read_uncommitted
+        key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+        max.partition.fetch.bytes = 1048576
+        max.poll.interval.ms = 300000
+        max.poll.records = 500
+        metadata.max.age.ms = 300000
+        metadata.recovery.rebootstrap.trigger.ms = 300000
+        metadata.recovery.strategy = rebootstrap
+        metric.reporters = [org.apache.kafka.common.metrics.JmxReporter]
+        metrics.num.samples = 2
+        metrics.recording.level = INFO
+        metrics.sample.window.ms = 30000
+        partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+        receive.buffer.bytes = 65536
+        reconnect.backoff.max.ms = 1000
+        reconnect.backoff.ms = 50
+        request.timeout.ms = 30000
+        retry.backoff.max.ms = 1000
+        retry.backoff.ms = 100
+        sasl.client.callback.handler.class = null
+        sasl.jaas.config = [hidden]
+        sasl.kerberos.kinit.cmd = /usr/bin/kinit
+        sasl.kerberos.min.time.before.relogin = 60000
+        sasl.kerberos.service.name = null
+        sasl.kerberos.ticket.renew.jitter = 0.05
+        sasl.kerberos.ticket.renew.window.factor = 0.8
+        sasl.login.callback.handler.class = null
+        sasl.login.class = null
+        sasl.login.connect.timeout.ms = null
+        sasl.login.read.timeout.ms = null
+        sasl.login.refresh.buffer.seconds = 300
+        sasl.login.refresh.min.period.seconds = 60
+        sasl.login.refresh.window.factor = 0.8
+        sasl.login.refresh.window.jitter = 0.05
+        sasl.login.retry.backoff.max.ms = 10000
+        sasl.login.retry.backoff.ms = 100
+        sasl.mechanism = SCRAM-SHA-512
+        sasl.oauthbearer.clock.skew.seconds = 30
+        sasl.oauthbearer.expected.audience = null
+        sasl.oauthbearer.expected.issuer = null
+        sasl.oauthbearer.header.urlencode = false
+        sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+        sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+        sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+        sasl.oauthbearer.jwks.endpoint.url = null
+        sasl.oauthbearer.scope.claim.name = scope
+        sasl.oauthbearer.sub.claim.name = sub
+        sasl.oauthbearer.token.endpoint.url = null
+        security.protocol = SASL_SSL
+        security.providers = null
+        send.buffer.bytes = 131072
+        session.timeout.ms = 45000
+        socket.connection.setup.timeout.max.ms = 30000
+        socket.connection.setup.timeout.ms = 10000
+        ssl.cipher.suites = null
+        ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+        ssl.endpoint.identification.algorithm = https
+        ssl.engine.factory.class = null
+        ssl.key.password = null
+        ssl.keymanager.algorithm = SunX509
+        ssl.keystore.certificate.chain = null
+        ssl.keystore.key = null
+        ssl.keystore.location = null
+        ssl.keystore.password = null
+        ssl.keystore.type = JKS
+        ssl.protocol = TLSv1.3
+        ssl.provider = null
+        ssl.secure.random.implementation = null
+        ssl.trustmanager.algorithm = PKIX
+        ssl.truststore.certificates = null
+        ssl.truststore.location = /weblogic/keystore/kafka/cluster-ca-cert.jks
+        ssl.truststore.password = [hidden]
+        ssl.truststore.type = JKS
+        value.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
 
-None
-The filter configuration for the server log file.More Info...
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.k.c.t.i.KafkaMetricsCollector        : initializing Kafka metrics collector
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.kafka.common.utils.AppInfoParser     : The mbean of App info: [kafka.consumer], id: [txmswiftprocessor-1-0] already exists, so skipping a new mbean creation.
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.k.c.c.i.ClassicKafkaConsumer         : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_1] Subscribed to topic(s): sbi.ittss.idea.txm.margin.derived.matrix
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.kafka.common.config.AbstractConfig   : ConsumerConfig values:
+        allow.auto.create.topics = true
+        auto.commit.interval.ms = 5000
+        auto.offset.reset = latest
+        bootstrap.servers = [my-cluster-kafka-bootstrap-rforex-kafka.apps.tssrfxuat.sbi.co.in:443]
+        check.crcs = true
+        client.dns.lookup = use_all_dns_ips
+        client.id = txmswiftprocessor-1-0
+        client.rack =
+        connections.max.idle.ms = 540000
+        default.api.timeout.ms = 60000
+        enable.auto.commit = false
+        enable.metrics.push = true
+        exclude.internal.topics = true
+        fetch.max.bytes = 52428800
+        fetch.max.wait.ms = 500
+        fetch.min.bytes = 1
+        group.id = I_SWIFT_IN_IDEA_2
+        group.instance.id = null
+        group.protocol = classic
+        group.remote.assignor = null
+        heartbeat.interval.ms = 3000
+        interceptor.classes = []
+        internal.leave.group.on.close = true
+        internal.throw.on.fetch.stable.offset.unsupported = false
+        isolation.level = read_uncommitted
+        key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+        max.partition.fetch.bytes = 1048576
+        max.poll.interval.ms = 300000
+        max.poll.records = 500
+        metadata.max.age.ms = 300000
+        metadata.recovery.rebootstrap.trigger.ms = 300000
+        metadata.recovery.strategy = rebootstrap
+        metric.reporters = [org.apache.kafka.common.metrics.JmxReporter]
+        metrics.num.samples = 2
+        metrics.recording.level = INFO
+        metrics.sample.window.ms = 30000
+        partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+        receive.buffer.bytes = 65536
+        reconnect.backoff.max.ms = 1000
+        reconnect.backoff.ms = 50
+        request.timeout.ms = 30000
+        retry.backoff.max.ms = 1000
+        retry.backoff.ms = 100
+        sasl.client.callback.handler.class = null
+        sasl.jaas.config = [hidden]
+        sasl.kerberos.kinit.cmd = /usr/bin/kinit
+        sasl.kerberos.min.time.before.relogin = 60000
+        sasl.kerberos.service.name = null
+        sasl.kerberos.ticket.renew.jitter = 0.05
+        sasl.kerberos.ticket.renew.window.factor = 0.8
+        sasl.login.callback.handler.class = null
+        sasl.login.class = null
+        sasl.login.connect.timeout.ms = null
+        sasl.login.read.timeout.ms = null
+        sasl.login.refresh.buffer.seconds = 300
+        sasl.login.refresh.min.period.seconds = 60
+        sasl.login.refresh.window.factor = 0.8
+        sasl.login.refresh.window.jitter = 0.05
+        sasl.login.retry.backoff.max.ms = 10000
+        sasl.login.retry.backoff.ms = 100
+        sasl.mechanism = SCRAM-SHA-512
+        sasl.oauthbearer.clock.skew.seconds = 30
+        sasl.oauthbearer.expected.audience = null
+        sasl.oauthbearer.expected.issuer = null
+        sasl.oauthbearer.header.urlencode = false
+        sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+        sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+        sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+        sasl.oauthbearer.jwks.endpoint.url = null
+        sasl.oauthbearer.scope.claim.name = scope
+        sasl.oauthbearer.sub.claim.name = sub
+        sasl.oauthbearer.token.endpoint.url = null
+        security.protocol = SASL_SSL
+        security.providers = null
+        send.buffer.bytes = 131072
+        session.timeout.ms = 45000
+        socket.connection.setup.timeout.max.ms = 30000
+        socket.connection.setup.timeout.ms = 10000
+        ssl.cipher.suites = null
+        ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+        ssl.endpoint.identification.algorithm = https
+        ssl.engine.factory.class = null
+        ssl.key.password = null
+        ssl.keymanager.algorithm = SunX509
+        ssl.keystore.certificate.chain = null
+        ssl.keystore.key = null
+        ssl.keystore.location = null
+        ssl.keystore.password = null
+        ssl.keystore.type = JKS
+        ssl.protocol = TLSv1.3
+        ssl.provider = null
+        ssl.secure.random.implementation = null
+        ssl.trustmanager.algorithm = PKIX
+        ssl.truststore.certificates = null
+        ssl.truststore.location = /weblogic/keystore/kafka/cluster-ca-cert.jks
+        ssl.truststore.password = [hidden]
+        ssl.truststore.type = JKS
+        value.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
 
-Log File Buffer:	
-8
-Gets the underlying log buffer size in kilobytesMore Info...
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.k.c.t.i.KafkaMetricsCollector        : initializing Kafka metrics collector
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.kafka.common.utils.AppInfoParser     : The mbean of App info: [kafka.consumer], id: [txmswiftprocessor-1-0] already exists, so skipping a new mbean creation.
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.k.c.c.i.ClassicKafkaConsumer         : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_2] Subscribed to topic(s): sbi.ittss.idea.txm.derived.validations
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.kafka.common.config.AbstractConfig   : ConsumerConfig values:
+        allow.auto.create.topics = true
+        auto.commit.interval.ms = 5000
+        auto.offset.reset = latest
+        bootstrap.servers = [my-cluster-kafka-bootstrap-rforex-kafka.apps.tssrfxuat.sbi.co.in:443]
+        check.crcs = true
+        client.dns.lookup = use_all_dns_ips
+        client.id = txmswiftprocessor-1-0
+        client.rack =
+        connections.max.idle.ms = 540000
+        default.api.timeout.ms = 60000
+        enable.auto.commit = false
+        enable.metrics.push = true
+        exclude.internal.topics = true
+        fetch.max.bytes = 52428800
+        fetch.max.wait.ms = 500
+        fetch.min.bytes = 1
+        group.id = I_SWIFT_IN_IDEA_0
+        group.instance.id = null
+        group.protocol = classic
+        group.remote.assignor = null
+        heartbeat.interval.ms = 3000
+        interceptor.classes = []
+        internal.leave.group.on.close = true
+        internal.throw.on.fetch.stable.offset.unsupported = false
+        isolation.level = read_uncommitted
+        key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+        max.partition.fetch.bytes = 1048576
+        max.poll.interval.ms = 300000
+        max.poll.records = 500
+        metadata.max.age.ms = 300000
+        metadata.recovery.rebootstrap.trigger.ms = 300000
+        metadata.recovery.strategy = rebootstrap
+        metric.reporters = [org.apache.kafka.common.metrics.JmxReporter]
+        metrics.num.samples = 2
+        metrics.recording.level = INFO
+        metrics.sample.window.ms = 30000
+        partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+        receive.buffer.bytes = 65536
+        reconnect.backoff.max.ms = 1000
+        reconnect.backoff.ms = 50
+        request.timeout.ms = 30000
+        retry.backoff.max.ms = 1000
+        retry.backoff.ms = 100
+        sasl.client.callback.handler.class = null
+        sasl.jaas.config = [hidden]
+        sasl.kerberos.kinit.cmd = /usr/bin/kinit
+        sasl.kerberos.min.time.before.relogin = 60000
+        sasl.kerberos.service.name = null
+        sasl.kerberos.ticket.renew.jitter = 0.05
+        sasl.kerberos.ticket.renew.window.factor = 0.8
+        sasl.login.callback.handler.class = null
+        sasl.login.class = null
+        sasl.login.connect.timeout.ms = null
+        sasl.login.read.timeout.ms = null
+        sasl.login.refresh.buffer.seconds = 300
+        sasl.login.refresh.min.period.seconds = 60
+        sasl.login.refresh.window.factor = 0.8
+        sasl.login.refresh.window.jitter = 0.05
+        sasl.login.retry.backoff.max.ms = 10000
+        sasl.login.retry.backoff.ms = 100
+        sasl.mechanism = SCRAM-SHA-512
+        sasl.oauthbearer.clock.skew.seconds = 30
+        sasl.oauthbearer.expected.audience = null
+        sasl.oauthbearer.expected.issuer = null
+        sasl.oauthbearer.header.urlencode = false
+        sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+        sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+        sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+        sasl.oauthbearer.jwks.endpoint.url = null
+        sasl.oauthbearer.scope.claim.name = scope
+        sasl.oauthbearer.sub.claim.name = sub
+        sasl.oauthbearer.token.endpoint.url = null
+        security.protocol = SASL_SSL
+        security.providers = null
+        send.buffer.bytes = 131072
+        session.timeout.ms = 45000
+        socket.connection.setup.timeout.max.ms = 30000
+        socket.connection.setup.timeout.ms = 10000
+        ssl.cipher.suites = null
+        ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+        ssl.endpoint.identification.algorithm = https
+        ssl.engine.factory.class = null
+        ssl.key.password = null
+        ssl.keymanager.algorithm = SunX509
+        ssl.keystore.certificate.chain = null
+        ssl.keystore.key = null
+        ssl.keystore.location = null
+        ssl.keystore.password = null
+        ssl.keystore.type = JKS
+        ssl.protocol = TLSv1.3
+        ssl.provider = null
+        ssl.secure.random.implementation = null
+        ssl.trustmanager.algorithm = PKIX
+        ssl.truststore.certificates = null
+        ssl.truststore.location = /weblogic/keystore/kafka/cluster-ca-cert.jks
+        ssl.truststore.password = [hidden]
+        ssl.truststore.type = JKS
+        value.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
 
-Standard out :
-Severity level:	
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.k.c.t.i.KafkaMetricsCollector        : initializing Kafka metrics collector
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.kafka.common.utils.AppInfoParser     : The mbean of App info: [kafka.consumer], id: [txmswiftprocessor-1-0] already exists, so skipping a new mbean creation.
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] o.a.k.c.c.i.ClassicKafkaConsumer         : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_0] Subscribed to topic(s): sbi.ittss.idea.txm.raw.swift
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] c.s.i.p.InwardSwiftProcessorApplication  : Started InwardSwiftProcessorApplication in 9.008 seconds (process running for 345549.494)
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] c.sbi.inward.parser.ServletInitializer   : Root context already created (using as parent).
 
-Notice
-The minimum severity of log messages going to the standard out. Messages with a lower severity than the specified value will not be published to standard out.More Info...
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
 
-Filter:	
+ :: Spring Boot ::                (v3.5.0)
 
-None
-The filter configuration for log events being sent to the standard out.More Info...
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] c.sbi.inward.parser.ServletInitializer   : The following 1 profile is active: "uat"
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [ntainer#2-0-C-1] org.apache.kafka.clients.Metadata        : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_3] Cluster ID: ELFZfyvsRqGa9w5vTFwifw
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [ntainer#2-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_3] Discovered group coordinator my-cluster-broker-pool-0-rforex-kafka.apps.tssrfxuat.sbi.co.in:443 (id: 2147483647 rack: null isFenced: false)
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [ntainer#3-0-C-1] org.apache.kafka.clients.Metadata        : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_1] Cluster ID: ELFZfyvsRqGa9w5vTFwifw
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [ntainer#3-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_1] Discovered group coordinator my-cluster-broker-pool-1-rforex-kafka.apps.tssrfxuat.sbi.co.in:443 (id: 2147483646 rack: null isFenced: false)
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [ntainer#2-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_3] (Re-)joining group
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [ntainer#3-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_1] (Re-)joining group
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [ntainer#0-0-C-1] org.apache.kafka.clients.Metadata        : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_2] Cluster ID: ELFZfyvsRqGa9w5vTFwifw
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_2] Discovered group coordinator my-cluster-broker-pool-2-rforex-kafka.apps.tssrfxuat.sbi.co.in:443 (id: 2147483645 rack: null isFenced: false)
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_2] (Re-)joining group
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [ntainer#1-0-C-1] org.apache.kafka.clients.Metadata        : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_0] Cluster ID: ELFZfyvsRqGa9w5vTFwifw
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_0] Discovered group coordinator my-cluster-broker-pool-1-rforex-kafka.apps.tssrfxuat.sbi.co.in:443 (id: 2147483646 rack: null isFenced: false)
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_0] (Re-)joining group
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [ntainer#2-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_3] Request joining group due to: need to re-join with the given member-id: txmswiftprocessor-1-0-48612e0b-c989-4716-8dd5-db2dbc7ec8c5
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [ntainer#2-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_3] (Re-)joining group
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [ntainer#3-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_1] Request joining group due to: need to re-join with the given member-id: txmswiftprocessor-1-0-a75d0f12-8452-4852-9723-3ff8e4a90961
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [ntainer#3-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_1] (Re-)joining group
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_2] Request joining group due to: need to re-join with the given member-id: txmswiftprocessor-1-0-64f16793-eb9f-4c9c-a695-5c0cb59b7ce8
+2026-05-12 15:19:37 +0530 [] [] INFO  3759089 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_2] (Re-)joining group
+2026-05-12 15:19:38 +0530 [] [] INFO  3759089 --- [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_0] Request joining group due to: need to re-join with the given member-id: txmswiftprocessor-1-0-1208c4f0-8532-4328-b4cc-412a3491bbd7
+2026-05-12 15:19:38 +0530 [] [] INFO  3759089 --- [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_0] (Re-)joining group
+2026-05-12 15:19:38 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 331 ms
+2026-05-12 15:19:38 +0530 [] [] WARN  3759089 --- [o-9080-exec-374] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Unable to start web server
+2026-05-12 15:19:38 +0530 [] [] INFO  3759089 --- [o-9080-exec-374] .s.b.a.l.ConditionEvaluationReportLogger :
 
-Domain log broadcaster :
-Severity level:	
-
-Notice
-The minimum severity of log messages going to the domain log from this server's log broadcaster. Messages with a lower severity than the specified value will not be published to the domain log.More Info...
-
-Filter:	
-
-None
-The filter configuration for log events being sent to the domain log.More Info...
-
-Buffer Size:	
-10
-Broadcasts log messages to the domain log in batch mode.More Info...
-
-Stack Traces to stdout	
-Specifies whether to dump stack traces to the console when included in logged message.More Info...
-
-stdout Stack Trace Depth:	
-5
-Determines the no of stacktrace frames to display on standard out. All frames are displayed in the log file. * -1 means all frames are displayed.More Info...
-
-Restart may be required. stdout Format:	
-standard
-The output format to use when logging to the console.More Info...
-
-Trigger Depth:	
-500
-Returns the depth of stack frame that will trigger the truncation of stack frame for the remaining cascaded causes.More Info...
-
-Depth After Trigger:	
-5
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-05-12 15:19:38 +0530 [] [] ERROR 3759089 --- [o-9080-exec-374] o.s.boot.SpringApplication               : Application run failed
+org.springframework.context.ApplicationContextException: Unable to start web server
+        at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:170)
+        at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:621)
+        at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+        at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:753)
+        at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+        at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.run(SpringBootServletInitializer.java:194)
+        at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.createRootApplicationContext(SpringBootServletInitializer.java:174)
+        at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.onStartup(SpringBootServletInitializer.java:102)
+        at org.springframework.web.SpringServletContainerInitializer.onStartup(SpringServletContainerInitializer.java:171)
+        at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:4416)
+        at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164)
+        at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:564)
+        at org.apache.catalina.core.StandardHost.addChild(StandardHost.java:663)
+        at org.apache.catalina.startup.HostConfig.deployWAR(HostConfig.java:923)
+        at org.apache.catalina.startup.HostConfig.deployApps(HostConfig.java:445)
+        at org.apache.catalina.startup.HostConfig.check(HostConfig.java:1653)
+        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+        at org.apache.tomcat.util.modeler.BaseModelMBean.invoke(BaseModelMBean.java:249)
+        at java.management/com.sun.jmx.interceptor.DefaultMBeanServerInterceptor.invoke(DefaultMBeanServerInterceptor.java:803)
+        at java.management/com.sun.jmx.mbeanserver.JmxMBeanServer.invoke(JmxMBeanServer.java:802)
+        at org.apache.catalina.manager.ManagerServlet.check(ManagerServlet.java:1449)
+        at org.apache.catalina.manager.ManagerServlet.deploy(ManagerServlet.java:943)
+        at org.apache.catalina.manager.HTMLManagerServlet.deployInternal(HTMLManagerServlet.java:279)
+        at org.apache.catalina.manager.HTMLManagerServlet.doPost(HTMLManagerServlet.java:180)
+        at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:649)
+        at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
+        at org.apache.catalina.filters.CsrfPreventionFilter.doFilter(CsrfPreventionFilter.java:429)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+        at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+        at org.apache.catalina.filters.HttpHeaderSecurityFilter.doFilter(HttpHeaderSecurityFilter.java:114)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+        at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+        at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
+        at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:607)
+        at org.apache.catalina.valves.RequestFilterValve.process(RequestFilterValve.java:352)
+        at org.apache.catalina.valves.RemoteAddrValve.invoke(RemoteAddrValve.java:55)
+        at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
+        at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
+        at org.apache.catalina.valves.AbstractAccessLogValve.invoke(AbstractAccessLogValve.java:654)
+        at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
+        at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
+        at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
+        at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+        at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+        at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1779)
+        at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+        at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
+        at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
+        at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
+        at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.lang.IllegalStateException: Failed to register 'filter errorPageFilterRegistration' on the servlet context. Possibly already registered?
+        at org.springframework.boot.web.servlet.DynamicRegistrationBean.register(DynamicRegistrationBean.java:122)
+        at org.springframework.boot.web.servlet.RegistrationBean.onStartup(RegistrationBean.java:52)
+        at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.selfInitialize(ServletWebServerApplicationContext.java:246)
+        at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.createWebServer(ServletWebServerApplicationContext.java:202)
+        at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:167)
+        ... 53 common frames omitted
+12-May-2026 15:19:38.215 SEVERE [http-nio-9080-exec-374] org.apache.catalina.startup.HostConfig.deployWAR Error deploying web application archive [/weblogic/apache-tomcat/webapps/rforex#rforexinwardswift.war]
+        java.lang.IllegalStateException: Error starting child
+                at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:567)
+                at org.apache.catalina.core.StandardHost.addChild(StandardHost.java:663)
+                at org.apache.catalina.startup.HostConfig.deployWAR(HostConfig.java:923)
+                at org.apache.catalina.startup.HostConfig.deployApps(HostConfig.java:445)
+                at org.apache.catalina.startup.HostConfig.check(HostConfig.java:1653)
+                at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+                at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+                at org.apache.tomcat.util.modeler.BaseModelMBean.invoke(BaseModelMBean.java:249)
+                at java.management/com.sun.jmx.interceptor.DefaultMBeanServerInterceptor.invoke(DefaultMBeanServerInterceptor.java:803)
+                at java.management/com.sun.jmx.mbeanserver.JmxMBeanServer.invoke(JmxMBeanServer.java:802)
+                at org.apache.catalina.manager.ManagerServlet.check(ManagerServlet.java:1449)
+                at org.apache.catalina.manager.ManagerServlet.deploy(ManagerServlet.java:943)
+                at org.apache.catalina.manager.HTMLManagerServlet.deployInternal(HTMLManagerServlet.java:279)
+                at org.apache.catalina.manager.HTMLManagerServlet.doPost(HTMLManagerServlet.java:180)
+                at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:649)
+                at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
+                at org.apache.catalina.filters.CsrfPreventionFilter.doFilter(CsrfPreventionFilter.java:429)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+                at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+                at org.apache.catalina.filters.HttpHeaderSecurityFilter.doFilter(HttpHeaderSecurityFilter.java:114)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+                at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+                at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
+                at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:607)
+                at org.apache.catalina.valves.RequestFilterValve.process(RequestFilterValve.java:352)
+                at org.apache.catalina.valves.RemoteAddrValve.invoke(RemoteAddrValve.java:55)
+                at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
+                at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
+                at org.apache.catalina.valves.AbstractAccessLogValve.invoke(AbstractAccessLogValve.java:654)
+                at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
+                at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
+                at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
+                at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+                at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+                at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1779)
+                at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+                at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
+                at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
+                at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
+                at java.base/java.lang.Thread.run(Thread.java:1583)
+        Caused by: org.apache.catalina.LifecycleException: Failed to start component [StandardEngine[Catalina].StandardHost[localhost].StandardContext[/rforex/rforexinwardswift]]
+                at org.apache.catalina.util.LifecycleBase.handleSubClassException(LifecycleBase.java:404)
+                at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:179)
+                at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:564)
+                ... 41 more
+        Caused by: org.springframework.context.ApplicationContextException: Unable to start web server
+                at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:170)
+                at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:621)
+                at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+                at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:753)
+                at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+                at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+                at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.run(SpringBootServletInitializer.java:194)
+                at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.createRootApplicationContext(SpringBootServletInitializer.java:174)
+                at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.onStartup(SpringBootServletInitializer.java:102)
+                at org.springframework.web.SpringServletContainerInitializer.onStartup(SpringServletContainerInitializer.java:171)
+                at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:4416)
+                at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164)
+                ... 42 more
+        Caused by: java.lang.IllegalStateException: Failed to register 'filter errorPageFilterRegistration' on the servlet context. Possibly already registered?
+                at org.springframework.boot.web.servlet.DynamicRegistrationBean.register(DynamicRegistrationBean.java:122)
+                at org.springframework.boot.web.servlet.RegistrationBean.onStartup(RegistrationBean.java:52)
+                at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.selfInitialize(ServletWebServerApplicationContext.java:246)
+                at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.createWebServer(ServletWebServerApplicationContext.java:202)
+                at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:167)
+                ... 53 more
+12-May-2026 15:19:38.216 INFO [http-nio-9080-exec-374] org.apache.catalina.startup.HostConfig.deployWAR Deployment of web application archive [/weblogic/apache-tomcat/webapps/rforex#rforexinwardswift.war] has finished in [15,109] ms
+2026-05-12 15:19:40 +0530 [] [] INFO  3759089 --- [ntainer#2-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_3] Successfully joined group with generation Generation{generationId=43, memberId='txmswiftprocessor-1-0-48612e0b-c989-4716-8dd5-db2dbc7ec8c5', protocol='range'}
+2026-05-12 15:19:40 +0530 [] [] INFO  3759089 --- [ntainer#2-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_3] Finished assignment for group at generation 43: {txmswiftprocessor-1-0-48612e0b-c989-4716-8dd5-db2dbc7ec8c5=Assignment(partitions=[sbi.ittss.idea.txm.csig.derived.response-0, sbi.ittss.idea.txm.csig.derived.response-1, sbi.ittss.idea.txm.csig.derived.response-2])}
+2026-05-12 15:19:40 +0530 [] [] INFO  3759089 --- [ntainer#3-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_1] Successfully joined group with generation Generation{generationId=67, memberId='txmswiftprocessor-1-0-a75d0f12-8452-4852-9723-3ff8e4a90961', protocol='range'}
+2026-05-12 15:19:40 +0530 [] [] INFO  3759089 --- [ntainer#3-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_1] Finished assignment for group at generation 67: {txmswiftprocessor-1-0-a75d0f12-8452-4852-9723-3ff8e4a90961=Assignment(partitions=[sbi.ittss.idea.txm.margin.derived.matrix-0, sbi.ittss.idea.txm.margin.derived.matrix-1, sbi.ittss.idea.txm.margin.derived.matrix-2])}
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#2-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_3] Successfully synced group in generation Generation{generationId=43, memberId='txmswiftprocessor-1-0-48612e0b-c989-4716-8dd5-db2dbc7ec8c5', protocol='range'}
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#2-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_3] Notifying assignor about the new Assignment(partitions=[sbi.ittss.idea.txm.csig.derived.response-0, sbi.ittss.idea.txm.csig.derived.response-1, sbi.ittss.idea.txm.csig.derived.response-2])
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#3-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_1] Successfully synced group in generation Generation{generationId=67, memberId='txmswiftprocessor-1-0-a75d0f12-8452-4852-9723-3ff8e4a90961', protocol='range'}
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_2] Successfully joined group with generation Generation{generationId=53, memberId='txmswiftprocessor-1-0-64f16793-eb9f-4c9c-a695-5c0cb59b7ce8', protocol='range'}
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#3-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_1] Notifying assignor about the new Assignment(partitions=[sbi.ittss.idea.txm.margin.derived.matrix-0, sbi.ittss.idea.txm.margin.derived.matrix-1, sbi.ittss.idea.txm.margin.derived.matrix-2])
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_2] Finished assignment for group at generation 53: {txmswiftprocessor-1-0-64f16793-eb9f-4c9c-a695-5c0cb59b7ce8=Assignment(partitions=[sbi.ittss.idea.txm.derived.validations-0, sbi.ittss.idea.txm.derived.validations-1, sbi.ittss.idea.txm.derived.validations-2])}
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#3-0-C-1] k.c.c.i.ConsumerRebalanceListenerInvoker : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_1] Adding newly assigned partitions: sbi.ittss.idea.txm.margin.derived.matrix-0, sbi.ittss.idea.txm.margin.derived.matrix-1, sbi.ittss.idea.txm.margin.derived.matrix-2
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#2-0-C-1] k.c.c.i.ConsumerRebalanceListenerInvoker : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_3] Adding newly assigned partitions: sbi.ittss.idea.txm.csig.derived.response-0, sbi.ittss.idea.txm.csig.derived.response-1, sbi.ittss.idea.txm.csig.derived.response-2
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_2] Successfully synced group in generation Generation{generationId=53, memberId='txmswiftprocessor-1-0-64f16793-eb9f-4c9c-a695-5c0cb59b7ce8', protocol='range'}
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_2] Notifying assignor about the new Assignment(partitions=[sbi.ittss.idea.txm.derived.validations-0, sbi.ittss.idea.txm.derived.validations-1, sbi.ittss.idea.txm.derived.validations-2])
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#0-0-C-1] k.c.c.i.ConsumerRebalanceListenerInvoker : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_2] Adding newly assigned partitions: sbi.ittss.idea.txm.derived.validations-0, sbi.ittss.idea.txm.derived.validations-1, sbi.ittss.idea.txm.derived.validations-2
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_0] Successfully joined group with generation Generation{generationId=95, memberId='txmswiftprocessor-1-0-1208c4f0-8532-4328-b4cc-412a3491bbd7', protocol='range'}
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_0] Finished assignment for group at generation 95: {txmswiftprocessor-1-0-1208c4f0-8532-4328-b4cc-412a3491bbd7=Assignment(partitions=[sbi.ittss.idea.txm.raw.swift-0, sbi.ittss.idea.txm.raw.swift-1, sbi.ittss.idea.txm.raw.swift-2])}
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#2-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition sbi.ittss.idea.txm.csig.derived.response-0 to the committed offset FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[my-cluster-broker-pool-2-rforex-kafka.apps.tssrfxuat.sbi.co.in:443 (id: 2 rack: null isFenced: false)], epoch=0}}
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#3-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition sbi.ittss.idea.txm.margin.derived.matrix-1 to the committed offset FetchPosition{offset=8, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[my-cluster-broker-pool-2-rforex-kafka.apps.tssrfxuat.sbi.co.in:443 (id: 2 rack: null isFenced: false)], epoch=0}}
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#2-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition sbi.ittss.idea.txm.csig.derived.response-2 to the committed offset FetchPosition{offset=3, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[my-cluster-broker-pool-1-rforex-kafka.apps.tssrfxuat.sbi.co.in:443 (id: 1 rack: null isFenced: false)], epoch=0}}
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#3-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition sbi.ittss.idea.txm.margin.derived.matrix-2 to the committed offset FetchPosition{offset=10, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[my-cluster-broker-pool-0-rforex-kafka.apps.tssrfxuat.sbi.co.in:443 (id: 0 rack: null isFenced: false)], epoch=0}}
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#2-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition sbi.ittss.idea.txm.csig.derived.response-1 to the committed offset FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[my-cluster-broker-pool-0-rforex-kafka.apps.tssrfxuat.sbi.co.in:443 (id: 0 rack: null isFenced: false)], epoch=0}}
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#3-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition sbi.ittss.idea.txm.margin.derived.matrix-0 to the committed offset FetchPosition{offset=29, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[my-cluster-broker-pool-1-rforex-kafka.apps.tssrfxuat.sbi.co.in:443 (id: 1 rack: null isFenced: false)], epoch=0}}
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#2-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : I_SWIFT_IN_IDEA_3: partitions assigned: [sbi.ittss.idea.txm.csig.derived.response-0, sbi.ittss.idea.txm.csig.derived.response-1, sbi.ittss.idea.txm.csig.derived.response-2]
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#3-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : I_SWIFT_IN_IDEA_1: partitions assigned: [sbi.ittss.idea.txm.margin.derived.matrix-0, sbi.ittss.idea.txm.margin.derived.matrix-1, sbi.ittss.idea.txm.margin.derived.matrix-2]
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_0] Successfully synced group in generation Generation{generationId=95, memberId='txmswiftprocessor-1-0-1208c4f0-8532-4328-b4cc-412a3491bbd7', protocol='range'}
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_0] Notifying assignor about the new Assignment(partitions=[sbi.ittss.idea.txm.raw.swift-0, sbi.ittss.idea.txm.raw.swift-1, sbi.ittss.idea.txm.raw.swift-2])
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#1-0-C-1] k.c.c.i.ConsumerRebalanceListenerInvoker : [Consumer clientId=txmswiftprocessor-1-0, groupId=I_SWIFT_IN_IDEA_0] Adding newly assigned partitions: sbi.ittss.idea.txm.raw.swift-0, sbi.ittss.idea.txm.raw.swift-1, sbi.ittss.idea.txm.raw.swift-2
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition sbi.ittss.idea.txm.derived.validations-0 to the committed offset FetchPosition{offset=14, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[my-cluster-broker-pool-1-rforex-kafka.apps.tssrfxuat.sbi.co.in:443 (id: 1 rack: null isFenced: false)], epoch=0}}
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition sbi.ittss.idea.txm.derived.validations-1 to the committed offset FetchPosition{offset=13, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[my-cluster-broker-pool-2-rforex-kafka.apps.tssrfxuat.sbi.co.in:443 (id: 2 rack: null isFenced: false)], epoch=0}}
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition sbi.ittss.idea.txm.derived.validations-2 to the committed offset FetchPosition{offset=4, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[my-cluster-broker-pool-0-rforex-kafka.apps.tssrfxuat.sbi.co.in:443 (id: 0 rack: null isFenced: false)], epoch=0}}
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#0-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : I_SWIFT_IN_IDEA_2: partitions assigned: [sbi.ittss.idea.txm.derived.validations-0, sbi.ittss.idea.txm.derived.validations-1, sbi.ittss.idea.txm.derived.validations-2]
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition sbi.ittss.idea.txm.raw.swift-2 to the committed offset FetchPosition{offset=40, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[my-cluster-broker-pool-1-rforex-kafka.apps.tssrfxuat.sbi.co.in:443 (id: 1 rack: null isFenced: false)], epoch=0}}
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition sbi.ittss.idea.txm.raw.swift-0 to the committed offset FetchPosition{offset=36, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[my-cluster-broker-pool-2-rforex-kafka.apps.tssrfxuat.sbi.co.in:443 (id: 2 rack: null isFenced: false)], epoch=0}}
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition sbi.ittss.idea.txm.raw.swift-1 to the committed offset FetchPosition{offset=32, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[my-cluster-broker-pool-0-rforex-kafka.apps.tssrfxuat.sbi.co.in:443 (id: 0 rack: null isFenced: false)], epoch=0}}
+2026-05-12 15:19:41 +0530 [] [] INFO  3759089 --- [ntainer#1-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : I_SWIFT_IN_IDEA_0: partitions assigned: [sbi.ittss.idea.txm.raw.swift-0, sbi.ittss.idea.txm.raw.swift-1, sbi.ittss.idea.txm.raw.swift-2]
