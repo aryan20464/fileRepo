@@ -1,5 +1,4 @@
-mvn clean install -U -s settings.xml \
-  -Dmaven.wagon.http.ssl.insecure=true \
-  -Dmaven.wagon.http.ssl.allowall=true \
-  -Dmaven.wagon.http.ssl.ignore.validity.dates=true \
-  -Dcom.sun.security.enableAIAcaIssuers=false
+[tanzuuser@tss-rforex-jump-pr ~]$ free -h
+               total        used        free      shared  buff/cache   available
+Mem:           7.5Gi       2.3Gi       406Mi        35Mi       5.1Gi       5.2Gi
+Swap:          4.0Gi       1.0Gi       3.0Gi
