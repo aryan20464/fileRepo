@@ -1,1 +1,17 @@
-transfer failed for https://artifactory.jfrog.sbi:443/artifactory/itfo-treasury-tss-idea-maven-virtual/org/springframework/boot/spring-boot-starter-parent/3.5.14/spring-boot-starter-parent-3.5.14.pom, status: 503 Service Unavailable, proxy: ProxyInfo{host='swg.sbi.co.in', userName='null', port=9090, type='https', nonProxyHosts='null'}
+Scanning for projects...
+Downloading from central: https://artifactory.jfrog.sbi:443/artifactory/itfo-treasury-tss-idea-maven-virtual/org/springframework/boot/spring-boot-starter-parent/3.5.14/spring-boot-starter-parent-3.5.14.pom
+Downloading from snapshots: https://artifactory.jfrog.sbi:443/artifactory/itfo-treasury-tss-idea-maven-virtual/org/springframework/boot/spring-boot-starter-parent/3.5.14/spring-boot-starter-parent-3.5.14.pom
+[ERROR] [ERROR] Some problems were encountered while processing the POMs:
+[FATAL] Non-resolvable parent POM for com.example:test:0.0.1-SNAPSHOT: The following artifacts could not be resolved: org.springframework.boot:spring-boot-starter-parent:pom:3.5.14 (absent): Could not transfer artifact org.springframework.boot:spring-boot-starter-parent:pom:3.5.14 from/to central (https://artifactory.jfrog.sbi:443/artifactory/itfo-treasury-tss-idea-maven-virtual): PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target and 'parent.relativePath' points at no local POM @ line 5, column 10
+ @
+[ERROR] The build could not read 1 project -> [Help 1]
+[ERROR]
+[ERROR]   The project com.example:test:0.0.1-SNAPSHOT (D:\dump_projects\test\pom.xml) has 1 error
+[ERROR]     Non-resolvable parent POM for com.example:test:0.0.1-SNAPSHOT: The following artifacts could not be resolved: org.springframework.boot:spring-boot-starter-parent:pom:3.5.14 (absent): Could not transfer artifact org.springframework.boot:spring-boot-starter-parent:pom:3.5.14 from/to central (https://artifactory.jfrog.sbi:443/artifactory/itfo-treasury-tss-idea-maven-virtual): PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target and 'parent.relativePath' points at no local POM @ line 5, column 10 -> [Help 2]
+[ERROR]
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR]
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/ProjectBuildingException
+[ERROR] [Help 2] http://cwiki.apache.org/confluence/display/MAVEN/UnresolvableModelException
