@@ -1,39 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<settings xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd" xmlns="http://maven.apache.org/SETTINGS/1.2.0"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <servers>
-        <server>
-            <username>xyz</username>
-            <password>123</password>
-            <id>central</id>
-        </server>
-    </servers>
-    <profiles>
-        <profile>
-            <repositories>
-                <repository>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                    <id>central</id>
-                    <name>idea-maven-virtual</name>
-                    <url>https://artifactory.dbs/idea-maven-virtual</url>
-                </repository>
-            </repositories>
-            <pluginRepositories>
-                <pluginRepository>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                    <id>central</id>
-                    <name>idea-maven-virtual</name>
-                    <url>://artifactory.dbs/idea-maven-virtual</url>
-                </pluginRepository>
-            </pluginRepositories>
-            <id>artifactory</id>
-        </profile>
-    </profiles>
-    <activeProfiles>
-        <activeProfile>artifactory</activeProfile>
-    </activeProfiles>
-</settings>
+Deploy
+Target Repository
+idea-custom-maven-libs
+Package Type
+Maven
+Repository Layout
+[orgPath]/[module]/[baseRev](-[folderItegRev])/[module]-[baseRev](-[fileItegRev])(-[classifier]).[ext]
+Single DeployMultiple Deploy
+Drop file  
+or
+  Select file
+Target Path
+
+C:\Users\1064695\.m2\repository_orig\com\idea\rforex-jwt-security-lib\1.0.0
+
+06-02-2026  14:35    <DIR>          .
+06-02-2026  14:35    <DIR>          ..
+12-01-2026  19:20               100 m2e-lastUpdated.properties
+11-03-2026  20:07        62,873,681 rforex-jwt-security-lib-1.0.0-exec.jar
+24-09-2025  10:17               434 rforex-jwt-security-lib-1.0.0-javadoc.jar.lastUpdated
+12-01-2026  19:20               255 rforex-jwt-security-lib-1.0.0-sources.jar.lastUpdated
+11-03-2026  20:07            10,906 rforex-jwt-security-lib-1.0.0.jar
+06-02-2026  14:31               255 rforex-jwt-security-lib-1.0.0.jar.lastUpdated
+14-05-2025  15:25             2,143 rforex-jwt-security-lib-1.0.0.pom
+06-02-2026  14:30               255 rforex-jwt-security-lib-1.0.0.pom.lastUpdated
+11-03-2026  20:07               258 _remote.repositories
