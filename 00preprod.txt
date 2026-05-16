@@ -22,6 +22,18 @@ spec:
         runAsUser: 1001
         runAsGroup: 1001
         fsGroup: 1001  # This ensures volumes are readable/writable by itss
+      # --- ADDED AFFINITY BLOCK START ---
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - rforex-fcra
+            topologyKey: "kubernetes.io/hostname"
+      # --- ADDED AFFINITY BLOCK END ---
       containers:
         - name: rforex-fcra
           image: h06vksharbor.corp.ad.sbi/itss/rforex-fcra:prp-2.2-cg-jre
@@ -44,13 +56,6 @@ spec:
         - name: fcra-storage
           persistentVolumeClaim:
             claimName: pvc-fcra
-      resources:
-        requests:
-          cpu: "100m"
-          memory: "128Mi"
-        limits:
-          cpu: "500m"
-          memory: "1248Mi"
 ---
 apiVersion: v1
 kind: Service
