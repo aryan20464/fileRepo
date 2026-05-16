@@ -36,3 +36,6 @@ for /f "tokens=*" %%B in ('findstr /c:"\"name_with_namespace\"" %INPUT%') do (
 echo Done -> %OUTPUT%
 
 jq -r '.[] | "\(.id),\(.name_with_namespace)"' projects.json
+
+grep -E '"id"|name_with_namespace' projects.json | paste - - | \
+sed -E 's/.*"id": *([0-9]+).*/\1,/; s/.*"name_with_namespace": *"([^"]+)".*/\1/'
