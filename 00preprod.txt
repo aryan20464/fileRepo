@@ -1,32 +1,134 @@
-@echo off
-setlocal enabledelayedexpansion
-
-set GITLAB_URL=https://ideagit.one:10000
-set TOKEN=tkn
-set REPO_LIST=D:\chakri\gitlab-upgrade\rforex\gitlab_repos.txt
-
-for /f "tokens=*" %%r in (%REPO_LIST%) do (
-
-    set REPO_URL=%%r
-
-    REM Remove domain
-    set PROJECT=!REPO_URL:%GITLAB_URL%/=!
-
-    REM Remove .git
-    set PROJECT=!PROJECT:.git=!
-
-    REM URL encode slash
-    set PROJECT=!PROJECT:/=%%2F!
-
-    echo ==========================================
-    echo Exporting !PROJECT!
-    echo ==========================================
-
-    curl --ssl-no-revoke --request POST ^
-         --header "PRIVATE-TOKEN: %TOKEN%" ^
-         "%GITLAB_URL%/api/v4/projects/!PROJECT!/export"
-
-    echo.
-)
-
-pause
+{
+        "id": 258,
+        "description": null,
+        "name": "rforex-vks",
+        "name_with_namespace": "rForex-K8s / rforex-vks",
+        "path": "rforex-vks",
+        "path_with_namespace": "rforex-k8s/rforex-vks",
+        "created_at": "2026-05-16T04:58:47.031Z",
+        "default_branch": "main",
+        "tag_list": [],
+        "topics": [],
+        "ssh_url_to_repo": "git@companygiturl:rforex-k8s/rforex-vks.git",
+        "http_url_to_repo": "https://companygiturl:10000/rforex-k8s/rforex-vks.git",
+        "web_url": "https://companygiturl:10000/rforex-k8s/rforex-vks",
+        "readme_url": "https://companygiturl:10000/rforex-k8s/rforex-vks/-/blob/main/README.md",
+        "forks_count": 0,
+        "avatar_url": null,
+        "star_count": 0,
+        "last_activity_at": "2026-05-16T07:57:14.930Z",
+        "namespace": {
+            "id": 343,
+            "name": "rForex-K8s",
+            "path": "rforex-k8s",
+            "kind": "group",
+            "full_path": "rforex-k8s",
+            "parent_id": null,
+            "avatar_url": "/uploads/-/system/group/avatar/343/rfrx-group.png",
+            "web_url": "https://companygiturl:10000/groups/rforex-k8s"
+        },
+        "repository_storage": "default",
+        "_links": {
+            "self": "https://companygiturl:10000/api/v4/projects/258",
+            "issues": "https://companygiturl:10000/api/v4/projects/258/issues",
+            "merge_requests": "https://companygiturl:10000/api/v4/projects/258/merge_requests",
+            "repo_branches": "https://companygiturl:10000/api/v4/projects/258/repository/branches",
+            "labels": "https://companygiturl:10000/api/v4/projects/258/labels",
+            "events": "https://companygiturl:10000/api/v4/projects/258/events",
+            "members": "https://companygiturl:10000/api/v4/projects/258/members",
+            "cluster_agents": "https://companygiturl:10000/api/v4/projects/258/cluster_agents"
+        },
+        "code_suggestions": true,
+        "packages_enabled": true,
+        "empty_repo": false,
+        "archived": false,
+        "visibility": "private",
+        "resolve_outdated_diff_discussions": false,
+        "container_expiration_policy": {
+            "cadence": "1d",
+            "enabled": false,
+            "keep_n": 10,
+            "older_than": "90d",
+            "name_regex": ".*",
+            "name_regex_keep": null,
+            "next_run_at": "2026-05-17T04:58:47.144Z"
+        },
+        "issues_enabled": true,
+        "merge_requests_enabled": true,
+        "wiki_enabled": true,
+        "jobs_enabled": true,
+        "snippets_enabled": true,
+        "container_registry_enabled": true,
+        "service_desk_enabled": false,
+        "service_desk_address": null,
+        "can_create_merge_request_in": true,
+        "issues_access_level": "enabled",
+        "repository_access_level": "enabled",
+        "merge_requests_access_level": "enabled",
+        "forking_access_level": "enabled",
+        "wiki_access_level": "enabled",
+        "builds_access_level": "enabled",
+        "snippets_access_level": "enabled",
+        "pages_access_level": "private",
+        "analytics_access_level": "enabled",
+        "container_registry_access_level": "enabled",
+        "security_and_compliance_access_level": "private",
+        "releases_access_level": "enabled",
+        "environments_access_level": "enabled",
+        "feature_flags_access_level": "enabled",
+        "infrastructure_access_level": "enabled",
+        "monitor_access_level": "enabled",
+        "model_experiments_access_level": "enabled",
+        "model_registry_access_level": "enabled",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "shared_runners_enabled": false,
+        "lfs_enabled": true,
+        "creator_id": 18,
+        "import_url": null,
+        "import_type": null,
+        "import_status": "none",
+        "open_issues_count": 0,
+        "description_html": "",
+        "updated_at": "2026-05-16T08:10:09.618Z",
+        "ci_default_git_depth": 20,
+        "ci_forward_deployment_enabled": true,
+        "ci_forward_deployment_rollback_allowed": true,
+        "ci_job_token_scope_enabled": false,
+        "ci_separated_caches": true,
+        "ci_allow_fork_pipelines_to_run_in_parent_project": true,
+        "build_git_strategy": "fetch",
+        "keep_latest_artifact": true,
+        "restrict_user_defined_variables": false,
+        "runners_token": "GR1348941hWZtbPNn353UmQRN87ui",
+        "runner_token_expiration_interval": null,
+        "group_runners_enabled": true,
+        "auto_cancel_pending_pipelines": "enabled",
+        "build_timeout": 3600,
+        "auto_devops_enabled": false,
+        "auto_devops_deploy_strategy": "continuous",
+        "ci_config_path": "",
+        "public_jobs": true,
+        "shared_with_groups": [],
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": null,
+        "request_access_enabled": true,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "remove_source_branch_after_merge": true,
+        "printing_merge_request_link_enabled": true,
+        "merge_method": "merge",
+        "squash_option": "default_off",
+        "enforce_auth_checks_on_uploads": true,
+        "suggestion_commit_message": null,
+        "merge_commit_template": null,
+        "squash_commit_template": null,
+        "issue_branch_template": null,
+        "autoclose_referenced_issues": true,
+        "permissions": {
+            "project_access": null,
+            "group_access": {
+                "access_level": 50,
+                "notification_level": 3
+            }
+        }
+    },
