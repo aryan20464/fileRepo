@@ -3,3 +3,7 @@ for /f %%i in (ids.txt) do (
          --header "PRIVATE-TOKEN: %TOKEN%" ^
          "%GITLAB_URL%/api/v4/projects/%%i/export"
 )
+
+curl --ssl-no-revoke ^
+     --header "PRIVATE-TOKEN: %TOKEN%" ^
+     "%GITLAB_URL%/api/v4/projects/rforexhub%%2Ffxretail/export"
