@@ -1,4 +1,5 @@
 @echo off
+setlocal enabledelayedexpansion
 
 set GITLAB_URL=https://ideagit.one:10000
 set TOKEN=tkn
@@ -6,41 +7,26 @@ set REPO_LIST=D:\chakri\gitlab-upgrade\rforex\gitlab_repos.txt
 
 for /f "tokens=*" %%r in (%REPO_LIST%) do (
 
-    echo ==========================================
-    echo Fetching page %%r
-    echo ==========================================
-	set ID=%%r
+    set REPO_URL=%%r
 
-    call :EXPORT_PROJECT !ID!
-	
-	PAUSE
+    REM Remove domain
+    set PROJECT=!REPO_URL:%GITLAB_URL%/=!
+
+    REM Remove .git
+    set PROJECT=!PROJECT:.git=!
+
+    REM URL encode slash
+    set PROJECT=!PROJECT:/=%%2F!
+
+    echo ==========================================
+    echo Exporting !PROJECT!
+    echo ==========================================
+
+    curl --ssl-no-revoke --request POST ^
+         --header "PRIVATE-TOKEN: %TOKEN%" ^
+         "%GITLAB_URL%/api/v4/projects/!PROJECT!/export"
+
+    echo.
 )
 
-goto :EOF
-
-:EXPORT_PROJECT
-
-set PROJECT_ID=%1
-
-echo Exporting Project %PROJECT_ID%
-
-curl --request POST ^
-     --header "PRIVATE-TOKEN: %TOKEN%" ^
-     "%GITLAB_URL%/api/v4/projects/%PROJECT_ID%/export"
-
-goto :EOF
-
-PAUSE
-
-
-==========================================
-Fetching page https://ideagit.one:10000/rforexhub/fxretail.git
-==========================================
-Exporting Project !ID!
-curl: (35) schannel: next InitializeSecurityContext failed: CRYPT_E_REVOCATION_OFFLINE (0x80092013) - The revocation function was unable to check revocation because the revocation server was offline.
-Press any key to continue . . .
-==========================================
-Fetching page https://ideagit.one:10000/rforexhub/txm-inward-swift-processor.git
-==========================================
-Exporting Project !ID!
-curl: (35) schannel: next InitializeSecurityContext failed: CRYPT_E_REVOCATION_OFFLINE (0x80092013) - The revocation function was unable to check revocation because the revocation server was offline.
+pause
