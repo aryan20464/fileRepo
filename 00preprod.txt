@@ -1,71 +1,23 @@
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: rforex-fcra
-  namespace: forex
-  labels:
-    app: rforex-fcra
-spec:
-  replicas: 1
-  strategy:
-    type: Recreate
-  selector:
-    matchLabels:
-      app: rforex-fcra
-  template:
-    metadata:
-      labels:
-        app: rforex-fcra
-    spec:
-      securityContext:
-        runAsUser: 1001
-        runAsGroup: 1001
-        fsGroup: 1001  # This ensures volumes are readable/writable by itss
-      # --- ADDED AFFINITY BLOCK START ---
-      affinity:
-        podAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: app
-                operator: In
-                values:
-                - rforex-fcra
-            topologyKey: "kubernetes.io/hostname"
-      # --- ADDED AFFINITY BLOCK END ---
-      containers:
-        - name: rforex-fcra
-          image: h06vksharbor.corp.ad.sbi/itss/rforex-fcra:prp-2.2-cg-jre
-          ports:
-            - containerPort: 8081
-          imagePullPolicy: Always
-          volumeMounts:
-            - name: fcra-storage
-              mountPath: /fcra
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            runAsNonRoot: true
-            runAsUser: 1001
-            seccompProfile:
-              type: RuntimeDefault
-      volumes:
-        - name: fcra-storage
-          persistentVolumeClaim:
-            claimName: pvc-fcra
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: rforex-fcra-service
-  namespace: forex
-spec:
-  selector:
-    app: rforex-fcra
-  type: ClusterIP
-  ports:
-    - port: 8081
-      targetPort: 8081
+@echo off
+
+set GITLAB_URL=https://gitlab.company.com
+set TOKEN=YOUR_ADMIN_TOKEN
+
+del gitlab_repos.txt 2>nul
+
+for /L %%p in (1,1,50) do (
+
+    echo Fetching page %%p
+
+    curl --silent ^
+    --header "PRIVATE-TOKEN: %TOKEN%" ^
+    "%GITLAB_URL%/api/v4/projects?owned=false^&membership=false^&simple=true^&per_page=100^&page=%%p" ^
+    >> temp.json
+
+)
+
+findstr "ssh_url_to_repo" temp.json > gitlab_repos.txt
+
+del temp.json
+
+echo Done. Output saved to gitlab_repos.txt
