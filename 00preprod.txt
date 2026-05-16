@@ -1,38 +1,84 @@
 @echo off
 
-setlocal enabledelayedexpansion
+set GITLAB_URL=https://gitlab.company.com
+set TOKEN=YOUR_ADMIN_TOKEN
 
-set REPO_LIST=gitlab_repos.txt
-set CLONE_DIR=all-gitlab-repos
-set ZIP_NAME=gitlab-mirror-backup.tar.gz
+for /L %%p in (1,1,50) do (
 
-if not exist %CLONE_DIR% (
-    mkdir %CLONE_DIR%
+    echo ==========================================
+    echo Fetching page %%p
+    echo ==========================================
+
+    curl --silent ^
+    --header "PRIVATE-TOKEN: %TOKEN%" ^
+    "%GITLAB_URL%/api/v4/projects?simple=true^&per_page=100^&page=%%p" ^
+    -o page_%%p.json
+
+    for /f "tokens=2 delims=:" %%i in ('findstr "\"id\"" page_%%p.json') do (
+
+        set ID=%%i
+
+        call :EXPORT_PROJECT !ID!
+
+    )
 )
 
-cd %CLONE_DIR%
+goto :EOF
 
-for /f "tokens=*" %%r in (..\%REPO_LIST%) do (
+:EXPORT_PROJECT
 
-    echo ============================================
-    echo Cloning %%r
-    echo ============================================
+set PROJECT_ID=%1
 
-    git clone --mirror %%r
+echo Exporting Project %PROJECT_ID%
+
+curl --request POST ^
+     --header "PRIVATE-TOKEN: %TOKEN%" ^
+     "%GITLAB_URL%/api/v4/projects/%PROJECT_ID%/export"
+
+goto :EOF
+
+
+
+
+
+
+
+@echo off
+
+set GITLAB_URL=https://gitlab.company.com
+set TOKEN=YOUR_ADMIN_TOKEN
+
+mkdir exports
+
+for /L %%p in (1,1,50) do (
+
+    echo Fetching page %%p
+
+    curl --silent ^
+    --header "PRIVATE-TOKEN: %TOKEN%" ^
+    "%GITLAB_URL%/api/v4/projects?simple=true^&per_page=100^&page=%%p" ^
+    -o page_%%p.json
+
+    for /f "tokens=2 delims=:" %%i in ('findstr "\"id\"" page_%%p.json') do (
+
+        set ID=%%i
+
+        call :DOWNLOAD_PROJECT !ID!
+
+    )
 )
 
-cd ..
+goto :EOF
 
-echo ============================================
-echo Creating archive %ZIP_NAME%
-echo ============================================
+:DOWNLOAD_PROJECT
 
-tar -czf %ZIP_NAME% %CLONE_DIR%
+set PROJECT_ID=%1
 
-echo ============================================
-echo DONE
+echo Downloading Export %PROJECT_ID%
 
-echo Backup archive created:
+curl --location ^
+     --header "PRIVATE-TOKEN: %TOKEN%" ^
+     "%GITLAB_URL%/api/v4/projects/%PROJECT_ID%/export/download" ^
+     -o exports\%PROJECT_ID%.tar.gz
 
-echo %ZIP_NAME%
-echo ============================================
+goto :EOF
