@@ -1,26 +1,66 @@
-Deploy
-Target Repository
-idea-custom-maven-libs
-Package Type
-Maven
-Repository Layout
-[orgPath]/[module]/[baseRev](-[folderItegRev])/[module]-[baseRev](-[fileItegRev])(-[classifier]).[ext]
-Single DeployMultiple Deploy
-Drop file  
-or
-  Select file
-Target Path
-
-C:\Users\1064695\.m2\repository_orig\com\idea\rforex-jwt-security-lib\1.0.0
-
-06-02-2026  14:35    <DIR>          .
-06-02-2026  14:35    <DIR>          ..
-12-01-2026  19:20               100 m2e-lastUpdated.properties
-11-03-2026  20:07        62,873,681 rforex-jwt-security-lib-1.0.0-exec.jar
-24-09-2025  10:17               434 rforex-jwt-security-lib-1.0.0-javadoc.jar.lastUpdated
-12-01-2026  19:20               255 rforex-jwt-security-lib-1.0.0-sources.jar.lastUpdated
-11-03-2026  20:07            10,906 rforex-jwt-security-lib-1.0.0.jar
-06-02-2026  14:31               255 rforex-jwt-security-lib-1.0.0.jar.lastUpdated
-14-05-2025  15:25             2,143 rforex-jwt-security-lib-1.0.0.pom
-06-02-2026  14:30               255 rforex-jwt-security-lib-1.0.0.pom.lastUpdated
-11-03-2026  20:07               258 _remote.repositories
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rforex-fcra
+  namespace: forex
+  labels:
+    app: rforex-fcra
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: rforex-fcra
+  template:
+    metadata:
+      labels:
+        app: rforex-fcra
+    spec:
+      securityContext:
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001  # This ensures volumes are readable/writable by itss
+      containers:
+        - name: rforex-fcra
+          image: h06vksharbor.corp.ad.sbi/itss/rforex-fcra:prp-2.2-cg-jre
+          ports:
+            - containerPort: 8081
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: fcra-storage
+              mountPath: /fcra
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            runAsUser: 1001
+            seccompProfile:
+              type: RuntimeDefault
+      volumes:
+        - name: fcra-storage
+          persistentVolumeClaim:
+            claimName: pvc-fcra
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "128Mi"
+        limits:
+          cpu: "500m"
+          memory: "1248Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rforex-fcra-service
+  namespace: forex
+spec:
+  selector:
+    app: rforex-fcra
+  type: ClusterIP
+  ports:
+    - port: 8081
+      targetPort: 8081
