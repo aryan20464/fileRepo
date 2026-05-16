@@ -39,3 +39,43 @@ jq -r '.[] | "\(.id),\(.name_with_namespace)"' projects.json
 
 grep -E '"id"|name_with_namespace' projects.json | paste - - | \
 sed -E 's/.*"id": *([0-9]+).*/\1,/; s/.*"name_with_namespace": *"([^"]+)".*/\1/'
+
+
+@echo off
+setlocal enabledelayedexpansion
+
+set GITLAB_URL=https://companygiturl:10000
+set TOKEN=tkn
+set INPUT=projects.txt
+set आउट=D:\gitlab-backup
+
+REM create folder if not exists
+if not exist "%out%" mkdir "%out%"
+
+for /f "tokens=1,* delims=," %%A in (%INPUT%) do (
+
+    set ID=%%A
+    set NAME=%%B
+
+    REM trim leading space
+    for /f "tokens=* delims= " %%x in ("!NAME!") do set NAME=%%x
+
+    REM sanitize filename
+    set NAME=!NAME:/=_!
+    set NAME=!NAME::=_!
+    set NAME=!NAME:"=_!
+
+    set FILE=!out!\!ID!_!NAME!.tar.gz
+
+    echo ==========================================
+    echo Downloading !ID!
+    echo Saving to !FILE!
+    echo ==========================================
+
+    curl --location --fail --show-error --silent --ssl-no-revoke ^
+        --header "PRIVATE-TOKEN: %TOKEN%" ^
+        "%GITLAB_URL%/api/v4/projects/!ID!/export/download" ^
+        -o "!FILE!"
+
+    timeout /t 10 >nul
+)
