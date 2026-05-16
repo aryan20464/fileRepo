@@ -1,26 +1,19 @@
 @echo off
 
-set GITLAB_URL=https://gitlab.company.com
-set TOKEN=YOUR_ADMIN_TOKEN
+set GITLAB_URL=https://ideagit.one:10000
+set TOKEN=tkn
+set REPO_LIST=D:\chakri\gitlab-upgrade\rforex\gitlab_repos.txt
 
-for /L %%p in (1,1,50) do (
+for /f "tokens=*" %%r in (%REPO_LIST%) do (
 
     echo ==========================================
-    echo Fetching page %%p
+    echo Fetching page %%r
     echo ==========================================
+	set ID=%%r
 
-    curl --silent ^
-    --header "PRIVATE-TOKEN: %TOKEN%" ^
-    "%GITLAB_URL%/api/v4/projects?simple=true^&per_page=100^&page=%%p" ^
-    -o page_%%p.json
-
-    for /f "tokens=2 delims=:" %%i in ('findstr "\"id\"" page_%%p.json') do (
-
-        set ID=%%i
-
-        call :EXPORT_PROJECT !ID!
-
-    )
+    call :EXPORT_PROJECT !ID!
+	
+	PAUSE
 )
 
 goto :EOF
@@ -37,48 +30,17 @@ curl --request POST ^
 
 goto :EOF
 
+PAUSE
 
 
-
-
-
-
-@echo off
-
-set GITLAB_URL=https://gitlab.company.com
-set TOKEN=YOUR_ADMIN_TOKEN
-
-mkdir exports
-
-for /L %%p in (1,1,50) do (
-
-    echo Fetching page %%p
-
-    curl --silent ^
-    --header "PRIVATE-TOKEN: %TOKEN%" ^
-    "%GITLAB_URL%/api/v4/projects?simple=true^&per_page=100^&page=%%p" ^
-    -o page_%%p.json
-
-    for /f "tokens=2 delims=:" %%i in ('findstr "\"id\"" page_%%p.json') do (
-
-        set ID=%%i
-
-        call :DOWNLOAD_PROJECT !ID!
-
-    )
-)
-
-goto :EOF
-
-:DOWNLOAD_PROJECT
-
-set PROJECT_ID=%1
-
-echo Downloading Export %PROJECT_ID%
-
-curl --location ^
-     --header "PRIVATE-TOKEN: %TOKEN%" ^
-     "%GITLAB_URL%/api/v4/projects/%PROJECT_ID%/export/download" ^
-     -o exports\%PROJECT_ID%.tar.gz
-
-goto :EOF
+==========================================
+Fetching page https://ideagit.one:10000/rforexhub/fxretail.git
+==========================================
+Exporting Project !ID!
+curl: (35) schannel: next InitializeSecurityContext failed: CRYPT_E_REVOCATION_OFFLINE (0x80092013) - The revocation function was unable to check revocation because the revocation server was offline.
+Press any key to continue . . .
+==========================================
+Fetching page https://ideagit.one:10000/rforexhub/txm-inward-swift-processor.git
+==========================================
+Exporting Project !ID!
+curl: (35) schannel: next InitializeSecurityContext failed: CRYPT_E_REVOCATION_OFFLINE (0x80092013) - The revocation function was unable to check revocation because the revocation server was offline.
