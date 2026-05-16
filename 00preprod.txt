@@ -7,3 +7,32 @@ for /f %%i in (ids.txt) do (
 curl --ssl-no-revoke ^
      --header "PRIVATE-TOKEN: %TOKEN%" ^
      "%GITLAB_URL%/api/v4/projects/rforexhub%%2Ffxretail/export"
+
+@echo off
+setlocal enabledelayedexpansion
+
+set INPUT=projects.json
+set OUTPUT=clean_projects.txt
+
+del %OUTPUT% 2>nul
+
+for /f "tokens=*" %%A in ('findstr /c:"\"id\"" %INPUT%') do (
+    set line=%%A
+    set id=!line:*"id":=!
+    for /f "tokens=1 delims=, " %%i in ("!id!") do set project_id=%%i
+
+    set last_id=!project_id!
+)
+
+for /f "tokens=*" %%B in ('findstr /c:"\"name_with_namespace\"" %INPUT%') do (
+    set line=%%B
+    set name=!line:*"name_with_namespace":=!
+    set name=!name:"=!
+    set name=!name:,=!
+
+    echo !last_id!,!name!>> %OUTPUT%
+)
+
+echo Done -> %OUTPUT%
+
+cat projects.json | grep -E '"id"|"name_with_namespace"' | paste - - | sed 's/.*"id":\s*\([0-9]*\).*/\1,/; s/.*"name_with_namespace":\s*"\(.*\)".*/\1/'
