@@ -1,23 +1,192 @@
+# Bulk Clone and ZIP All GitLab Repositories (Windows CMD)
+
+This guide assumes:
+
+* You already exported all GitLab repository URLs into:
+
+```text
+gitlab_repos.txt
+```
+
+* Each line contains one repository URL.
+* Git is installed on Windows.
+* `tar` is available (comes with modern Windows/Git Bash).
+
+---
+
+# Option 1 — Windows CMD Script (Recommended)
+
+Create a file:
+
+```text
+clone_and_zip.cmd
+```
+
+Paste this:
+
+```cmd
 @echo off
 
-set GITLAB_URL=https://gitlab.company.com
-set TOKEN=YOUR_ADMIN_TOKEN
+setlocal enabledelayedexpansion
 
-del gitlab_repos.txt 2>nul
+set REPO_LIST=gitlab_repos.txt
+set CLONE_DIR=all-gitlab-repos
+set ZIP_NAME=gitlab-mirror-backup.tar.gz
 
-for /L %%p in (1,1,50) do (
-
-    echo Fetching page %%p
-
-    curl --silent ^
-    --header "PRIVATE-TOKEN: %TOKEN%" ^
-    "%GITLAB_URL%/api/v4/projects?owned=false^&membership=false^&simple=true^&per_page=100^&page=%%p" ^
-    >> temp.json
-
+if not exist %CLONE_DIR% (
+    mkdir %CLONE_DIR%
 )
 
-findstr "ssh_url_to_repo" temp.json > gitlab_repos.txt
+cd %CLONE_DIR%
 
-del temp.json
+for /f "tokens=*" %%r in (..\%REPO_LIST%) do (
 
-echo Done. Output saved to gitlab_repos.txt
+    echo ============================================
+    echo Cloning %%r
+    echo ============================================
+
+    git clone --mirror %%r
+)
+
+cd ..
+
+echo ============================================
+echo Creating archive %ZIP_NAME%
+echo ============================================
+
+tar -czf %ZIP_NAME% %CLONE_DIR%
+
+echo ============================================
+echo DONE
+
+echo Backup archive created:
+
+echo %ZIP_NAME%
+echo ============================================
+```
+
+---
+
+# Run the Script
+
+Open CMD in the folder containing:
+
+```text
+gitlab_repos.txt
+clone_and_zip.cmd
+```
+
+Run:
+
+```cmd
+clone_and_zip.cmd
+```
+
+---
+
+# What This Does
+
+The script:
+
+1. Reads all repository URLs from:
+
+```text
+gitlab_repos.txt
+```
+
+2. Clones every repo using:
+
+```cmd
+git clone --mirror
+```
+
+3. Stores them under:
+
+```text
+all-gitlab-repos
+```
+
+4. Creates:
+
+```text
+gitlab-mirror-backup.tar.gz
+```
+
+---
+
+# Why --mirror Is Important
+
+`--mirror` preserves:
+
+* all branches
+* tags
+* refs
+* hooks refs
+* pull/merge refs
+* full git history
+
+This is better than a normal clone for upgrade backups.
+
+---
+
+# Verify Backup
+
+Check archive:
+
+```cmd
+dir gitlab-mirror-backup.tar.gz
+```
+
+Verify cloned repositories:
+
+```cmd
+dir all-gitlab-repos
+```
+
+---
+
+# Restore Example
+
+To restore later:
+
+```cmd
+git clone --mirror repo.git
+```
+
+OR push into a new GitLab:
+
+```cmd
+cd repo.git
+
+git push --mirror NEW_GITLAB_URL
+```
+
+---
+
+# Important Notes
+
+* Large GitLab instances may take hours.
+* Ensure sufficient disk space.
+* Some repositories may fail due to permissions.
+* SSH clone URLs require SSH key access.
+* HTTPS clone URLs may require PAT authentication.
+
+---
+
+# Recommended Additional Backups Before GitLab Upgrade
+
+For a production GitLab upgrade, also take:
+
+```cmd
+gitlab-backup create
+```
+
+and backup:
+
+```text
+/etc/gitlab
+PostgreSQL
+Redis
+```
+
+Repository mirrors alone are not full GitLab backups.
