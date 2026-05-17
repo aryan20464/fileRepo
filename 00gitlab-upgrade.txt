@@ -1,0 +1,29 @@
+gitlab-rake gitlab:env:info
+
+gitlab-rake gitlab:check SANITIZE=true
+
+gitlab-rails runner 'puts Gitlab::Database::BackgroundMigration::BatchedMigration.pending.count'
+
+gitlab-backup create STRATEGY=copy
+
+backup 
+/var/opt/gitlab
+/etc/gitlab
+
+yum install gitlab-ce-16.11.x
+gitlab-ctl reconfigure
+gitlab-ctl restart
+
+gitlab-rake gitlab:check
+gitlab-ctl status
+
+NOTE: IF NEEDED gitlab-ctl pg-upgrade
+
+
+yum install gitlab-ce-17.0.x
+gitlab-ctl reconfigure
+
+🟢 STEP 5: Immediately check failures
+
+/var/log/gitlab/postgresql/
+/var/log/gitlab/gitlab-rails/
