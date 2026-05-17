@@ -30,3 +30,42 @@ gitlab-ctl reconfigure
 
 
 sudo gitlab-rails runner "puts Gitlab::Database::BackgroundMigration::BatchedMigration.where.not(status: 3).count"
+
+
+lsblk
+NAME                   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda                      8:0    0   60G  0 disk
+├─sda1                   8:1    0    1G  0 part /boot
+└─sda2                   8:2    0   59G  0 part
+  ├─rhel-root          253:0    0   10G  0 lvm  /
+  ├─rhel-swap          253:1    0    4G  0 lvm  [SWAP]
+  ├─rhel-usr           253:2    0   10G  0 lvm  /usr
+  ├─rhel-tmp           253:5    0    5G  0 lvm  /tmp
+  ├─rhel-var_log_audit 253:6    0    5G  0 lvm  /var/log/audit
+  ├─rhel-var           253:7    0    7G  0 lvm  /var
+  ├─rhel-home          253:8    0    3G  0 lvm  /home
+  ├─rhel-var_log       253:9    0    5G  0 lvm  /var/log
+  └─rhel-var_tmp       253:10   0   10G  0 lvm  /var/tmp
+sdb                      8:16   0  150G  0 disk
+├─data-devtools        253:3    0  100G  0 lvm  /devtools
+└─data-data            253:4    0   50G  0 lvm  /data
+sr0                     11:0    1 1024M  0 rom
+[root@tss-ideasvnuat var]# df -lh
+Filesystem                      Size  Used Avail Use% Mounted on
+devtmpfs                         12G     0   12G   0% /dev
+tmpfs                            12G   92K   12G   1% /dev/shm
+tmpfs                            12G  515M   12G   5% /run
+tmpfs                            12G     0   12G   0% /sys/fs/cgroup
+/dev/mapper/rhel-root           9.8G  8.4G  908M  91% /
+/dev/mapper/rhel-usr            9.8G  6.1G  3.2G  66% /usr
+/dev/mapper/rhel-home           2.9G  2.2M  2.8G   1% /home
+/dev/mapper/data-data            49G   26G   22G  54% /data
+/dev/mapper/data-devtools        98G   47G   46G  51% /devtools
+/dev/mapper/rhel-tmp            4.9G  244K  4.6G   1% /tmp
+/dev/sda1                       974M  406M  501M  45% /boot
+/dev/mapper/rhel-var            6.9G  3.1G  3.5G  47% /var
+/dev/mapper/rhel-var_log        4.9G  798M  3.8G  18% /var/log
+/dev/mapper/rhel-var_tmp        9.8G   52K  9.3G   1% /var/tmp
+/dev/mapper/rhel-var_log_audit  4.9G  379M  4.3G   9% /var/log/audit
+tmpfs                           2.4G     0  2.4G   0% /run/user/0
+
