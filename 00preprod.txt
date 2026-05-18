@@ -1,10 +1,32 @@
---- compiler:3.13.0:compile (default-compile) @ rforex-authservice ---
-[INFO] Recompiling the module because of changed source code.
-[INFO] Compiling 4 source files with javac [debug parameters release 21] to target/classes
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD FAILURE
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time:  3.489 s
-[INFO] Finished at: 2026-05-18T05:43:17Z
-[INFO] ------------------------------------------------------------------------
-[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project rforex-authservice: Fatal error compiling: error: release version 21 not supported -> [Help 1
+set RFOREX_BACKEND=4325
+set RFOREX_FRONTEND=4324
+set INPUT=D:\chakri\devsecops\rforex_import.txt
+
+
+for /f "tokens=1,* delims=," %%A in (%INPUT%) do (
+
+    set ID=%%A
+    set NAME=%%B
+	
+	echo !ID!
+
+    REM trim leading space
+    for /f "tokens=* delims= " %%x in ("!NAME!") do set NAME=%%x
+
+    REM sanitize filename
+    set NAME=!NAME:/=_!
+    set NAME=!NAME::=_!
+    set NAME=!NAME:"=_!
+
+    set FILE=!out!\!ID!_!NAME!.tar.gz
+
+    echo ==========================================
+    echo ID !ID!
+    echo Saving to !FILE!
+    echo ==========================================
+)
+PAUSE
+
+
+232,GES
+221,Kafka-Rest-Application
