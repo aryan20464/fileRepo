@@ -1,2 +1,10 @@
-time="2026-05-20T10:02:45Z" level=warning msg="Using cgroups-v1 which is deprecated in favor of cgroups-v2 with Podman v5 and will be removed in a future version. Set environment variable `PODMAN_IGNORE_CGROUPSV1_WARNING` to hide this warning."
-Error: authenticating creds for "ksharbor.corp.ad.vi": pinging container registry ksharbor.corp.ad.vi: Get "https://ksharbor.corp.ad.vi/v2/": tls: failed to verify certificate: x509: certificate signed by unknown authority
+$ jf rt dl "https://artifactory.jfrog.sbi:443/artifactory/itfo-treasury-tss-idea-libs-releases/rforex-auth-service/rforex-authservice-0.0.1-SNAPSHOT.jar" --target "rforex-authservice-dl.jar" --flat
+12:35:11 [Error] Wrong number of arguments (3). You can read the documentation at https://jfrog.com/help/r/jfrog-cli
+Name:
+  jf rt download - Download files from Artifactory to local file system.
+Usage:
+  jf rt download [command options] <source pattern> <target pattern>
+  
+Arguments:
+  source pattern
+    Specifies the source path in Artifactory, from which the artifacts should be downloaded, in the format: <repository name>/<repository path>. Wildcards can be used to specify multiple artifacts.
