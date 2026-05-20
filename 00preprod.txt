@@ -1,4 +1,8 @@
-- >
+check_multiple_endpoints:
+  stage: test
+  image: alpine:latest
+  script:
+    - >
       ENDPOINTS=(
         "https://example.com"
         "https://example.com"
