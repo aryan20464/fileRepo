@@ -1,10 +1,25 @@
-$ jf rt dl "https://artifactory.jfrog.sbi:443/artifactory/itfo-treasury-tss-idea-libs-releases/rforex-auth-service/rforex-authservice-0.0.1-SNAPSHOT.jar" --target "rforex-authservice-dl.jar" --flat
-12:35:11 [Error] Wrong number of arguments (3). You can read the documentation at https://jfrog.com/help/r/jfrog-cli
-Name:
-  jf rt download - Download files from Artifactory to local file system.
-Usage:
-  jf rt download [command options] <source pattern> <target pattern>
-  
-Arguments:
-  source pattern
-    Specifies the source path in Artifactory, from which the artifacts should be downloaded, in the format: <repository name>/<repository path>. Wildcards can be used to specify multiple artifacts.
+$ jf rt dl "libs-releases/rforex-auth-service/rforex-authservice-0.0.1-SNAPSHOT.jar" "/builds/dept/rforex/backend/rforex-auth-service/rforex-authservice-dl.jar"
+13:13:47 [Info] [Thread 2] Downloading "itfo-treasury-tss-idea-libs-releases/rforex-auth-service/rforex-authservice-0.0.1-SNAPSHOT.jar" to "/builds/dept/rforex/backend/rforex-auth-service/rforex-auth-service/rforex-authservice-dl.jar"
+13:13:48 [Info] [Thread 2] [1]: 206 ...
+13:13:48 [Info] [Thread 2] [2]: 206 ...
+13:13:48 [Info] [Thread 2] [0]: 206 ...
+13:13:49 [Info] [Thread 2] Done downloading.
+{
+  "status": "success",
+  "totals": {
+    "success": 1,
+    "failure": 0
+  }
+}
+$ pwd
+/builds/dept/rforex/backend/rforex-auth-service
+$ ls -lrth
+total 32K
+-rw-rw-rw- 1 root root  11K May 18 05:53 mvnw
+-rw-rw-rw- 1 root root 6.9K May 18 05:53 mvnw.cmd
+drwxrwxrwx 4 root root   30 May 18 05:53 src
+drwxrwxrwx 2 root root   24 May 20 11:51 bin
+-rw-rw-rw- 1 root root 1.7K May 20 11:51 pom.xml
+-rw-rw-rw- 1 root root 1.1K May 20 12:20 rforex-authservice-k8s.yaml
+-rw-rw-rw- 1 root root 1.5K May 20 13:13 Dockerfile
+drwxr-xr-x 2 root root   39 May 20 13:13 rforex-auth-service
