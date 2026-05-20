@@ -1,25 +1,8 @@
-$ jf rt dl "libs-releases/rforex-auth-service/rforex-authservice-0.0.1-SNAPSHOT.jar" "./rforex-authservice-dl.jar"
-13:19:22 [Info] [Thread 0] Downloading "libs-releases/rforex-auth-service/rforex-authservice-0.0.1-SNAPSHOT.jar" to "rforex-auth-service/rforex-authservice-dl.jar"
-13:19:22 [Info] [Thread 0] [0]: 206 ...
-13:19:22 [Info] [Thread 0] [1]: 206 ...
-13:19:22 [Info] [Thread 0] [2]: 206 ...
-13:19:23 [Info] [Thread 0] Done downloading.
-{
-  "status": "success",
-  "totals": {
-    "success": 1,
-    "failure": 0
-  }
-}
-$ pwd
-/builds/it-tss/rforex/backend/rforex-auth-service
-$ ls -lrth
-total 32K
--rw-rw-rw-. 1 root root  11K May 18 08:33 mvnw
--rw-rw-rw-. 1 root root 6.9K May 18 08:33 mvnw.cmd
-drwxrwxrwx. 4 root root   30 May 18 08:33 src
--rw-rw-rw-. 1 root root 1.5K May 20 12:35 Dockerfile
-drwxrwxrwx. 2 root root   24 May 20 12:35 bin
--rw-rw-rw-. 1 root root 1.7K May 20 12:35 pom.xml
--rw-rw-rw-. 1 root root 1.1K May 20 12:35 rforex-authservice-k8s.yaml
-drwxr-xr-x. 2 root root   39 May 20 13:19 rforex-auth-service
+check_multiple_endpoints:
+  stage: kubectl_check
+  image: artifactory.jfrog.sbi:443/dso-docker-base-images/ubi9/ubi9-podman-git-python-helm-jinja:1.0
+  allow_failure: true
+  script:
+    - pwd
+    - ls -rlth
+    - kubectl version
