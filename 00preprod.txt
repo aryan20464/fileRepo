@@ -1,9 +1,27 @@
-$ kubectl config get-contexts
-CURRENT   NAME                               CLUSTER           AUTHINFO           NAMESPACE
-*         kubernetes-admin@h06vksuatcmmcls   h06vksuatcmmcls   kubernetes-admin   
-$ kubectl get pods -n forex
-E0521 03:42:31.149966      34 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"https://10.177.106.141:6443/api?timeout=32s\": dial tcp 10.177.106.141:6443: i/o timeout"
-E0521 03:43:01.150921      34 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"https://10.177.106.141:6443/api?timeout=32s\": dial tcp 10.177.106.141:6443: i/o timeout"
-E0521 03:43:31.152346      34 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"https://10.177.106.141:6443/api?timeout=32s\": dial tcp 10.177.106.141:6443: i/o timeout"
-E0521 03:44:01.153513      34 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"https://10.177.106.141:6443/api?timeout=32s\": dial tcp 10.177.106.141:6443: i/o timeout"
-  
+check_kubectl_push:
+  stage: kubectl_push
+  image: artifactory.jfrog.sbi:443/dso-docker-base-images/ubi9/ubi9-podman-git-python-helm-jinja:1.0
+  script:
+    - pwd
+    - ls -rlth
+    - export KUBECONFIG="$KUBECONFIG_UAT"
+    - kubectl config get-contexts
+    - kubectl get pods -n forex
+    - >
+      sed -i "s|image: .*rforex-authservice:.*|image: ${DOCKER_IMAGE}|g" rforex-authservice-k8s.yaml
+    - grep "image:" rforex-authservice-k8s.yaml
+
+    # Deploy to Kubernete
+    - kubectl apply -f rforex-authservice-k8s.yaml
+
+  only:
+    - release-vks-uat/rforex-authservice
+    $ sed -i "s|image: .*rforex-authservice:.*|image: ${DOCKER_IMAGE}|g" rforex-authservice-k8s.yaml
+$ grep "image:" rforex-authservice-k8s.yaml
+          image: 
+$ kubectl apply -f rforex-authservice-k8s.yaml
+The Deployment "rforex-authentication" is invalid: spec.template.spec.containers[0].image: Required value
+service/rforex-auth-service unchanged
+Cleaning up project directory and file based variables
+00:01
+ERROR: Job failed: exit code 1
