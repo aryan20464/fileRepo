@@ -1,26 +1,9 @@
-$ pwd
-/builds/it-tss/rforex/backend/rforex-auth-service
-$ ls -rlth
-total 32K
--rw-rw-rw- 1 root root  11K May 18 05:53 mvnw
--rw-rw-rw- 1 root root 6.9K May 18 05:53 mvnw.cmd
-drwxrwxrwx 4 root root   30 May 18 05:53 src
-drwxrwxrwx 2 root root   24 May 20 11:51 bin
--rw-rw-rw- 1 root root 1.7K May 20 11:51 pom.xml
--rw-rw-rw- 1 root root 1.1K May 20 12:20 rforex-authservice-k8s.yaml
--rw-rw-rw- 1 root root 1.5K May 20 13:13 Dockerfile
-$ mkdir -p ~/.kube
-$ echo "$KUBECONFIG_UAT" > ~/.kube/config
-$ chmod 600 ~/.kube/config
-$ echo ~/.kube/config
-/root/.kube/config
-$ echo $KUBECONFIG_UAT
 $ kubectl config get-contexts
-CURRENT   NAME   CLUSTER   AUTHINFO   NAMESPACE
-$ kubectl cluster-info
-E0520 13:42:53.348758      34 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"http://localhost:8080/api?timeout=32s\": dial tcp [::1]:8080: connect: connection refused"
-E0520 13:42:53.349173      34 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"http://localhost:8080/api?timeout=32s\": dial tcp [::1]:8080: connect: connection refused"
-E0520 13:42:53.350646      34 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"http://localhost:8080/api?timeout=32s\": dial tcp [::1]:8080: connect: connection refused"
-E0520 13:42:53.351032      34 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"http://localhost:8080/api?timeout=32s\": dial tcp [::1]:8080: connect: connection refused"
-E0520 13:42:53.352473      34 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"http://localhost:8080/api?timeout=32s\": dial tcp [::1]:8080: connect: connection refused"
-The connection to the server localhost:8080 was refused - did you specify the right host or port?
+CURRENT   NAME                               CLUSTER           AUTHINFO           NAMESPACE
+*         kubernetes-admin@h06vksuatcmmcls   h06vksuatcmmcls   kubernetes-admin   
+$ kubectl get pods -n forex
+E0521 03:42:31.149966      34 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"https://10.177.106.141:6443/api?timeout=32s\": dial tcp 10.177.106.141:6443: i/o timeout"
+E0521 03:43:01.150921      34 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"https://10.177.106.141:6443/api?timeout=32s\": dial tcp 10.177.106.141:6443: i/o timeout"
+E0521 03:43:31.152346      34 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"https://10.177.106.141:6443/api?timeout=32s\": dial tcp 10.177.106.141:6443: i/o timeout"
+E0521 03:44:01.153513      34 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"https://10.177.106.141:6443/api?timeout=32s\": dial tcp 10.177.106.141:6443: i/o timeout"
+  
