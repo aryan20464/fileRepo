@@ -1,59 +1,18 @@
-WARNING: Uploading artifacts as "dotenv" to coordinator... POST https://gitlab.sbi/api/v4/jobs/543632/artifacts: 400 Bad Request (Validation failed: Key can contain only letters, digits and '_'.)  id=543632 responseStatus=400 Bad Request status=400 token=eyJraWQiO
+ocation /grafana/ {
 
-stages:
-  - endpoint_check
-  - kubectl_push
+                allow 10.30.130.32;
+                deny all;     
+                return 404;           
+                proxy_set_header Host               $http_host;
+                proxy_set_header X-Real-IP          $remote_addr;
+                proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto  $real_proto;
+                proxy_set_header X-Forwarded-Host   $http_x_forwarded_host;
+                proxy_set_header X-Forwarded-Port   $http_x_forwarded_port;
 
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection "upgrade";
 
-
-check_multiple_endpoints:
-  stage: endpoint_check
-  image: artifactory.jfrog.sbi:443/dso-docker-base-images/ubi9/ubi9-podman-git-python-openshift-jq:2.0
-  before_script:
-    - mkdir -p /etc/containers/certs.d/h06vksharbor.corp.ad.sbi
-    - echo "$HARBOR_UAT_CRT" > /etc/containers/certs.d/h06vksharbor.corp.ad.sbi/ca.crt
-    - podman login h06vksharbor.corp.ad.sbi -u "$DOCKER_RBTAC_USER" -p "$DOCKER_RBATAC_TOKEN" 
-    - echo $JF_URL
-    - jf config add \--url="$JF_URL" \--xray-url="$JF_XRAY_URL" \--user="$JF_USER" \--access-token="$JF_TOKEN" \--interactive=false 
-    - jf config add itfo-server --url=$JF_URL --user=$JF_USER --access-token=$JF_TOKEN --interactive=false  
-    - jf config use itfo-server
-    - jf rt ping  # Verify connection
-  script:
-    - jf rt dl "itfo-treasury-tss-idea-libs-releases/rforex-auth-service/rforex-authservice-0.0.1-SNAPSHOT.jar" "./rforex-authservice-dl.jar" --flat=true
-    - pwd
-    - ls -lrth
-    - echo "Generating Docker image tag with short commit and timestamp"
-    - TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
-    - DOCKER_IMAGE="h06vksharbor.corp.ad.sbi/itss/rforex-authservice:${CI_COMMIT_SHORT_SHA}-${TIMESTAMP}"
-    - echo "Docker image will be $DOCKER_IMAGE"
-    - echo "$DOCKER_IMAGE=$DOCKER_IMAGE" >> imagebuild.env
-    - podman build -t $DOCKER_IMAGE .
-    - podman push $DOCKER_IMAGE
-    - cat imagebuild.env
-  artifacts:
-    reports:
-      dotenv: imagebuild.env
-    expire_in: 1 days
-
-
-    
-  only:
-    - release-vks-uat/rforex-authservice
-
-check_kubectl_push:
-  stage: kubectl_push
-  image: artifactory.jfrog.sbi:443/dso-docker-base-images/ubi9/ubi9-podman-git-python-helm-jinja:1.0
-  script:
-    - pwd
-    - ls -rlth
-    - export KUBECONFIG="$KUBECONFIG_UAT"
-    - kubectl config get-contexts
-    - kubectl get pods -n forex
-    # Deploy to Kubernetes
-    - echo "DOCKER_IMAGE=$DOCKER_IMAGE"
-    - sed -i "s|IMAGE_NAME_WITH_TAG|${DOCKER_IMAGE}|g" rforex-authservice-k8s.yaml
-    - grep "image:" rforex-authservice-k8s.yaml
-    - kubectl apply -f rforex-authservice-k8s.yaml
-
-  only:
-    - release-vks-uat/rforex-authservice
+                proxy_pass http://grafana:3000;                        
+            }
