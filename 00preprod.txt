@@ -1,3 +1,45 @@
+WARNING: Uploading artifacts as "dotenv" to coordinator... POST https://gitlab.sbi/api/v4/jobs/543632/artifacts: 400 Bad Request (Validation failed: Key can contain only letters, digits and '_'.)  id=543632 responseStatus=400 Bad Request status=400 token=eyJraWQiO
+
+stages:
+  - endpoint_check
+  - kubectl_push
+
+
+
+check_multiple_endpoints:
+  stage: endpoint_check
+  image: artifactory.jfrog.sbi:443/dso-docker-base-images/ubi9/ubi9-podman-git-python-openshift-jq:2.0
+  before_script:
+    - mkdir -p /etc/containers/certs.d/h06vksharbor.corp.ad.sbi
+    - echo "$HARBOR_UAT_CRT" > /etc/containers/certs.d/h06vksharbor.corp.ad.sbi/ca.crt
+    - podman login h06vksharbor.corp.ad.sbi -u "$DOCKER_RBTAC_USER" -p "$DOCKER_RBATAC_TOKEN" 
+    - echo $JF_URL
+    - jf config add \--url="$JF_URL" \--xray-url="$JF_XRAY_URL" \--user="$JF_USER" \--access-token="$JF_TOKEN" \--interactive=false 
+    - jf config add itfo-server --url=$JF_URL --user=$JF_USER --access-token=$JF_TOKEN --interactive=false  
+    - jf config use itfo-server
+    - jf rt ping  # Verify connection
+  script:
+    - jf rt dl "itfo-treasury-tss-idea-libs-releases/rforex-auth-service/rforex-authservice-0.0.1-SNAPSHOT.jar" "./rforex-authservice-dl.jar" --flat=true
+    - pwd
+    - ls -lrth
+    - echo "Generating Docker image tag with short commit and timestamp"
+    - TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
+    - DOCKER_IMAGE="h06vksharbor.corp.ad.sbi/itss/rforex-authservice:${CI_COMMIT_SHORT_SHA}-${TIMESTAMP}"
+    - echo "Docker image will be $DOCKER_IMAGE"
+    - echo "$DOCKER_IMAGE=$DOCKER_IMAGE" >> imagebuild.env
+    - podman build -t $DOCKER_IMAGE .
+    - podman push $DOCKER_IMAGE
+    - cat imagebuild.env
+  artifacts:
+    reports:
+      dotenv: imagebuild.env
+    expire_in: 1 days
+
+
+    
+  only:
+    - release-vks-uat/rforex-authservice
+
 check_kubectl_push:
   stage: kubectl_push
   image: artifactory.jfrog.sbi:443/dso-docker-base-images/ubi9/ubi9-podman-git-python-helm-jinja:1.0
@@ -7,21 +49,11 @@ check_kubectl_push:
     - export KUBECONFIG="$KUBECONFIG_UAT"
     - kubectl config get-contexts
     - kubectl get pods -n forex
-    - >
-      sed -i "s|image: .*rforex-authservice:.*|image: ${DOCKER_IMAGE}|g" rforex-authservice-k8s.yaml
+    # Deploy to Kubernetes
+    - echo "DOCKER_IMAGE=$DOCKER_IMAGE"
+    - sed -i "s|IMAGE_NAME_WITH_TAG|${DOCKER_IMAGE}|g" rforex-authservice-k8s.yaml
     - grep "image:" rforex-authservice-k8s.yaml
-
-    # Deploy to Kubernete
     - kubectl apply -f rforex-authservice-k8s.yaml
 
   only:
     - release-vks-uat/rforex-authservice
-    $ sed -i "s|image: .*rforex-authservice:.*|image: ${DOCKER_IMAGE}|g" rforex-authservice-k8s.yaml
-$ grep "image:" rforex-authservice-k8s.yaml
-          image: 
-$ kubectl apply -f rforex-authservice-k8s.yaml
-The Deployment "rforex-authentication" is invalid: spec.template.spec.containers[0].image: Required value
-service/rforex-auth-service unchanged
-Cleaning up project directory and file based variables
-00:01
-ERROR: Job failed: exit code 1
