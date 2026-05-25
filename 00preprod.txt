@@ -1,150 +1,24 @@
-+----------------+------------+---------------------------+---------------+---------------------------+---------------+-----------------+-------+
-| CVE            | SEVERITY   | DIRECT                    | DIRECT        | AFFECTED                  | AFFECTED      | FIXED           | TYPE  |
-|                |            | PACKAGE                   | PACKAGE       | COMPONENT                 | COMPONENT     | VERSIONS        |       |
-|                |            |                           | VERSION       | NAME                      | VERSION       |                 |       |
-+----------------+------------+---------------------------+---------------+---------------------------+---------------+-----------------+-------+
-| CVE-2026-43515 | 💀Critical | org.apache.tomcat.embed:t | 10.1.54       | org.apache.tomcat.embed:t | 10.1.54       | [10.1.55]       | Maven |
-|                |            | omcat-embed-core          |               | omcat-embed-core          |               | [11.0.22]       |       |
-|                |            |                           |               |                           |               | [9.0.118]       |       |
-+----------------+------------+---------------------------+---------------+---------------------------+---------------+-----------------+-------+
-| CVE-2026-43512 | 💀Critical | org.apache.tomcat.embed:t | 10.1.54       | org.apache.tomcat.embed:t | 10.1.54       | [10.1.55]       | Maven |
-|                |            | omcat-embed-core          |               | omcat-embed-core          |               | [11.0.22]       |       |
-|                |            |                           |               |                           |               | [9.0.118]       |       |
-+----------------+------------+---------------------------+---------------+---------------------------+---------------+-----------------+-------+
-| CVE-2026-41293 | 💀Critical | org.apache.tomcat.embed:t | 10.1.54       | org.apache.tomcat.embed:t | 10.1.54       | [10.1.55]       | Maven |
-|                |            | omcat-embed-core          |               | omcat-embed-core          |               | [11.0.22]       |       |
-|                |            |                           |               |                           |               | [9.0.118]       |       |
-+----------------+------------+---------------------------+---------------+---------------------------+---------------+-----------------+-------+
-| CVE-2026-42584 | 💀Critical | io.netty:netty-codec-http | 4.1.132.Final | io.netty:netty-codec-http | 4.1.132.Final | [4.1.133.Final] | Maven |
-|                |            |                           |               |                           |               | [4.2.13.Final]  |       |
-+----------------+------------+---------------------------+---------------+---------------------------+---------------+-----------------+-------+
-| CVE-2026-42581 | 💀Critical | io.netty:netty-codec-http | 4.1.132.Final | io.netty:netty-codec-http | 4.1.132.Final | [4.1.133.Final] | Maven |
-|                |            |                           |               |                           |               | [4.2.13.Final]  |       |
-+----------------+------------+---------------------------+---------------+---------------------------+---------------+-----------------+-------+
-| CVE-2026-42579 | 💀Critical | io.netty:netty-codec-dns  | 4.1.132.Final | io.netty:netty-codec-dns  | 4.1.132.Final | [4.1.133.Final] | Maven |
-|                |            |                           |               |                           |               | [4.2.13.Final]  |       |
-+----------------+------------+---------------------------+---------------+---------------------------+---------------+-----------------+-------+
-| CVE-2026-43513 | 🔥High     | org.apache.tomcat.embed:t | 10.1.54       | org.apache.tomcat.embed:t | 10.1.54       | [10.1.55]       | Maven |
-|                |            | omcat-embed-core          |               | omcat-embed-core          |               | [11.0.22]       |       |
-|                |            |                           |               |                           |               | [9.0.118]       |       |
-+----------------+------------+---------------------------+---------------+---------------------------+---------------+-----------------+-------+
-| CVE-2026-42498 | 🔥High     | org.apache.tomcat.embed:t | 10.1.54       | org.apache.tomcat.embed:t | 10.1.54       |                 | Maven |
-|                |            | omcat-embed-websocket     |               | omcat-embed-websocket     |               |                 |       |
-+----------------+------------+---------------------------+---------------+---------------------------+---------------+-----------------+-------+
-| CVE-2026-41284 | 🔥High     | org.apache.tomcat.embed:t | 10.1.54       | org.apache.tomcat.embed:t | 10.1.54       | [10.1.55]       | Maven |
-|                |            | omcat-embed-core          |               | omcat-embed-core          |               | [11.0.22]       |       |
-|                |            |                           |               |                           |               | [9.0.118]       |       |
-+----------------+------------+---------------------------+---------------+---------------------------+---------------+-----------------+-------+
-| CVE-2026-42587 | 🔥High     | io.netty:netty-codec-http | 4.1.132.Final | io.netty:netty-codec-http | 4.1.132.Final | [4.1.133.Final] | Maven |
-|                |            |                           |               |                           |               | [4.2.13.Final]  |       |
-+----------------+------------+---------------------------+---------------+---------------------------+---------------+-----------------+-------+
-| CVE-2026-42587 | 🔥High     | io.netty:netty-codec-http | 4.1.132.Final | io.netty:netty-codec-http | 4.1.132.Final | [4.1.133.Final] | Maven |
-|                |            | 2                         |               | 2                         |               | [4.2.13.Final]  |       |
-+----------------+------------+---------------------------+---------------+---------------------------+---------------+-----------------+-------+
-| CVE-2026-42585 | 🔥High     | io.netty:netty-codec-http | 4.1.132.Final | io.netty:netty-codec-http | 4.1.132.Final | [4.1.133.Final] | Maven |
-|                |            |                           |               |                           |               | [4.2.13.Final]  |       |
-+----------------+------------+---------------------------+---------------+---------------------------+---------------+-----------------+-------+
-| CVE-2026-42583 | 🔥High     | io.netty:netty-codec      | 4.1.132.Final | io.netty:netty-codec      | 4.1.132.Final | [4.1.133.Final] | Maven |
-+----------------+------------+---------------------------+---------------+---------------------------+---------------+-----------------+-------+
-| CVE-2026-42578 | 🔥High     | io.netty:netty-handler-pr | 4.1.132.Final | io.netty:netty-handler-pr | 4.1.132.Final | [4.1.133.Final] | Maven |
-|                |            | oxy                       |               | oxy                       |               | [4.2.13.Final]  |       |
-+----------------+------------+---------------------------+---------------+---------------------------+---------------+-----------------+-------+
-| CVE-2026-42580 | 🎃Medium   | io.netty:netty-codec-http | 4.1.132.Final | io.netty:netty-codec-http | 4.1.132.Final | [4.1.133.Final] | Maven |
-|                |            |                           |               |                           |               | [4.2.13.Final]  |       |
-+----------------+------------+---------------------------+---------------+---------------------------+---------------+-----------------+-------+
-| CVE-2026-41417 | 🎃Medium   | io.netty:netty-codec-http | 4.1.132.Final | io.netty:netty-codec-http | 4.1.132.Final | [4.1.133.Final] | Maven |
-|                |            |                           |               |                           |               | [4.2.13.Final]  |       |
-+----------------+------------+---------------------------+---------------+---------------------------+---------------+-----------------+-------+
-| CVE-2026-43514 | 👻Low      | org.apache.tomcat.embed:t | 10.1.54       | org.apache.tomcat.embed:t | 10.1.54       | [10.1.55]       | Maven |
-|                |            | omcat-embed-core          |               | omcat-embed-core          |               | [11.0.22]       |       |
-|                |            |                           |               |                           |               | [9.0.118]       |       |
-+----------------+------------+---------------------------+---------------+---------------------------+---------------+-----------------+-------+
+$ echo "DOCKER_HARBOR_IMAGE=$DOCKER_HARBOR_IMAGE"
+DOCKER_HARBOR_IMAGE=DOCKER_HARBOR_IMAGE
+$ sed -i "s|IMAGE_NAME_WITH_TAG|${DOCKER_HARBOR_IMAGE}|g" rforex-authservice-k8s.yaml
+$ grep "image:" rforex-authservice-k8s.yaml
+          image: DOCKER_HARBOR_IMAGE
+$ kubectl apply -f rforex-authservice-k8s.yaml
+deployment.apps/rforex-authentication unchanged
+service/rforex-auth-service unchanged
+Cleaning up project directory and file based variables
+00:01
+Job succeeded
 
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.14</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
-	<groupId>com.idea</groupId>
-	<artifactId>rforex-authservice</artifactId>
-	<name>rforex-authservice</name>
-	<packaging>jar</packaging>
-	<description>Demo project for Spring Boot</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
-	<properties>
-		<java.version>21</java.version>
-        <commons-lang3.version>3.18.0</commons-lang3.version>
-	</properties>
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-    	 <groupId>org.springframework.boot</groupId>
-   		 <artifactId>spring-boot-starter-webflux</artifactId>
-	    </dependency>
-		<dependency>
-			<groupId>com.idea</groupId>
-	<artifactId>rforex-jwt-security-lib</artifactId>
-	<version>1.0.0</version>
-	</dependency>
-	</dependencies>
-
-	<build>
-        <finalName>RforexAuthService</finalName>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
-    
-    <profiles>
-        <profile>
-            <id>preprod</id>
-            <properties>
-                <spring.profiles.active>preprod</spring.profiles.active>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>uat</id>
-            <properties>
-                <spring.profiles.active>uat</spring.profiles.active>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>prod</id>
-            <properties>
-                <spring.profiles.active>prod</spring.profiles.active>
-            </properties>
-        </profile>
-
-    </profiles>
-
-</project>
+$ pwd
+/builds/it-tss/rforex/backend/rforex-auth-service
+$ ls -rlth
+total 364K
+-rw-rw-rw- 1 root root  11K May 18 05:53 mvnw
+-rw-rw-rw- 1 root root 6.9K May 18 05:53 mvnw.cmd
+drwxrwxrwx 4 root root   30 May 18 05:53 src
+drwxrwxrwx 2 root root   24 May 22 05:11 bin
+-rw-rw-rw- 1 root root 1.6K May 25 08:43 Dockerfile
+-rw-rw-rw- 1 root root  997 May 25 09:04 rforex-authservice-k8s.yaml
+-rw-rw-rw- 1 root root 2.5K May 25 09:15 pom.xml
+-rw-r--r-- 1 root root 325K May 25 09:17 it-tss-rforex-backend-rforex-auth-service_report.pdf
