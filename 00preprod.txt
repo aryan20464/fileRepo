@@ -5,3 +5,67 @@ java -cp weblogic.jar weblogic.Deployer \
   -deploy \
   -targets AdminServer \
   target/app.war
+
+Threads: 1623 total,   3 running, 1620 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 10.5 us,  2.2 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.2 hi,  0.3 si,  0.0 st
+MiB Mem :  48013.9 total,    256.1 free,  44232.9 used,   3524.9 buff/cache
+MiB Swap:   4096.0 total,      3.2 free,   4092.8 used.   1935.6 avail Mem
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+ 996424 weblogic  20   0   48.4g  39.3g  37328 S  18.3  83.8   0:11.04 java
+ 642281 weblogic  20   0   48.4g  39.3g  37328 S  17.0  83.8   4:11.21 java
+ 883124 weblogic  20   0   48.4g  39.3g  37328 S  16.4  83.8   0:09.81 java
+1075765 weblogic  20   0   48.4g  39.3g  37328 S  15.8  83.8   0:05.20 java
+ 641609 weblogic  20   0   48.4g  39.3g  37328 S  15.1  83.8   0:30.15 java
+1041420 weblogic  20   0   48.4g  39.3g  37328 R  12.5  83.8   0:07.47 java
+  10520 dtuser    20   0  181000   2128   1640 S   8.0   0.0   1224:12 oneagentnettrac
+ 641461 weblogic  20   0   48.4g  39.3g  37328 S   8.0  83.8  94:34.35 java
+ 641462 weblogic  20   0   48.4g  39.3g  37328 S   8.0  83.8  94:52.67 java
+ 641463 weblogic  20   0   48.4g  39.3g  37328 S   7.7  83.8  94:19.52 java
+ 641464 weblogic  20   0   48.4g  39.3g  37328 S   7.7  83.8  94:28.05 java
+ 223605 root      20   0 6212380 136468  29800 R   6.4   0.3  27:16.14 pool-19
+ 641466 weblogic  20   0   48.4g  39.3g  37328 S   3.9  83.8  49:12.66 java
+1917627 weblogic  20   0  269160   7176   4472 R   3.9   0.0   0:00.37 top
+ 223035 root      20   0 2891592 521004  15980 S   1.6   1.1  37:33.49 dsp.am.service
+ 771188 weblogic  20   0   48.4g  39.3g  37328 S   1.6  83.8   0:20.68 java
+ 641500 weblogic  20   0   48.4g  39.3g  37328 S   1.0  83.8  10:58.91 java
+ 834998 weblogic  20   0   48.4g  39.3g  37328 S   1.0  83.8   0:08.47 java
+ 880157 weblogic  20   0   48.4g  39.3g  37328 S   1.0  83.8   0:08.06 java
+ 900096 weblogic  20   0   48.4g  39.3g  37328 S   1.0  83.8   2:57.46 java
+ 223107 root      20   0 2891592 521004  15980 S   0.6   1.1  13:17.77 wrs.sendEvent_0
+ 223125 root      20   0 2891592 521004  15980 S   0.6   1.1   7:02.88 dsa.Scheduler_0
+ 641454 weblogic  20   0   48.4g  39.3g  37328 S   0.6  83.8   0:24.06 java
+ 641541 weblogic  20   0   48.4g  39.3g  37328 S   0.6  83.8   0:29.40 java
+ 641565 weblogic  20   0   48.4g  39.3g  37328 S   0.6  83.8   0:25.89 java
+ 757710 weblogic  20   0   48.4g  39.3g  37328 S   0.6  83.8   0:19.11 java
+ 757714 weblogic  20   0   48.4g  39.3g  37328 S   0.6  83.8   0:27.91 java
+ 757719 weblogic  20   0   48.4g  39.3g  37328 S   0.6  83.8   0:24.01 java
+ 835350 weblogic  20   0   48.4g  39.3g  37328 S   0.6  83.8   3:02.33 java
+ 837322 weblogic  20   0   48.4g  39.3g  37328 S   0.6  83.8   4:41.10 java
+ 970608 weblogic  20   0   48.4g  39.3g  37328 S   0.6  83.8  10:56.26 java
+ 997515 weblogic  20   0   48.4g  39.3g  37328 S   0.6  83.8   0:04.10 java
+1000276 weblogic  20   0   48.4g  39.3g  37328 S   0.6  83.8   6:42.21 java
+1002144 weblogic  20   0   48.4g  39.3g  37328 S   0.6  83.8   0:07.04 java
+1818220 weblogic  20   0   48.4g  39.3g  37328 S   0.6  83.8   0:02.47 java
+   1015 root      20   0  225876 120264 100760 S   0.3   0.2  77:23.14 systemd-journal
+   1346 root      20   0       0      0      0 S   0.3   0.0   5:56.43 xfsaild/dm-6
+   1926 root      20   0  598232   3532   2216 S   0.3   0.0 237:18.17 NetworkManager
+  10424 dtuser    20   0  376024  66568  22900 S   0.3   0.1  53:28.30 oneagentnetwork
+   3672 root      20   0   10.8g 320992   8620 S   0.3   0.7  22:35.37 VM Thread
+   3935 root      20   0   10.8g 320992   8620 S   0.3   0.7  27:05.36 VM Periodic Tas
+   4152 root      20   0 6256624  71280  15000 S   0.3   0.1   3:40.75 cvd
+  10823 dtuser    20   0  175064   5172   4728 S   0.3   0.0   6:37.72 aggregator
+  10824 dtuser    20   0  175064   5172   4728 S   0.3   0.0  35:23.69 parser
+1820161 root      20   0 4144912  48652   9000 S   0.3   0.1   0:00.09 pool-27397
+ 223017 root      20   0 2891592 521004  15980 S   0.3   1.1   0:35.78 dsp.hub.service
+ 223099 root      20   0 2891592 521004  15980 S   0.3   1.1   1:10.00 ProcMonLinux
+ 223676 root      20   0 2891592 521004  15980 S   0.3   1.1   7:32.91 dsa.Scheduler_0
+ 223445 root      20   0 6212380 136468  29800 S   0.3   0.3   1:11.84 pool-8
+ 223446 root      20   0 6212380 136468  29800 S   0.3   0.3   1:11.84 pool-9
+ 223447 root      20   0 6212380 136468  29800 S   0.3   0.3   1:11.80 pool-10
+ 223448 root      20   0 6212380 136468  29800 S   0.3   0.3   1:11.95 pool-11
+ 223449 root      20   0 6212380 136468  29800 S   0.3   0.3   1:12.16 pool-12
+ 223450 root      20   0 6212380 136468  29800 S   0.3   0.3   1:11.76 pool-13
+ 223451 root      20   0 6212380 136468  29800 S   0.3   0.3   1:11.99 pool-14
+ 223452 root      20   0 6212380 136468  29800 S   0.3   0.3   1:12.15 pool-15
+s
