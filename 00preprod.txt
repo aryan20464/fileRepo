@@ -6,6 +6,27 @@ java -cp weblogic.jar weblogic.Deployer \
   -targets AdminServer \
   target/app.war
 
+-bash-4.4$ ps -ef | grep weblogic
+weblogic   11591       1  0 Apr24 ?        00:00:19 /usr/lib/systemd/systemd --user
+weblogic   11595   11591  0 Apr24 ?        00:00:00 (sd-pam)
+weblogic  640454       1  0 May25 ?        00:00:00 /bin/sh ./startWebLogic.sh
+weblogic  640503  640454  0 May25 ?        00:25:33 /weblogic/java/bin/java -server -Xms256m -Xmx512m -cp /weblogic/oracle/middleware/wlserver/server/lib/weblogic-launcher.jar -Dlaunch.use.env.classpath=true -Dweblogic.Name=AdminServer -Djava.security.policy=/weblogic/oracle/middleware/wlserver/server/lib/weblogic.policy -Dweblogic.ProductionModeEnabled=true -Djava.system.class.loader=com.oracle.classloader.weblogic.LaunchClassLoader -javaagent:/weblogic/oracle/middleware/wlserver/server/lib/debugpatch-agent.jar -da -Dwls.home=/weblogic/oracle/middleware/wlserver/server -Dweblogic.home=/weblogic/oracle/middleware/wlserver/server -Djava.ext.dirs=/weblogic/java/jre/lib/ext -Dweblogic.security.SSL.enforceConstraints=off -Dssl.debug=true -Dweblogic.security.SSL.ignoreHostnameVerification=true weblogic.Server
+weblogic  641075       1  0 May25 ?        00:00:00 /bin/sh ./startNodeManager.sh
+weblogic  641076  641075  0 May25 ?        00:00:00 /bin/sh /weblogic/oracle/middleware/wlserver/server/bin/startNodeManager.sh
+weblogic  641123  641076  0 May25 ?        00:11:10 /weblogic/java/bin/java -server -Xms32m -Xmx200m -Djdk.tls.ephemeralDHKeySize=2048 -Dcoherence.home=/weblogic/oracle/middleware/wlserver/../coherence -Dbea.home=/weblogic/oracle/middleware/wlserver/.. -Dweblogic.RootDirectory=/weblogic/oracle/middleware/user_projects/domains/IDEA -Djdk.security.allowNonCaAnchor=true -Dweblogic.security.SSL.enforceConstraints=off -Dssl.debug=true -Dweblogic.nodemanager.sslHostNameVerificationEnabled=false -Djava.system.class.loader=com.oracle.classloader.weblogic.LaunchClassLoader -Djava.security.policy=/weblogic/oracle/middleware/wlserver/server/lib/weblogic.policy -Dweblogic.nodemanager.JavaHome=/weblogic/java weblogic.NodeManager -v
+weblogic  641280  641123  0 May25 ?        00:00:00 /bin/sh /weblogic/oracle/middleware/user_projects/domains/IDEA/bin/startWebLogic.sh
+weblogic  641333  641280 22 May25 ?        21:12:12 /weblogic/java/bin/java -server -Xms256m -Xmx512m -cp /weblogic/oracle/middleware/wlserver/server/lib/weblogic-launcher.jar -Dlaunch.use.env.classpath=true -Dweblogic.Name=FXS_SERVER1 -Djava.security.policy=/weblogic/oracle/middleware/wlserver/server/lib/weblogic.policy -Dweblogic.ProductionModeEnabled=true -Dweblogic.system.BootIdentityFile=/weblogic/oracle/middleware/user_projects/domains/IDEA/servers/FXS_SERVER1/data/nodemanager/boot.properties -Dweblogic.nodemanager.ServiceEnabled=true -Dweblogic.nmservice.RotationEnabled=true -Dweblogic.security.SSL.ignoreHostnameVerification=true -Dweblogic.ReverseDNSAllowed=false -Xms12G -Xmx36G -Dweblogic.security.SSL.protocolVersion=TLS1 -Dweblogic.security.SSL.minimumProtocolVersion=TLSv1.2 -Djava.system.class.loader=com.oracle.classloader.weblogic.LaunchClassLoader -javaagent:/weblogic/oracle/middleware/wlserver/server/lib/debugpatch-agent.jar -da -Dwls.home=/weblogic/oracle/middleware/wlserver/server -Dweblogic.home=/weblogic/oracle/middleware/wlserver/server -Djava.ext.dirs=/weblogic/java/jre/lib/ext -Dweblogic.management.server=http://10.191.151.161:6002 -Dweblogic.security.SSL.enforceConstraints=off -Dssl.debug=true -Dweblogic.security.SSL.ignoreHostnameVerification=true weblogic.Server
+root     1848827 4119651  0 10:27 ?        00:00:00 sshd: weblogic [priv]
+weblogic 1848834 1848827  0 10:27 ?        00:00:01 sshd: weblogic@pts/0
+weblogic 1848835 1848834  0 10:27 pts/0    00:00:00 -bash
+root     1912292 4119651  0 10:37 ?        00:00:00 sshd: weblogic [priv]
+weblogic 1912301 1912292  0 10:37 ?        00:00:00 sshd: weblogic@pts/1
+weblogic 1912320 1912301  0 10:37 pts/1    00:00:00 -bash
+weblogic 1978565 1912320  0 10:46 pts/1    00:00:00 ps -ef
+weblogic 1978566 1912320  0 10:46 pts/1    00:00:00 grep --color=auto weblogic
+-bash-4.4$ ps -o nlwp 641333
+N
+
 Threads: 1623 total,   3 running, 1620 sleeping,   0 stopped,   0 zombie
 %Cpu(s): 10.5 us,  2.2 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.2 hi,  0.3 si,  0.0 st
 MiB Mem :  48013.9 total,    256.1 free,  44232.9 used,   3524.9 buff/cache
