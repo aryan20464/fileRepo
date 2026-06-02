@@ -5,6 +5,29 @@ java -cp weblogic.jar weblogic.Deployer \
   -deploy \
   -targets AdminServer \
   target/app.war
+deploy_job:
+  stage: deploy
+  image: ://oracle.com
+  script:
+    # 1. Grab the path of the built file from your build stage
+    - WAR_FILE=$(ls target/*.war)
+    
+    # 2. Load the WebLogic environment variables to set up the Java classpath
+    - source /u01/oracle/wlserver/server/bin/setWLSEnv.sh
+    
+    # 3. Execute the deployment directly over the T3 network
+    - java weblogic.Deployer 
+        -adminurl "$WLS_ADMIN_URL" 
+        -username "$WLS_USER" 
+        -password "$WLS_PASSWORD" 
+        -name "MyJavaApp" 
+        -targets "ManagedServer1" 
+        -upload 
+        -redeploy 
+        -source "$WAR_FILE"
+  only:
+    - main
+
 
 2026-06-01 13:57:04 +0530 [] [] INFO  1436736 --- [o-9080-exec-200] c.e.r.ServletInitializer                 : The following 1 profile is active: "uat"
 2026-06-01 13:57:05 +0530 [] [] INFO  1436736 --- [o-9080-exec-200] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 548 ms
