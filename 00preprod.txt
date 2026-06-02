@@ -28,6 +28,83 @@ deploy_job:
   only:
     - main
 
+$ ls -lrth
+total 100K
+-rw-rw-rw-  1 root root  572 May 27 06:12 Dockerfile
+-rw-rw-rw-  1 root root  20K May 27 06:12 hs_err_pid30948.log
+-rw-rw-rw-  1 root root  20K May 27 06:12 hs_err_pid30760.log
+-rw-rw-rw-  1 root root 6.1K May 27 06:12 README.md
+-rw-rw-rw-  1 root root 6.4K May 27 06:12 pom.xml
+-rw-rw-rw-  1 root root 6.6K May 27 06:12 mvnw.cmd
+-rw-rw-rw-  1 root root  11K May 27 06:12 mvnw
+-rw-rw-rw-  1 root root 1.3K May 27 06:12 indents-backend-k8s.yaml
+drwxrwxrwx  4 root root   30 May 27 06:12 src
+drwxr-xr-x 10 root root 4.0K Jun  2 04:14 target
+-rw-r--r--  1 root root 5.5K Jun  2 04:15 weblogic.jar
+-rw-r--r--  1 root root  102 Jun  2 04:15 42-uat-ssh.pub
+$ cp target/RfmIndentsService.war .
+$ java -cp weblogic.jar weblogic.Deployer -adminurl "$WLS_UAT_ADMIN_URL" -username "$WLS_UAT_USER" -password "$WLS_UAT_PASSWORD" -name "RfmIndentsService" -targets "IDEAAPP" -upload -redeploy -source "RfmIndentsService.war"
+Picked up JAVA_TOOL_OPTIONS: -Djavax.net.ssl.trustStore=/opt/jfrog-truststore.jks -Djavax.net.ssl.trustStorePassword=changeit
+Error: Could not find or load main class weblogic.Deployer
+Caused by: java.lang.ClassNotFoundException: weblogic.Deployer
+Cleaning up project directory and file based variables
+00:00
+ERROR: Job failed: exit code 1
+
+
+default:
+  tags:
+    - runner55
+
+stages:
+  - build
+  - deploy
+
+image: artifactory.jfrog.sbi:443/dso-base-image/java-maven-images/rhel-jdk-17-maven3.8.5:0.0.1
+
+variables:
+  MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode"
+
+build_job:
+  stage: build
+  script:    
+    - mvn clean package -U -P uat
+  artifacts:
+    paths:
+      - target/
+    expire_in: 1 day
+  only:
+    - rfm-integration-devsecops
+
+deploy_job:
+  stage: deploy
+  before_script:
+    - echo $JF_URL
+    - jf config add \--url="$JF_URL" \--user="$JF_USER" \--access-token="$JF_TOKEN" \--interactive=false 
+    - jf config add itfo-server --url=$JF_URL --user=$JF_USER --access-token=$JF_TOKEN --interactive=false  
+    - jf config use itfo-server
+    - jf rt ping  # Verify connection  
+  
+    - jf rt dl "itfo-treasury-tss-idea-custom-maven-libs/weblogic.jar" "./weblogic.jar" --flat=true
+    - jf rt dl "itfo-treasury-tss-idea-custom-maven-libs/id_ed25519.pub" "./42-uat-ssh.pub" --flat=true
+    - ls -lrth
+    - cp target/RfmIndentsService.war .
+  script:    
+    # Perform deployment from using the weblogic.jar downloaded from target server
+    - java -cp weblogic.jar weblogic.Deployer 
+        -adminurl "$WLS_UAT_ADMIN_URL" 
+        -username "$WLS_UAT_USER" 
+        -password "$WLS_UAT_PASSWORD" 
+        -name "RfmIndentsService" 
+        -targets "IDEAAPP" 
+        -upload 
+        -redeploy 
+        -source "RfmIndentsService.war"
+  only:
+    - rfm-integration-devsecops
+
+
+
 
 2026-06-01 13:57:04 +0530 [] [] INFO  1436736 --- [o-9080-exec-200] c.e.r.ServletInitializer                 : The following 1 profile is active: "uat"
 2026-06-01 13:57:05 +0530 [] [] INFO  1436736 --- [o-9080-exec-200] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 548 ms
