@@ -1,26 +1,33 @@
 deploy_job:
   stage: deploy
   before_script:
-    - echo $JF_URL
     - jf config add --url="$JF_URL" --user="$JF_USER" --access-token="$JF_TOKEN" --interactive=false
     - jf config use itfo-server
     - jf rt ping
 
+    # Download WDT
     - jf rt dl "itfo-treasury-tss-idea-custom-maven-libs/weblogic-deploy/**" "./weblogic-deploy/" --flat=false --recursive=true
     - chmod +x weblogic-deploy/bin/*.sh
-    - ls -lrth
 
     - cp target/RfmIndentsService.war .
   script:
     - |
+      # Create minimal archive structure (very simple)
+      mkdir -p wlsdeploy/applications
+      cp RfmIndentsService.war wlsdeploy/applications/
+
+      cd wlsdeploy
+      zip -r ../archive.zip .
+      cd ..
+
+      # Deploy using WDT
       ./weblogic-deploy/bin/deployApps.sh \
         -admin_url "$WLS_UAT_ADMIN_URL" \
         -user "$WLS_UAT_USER" \
         -password "$WLS_UAT_PASSWORD" \
-        -archive ./archive.zip \
+        -archive_file ./archive.zip \
         -target "IDEAAPP" \
         -verbose
-
   only:
     - rfm-integration-devsecops
 
