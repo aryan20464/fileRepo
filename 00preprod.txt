@@ -1,3 +1,8 @@
+  Path              : /weblogic/oracle/middleware/wlserver/server/lib/consoleapp/APP-INF/lib/log4j-core-2.17.2.jar
+  Installed version : 2.17.2
+  Fixed version     : 2.25.4
+
+
 -rwxrwxrwx. 1 weblogic weblogic      1232 Mar 19  2014 acls.prop
 -rwxrwxrwx. 1 weblogic weblogic      6331 Feb 10  2015 adapters.prop
 -rwxrwxrwx. 1 weblogic weblogic       234 Mar 19  2014 adaptertypes.prop
