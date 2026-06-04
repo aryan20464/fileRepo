@@ -1,96 +1,42 @@
-deploy_job:
-  stage: deploy
-  image: artifactory.jfrog.oec:443/dso-base-image/java-maven-images/rhel-jdk-17-maven3.8.5:0.0.1
-  variables:
-    WDT_HOME: "./weblogic-deploy"
-    APP_NAME: "RfmIndentsService"
-    TARGET_NAME: "IDEAAPP"                          # Your cluster/server name in WLS
-    WAR_INTERNAL_PATH: "wlsdeploy/applications/RfmIndentsService.war"
-    ORACLE_HOME: "./wls-stub"                       # Option A — WDT reads this env var automatically
-
-  before_script:
-    # ── JFrog setup ───────────────────────────────────────────────────────────
-    - jf config add --url="$JF_URL" --user="$JF_USER" --access-token="$JF_TOKEN" --interactive=false
-    - jf rt ping
-
-    # ── Download WDT ──────────────────────────────────────────────────────────
-    - jf rt dl "itfo-treasury-tss-idea-custom-maven-libs/weblogic-deploy/**" "./" --flat=false --recursive=true
-    - chmod +x ./weblogic-deploy/bin/*.sh
-    - echo "=== WDT Version ===" && cat ./weblogic-deploy/VERSION.txt
-
-    # ── Build oracle_home stub ─────────────────────────────────────────────────
-    # WDT 4.4.5 needs oracle_home to exist with a minimal WLS structure.
-    # Since runner has no WLS install, we create a stub that satisfies WDT's checks.
-    - mkdir -p ./wls-stub/wlserver/server/lib
-    - mkdir -p ./wls-stub/wlserver/common/bin
-    - mkdir -p ./wls-stub/oracle_common/common/bin
-    - |
-      # .product.properties tells WDT the WLS version — must match your target
-      cat > ./wls-stub/wlserver/.product.properties << 'EOF'
-      oracle.product.version=14.1.1.0.0
-      EOF
-    - |
-      # Stub wlst.sh — WDT checks this exists; in -remote mode it won't actually execute it
-      cat > ./wls-stub/wlserver/common/bin/wlst.sh << 'EOF'
-      #!/bin/bash
-      echo "STUB wlst.sh - remote mode only"
-      EOF
-    - chmod +x ./wls-stub/wlserver/common/bin/wlst.sh
-    - echo "=== Oracle Home Stub ===" && find ./wls-stub -type f
-
-    # ── Java check ────────────────────────────────────────────────────────────
-    - java -version
-
-    # ── Verify archive structure ──────────────────────────────────────────────
-    - echo "=== Archive contents ===" && unzip -l ./archive.zip
-    - |
-      if ! unzip -l ./archive.zip | grep -q "${WAR_INTERNAL_PATH}"; then
-        echo "ERROR: ${WAR_INTERNAL_PATH} not found inside archive.zip"
-        echo "Actual paths in archive:"
-        unzip -l ./archive.zip
-        exit 1
-      fi
-    - echo "=== Pre-deploy checks passed ==="
-
-  script:
-    # ── Generate model.yaml ───────────────────────────────────────────────────
-    - |
-      cat > model.yaml << EOF
-      appDeployments:
-        Application:
-          ${APP_NAME}:
-            SourcePath: '${WAR_INTERNAL_PATH}'
-            Target: '${TARGET_NAME}'
-            ModuleType: war
-            StagingMode: stage
-      EOF
-    - echo "=== model.yaml ===" && cat model.yaml
-
-    # ── Execute WDT deployApps ────────────────────────────────────────────────
-    - |
-      ./weblogic-deploy/bin/deployApps.sh \
-        -oracle_home ${ORACLE_HOME} \
-        -model_file model.yaml \
-        -archive_file ./archive.zip \
-        -admin_url "$WLS_UAT_ADMIN_URL" \
-        -admin_user "$WLS_UAT_USER" \
-        -admin_pass_env WLS_UAT_PASSWORD \
-        -domain_type WLS \
-        -remote \
-        -verbose
-
-    # ── Exit code handling ────────────────────────────────────────────────────
-    - |
-      EXIT_CODE=$?
-      if [ $EXIT_CODE -eq 0 ]; then
-        echo ">>> Deployment successful."
-      elif [ $EXIT_CODE -eq 2 ]; then
-        echo ">>> Deployment succeeded with warnings. Review logs above."
-        exit 0
-      else
-        echo "ERROR: WDT deployApps failed with exit code: ${EXIT_CODE}"
-        exit 1
-      fi
-
-  only:
-    - rfm-integration-devsecops
+$ chmod +x ./weblogic-deploy/bin/*.sh
+$ echo "=== WDT Version ===" && cat ./weblogic-deploy/VERSION.txt
+=== WDT Version ===
+WebLogic Deploy Tooling 4.4.5$ mkdir -p ./wls-stub/wlserver/server/lib
+$ mkdir -p ./wls-stub/wlserver/common/bin
+$ mkdir -p ./wls-stub/oracle_common/common/bin
+$ # .product.properties tells WDT the WLS version — must match your target # collapsed multi-line command
+$ # Stub wlst.sh — WDT checks this exists; in -remote mode it won't actually execute it # collapsed multi-line command
+$ chmod +x ./wls-stub/wlserver/common/bin/wlst.sh
+$ echo "=== Oracle Home Stub ===" && find ./wls-stub -type f
+=== Oracle Home Stub ===
+./wls-stub/wlserver/common/bin/wlst.sh
+./wls-stub/wlserver/.product.properties
+$ java -version
+Picked up JAVA_TOOL_OPTIONS: -Djavax.net.ssl.trustStore=/opt/jfrog-truststore.jks -Djavax.net.ssl.trustStorePassword=changeit
+java version "17.0.12" 2024-07-16 LTS
+Java(TM) SE Runtime Environment (build 17.0.12+8-LTS-286)
+Java HotSpot(TM) 64-Bit Server VM (build 17.0.12+8-LTS-286, mixed mode, sharing)
+$ cat > model.yaml << EOF # collapsed multi-line command
+$ echo "=== model.yaml ===" && cat model.yaml
+=== model.yaml ===
+appDeployments:
+  Application:
+    RfmIndentsService:
+      SourcePath: 'wlsdeploy/applications/RfmIndentsService.war'
+      Target: 'IDEAAPP'
+      ModuleType: war
+      StagingMode: stage
+$ ./weblogic-deploy/bin/deployApps.sh \ # collapsed multi-line command
+JDK version is 17.0.12+8-LTS-286
+JAVA_HOME = /opt/java
+WLST_EXT_CLASSPATH = 
+CLASSPATH = /builds/it-tss/irm/backend/RFMIndentsModule/weblogic-deploy/lib/weblogic-deploy-core.jar
+WLST_PROPERTIES = -Dcom.oracle.cie.script.throwException=true -Djava.util.logging.config.class=oracle.weblogic.deploy.logging.WLSDeployLoggingConfig -Dslf4j.provider=org.slf4j.jul.JULServiceProvider -Dslf4j.internal.verbosity=ERROR 
+./wls-stub/wlserver/common/bin/wlst.sh /builds/it-tss/irm/backend/RFMIndentsModule/weblogic-deploy/lib/python/deploy.py -oracle_home ./wls-stub -model_file model.yaml -archive_file ./archive.zip -admin_url http://10.191.158.42:7111 -admin_user nrm_idea -admin_pass_env WLS_UAT_PASSWORD -domain_type WLS -remote -verbose
+STUB wlst.sh - remote mode only
+deployApps.sh completed successfully (exit code = 0)
+$ EXIT_CODE=$? # collapsed multi-line command
+>>> Deployment successful.
+Cleaning up project directory and file based variables
+00:01
+Job succeeded
