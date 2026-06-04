@@ -1,67 +1,76 @@
-$ echo "=== WDT Version ===" && cat ./weblogic-deploy/VERSION.txt
-=== WDT Version ===
-WebLogic Deploy Tooling 4.4.5$ jf rt dl "itfo-treasury-tss-idea-custom-maven-libs/wlthint3client.jar" "./" --flat=true
-10:09:30 [Info] [Thread 2] Downloading "itfo-treasury-tss-idea-custom-maven-libs/wlthint3client.jar" to "wlthint3client.jar"
-10:09:30 [Info] [Thread 2] [2]: 206 ...
-10:09:30 [Info] [Thread 2] [0]: 206 ...
-10:09:30 [Info] [Thread 2] [1]: 206 ...
-10:09:30 [Info] [Thread 2] Done downloading.
-{
-  "status": "success",
-  "totals": {
-    "success": 1,
-    "failure": 0
-  }
-}
-$ ls -lh ./wlthint3client.jar
--rw-r--r-- 1 root root 5.6M Jun  4 10:09 ./wlthint3client.jar
-$ mkdir -p ./wls-stub/wlserver/server/lib
-$ mkdir -p ./wls-stub/wlserver/common/bin
-$ mkdir -p ./wls-stub/oracle_common/common/bin
-$ cat > ./wls-stub/wlserver/.product.properties << 'EOF' # collapsed multi-line command
-$ cat > ./wls-stub/wlserver/common/bin/wlst.sh << WLST_EOF # collapsed multi-line command
-$ chmod +x ./wls-stub/wlserver/common/bin/wlst.sh
-$ echo "=== wlst.sh on disk ===" && cat ./wls-stub/wlserver/common/bin/wlst.sh
-=== wlst.sh on disk ===
-#!/bin/bash
-THIN_CLIENT="/builds/it-tss/irm/backend/RFMIndentsModule/wlthint3client.jar"
-if [ ! -f "$THIN_CLIENT" ]; then
-  echo "ERROR: wlthint3client.jar not found at $THIN_CLIENT"
-  exit 1
-fi
-echo "=== WLST bootstrap: thin client at $THIN_CLIENT ==="
-FULL_CLASSPATH="${WLST_EXT_CLASSPATH}:${THIN_CLIENT}"
-exec java   ${WLST_PROPERTIES}   -cp "${FULL_CLASSPATH}"   weblogic.WLST "$@"
-$ java -version
-Picked up JAVA_TOOL_OPTIONS: -Djavax.net.ssl.trustStore=/opt/jfrog-truststore.jks -Djavax.net.ssl.trustStorePassword=changeit
-java version "17.0.12" 2024-07-16 LTS
-Java(TM) SE Runtime Environment (build 17.0.12+8-LTS-286)
-Java HotSpot(TM) 64-Bit Server VM (build 17.0.12+8-LTS-286, mixed mode, sharing)
-$ cat > model.yaml << EOF # collapsed multi-line command
-$ echo "=== model.yaml ===" && cat model.yaml
-=== model.yaml ===
-appDeployments:
-  Application:
-    RfmIndentsService:
-      SourcePath: 'wlsdeploy/applications/RfmIndentsService.war'
-      Target: 'IDEAAPP'
-      ModuleType: war
-      StagingMode: stage
-$ export WLST_EXT_CLASSPATH="${CI_PROJECT_DIR}/wlthint3client.jar"
-$ echo "WLST_EXT_CLASSPATH=${WLST_EXT_CLASSPATH}"
-WLST_EXT_CLASSPATH=/builds/it-tss/irm/backend/RFMIndentsModule/wlthint3client.jar
-$ ./weblogic-deploy/bin/deployApps.sh \ # collapsed multi-line command
-JDK version is 17.0.12+8-LTS-286
-JAVA_HOME = /opt/java
-WLST_EXT_CLASSPATH = /builds/it-tss/irm/backend/RFMIndentsModule/wlthint3client.jar
-CLASSPATH = /builds/it-tss/irm/backend/RFMIndentsModule/weblogic-deploy/lib/weblogic-deploy-core.jar
-WLST_PROPERTIES = -Dcom.oracle.cie.script.throwException=true -Djava.util.logging.config.class=oracle.weblogic.deploy.logging.WLSDeployLoggingConfig -Dslf4j.provider=org.slf4j.jul.JULServiceProvider -Dslf4j.internal.verbosity=ERROR 
-./wls-stub/wlserver/common/bin/wlst.sh /builds/it-tss/irm/backend/RFMIndentsModule/weblogic-deploy/lib/python/deploy.py -oracle_home ./wls-stub -model_file model.yaml -archive_file ./archive.zip -admin_url http://10.191.158.42:7111 -admin_user nrm_idea -admin_pass_env WLS_UAT_PASSWORD -domain_type WLS -remote -verbose
-=== WLST bootstrap: thin client at /builds/it-tss/irm/backend/RFMIndentsModule/wlthint3client.jar ===
-Picked up JAVA_TOOL_OPTIONS: -Djavax.net.ssl.trustStore=/opt/jfrog-truststore.jks -Djavax.net.ssl.trustStorePassword=changeit
-Error: Could not find or load main class weblogic.WLST
-Caused by: java.lang.ClassNotFoundException: weblogic.WLST
-deployApps.sh completed but with some issues (exit code = 1)
-Cleaning up project directory and file based variables
-00:01
-ERROR: Job failed: exit code 1
+deploy_job:
+  stage: deploy
+  image: artifactory.jfrog.oec:443/dso-base-image/java-maven-images/rhel-jdk-17-maven3.8.5:0.0.1
+  variables:
+    APP_NAME: "RfmIndentsService"
+    TARGET_NAME: "IDEAAPP"
+    WAR_PATH: "./target/RfmIndentsService.war"
+
+  before_script:
+    - jf config add --url="$JF_URL" --user="$JF_USER" --access-token="$JF_TOKEN" --interactive=false
+    - jf rt ping
+    - which curl && curl --version
+
+  script:
+    # ── Check if app already deployed, undeploy if so ─────────────────────────
+    - |
+      echo ">>> Checking existing deployment..."
+      HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+        --user "${WLS_UAT_USER}:${WLS_UAT_PASSWORD}" \
+        -H "X-Requested-By: GitLab-CI" \
+        "${WLS_UAT_ADMIN_URL}/management/weblogic/latest/domainConfig/appDeployments/${APP_NAME}")
+      echo ">>> Existing deployment check HTTP status: ${HTTP_STATUS}"
+
+    - |
+      if [ "$HTTP_STATUS" == "200" ]; then
+        echo ">>> App exists, undeploying..."
+        curl -sf -X POST \
+          --user "${WLS_UAT_USER}:${WLS_UAT_PASSWORD}" \
+          -H "X-Requested-By: GitLab-CI" \
+          -H "Content-Type: application/json" \
+          -d "{\"targets\": [\"${TARGET_NAME}\"]}" \
+          "${WLS_UAT_ADMIN_URL}/management/weblogic/latest/domainRuntime/deploymentManager/deployments/${APP_NAME}/undeploy"
+        echo ">>> Undeploy submitted, waiting..."
+        sleep 10
+      else
+        echo ">>> No existing deployment found, proceeding with fresh deploy."
+      fi
+
+    # ── Deploy WAR via REST ───────────────────────────────────────────────────
+    - |
+      echo ">>> Deploying ${APP_NAME} to target ${TARGET_NAME}..."
+      DEPLOY_RESPONSE=$(curl -sf -X POST \
+        --user "${WLS_UAT_USER}:${WLS_UAT_PASSWORD}" \
+        -H "X-Requested-By: GitLab-CI" \
+        -F "model={
+              \"name\": \"${APP_NAME}\",
+              \"targets\": [\"${TARGET_NAME}\"],
+              \"deploymentPath\": \"${APP_NAME}.war\"
+            };type=application/json" \
+        -F "sourcePath=@${WAR_PATH};type=application/octet-stream" \
+        "${WLS_UAT_ADMIN_URL}/management/weblogic/latest/domainRuntime/deploymentManager/deployments")
+      echo ">>> Deploy response: ${DEPLOY_RESPONSE}"
+
+    # ── Wait and verify ───────────────────────────────────────────────────────
+    - sleep 15
+    - |
+      echo ">>> Verifying deployment state..."
+      STATE=$(curl -sf \
+        --user "${WLS_UAT_USER}:${WLS_UAT_PASSWORD}" \
+        -H "X-Requested-By: GitLab-CI" \
+        "${WLS_UAT_ADMIN_URL}/management/weblogic/latest/domainRuntime/deploymentManager/deployments/${APP_NAME}" \
+        | python3 -c "
+      import sys, json
+      d = json.load(sys.stdin)
+      state = d.get('overallHealthState', {}).get('state', 'UNKNOWN')
+      print(state)
+      ")
+      echo ">>> Deployment state: ${STATE}"
+      if [ "$STATE" != "HEALTH_OK" ]; then
+        echo "ERROR: Expected HEALTH_OK, got ${STATE}"
+        exit 1
+      fi
+      echo ">>> Deployment verified healthy."
+
+  only:
+    - rfm-integration-devsecops
