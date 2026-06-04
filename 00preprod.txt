@@ -3,49 +3,37 @@ deploy_job:
   image: artifactory.jfrog.oec:443/dso-base-image/java-maven-images/rhel-jdk-17-maven3.8.5:0.0.1
   variables:
     WDT_HOME: "./weblogic-deploy"
-    ORACLE_HOME_STUB: "./wls-stub"
     APP_NAME: "IDEAAPP"
-    TARGET_NAME: "IDEAAPP"              # Cluster or server name in WLS domain
+    TARGET_NAME: "IDEAAPP"
     WAR_INTERNAL_PATH: "wlsdeploy/applications/ideaapp.war"
 
   before_script:
-    # ── JFrog CLI setup ────────────────────────────────────────────────────────
+    # ── JFrog setup ───────────────────────────────────────────────────────────
     - jf config add --url="$JF_URL" --user="$JF_USER" --access-token="$JF_TOKEN" --interactive=false
     - jf rt ping
 
-    # ── Download WDT from Artifactory ─────────────────────────────────────────
+    # ── Download WDT ──────────────────────────────────────────────────────────
     - jf rt dl "itfo-treasury-tss-idea-custom-maven-libs/weblogic-deploy/**" "./" --flat=false --recursive=true
     - chmod +x ./weblogic-deploy/bin/*.sh
 
-    # ── WDT version check ─────────────────────────────────────────────────────
-    - echo "=== WDT Version ==="
-    - cat ./weblogic-deploy/VERSION.txt 2>/dev/null || ls ./weblogic-deploy/
+    # ── Confirm WDT version ───────────────────────────────────────────────────
+    - echo "=== WDT Version ===" && cat ./weblogic-deploy/VERSION.txt
 
-    # ── Create oracle_home stub (WDT needs this even in -remote mode) ─────────
-    - mkdir -p ${ORACLE_HOME_STUB}/wlserver/server/lib
-    - mkdir -p ${ORACLE_HOME_STUB}/oracle_common/common/bin
-    - |
-      cat > ${ORACLE_HOME_STUB}/wlserver/.product.properties << 'EOF'
-      oracle.product.version=14.1.1.0.0
-      EOF
+    # ── Confirm Java ──────────────────────────────────────────────────────────
+    - java -version
 
-    # ── Verify archive.zip structure ──────────────────────────────────────────
-    - echo "=== Archive contents ==="
-    - unzip -l ./archive.zip | grep -i "\.war\|wlsdeploy" || echo "WARN: check archive structure"
-
-    # ── Verify WAR exists at expected internal path ───────────────────────────
+    # ── Verify archive structure ──────────────────────────────────────────────
+    - echo "=== Archive contents ===" && unzip -l ./archive.zip
     - |
       if ! unzip -l ./archive.zip | grep -q "${WAR_INTERNAL_PATH}"; then
         echo "ERROR: ${WAR_INTERNAL_PATH} not found inside archive.zip"
-        echo "Actual contents:"
         unzip -l ./archive.zip
         exit 1
       fi
-
     - echo "=== Pre-deploy checks passed ==="
 
   script:
-    # ── Generate model.yaml dynamically ───────────────────────────────────────
+    # ── Generate model.yaml ───────────────────────────────────────────────────
     - |
       cat > model.yaml << EOF
       appDeployments:
@@ -56,14 +44,11 @@ deploy_job:
             ModuleType: war
             StagingMode: stage
       EOF
+    - echo "=== model.yaml ===" && cat model.yaml
 
-    - echo "=== model.yaml ==="
-    - cat model.yaml
-
-    # ── Execute WDT deployApps ────────────────────────────────────────────────
+    # ── Deploy — no -oracle_home needed in 4.4.5 remote mode ─────────────────
     - |
       ./weblogic-deploy/bin/deployApps.sh \
-        -oracle_home ${ORACLE_HOME_STUB} \
         -model_file model.yaml \
         -archive_file ./archive.zip \
         -admin_url "$WLS_UAT_ADMIN_URL" \
@@ -73,13 +58,13 @@ deploy_job:
         -remote \
         -verbose
 
-    # ── WDT exit code handling ────────────────────────────────────────────────
+    # ── Exit code handling ────────────────────────────────────────────────────
     - |
       EXIT_CODE=$?
       if [ $EXIT_CODE -eq 0 ]; then
         echo ">>> Deployment successful."
       elif [ $EXIT_CODE -eq 2 ]; then
-        echo ">>> Deployment completed with warnings. Review logs."
+        echo ">>> Deployment succeeded with warnings."
         exit 0
       else
         echo "ERROR: WDT deployApps failed. Exit code: ${EXIT_CODE}"
@@ -88,6 +73,9 @@ deploy_job:
 
   only:
     - rfm-integration-devsecops
+
+
+
 
 
 find /weblogic/ -type f -name wlst.sh
