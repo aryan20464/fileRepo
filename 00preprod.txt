@@ -1,76 +1,22 @@
-deploy_job:
-  stage: deploy
-  image: artifactory.jfrog.oec:443/dso-base-image/java-maven-images/rhel-jdk-17-maven3.8.5:0.0.1
-  variables:
-    APP_NAME: "RfmIndentsService"
-    TARGET_NAME: "IDEAAPP"
-    WAR_PATH: "./target/RfmIndentsService.war"
-
-  before_script:
-    - jf config add --url="$JF_URL" --user="$JF_USER" --access-token="$JF_TOKEN" --interactive=false
-    - jf rt ping
-    - which curl && curl --version
-
-  script:
-    # ── Check if app already deployed, undeploy if so ─────────────────────────
-    - |
-      echo ">>> Checking existing deployment..."
-      HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-        --user "${WLS_UAT_USER}:${WLS_UAT_PASSWORD}" \
-        -H "X-Requested-By: GitLab-CI" \
-        "${WLS_UAT_ADMIN_URL}/management/weblogic/latest/domainConfig/appDeployments/${APP_NAME}")
-      echo ">>> Existing deployment check HTTP status: ${HTTP_STATUS}"
-
-    - |
-      if [ "$HTTP_STATUS" == "200" ]; then
-        echo ">>> App exists, undeploying..."
-        curl -sf -X POST \
-          --user "${WLS_UAT_USER}:${WLS_UAT_PASSWORD}" \
-          -H "X-Requested-By: GitLab-CI" \
-          -H "Content-Type: application/json" \
-          -d "{\"targets\": [\"${TARGET_NAME}\"]}" \
-          "${WLS_UAT_ADMIN_URL}/management/weblogic/latest/domainRuntime/deploymentManager/deployments/${APP_NAME}/undeploy"
-        echo ">>> Undeploy submitted, waiting..."
-        sleep 10
-      else
-        echo ">>> No existing deployment found, proceeding with fresh deploy."
-      fi
-
-    # ── Deploy WAR via REST ───────────────────────────────────────────────────
-    - |
-      echo ">>> Deploying ${APP_NAME} to target ${TARGET_NAME}..."
-      DEPLOY_RESPONSE=$(curl -sf -X POST \
-        --user "${WLS_UAT_USER}:${WLS_UAT_PASSWORD}" \
-        -H "X-Requested-By: GitLab-CI" \
-        -F "model={
-              \"name\": \"${APP_NAME}\",
-              \"targets\": [\"${TARGET_NAME}\"],
-              \"deploymentPath\": \"${APP_NAME}.war\"
-            };type=application/json" \
-        -F "sourcePath=@${WAR_PATH};type=application/octet-stream" \
-        "${WLS_UAT_ADMIN_URL}/management/weblogic/latest/domainRuntime/deploymentManager/deployments")
-      echo ">>> Deploy response: ${DEPLOY_RESPONSE}"
-
-    # ── Wait and verify ───────────────────────────────────────────────────────
-    - sleep 15
-    - |
-      echo ">>> Verifying deployment state..."
-      STATE=$(curl -sf \
-        --user "${WLS_UAT_USER}:${WLS_UAT_PASSWORD}" \
-        -H "X-Requested-By: GitLab-CI" \
-        "${WLS_UAT_ADMIN_URL}/management/weblogic/latest/domainRuntime/deploymentManager/deployments/${APP_NAME}" \
-        | python3 -c "
-      import sys, json
-      d = json.load(sys.stdin)
-      state = d.get('overallHealthState', {}).get('state', 'UNKNOWN')
-      print(state)
-      ")
-      echo ">>> Deployment state: ${STATE}"
-      if [ "$STATE" != "HEALTH_OK" ]; then
-        echo "ERROR: Expected HEALTH_OK, got ${STATE}"
-        exit 1
-      fi
-      echo ">>> Deployment verified healthy."
-
-  only:
-    - rfm-integration-devsecops
+Your Local PC
+─────────────────────────────────────────
+wit.jar
+  + fmw_12.2.1.4.0_infrastructure.jar    ──► docker build
+  + jdk-8u391-linux-x64.tar.gz           ──► (WIT handles all
+  + WDT (auto pulled by WIT)                  layering internally)
+          │
+          ▼
+  wls-wdt:12.2.1.4 image
+  ├── /u01/jdk/                 (from your .tar.gz)
+  ├── /u01/app/oracle/middleware (from your fmw jar)
+  └── /u01/app/oracle/weblogic-deploy/ (WDT bundled by WIT)
+          │
+          ▼
+  Push to GitLab Registry
+          │
+          ▼
+  GitLab Runner pulls image
+  deployApps.sh ──► t3://prod-wls:7001
+                         │
+                    Production WLS
+                    (same 12.2.1.4)
