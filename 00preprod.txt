@@ -1,14 +1,74 @@
-$ mkdir -P wlsdeploy/applications
-mkdir: unrecognized option: P
-BusyBox v1.29.3 (2019-01-24 07:45:07 UTC) multi-call binary.
-Usage: mkdir [OPTIONS] DIRECTORY...
-Create DIRECTORY
-	-m MODE	Mode
-	-p	No error if exists; make parent directories as needed
+default:
+  tags:
+    - common_runner
+
+stages:
+  - build
+  - application-zipper
+
+
+variables:
+  MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode"
+
+build_job:
+  stage: build
+  image: artifactory.jfrog.sbi:443/dso-base-image/java-maven-images/rhel-jdk-17-maven3.8.5:0.0.1
+  script:    
+    - mvn clean package -U -P uat
+  artifacts:
+    paths:
+      - target/
+    expire_in: 1 day
+  only:
+    - rfm-integration-devsecops
+
+zip_job:
+  stage: application-zipper
+  image: artifactory.jfrog.sbi:443/itfo-ittss-idea-docker-local/linx-tools:zip
+  script:    
+    - mkdir -p wlsdeploy/applications
+    - cp target/RfmIndentsService.war wlsdeploy/applications/
+    - cd  wlsdeploy
+    - zip -r ../archive.zip
+    - cd ..
+    - ls -lrth  
+  artifacts:
+    paths:
+      - archive.zip
+    expire_in: 1 day
+  only:
+    - rfm-integration-devsecops
+
+
+
+Preparing environment
+00:00
+Using helper image:  artifactory.jfrog.sbi:443/dso-base-image/gitlab-runner-helper/gitlab-runner-helper:x86_64-v17.9.2  (overridden, default would be  registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-helper:x86_64-v17.9.2 )
+Using docker image sha256:4511164d4b592f8cb69c7ffe5cb2df5d1909c1e7924081721495a61e4b03f657 for artifactory.jfrog.sbi:443/dso-base-image/gitlab-runner-helper/gitlab-runner-helper:x86_64-v17.9.2 with digest artifactory.jfrog.sbi:443/dso-base-image/gitlab-runner-helper/gitlab-runner-helper@sha256:47dfd72820e9c3b93c84dcdc2e689ba1236880b4c01de59bbf0a26f9e72b2a35 ...
+Running on runner-wz1c0kgrx-project-2543-concurrent-0 via PE3DSOPGrunners4...
+Getting source from Git repository
+00:03
+Fetching changes with git depth set to 20...
+Reinitialized existing Git repository in /builds/it-tss/irm/backend/RFMIndentsModule/.git/
+Created fresh repository.
+Checking out 50f05f45 as detached HEAD (ref is rfm-integration-devsecops)...
+Removing target/
+Skipping Git submodules setup
+Downloading artifacts
+00:02
+Downloading artifacts for build_job (723937)...
+Downloading artifacts from coordinator... ok        host=gitlab.sbi id=723937 responseStatus=200 OK token=eyJraWQiO
+Executing "step_script" stage of the job script
+00:01
+Using docker image sha256:784a153bc006461bb13f4c707a6a16854e5567d088a0c49b213f64e2a4f0d00a for artifactory.jfrog.sbi:443/itfo-ittss-idea-docker-local/linx-tools:zip with digest artifactory.jfrog.sbi:443/itfo-ittss-idea-docker-local/linx-tools@sha256:19edb5895e897639d58f53ce7b1904fac591444a517ad4c3dd9040add63c6f32 ...
+$ mkdir -p wlsdeploy/applications
+$ cp target/RfmIndentsService.war wlsdeploy/applications/
+$ cd  wlsdeploy
+$ zip -r ../archive.zip
+zip error: Nothing to do! (../archive.zip)
 Cleaning up project directory and file based variables
 00:00
-ERROR: Job failed: exit code 1
-
+ERROR: Job failed: exit code 12
 FROM maven:3.8.5-openjdk-17
 
 # Install required basic Linux tools
