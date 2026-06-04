@@ -1,3 +1,14 @@
+$ mkdir -P wlsdeploy/applications
+mkdir: unrecognized option: P
+BusyBox v1.29.3 (2019-01-24 07:45:07 UTC) multi-call binary.
+Usage: mkdir [OPTIONS] DIRECTORY...
+Create DIRECTORY
+	-m MODE	Mode
+	-p	No error if exists; make parent directories as needed
+Cleaning up project directory and file based variables
+00:00
+ERROR: Job failed: exit code 1
+
 FROM maven:3.8.5-openjdk-17
 
 # Install required basic Linux tools
