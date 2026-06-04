@@ -1,3 +1,17 @@
+07:14:24 [Info] [Thread 2] Downloading "itfo-treasury-tss-idea-custom-maven-libs/weblogic-deploy/samples/model_variable_injector.json" to "weblogic-deploy/weblogic-deploy/samples/model_variable_injector.json"
+{
+  "status": "success",
+  "totals": {
+    "success": 243,
+    "failure": 0
+  }
+}
+$ chmod +x ./weblogic-deploy/bin/*.sh
+chmod: cannot access './weblogic-deploy/bin/*.sh': No such file or directory
+Cleaning up project directory and file based variables
+00:01
+ERROR: Job failed: exit code 1
+
 $ ls -lrth
 total 43M
 -rw-rw-rw-  1 root root 6.4K Jun  4 06:21 pom.xml
