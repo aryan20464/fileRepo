@@ -1,6 +1,50 @@
 deploy_job:
   stage: deploy
   image: artifactory.jfrog.oec:443/dso-base-image/java-maven-images/rhel-jdk-17-maven3.8.5:0.0.1
+  variables:
+    WDT_HOME: "./weblogic-deploy"   # Where JFrog downloads it
+  before_script:
+    - jf config add --url="$JF_URL" --user="$JF_USER" --access-token="$JF_TOKEN" --interactive=false
+    - jf rt ping
+    - jf rt dl "itfo-treasury-tss-idea-custom-maven-libs/weblogic-deploy/**" "./" --flat=false --recursive=true
+    - chmod +x ./weblogic-deploy/bin/*.sh
+    - ls -lrth
+    - echo "WDT Home: $WDT_HOME"
+  script:
+    - |
+      # === Create minimal model.yaml (required for deployApps.sh) ===
+      cat > model.yaml << EOF
+      appDeployments:
+        Application:
+          IDEAAPP:                                 # Application name (same as your target)
+            SourcePath: 'wlsdeploy/applications/ideaapp.war'   # Must match structure inside archive.zip
+            Target: 'IDEAAPP'                      # Your target cluster/server
+            ModuleType: war
+      EOF
+
+    - |
+      # Run deployment using WDT (Online mode)
+      ./weblogic-deploy/bin/deployApps.sh \
+        -oracle_home $WDT_HOME \
+        -model_file model.yaml \
+        -archive_file ./archive.zip \
+        -admin_url "$WLS_UAT_ADMIN_URL" \
+        -admin_user "$WLS_UAT_USER" \
+        -admin_pass_env WLS_UAT_PASSWORD \
+        -domain_type WLS \
+        -remote \
+        -verbose
+
+  only:
+    - rfm-integration-devsecops
+
+
+
+
+
+deploy_job:
+  stage: deploy
+  image: artifactory.jfrog.oec:443/dso-base-image/java-maven-images/rhel-jdk-17-maven3.8.5:0.0.1
   before_script:
     - jf config add --url="$JF_URL" --user="$JF_USER" --access-token="$JF_TOKEN" --interactive=false
     - jf rt ping
