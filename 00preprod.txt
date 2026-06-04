@@ -1,3 +1,23 @@
+$ ls -lrth
+total 43M
+-rw-rw-rw-  1 root root 6.4K Jun  4 06:21 pom.xml
+-rw-rw-rw-  1 root root 6.6K Jun  4 06:21 mvnw.cmd
+-rw-rw-rw-  1 root root  11K Jun  4 06:21 mvnw
+-rw-rw-rw-  1 root root 1.3K Jun  4 06:21 indents-backend-k8s.yaml
+-rw-rw-rw-  1 root root  20K Jun  4 06:21 hs_err_pid30948.log
+-rw-rw-rw-  1 root root  20K Jun  4 06:21 hs_err_pid30760.log
+-rw-rw-rw-  1 root root 6.1K Jun  4 06:21 README.md
+-rw-rw-rw-  1 root root  572 Jun  4 06:21 Dockerfile
+drwxrwxrwx  4 root root   30 Jun  4 06:21 src
+drwxr-xr-x 10 root root 4.0K Jun  4 07:20 target
+-rw-r--r--  1 root root  43M Jun  4 07:21 archive.zip
+drwxr-xr-x  3 root root   29 Jun  4 07:21 weblogic-deploy
+$ ./weblogic-deploy/bin/deployApps.sh \ # collapsed multi-line command
+/usr/bin/bash: line 191: ./weblogic-deploy/bin/deployApps.sh: No such file or directory
+Cleaning up project directory and file based variables
+00:00
+ERROR: Job failed: exit code 1
+
 image: artifactory.jfrog.sbi:443/dso-base-image/java-maven-images/rhel-jdk-17-maven3.8.5-custom:1.0.2
 
 variables:
