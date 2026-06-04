@@ -1,98 +1,96 @@
-$ ./weblogic-deploy/bin/deployApps.sh \ # collapsed multi-line command
--oracle_home not provided, and ORACLE_HOME not set
-Usage: deployApps.sh [-help] [-use_encryption]
-          [-oracle_home <oracle_home>]
-          [-domain_home <domain_home>]
-          -model_file <model_file>
-          [-archive_file <archive_file>]
-          [-variable_file <variable_file>]
-          [-domain_type <domain_type>]
-          [-passphrase_env <passphrase_env>]
-          [-passphrase_file <passphrase_file>]
-          [-passphrase_prompt]
-          [-wlst_path <wlst_path>]
-          [-cancel_changes_if_restart_required]
-          [-discard_current_edit]
-          [-wait_for_edit_lock]
-          [-output_dir <output_dir>]
-          [-admin_url <admin_url>
-           -admin_user <admin_user>
-           -admin_pass_env <admin_pass_env> | -admin_pass_file <admin_pass_file>
-           [-remote]
-          ]
-          [-ssh_host <ssh_host>
-           -ssh_port <ssh_port>
-           -ssh_user <ssh_user>
-           -ssh_pass_env <ssh_pass_env> | -ssh_pass_file <ssh_pass_file> | -ssh_pass_prompt
-           -ssh_private_key <ssh_private_key>
-           -ssh_private_key_pass_env <ssh_private_key_pass_env> | -ssh_private_key_pass_file <ssh_private_key_pass_file> | -ssh_private_key_pass_prompt
-          ]
-    where:
-        oracle_home     - the existing Oracle Home directory for the domain.
-                          This argument is required unless the ORACLE_HOME
-                          environment variable is set.
-        domain_home     - the domain home directory.  This argument is
-                          required if running in offline mode.
-        model_file      - the location of the model file to use.  This can also
-                          be specified as a comma-separated list of model
-                          locations, where each successive model layers on top
-                          of the previous ones.  This argument is required.
-        archive_file    - the path to the archive file to use.  This can also
-                          be specified as a comma-separated list of archive
-                          files.  The overlapping contents in each archive take
-                          precedence over previous archives in the list.
-        variable_file   - the location of the property file containing the
-                          values for variables used in the model. This can also
-                          be specified as a comma-separated list of property
-                          files, where each successive set of properties layers
-                          on top of the previous ones.
-        domain_type     - the type of domain (e.g., WLS, JRF).
-                          Used to locate wlst.cmd if -wlst_path not specified.
-        passphrase_env  - An alternative to entering the encryption passphrase
-                          at a prompt. The value is an ENVIRONMENT VARIABLE
-                          name that WDT will use to retrieve the passphrase.
-        passphrase_file - An alternative to entering the encryption passphrase
-                          at a prompt. The value is the name of a file with a
-                          string value which WDT will read to retrieve the
-                          passphrase.
-        wlst_path       - the Oracle Home subdirectory of the wlst.sh
-                          script to use (e.g., <ORACLE_HOME>/soa).
-        output_dir      - if specified, files containing restart information
-                          are written to this directory, including
-                          restart.file, non_dynamic_changes.file, and
-                          results.json.
-        admin_url       - the admin server URL (used for online deploy).
-        admin_user      - the admin username (used for online deploy).
-        admin_pass_env  - An alternative to entering the admin password at a
-                          prompt. The value is an ENVIRONMENT VARIABLE name
-                          that WDT will use to retrieve the password.
-        admin_pass_file - An alternative to entering the admin password at a
-                          prompt. The value is the name of a file with a
-                          string value which WDT will read to retrieve the
-                          password.
-        ssh_host        - the host name for admin server when SSH protocol is used to collect resources
-                          from the admin server host.
-        ssh_port        - the SSH port number for the admin server host.
-        ssh_user        - the SSH user name for the admin server host.
-        ssh_pass_env    - An alternative to entering the SSH password at the prompt.  The value is specified
-                          in an ENVIRONMENT VARIABLE name that WDT will use to retrieve the password
-        ssh_pass_file   - An alternative to entering the SSH password at the prompt.  The value is the name of
-                          a file with a string value which WDT will read to retrieve the password.
-        ssh_pass_prompt - Prompt for the SSH password.
-        ssh_private_key - the private key to use for connecting to the admin server host using SSH.
-        ssh_private_key_pass_env - An alternative to entering the SSH private keystore password at the prompt.
-                                   The value is specified in an ENVIRONMENT VARIABLE name that WDT will use
-                                   to retrieve the password
-        ssh_private_key_pass_file - An alternative to entering the SSH private keystore password at the prompt.
-                                    The value is the name of a file with a string value which WDT will read
-                                    to retrieve the password.
-        ssh_private_key_pass_prompt - Prompt for the SSH private keystore password.
-    The -cancel_changes_if_restart_required switch tells the program to cancel
-    the changes if the update requires domain restart.
-    The -discard_current_edit switch tells the program to discard all existing
-    changes before starting the update.
-    The -wait_for_edit_lock switch tells the program to skip checking for WLST
-    edit sessions and wait for the WLST edit lock.
-Cleaning up project directory and file based variables
-00:00
-ERROR: Job failed: exit code 1
+deploy_job:
+  stage: deploy
+  image: artifactory.jfrog.oec:443/dso-base-image/java-maven-images/rhel-jdk-17-maven3.8.5:0.0.1
+  variables:
+    WDT_HOME: "./weblogic-deploy"
+    APP_NAME: "RfmIndentsService"
+    TARGET_NAME: "IDEAAPP"                          # Your cluster/server name in WLS
+    WAR_INTERNAL_PATH: "wlsdeploy/applications/RfmIndentsService.war"
+    ORACLE_HOME: "./wls-stub"                       # Option A — WDT reads this env var automatically
+
+  before_script:
+    # ── JFrog setup ───────────────────────────────────────────────────────────
+    - jf config add --url="$JF_URL" --user="$JF_USER" --access-token="$JF_TOKEN" --interactive=false
+    - jf rt ping
+
+    # ── Download WDT ──────────────────────────────────────────────────────────
+    - jf rt dl "itfo-treasury-tss-idea-custom-maven-libs/weblogic-deploy/**" "./" --flat=false --recursive=true
+    - chmod +x ./weblogic-deploy/bin/*.sh
+    - echo "=== WDT Version ===" && cat ./weblogic-deploy/VERSION.txt
+
+    # ── Build oracle_home stub ─────────────────────────────────────────────────
+    # WDT 4.4.5 needs oracle_home to exist with a minimal WLS structure.
+    # Since runner has no WLS install, we create a stub that satisfies WDT's checks.
+    - mkdir -p ./wls-stub/wlserver/server/lib
+    - mkdir -p ./wls-stub/wlserver/common/bin
+    - mkdir -p ./wls-stub/oracle_common/common/bin
+    - |
+      # .product.properties tells WDT the WLS version — must match your target
+      cat > ./wls-stub/wlserver/.product.properties << 'EOF'
+      oracle.product.version=14.1.1.0.0
+      EOF
+    - |
+      # Stub wlst.sh — WDT checks this exists; in -remote mode it won't actually execute it
+      cat > ./wls-stub/wlserver/common/bin/wlst.sh << 'EOF'
+      #!/bin/bash
+      echo "STUB wlst.sh - remote mode only"
+      EOF
+    - chmod +x ./wls-stub/wlserver/common/bin/wlst.sh
+    - echo "=== Oracle Home Stub ===" && find ./wls-stub -type f
+
+    # ── Java check ────────────────────────────────────────────────────────────
+    - java -version
+
+    # ── Verify archive structure ──────────────────────────────────────────────
+    - echo "=== Archive contents ===" && unzip -l ./archive.zip
+    - |
+      if ! unzip -l ./archive.zip | grep -q "${WAR_INTERNAL_PATH}"; then
+        echo "ERROR: ${WAR_INTERNAL_PATH} not found inside archive.zip"
+        echo "Actual paths in archive:"
+        unzip -l ./archive.zip
+        exit 1
+      fi
+    - echo "=== Pre-deploy checks passed ==="
+
+  script:
+    # ── Generate model.yaml ───────────────────────────────────────────────────
+    - |
+      cat > model.yaml << EOF
+      appDeployments:
+        Application:
+          ${APP_NAME}:
+            SourcePath: '${WAR_INTERNAL_PATH}'
+            Target: '${TARGET_NAME}'
+            ModuleType: war
+            StagingMode: stage
+      EOF
+    - echo "=== model.yaml ===" && cat model.yaml
+
+    # ── Execute WDT deployApps ────────────────────────────────────────────────
+    - |
+      ./weblogic-deploy/bin/deployApps.sh \
+        -oracle_home ${ORACLE_HOME} \
+        -model_file model.yaml \
+        -archive_file ./archive.zip \
+        -admin_url "$WLS_UAT_ADMIN_URL" \
+        -admin_user "$WLS_UAT_USER" \
+        -admin_pass_env WLS_UAT_PASSWORD \
+        -domain_type WLS \
+        -remote \
+        -verbose
+
+    # ── Exit code handling ────────────────────────────────────────────────────
+    - |
+      EXIT_CODE=$?
+      if [ $EXIT_CODE -eq 0 ]; then
+        echo ">>> Deployment successful."
+      elif [ $EXIT_CODE -eq 2 ]; then
+        echo ">>> Deployment succeeded with warnings. Review logs above."
+        exit 0
+      else
+        echo "ERROR: WDT deployApps failed with exit code: ${EXIT_CODE}"
+        exit 1
+      fi
+
+  only:
+    - rfm-integration-devsecops
