@@ -1,4 +1,13 @@
-script:
+deploy_job:
+  stage: deploy
+  image: artifactory.jfrog.oec:443/dso-base-image/java-maven-images/rhel-jdk-17-maven3.8.5:0.0.1
+  before_script:
+    - jf config add --url="$JF_URL" --user="$JF_USER" --access-token="$JF_TOKEN" --interactive=false
+    - jf rt ping
+    - jf rt dl "itfo-treasury-tss-idea-custom-maven-libs/weblogic-deploy/**" "./" --flat=false --recursive=true
+    - chmod +x ./weblogic-deploy/bin/*.sh
+    - ls -lrth
+  script:
     - |
       ./weblogic-deploy/bin/deployApps.sh \
         -admin_url "$WLS_UAT_ADMIN_URL" \
@@ -7,3 +16,5 @@ script:
         -archive_file ./archive.zip \
         -target "IDEAAPP" \
         -verbose
+  only:
+    - rfm-integration-devsecops
