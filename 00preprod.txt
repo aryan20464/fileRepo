@@ -1,3 +1,8 @@
+ find /weblogic/ -type f -name wlst.sh
+/weblogic/Oracle/Middleware/Oracle_Home/oracle_common/common/bin/wlst.sh
+/weblogic/Oracle/Middleware/Oracle_Home/wlserver/common/bin/wlst.sh
+
+
 Unable to determine WLS version in ./weblogic-deploy to determine WLST shell script to call
 Cleaning up project directory and file based variables
 00:00
