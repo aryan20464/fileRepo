@@ -1,22 +1,22 @@
-Your Local PC
-─────────────────────────────────────────
-wit.jar
-  + fmw_12.2.1.4.0_infrastructure.jar    ──► docker build
-  + jdk-8u391-linux-x64.tar.gz           ──► (WIT handles all
-  + WDT (auto pulled by WIT)                  layering internally)
-          │
-          ▼
-  wls-wdt:12.2.1.4 image
-  ├── /u01/jdk/                 (from your .tar.gz)
-  ├── /u01/app/oracle/middleware (from your fmw jar)
-  └── /u01/app/oracle/weblogic-deploy/ (WDT bundled by WIT)
-          │
-          ▼
-  Push to GitLab Registry
-          │
-          ▼
-  GitLab Runner pulls image
-  deployApps.sh ──► t3://prod-wls:7001
-                         │
-                    Production WLS
-                    (same 12.2.1.4)
+D:\chakri\devsecops\42uat-ssh>imagetool cache listItems
+Cache contents
+wls_14.1.1.0.0=D:\chakri\devsecops\42uat-ssh\fmw_14.1.1.0.0_wls_Disk1_1of1.zip
+jdk_8u361=D:\chakri\devsecops\42uat-ssh\java_1.8.361.tar.gz
+
+D:\chakri\devsecops\42uat-ssh>$ imagetool create --tag wls:14.1.1.0.0
+'$' is not recognized as an internal or external command,
+operable program or batch file.
+
+D:\chakri\devsecops\42uat-ssh>imagetool create --tag wls:14.1.1.0.0
+[INFO   ] WebLogic Image Tool version 1.16.4
+[INFO   ] Image Tool build ID: 3ca931eb-82a3-4ab9-b726-cad9f6fafd90
+[INFO   ] Temporary directory used for image build context: C:\Users\1064695\wlsimgbuilder_temp7930117368568906562
+[SEVERE ] Installer with key="jdk_8u202_amd64" is not in the local cache, please download the installer and add it to the cache with "imagetool cache addInstaller ..."
+
+D:\chakri\devsecops\42uat-ssh>imagetool create --tag wls:14.1.1.0.0 --version 14.1.1.0.0 --jdkVersion 8u361 --type fmw --wdtVersion latest
+[INFO   ] WebLogic Image Tool version 1.16.4
+[INFO   ] Image Tool build ID: da89ec69-3571-4e8b-b28a-8e03f95cd06b
+[INFO   ] Temporary directory used for image build context: C:\Users\1064695\wlsimgbuilder_temp14549691991809956993
+[INFO   ] Copying D:\chakri\devsecops\42uat-ssh\java_1.8.361.tar.gz to build context folder.
+[INFO   ] Using middleware installers (fmw) version 14.1.1.0.0
+[SEVERE ] Installer with key="fmw_14.1.1.0.0_amd64" is not in the local cache, please download the installer and add it to the cache with "imagetool cache addInstaller ..."
