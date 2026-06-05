@@ -1,22 +1,32 @@
-D:\chakri\devsecops\42uat-ssh>imagetool cache listItems
-Cache contents
-wls_14.1.1.0.0=D:\chakri\devsecops\42uat-ssh\fmw_14.1.1.0.0_wls_Disk1_1of1.zip
-jdk_8u361=D:\chakri\devsecops\42uat-ssh\java_1.8.361.tar.gz
+test_ips_job:
+  stage: test
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl bash
+  script:
+    - |
+      # Define your list of IP addresses
+      IPS=("192.168.1.1" "10.0.0.1" "8.8.8.8" "1.1.1.1")
+      
+      # Track if any failures occurred
+      ANY_FAILED=0
 
-D:\chakri\devsecops\42uat-ssh>$ imagetool create --tag wls:14.1.1.0.0
-'$' is not recognized as an internal or external command,
-operable program or batch file.
+      for ip in "${IPS[@]}"; do
+        echo "-----------------------------------"
+        echo "Hitting IP: $ip..."
+        
+        # --max-time 3 sets the timeout to 3 seconds
+        # --fail makes curl return an error code on 4xx/5xx HTTP responses
+        if curl --silent --show-error --fail --max-time 3 "http://$ip"; then
+          echo "SUCCESS: Successfully reached $ip"
+        else
+          echo "WARNING: Failed to connect to $ip, moving to next..."
+          ANY_FAILED=1
+        fi
+      done
 
-D:\chakri\devsecops\42uat-ssh>imagetool create --tag wls:14.1.1.0.0
-[INFO   ] WebLogic Image Tool version 1.16.4
-[INFO   ] Image Tool build ID: 3ca931eb-82a3-4ab9-b726-cad9f6fafd90
-[INFO   ] Temporary directory used for image build context: C:\Users\1064695\wlsimgbuilder_temp7930117368568906562
-[SEVERE ] Installer with key="jdk_8u202_amd64" is not in the local cache, please download the installer and add it to the cache with "imagetool cache addInstaller ..."
-
-D:\chakri\devsecops\42uat-ssh>imagetool create --tag wls:14.1.1.0.0 --version 14.1.1.0.0 --jdkVersion 8u361 --type fmw --wdtVersion latest
-[INFO   ] WebLogic Image Tool version 1.16.4
-[INFO   ] Image Tool build ID: da89ec69-3571-4e8b-b28a-8e03f95cd06b
-[INFO   ] Temporary directory used for image build context: C:\Users\1064695\wlsimgbuilder_temp14549691991809956993
-[INFO   ] Copying D:\chakri\devsecops\42uat-ssh\java_1.8.361.tar.gz to build context folder.
-[INFO   ] Using middleware installers (fmw) version 14.1.1.0.0
-[SEVERE ] Installer with key="fmw_14.1.1.0.0_amd64" is not in the local cache, please download the installer and add it to the cache with "imagetool cache addInstaller ..."
+      # Optional: Fail the GitLab job at the end if any IP failed
+      if [ $ANY_FAILED -ne 0 ]; then
+        echo "Error: One or more IP addresses could not be reached."
+        exit 1
+      fi
