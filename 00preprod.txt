@@ -1,26 +1,27 @@
 @echo off
+echo --- TIMER DIAGNOSTIC MODE ACTIVE ---
+echo.
+
 :loop
-:: Capture the current system time
 set "rawTime=%TIME%"
-
-:: Replace any leading blank spaces with a zero (fixes morning single-digit hours)
 set "cleanTime=%rawTime: =0%"
-
-:: Extract just the first 5 characters (HH:MM format)
 set "currentTime=%cleanTime:~0,5%"
 
-:: TARGET TIME: Set your fixed execution time here (Must be 24-hour format, e.g., 15:30)
-if "%currentTime%"=="15:30" (
-    
-    :: =======================================
-    :: PUT THE COMMAND YOU WANT TO RUN BELOW HERE
-    echo Task ran successfully at %time% >> C:\script_log.txt
-    :: =======================================
+echo [%time%] Checking clock... Current parsed time is: "%currentTime%"
 
-    :: Wait 61 seconds so it does not trigger twice in the same minute
+if "%currentTime%"=="17:26" (
+    echo.
+    echo [MATCH FOUND!] Triggering your command now...
+    echo --------------------------------------------------
+    
+    echo Task ran successfully at %time%
+    
+    echo --------------------------------------------------
+    echo Command execution finished. 
+    echo.
+    pause
     timeout /t 61 /nobreak >nul
 )
 
-:: Check the clock every 30 seconds
-timeout /t 30 /nobreak >nul
+timeout /t 5 /nobreak >nul
 goto loop
