@@ -1,32 +1,26 @@
-test_ips_job:
-  stage: test
-  image: alpine:latest
-  before_script:
-    - apk add --no-cache curl bash
-  script:
-    - |
-      # Define your list of IP addresses
-      IPS=("192.168.1.1" "10.0.0.1" "8.8.8.8" "1.1.1.1")
-      
-      # Track if any failures occurred
-      ANY_FAILED=0
+@echo off
+:loop
+:: Capture the current system time
+set "rawTime=%TIME%"
 
-      for ip in "${IPS[@]}"; do
-        echo "-----------------------------------"
-        echo "Hitting IP: $ip..."
-        
-        # --max-time 3 sets the timeout to 3 seconds
-        # --fail makes curl return an error code on 4xx/5xx HTTP responses
-        if curl --silent --show-error --fail --max-time 3 "http://$ip"; then
-          echo "SUCCESS: Successfully reached $ip"
-        else
-          echo "WARNING: Failed to connect to $ip, moving to next..."
-          ANY_FAILED=1
-        fi
-      done
+:: Replace any leading blank spaces with a zero (fixes morning single-digit hours)
+set "cleanTime=%rawTime: =0%"
 
-      # Optional: Fail the GitLab job at the end if any IP failed
-      if [ $ANY_FAILED -ne 0 ]; then
-        echo "Error: One or more IP addresses could not be reached."
-        exit 1
-      fi
+:: Extract just the first 5 characters (HH:MM format)
+set "currentTime=%cleanTime:~0,5%"
+
+:: TARGET TIME: Set your fixed execution time here (Must be 24-hour format, e.g., 15:30)
+if "%currentTime%"=="15:30" (
+    
+    :: =======================================
+    :: PUT THE COMMAND YOU WANT TO RUN BELOW HERE
+    echo Task ran successfully at %time% >> C:\script_log.txt
+    :: =======================================
+
+    :: Wait 61 seconds so it does not trigger twice in the same minute
+    timeout /t 61 /nobreak >nul
+)
+
+:: Check the clock every 30 seconds
+timeout /t 30 /nobreak >nul
+goto loop
