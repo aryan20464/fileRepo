@@ -1,3 +1,31 @@
+#6 [os_update 2/3] RUN microdnf update     && microdnf install gzip tar unzip libaio libnsl jq findutils diffutils make fontconfig freetype     && microdnf clean all
+#6 0.440 Downloading metadata...
+#6 0.861 error: cannot update repo 'ol8_baseos_latest': Cannot download repomd.xml: Cannot download repodata/repomd.xml: All mirrors were tried; Last error: Curl error (6): Couldn't resolve host name for https://yum.oracle.com/repo/OracleLinux/OL8/baseos/latest/x86_64/repodata/repomd.xml [Could not resolve host: yum.oracle.com]
+#6 ERROR: process "/bin/sh -c microdnf update     && microdnf install gzip tar unzip libaio libnsl jq findutils diffutils make fontconfig freetype     && microdnf clean all" did not complete successfully: exit code: 1
+
+#5 [internal] load build context
+#5 transferring context: 198.42MB 1.0s done
+#5 CANCELED
+------
+ > [os_update 2/3] RUN microdnf update     && microdnf install gzip tar unzip libaio libnsl jq findutils diffutils make fontconfig freetype     && microdnf clean all:
+0.440 Downloading metadata...
+0.861 error: cannot update repo 'ol8_baseos_latest': Cannot download repomd.xml: Cannot download repodata/repomd.xml: All mirrors were tried; Last error: Curl error (6): Couldn't resolve host name for https://yum.oracle.com/repo/OracleLinux/OL8/baseos/latest/x86_64/repodata/repomd.xml [Could not resolve host: yum.oracle.com]
+------
+Dockerfile:15
+--------------------
+  14 |     # Ensure necessary OS packages are installed
+  15 | >>>     RUN microdnf update \
+  16 | >>>     && microdnf install gzip tar unzip libaio libnsl jq findutils diffutils make fontconfig freetype \
+  17 | >>>     && microdnf clean all
+  18 |
+--------------------
+ERROR: failed to solve: process "/bin/sh -c microdnf update     && microdnf install gzip tar unzip libaio libnsl jq findutils diffutils make fontconfig freetype     && microdnf clean all" did not complete successfully: exit code: 1
+[SEVERE ] Build command failed with error:
+
+
+
+
+
 :: Remove the broken configuration strings
 git config --local --unset lfs.https://com.extraheader
 git config --local --unset http.proxy
