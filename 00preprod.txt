@@ -1,11 +1,22 @@
 Cloning into 'weblogic-image-tool'...
-remote: Enumerating objects: 4, done.
-remote: Counting objects: 100% (4/4), done.
+remote: Enumerating objects: 6, done.
+remote: Counting objects: 100% (6/6), done.
 remote: Compressing objects: 100% (4/4), done.
-remote: Total 4 (delta 0), reused 4 (delta 0), pack-reused 0 (from 0)
-Receiving objects: 100% (4/4), done.
-https://git-lfs.github.com/spec/v1 is not a valid attribute name: .gitattributes:1
-sha256:0ea82be8b637c5a87193a32d087a97831b46a185835bdf47fe558f5a7272f718 is not a valid attribute name: .gitattributes:2
+remote: Total 6 (delta 0), reused 6 (delta 0), pack-reused 0 (from 0)
+Receiving objects: 100% (6/6), done.
+Updating files: 100% (2/2), done.
+Downloading weblogic-image-tool-wls-image.tar (900 MB)
+Error downloading object: weblogic-image-tool-wls-image.tar (1cdab55): Smudge error: Error downloading weblogic-image-tool-wls-image.tar (1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e): LFS: Authorization error: https://github-cloud.githubusercontent.com/alambic/media/1127593929/1c/da/1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA5BA2674WPWWEFGQ5%2F20260606%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260606T075936Z&X-Amz-Expires=3600&X-Amz-Signature=c54c2d141b1bd7793527cb8169297c6d374e90db329c201546dd7f7779d5156b&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=1261076562&token=1
+Check that you have proper access to the repository
+
+Errors logged to 'D:\dump_projects\weblogic-image-tool\.git\lfs\logs\20260606T132937.7133889.log'.
+Use `git lfs logs last` to view the log.
+error: external filter 'git-lfs filter-process' failed
+fatal: weblogic-image-tool-wls-image.tar: smudge filter lfs failed
+warning: Clone succeeded, but checkout failed.
+You can inspect what was checked out with 'git status'
+and retry with 'git restore --source=HEAD :/'
+
 
 
 D:\idea-sts-projects-dump\fileRepo>git lfs pull
