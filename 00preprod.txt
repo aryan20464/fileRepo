@@ -1,3 +1,9 @@
+imagetool cache addInstaller --type jdk --version 8u361 --path java_1.8.361.tar.gz --architecture amd64
+
+imagetool cache addInstaller --type wls --version 14.1.1.0.0 --path fmw_14.1.1.0.0_wls_Disk1_1of1.zip --architecture amd64
+
+imagetool cache listItems
+
 imagetool create --tag wls:14.1.1.0.0 --version 14.1.1.0.0 --jdkVersion 8u361 --type wls --fromImage oraclelinux:8-slim --wdtVersion latest
 
 @echo off
