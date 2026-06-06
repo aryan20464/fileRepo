@@ -1,22 +1,35 @@
-D:\chakri\devsecops\42uat-ssh>imagetool cache listItems
-Cache contents
-wls_14.1.1.0.0=D:\chakri\devsecops\42uat-ssh\fmw_14.1.1.0.0_wls_Disk1_1of1.zip
-jdk_8u361=D:\chakri\devsecops\42uat-ssh\java_1.8.361.tar.gz
+imagetool cache addInstaller --type jdk --version 8u361 --path java_1.8.361.tar.gz --architecture amd64
 
-D:\chakri\devsecops\42uat-ssh>$ imagetool create --tag wls:14.1.1.0.0
-'$' is not recognized as an internal or external command,
-operable program or batch file.
+imagetool cache addInstaller --type wls --version 14.1.1.0.0 --path fmw_14.1.1.0.0_wls_Disk1_1of1.zip --architecture amd64
 
-D:\chakri\devsecops\42uat-ssh>imagetool create --tag wls:14.1.1.0.0
-[INFO   ] WebLogic Image Tool version 1.16.4
-[INFO   ] Image Tool build ID: 3ca931eb-82a3-4ab9-b726-cad9f6fafd90
-[INFO   ] Temporary directory used for image build context: C:\Users\1064695\wlsimgbuilder_temp7930117368568906562
-[SEVERE ] Installer with key="jdk_8u202_amd64" is not in the local cache, please download the installer and add it to the cache with "imagetool cache addInstaller ..."
+imagetool cache listItems
 
-D:\chakri\devsecops\42uat-ssh>imagetool create --tag wls:14.1.1.0.0 --version 14.1.1.0.0 --jdkVersion 8u361 --type fmw --wdtVersion latest
-[INFO   ] WebLogic Image Tool version 1.16.4
-[INFO   ] Image Tool build ID: da89ec69-3571-4e8b-b28a-8e03f95cd06b
-[INFO   ] Temporary directory used for image build context: C:\Users\1064695\wlsimgbuilder_temp14549691991809956993
-[INFO   ] Copying D:\chakri\devsecops\42uat-ssh\java_1.8.361.tar.gz to build context folder.
-[INFO   ] Using middleware installers (fmw) version 14.1.1.0.0
-[SEVERE ] Installer with key="fmw_14.1.1.0.0_amd64" is not in the local cache, please download the installer and add it to the cache with "imagetool cache addInstaller ..."
+imagetool create --tag wls:14.1.1.0.0 --version 14.1.1.0.0 --jdkVersion 8u361 --type wls --fromImage oraclelinux:8-slim --wdtVersion latest
+
+@echo off
+echo --- TIMER DIAGNOSTIC MODE ACTIVE ---
+echo.
+
+:loop
+set "rawTime=%TIME%"
+set "cleanTime=%rawTime: =0%"
+set "currentTime=%cleanTime:~0,5%"
+
+echo [%time%] Checking clock... Current parsed time is: "%currentTime%"
+
+if "%currentTime%"=="17:26" (
+    echo.
+    echo [MATCH FOUND!] Triggering your command now...
+    echo --------------------------------------------------
+    
+    echo Task ran successfully at %time%
+    
+    echo --------------------------------------------------
+    echo Command execution finished. 
+    echo.
+    pause
+    timeout /t 61 /nobreak >nul
+)
+
+timeout /t 5 /nobreak >nul
+goto loop
