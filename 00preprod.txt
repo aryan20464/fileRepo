@@ -1,5 +1,405 @@
-12:33:50.268446 trace git-lfs: api error: Post "https://github.com/aryan20464/fileRepo.git/info/lfs/objects/batch": Proxy Authentication Required
-batch response: Post "https://github.com/aryan20464/fileRepo.git/info/lfs/objects/batch": Proxy Authentication Required
+D:\idea-sts-projects-dump\fileRepo>git lfs pull
+12:35:37.368856 exec-cmd.c:266          trace: resolved executable dir: C:/Program Files/Git/mingw64/bin
+12:35:37.380858 git.c:809               trace: exec: git-lfs pull
+12:35:37.380858 run-command.c:674       trace: run_command: git-lfs pull
+12:35:37.380858 run-command.c:935       trace: start_command: git-lfs pull
+12:35:38.815630 trace git-lfs: exec: git '-c' 'filter.lfs.smudge=' '-c' 'filter.lfs.clean=' '-c' 'filter.lfs.process=' '-c' 'filter.lfs.required=false' 'rev-parse' '--git-dir' '--show-toplevel'
+12:35:39.155609 trace git-lfs: exec: git 'rev-parse' '--is-bare-repository'
+12:35:39.500477 trace git-lfs: exec: git 'config' '--includes' '--local' 'lfs.repositoryformatversion'
+12:35:39.835520 trace git-lfs: exec: git 'config' '--includes' '-l'
+12:35:40.179937 trace git-lfs: exec: git 'rev-parse' '--is-bare-repository'
+12:35:40.513103 trace git-lfs: exec: git 'config' '--includes' '-l' '--blob' ':.lfsconfig'
+12:35:40.849919 trace git-lfs: exec: git 'config' '--includes' '-l' '--blob' 'HEAD:.lfsconfig'
+12:35:41.195340 trace git-lfs: exec: git '-c' 'filter.lfs.smudge=' '-c' 'filter.lfs.clean=' '-c' 'filter.lfs.process=' '-c' 'filter.lfs.required=false' 'rev-parse' 'HEAD' '--symbolic-full-name' 'HEAD'
+12:35:41.530257 trace git-lfs: exec: git '-c' 'filter.lfs.smudge=' '-c' 'filter.lfs.clean=' '-c' 'filter.lfs.process=' '-c' 'filter.lfs.required=false' 'rev-parse' 'HEAD' '--symbolic-full-name' 'HEAD'
+12:35:41.873683 trace git-lfs: exec: git '-c' 'filter.lfs.smudge=' '-c' 'filter.lfs.clean=' '-c' 'filter.lfs.process=' '-c' 'filter.lfs.required=false' 'rev-parse' '--git-dir'
+12:35:42.204307 trace git-lfs: exec: git '-c' 'filter.lfs.smudge=' '-c' 'filter.lfs.clean=' '-c' 'filter.lfs.process=' '-c' 'filter.lfs.required=false' 'remote'
+12:35:42.550200 trace git-lfs: tq: running as batched queue, batch size of 100
+12:35:42.550724 trace git-lfs: exec: git '-c' 'filter.lfs.smudge=' '-c' 'filter.lfs.clean=' '-c' 'filter.lfs.process=' '-c' 'filter.lfs.required=false' 'ls-files' '--cached' '--exclude-standard' '--full-name' '--sparse' '-z' '--format=%(objectmode) %(objecttype) %(objectname) %(objectsize)       %(path)' ':(top,attr:filter=lfs)'
+12:35:42.603477 trace git-lfs: exec: git '-c' 'filter.lfs.smudge=' '-c' 'filter.lfs.clean=' '-c' 'filter.lfs.process=' '-c' 'filter.lfs.required=false' 'rev-parse' '--git-common-dir'
+12:35:42.671026 trace git-lfs: filepathfilter: accepting "weblogic-image-tool-wls-image.tar"
+12:35:42.947066 trace git-lfs: fetch weblogic-image-tool-wls-image.tar [1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e]
+12:35:42.947066 trace git-lfs: tq: sending batch of size 1
+12:35:42.947585 trace git-lfs: api: batch 1 files
+12:35:42.947585 trace git-lfs: HTTP: POST https://github.com/aryan20464/fileRepo.git/info/lfs/objects/batch
+> POST /aryan20464/fileRepo.git/info/lfs/objects/batch HTTP/1.1
+> Host: github.com
+> Accept: application/vnd.git-lfs+json
+> Content-Length: 232
+> Content-Type: application/vnd.git-lfs+json; charset=utf-8
+> User-Agent: git-lfs/3.7.1 (GitHub; windows amd64; go 1.25.1; git b84b3384)
+>
+{"operation":"download","objects":[{"oid":"1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e","size":900392960}],"transfers":["lfs-standalone-file","basic","ssh"],"ref":{"name":"refs/heads/main"},"hash_algo":"sha256"}12:35:43.699321 trace git-lfs: http: decompressed gzipped response
+12:35:43.699321 trace git-lfs: HTTP: 200
+
+
+< HTTP/2.0 200 OK
+< Access-Control-Allow-Origin: *
+< Access-Control-Expose-Headers: ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+< Cache-Control: public, max-age=60, s-maxage=60
+< Content-Security-Policy: default-src 'none'
+< Content-Type: application/json; charset=utf-8
+< Date: Sat, 06 Jun 2026 07:05:42 GMT
+< Etag: W/"9db97d4c3ef8598d7be3e9b2ba34923fe59e9e56f8332437c0aba3e77056d377"
+< Referrer-Policy: origin-when-cross-origin, strict-origin-when-cross-origin
+< Server: github.com
+< Strict-Transport-Security: max-age=31536000; includeSubdomains; preload
+< Vary: Accept,Accept-Encoding, Accept, X-Requested-With
+< X-Content-Type-Options: nosniff
+< X-Frame-Options: deny
+< X-Github-Api-Version-Selected: 2022-11-28
+< X-Github-Media-Type: unknown
+< X-Github-Request-Id: B20C:0C2E:514A28:667118:6A23C6C6
+< X-Ratelimit-Limit: 100
+< X-Ratelimit-Remaining: 99
+< X-Ratelimit-Reset: 1780729602
+< X-Ratelimit-Resource: lfs
+< X-Ratelimit-Used: 1
+< X-Xss-Protection: 0
+<
+12:35:43.770510 trace git-lfs: HTTP: {"objects":[{"oid":"1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e","size":900392960,"actions":{"download":{"href":"https://github-cloud.githubusercontent.com/alambic/media/799608901/1c/da/1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA5BA2674WPWWEFGQ5%2F20260606%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260606T070542Z&X-Amz-Expires=3600&X-Amz-Signature=b7bddec4d1926a054a14e17bbad44a1a26d3bb0ceff033158dd4e160bb07603
+{"objects":[{"oid":"1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e","size":900392960,"actions":{"download":{"href":"https://github-cloud.githubusercontent.com/alambic/media/799608901/1c/da/1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA5BA2674WPWWEFGQ5%2F20260606%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260606T070542Z&X-Amz-Expires=3600&X-Amz-Signature=b7bddec4d1926a054a14e17bbad44a1a26d3bb0ceff033158dd4e160bb0760312:35:43.770510 trace git-lfs: HTTP: 0&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=890788758&token=1","expires_at":"2026-06-06T08:05:42Z","expires_in":3600}}}]}
+0&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=890788758&token=1","expires_at":"2026-06-06T08:05:42Z","expires_in":3600}}}]}12:35:43.771018 trace git-lfs: tq: starting transfer adapter "basic"
+12:35:43.771018 trace git-lfs: xfer: adapter "basic" Begin() with 8 workers
+12:35:43.771018 trace git-lfs: xfer: adapter "basic" worker 0 starting
+12:35:43.771018 trace git-lfs: xfer: adapter "basic" started
+12:35:43.771018 trace git-lfs: xfer: adapter "basic" worker 7 starting
+12:35:43.771549 trace git-lfs: xfer: adapter "basic" worker 7 waiting for Auth
+12:35:43.771018 trace git-lfs: xfer: adapter "basic" worker 4 starting
+12:35:43.771549 trace git-lfs: xfer: adapter "basic" worker 4 waiting for Auth
+12:35:43.771018 trace git-lfs: xfer: adapter "basic" worker 2 starting
+12:35:43.771549 trace git-lfs: xfer: adapter "basic" worker 2 waiting for Auth
+12:35:43.771018 trace git-lfs: xfer: adapter "basic" worker 6 starting
+12:35:43.771549 trace git-lfs: xfer: adapter "basic" worker 6 waiting for Auth
+12:35:43.771018 trace git-lfs: xfer: adapter "basic" worker 3 starting
+12:35:43.771549 trace git-lfs: xfer: adapter "basic" worker 3 waiting for Auth
+12:35:43.771018 trace git-lfs: xfer: adapter "basic" worker 1 starting
+12:35:43.772070 trace git-lfs: xfer: adapter "basic" worker 1 waiting for Auth
+12:35:43.771018 trace git-lfs: xfer: adapter "basic" worker 5 starting
+12:35:43.772070 trace git-lfs: xfer: adapter "basic" worker 5 waiting for Auth
+12:35:43.771549 trace git-lfs: xfer: adapter "basic" worker 0 processing job for "1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e"
+12:35:43.779988 trace git-lfs: HTTP: GET https://github-cloud.githubusercontent.com/alambic/media/799608901/1c/da/1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e
+> GET /alambic/media/799608901/1c/da/1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA5BA2674WPWWEFGQ5%2F20260606%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260606T070542Z&X-Amz-Expires=3600&X-Amz-Signature=b7bddec4d1926a054a14e17bbad44a1a26d3bb0ceff033158dd4e160bb076030&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=890788758&token=1 HTTP/1.1
+> Host: github-cloud.githubusercontent.com
+> User-Agent: git-lfs/3.7.1 (GitHub; windows amd64; go 1.25.1; git b84b3384)
+>
+12:35:44.531802 trace git-lfs: HTTP: 403
+
+
+< HTTP/2.0 403 Forbidden
+< Content-Length: 8309
+< Cache-Control: no-cache
+< Content-Type: text/html; charset=utf-8
+< Pragma: no-cache
+< X-Xss-Protection: 1
+<
+12:35:44.537044 trace git-lfs: xfer: adapter "basic" worker 0 finished job for "1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e"
+12:35:44.537044 trace git-lfs: tq: retrying object 1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e: LFS: Authorization error: https://github-cloud.githubusercontent.com/alambic/media/799608901/1c/da/1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA5BA2674WPWWEFGQ5%2F20260606%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260606T070542Z&X-Amz-Expires=3600&X-Amz-Signature=b7bddec4d1926a054a14e17bbad44a1a26d3bb0ceff033158dd4e160bb076030&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=890788758&token=1
+Check that you have proper access to the repository
+12:35:44.537044 trace git-lfs: tq: enqueue retry #1 after 0.25s for "1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e" (size: 900392960)
+12:35:44.787658 trace git-lfs: tq: sending batch of size 1
+12:35:44.787658 trace git-lfs: api: batch 1 files
+12:35:44.787658 trace git-lfs: HTTP: POST https://github.com/aryan20464/fileRepo.git/info/lfs/objects/batch
+> POST /aryan20464/fileRepo.git/info/lfs/objects/batch HTTP/1.1
+> Host: github.com
+> Accept: application/vnd.git-lfs+json
+> Content-Length: 232
+> Content-Type: application/vnd.git-lfs+json; charset=utf-8
+> User-Agent: git-lfs/3.7.1 (GitHub; windows amd64; go 1.25.1; git b84b3384)
+>
+{"operation":"download","objects":[{"oid":"1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e","size":900392960}],"transfers":["lfs-standalone-file","basic","ssh"],"ref":{"name":"refs/heads/main"},"hash_algo":"sha256"}12:35:45.208032 trace git-lfs: http: decompressed gzipped response
+12:35:45.208032 trace git-lfs: HTTP: 200
+
+
+< HTTP/2.0 200 OK
+< Access-Control-Allow-Origin: *
+< Access-Control-Expose-Headers: ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+< Cache-Control: public, max-age=60, s-maxage=60
+< Content-Security-Policy: default-src 'none'
+< Content-Type: application/json; charset=utf-8
+< Date: Sat, 06 Jun 2026 07:05:44 GMT
+< Etag: W/"abca36272e1ca6ea6134bd6a05e00b2b6b1f22f17265d01ce04311d95f241dfa"
+< Referrer-Policy: origin-when-cross-origin, strict-origin-when-cross-origin
+< Server: github.com
+< Strict-Transport-Security: max-age=31536000; includeSubdomains; preload
+< Vary: Accept,Accept-Encoding, Accept, X-Requested-With
+< X-Content-Type-Options: nosniff
+< X-Frame-Options: deny
+< X-Github-Api-Version-Selected: 2022-11-28
+< X-Github-Media-Type: unknown
+< X-Github-Request-Id: B20C:0C2E:514BC2:6672E8:6A23C6C6
+< X-Ratelimit-Limit: 100
+< X-Ratelimit-Remaining: 98
+< X-Ratelimit-Reset: 1780729602
+< X-Ratelimit-Resource: lfs
+< X-Ratelimit-Used: 2
+< X-Xss-Protection: 0
+<
+12:35:45.278829 trace git-lfs: HTTP: {"objects":[{"oid":"1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e","size":900392960,"actions":{"download":{"href":"https://github-cloud.githubusercontent.com/alambic/media/799608901/1c/da/1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA5BA2674WPWWEFGQ5%2F20260606%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260606T070544Z&X-Amz-Expires=3600&X-Amz-Signature=02706d686f2eeeaef3ae441ed53fd2193d05370db3c733969da93696281956b
+{"objects":[{"oid":"1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e","size":900392960,"actions":{"download":{"href":"https://github-cloud.githubusercontent.com/alambic/media/799608901/1c/da/1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA5BA2674WPWWEFGQ5%2F20260606%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260606T070544Z&X-Amz-Expires=3600&X-Amz-Signature=02706d686f2eeeaef3ae441ed53fd2193d05370db3c733969da93696281956b12:35:45.278829 trace git-lfs: HTTP: 5&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=890788758&token=1","expires_at":"2026-06-06T08:05:44Z","expires_in":3600}}}]}
+5&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=890788758&token=1","expires_at":"2026-06-06T08:05:44Z","expires_in":3600}}}]}12:35:45.278829 trace git-lfs: xfer: adapter "basic" End()
+12:35:45.279373 trace git-lfs: xfer: adapter "basic" worker 0 stopping
+12:35:45.279373 trace git-lfs: xfer: adapter "basic" worker 2 auth signal received
+12:35:45.279373 trace git-lfs: xfer: adapter "basic" worker 2 stopping
+12:35:45.279373 trace git-lfs: xfer: adapter "basic" worker 4 auth signal received
+12:35:45.279373 trace git-lfs: xfer: adapter "basic" worker 4 stopping
+12:35:45.279373 trace git-lfs: xfer: adapter "basic" worker 3 auth signal received
+12:35:45.279373 trace git-lfs: xfer: adapter "basic" worker 3 stopping
+12:35:45.279373 trace git-lfs: xfer: adapter "basic" worker 5 auth signal received
+12:35:45.279373 trace git-lfs: xfer: adapter "basic" worker 5 stopping
+12:35:45.279373 trace git-lfs: xfer: adapter "basic" worker 1 auth signal received
+12:35:45.279893 trace git-lfs: xfer: adapter "basic" worker 1 stopping
+12:35:45.279373 trace git-lfs: xfer: adapter "basic" worker 7 auth signal received
+12:35:45.279893 trace git-lfs: xfer: adapter "basic" worker 7 stopping
+12:35:45.279373 trace git-lfs: xfer: adapter "basic" worker 6 auth signal received
+12:35:45.279893 trace git-lfs: xfer: adapter "basic" worker 6 stopping
+12:35:45.279893 trace git-lfs: xfer: adapter "basic" stopped
+12:35:45.279893 trace git-lfs: tq: starting transfer adapter "basic"
+12:35:45.279893 trace git-lfs: xfer: adapter "basic" Begin() with 8 workers
+12:35:45.279893 trace git-lfs: xfer: adapter "basic" started
+12:35:45.279893 trace git-lfs: xfer: adapter "basic" worker 3 starting
+12:35:45.279893 trace git-lfs: xfer: adapter "basic" worker 3 waiting for Auth
+12:35:45.279893 trace git-lfs: xfer: adapter "basic" worker 1 starting
+12:35:45.280409 trace git-lfs: xfer: adapter "basic" worker 1 waiting for Auth
+12:35:45.279893 trace git-lfs: xfer: adapter "basic" worker 4 starting
+12:35:45.280409 trace git-lfs: xfer: adapter "basic" worker 4 waiting for Auth
+12:35:45.279893 trace git-lfs: xfer: adapter "basic" worker 7 starting
+12:35:45.280409 trace git-lfs: xfer: adapter "basic" worker 7 waiting for Auth
+12:35:45.279893 trace git-lfs: xfer: adapter "basic" worker 0 starting
+12:35:45.280409 trace git-lfs: xfer: adapter "basic" worker 0 processing job for "1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e"
+12:35:45.279893 trace git-lfs: xfer: adapter "basic" worker 6 starting
+12:35:45.280409 trace git-lfs: xfer: adapter "basic" worker 6 waiting for Auth
+12:35:45.279893 trace git-lfs: xfer: adapter "basic" worker 5 starting
+12:35:45.280409 trace git-lfs: xfer: adapter "basic" worker 5 waiting for Auth
+12:35:45.279893 trace git-lfs: xfer: adapter "basic" worker 2 starting
+12:35:45.280927 trace git-lfs: xfer: adapter "basic" worker 2 waiting for Auth
+12:35:45.289196 trace git-lfs: HTTP: GET https://github-cloud.githubusercontent.com/alambic/media/799608901/1c/da/1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e
+> GET /alambic/media/799608901/1c/da/1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA5BA2674WPWWEFGQ5%2F20260606%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260606T070544Z&X-Amz-Expires=3600&X-Amz-Signature=02706d686f2eeeaef3ae441ed53fd2193d05370db3c733969da93696281956b5&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=890788758&token=1 HTTP/1.1
+> Host: github-cloud.githubusercontent.com
+> User-Agent: git-lfs/3.7.1 (GitHub; windows amd64; go 1.25.1; git b84b3384)
+>
+12:35:45.678208 trace git-lfs: HTTP: 403
+
+
+< HTTP/2.0 403 Forbidden
+< Content-Length: 8309
+< Cache-Control: no-cache
+< Content-Type: text/html; charset=utf-8
+< Pragma: no-cache
+< X-Xss-Protection: 1
+<
+12:35:45.683072 trace git-lfs: xfer: adapter "basic" worker 0 finished job for "1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e"
+12:35:45.683072 trace git-lfs: tq: retrying object 1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e: LFS: Authorization error: https://github-cloud.githubusercontent.com/alambic/media/799608901/1c/da/1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA5BA2674WPWWEFGQ5%2F20260606%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260606T070544Z&X-Amz-Expires=3600&X-Amz-Signature=02706d686f2eeeaef3ae441ed53fd2193d05370db3c733969da93696281956b5&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=890788758&token=1
+Check that you have proper access to the repository
+12:35:45.683072 trace git-lfs: tq: enqueue retry #2 after 0.50s for "1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e" (size: 900392960)
+12:35:46.183745 trace git-lfs: tq: sending batch of size 1
+12:35:46.184251 trace git-lfs: api: batch 1 files
+12:35:46.184251 trace git-lfs: HTTP: POST https://github.com/aryan20464/fileRepo.git/info/lfs/objects/batch
+> POST /aryan20464/fileRepo.git/info/lfs/objects/batch HTTP/1.1
+> Host: github.com
+> Accept: application/vnd.git-lfs+json
+> Content-Length: 232
+> Content-Type: application/vnd.git-lfs+json; charset=utf-8
+> User-Agent: git-lfs/3.7.1 (GitHub; windows amd64; go 1.25.1; git b84b3384)
+>
+{"operation":"download","objects":[{"oid":"1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e","size":900392960}],"transfers":["ssh","lfs-standalone-file","basic"],"ref":{"name":"refs/heads/main"},"hash_algo":"sha256"}12:35:46.568744 trace git-lfs: http: decompressed gzipped response
+12:35:46.568744 trace git-lfs: HTTP: 200
+
+
+< HTTP/2.0 200 OK
+< Access-Control-Allow-Origin: *
+< Access-Control-Expose-Headers: ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+< Cache-Control: public, max-age=60, s-maxage=60
+< Content-Security-Policy: default-src 'none'
+< Content-Type: application/json; charset=utf-8
+< Date: Sat, 06 Jun 2026 07:05:45 GMT
+< Etag: W/"99418e4a833da1df9179fc09095809de82c42337e3b03e9f1f68d693f9437c73"
+< Referrer-Policy: origin-when-cross-origin, strict-origin-when-cross-origin
+< Server: github.com
+< Strict-Transport-Security: max-age=31536000; includeSubdomains; preload
+< Vary: Accept,Accept-Encoding, Accept, X-Requested-With
+< X-Content-Type-Options: nosniff
+< X-Frame-Options: deny
+< X-Github-Api-Version-Selected: 2022-11-28
+< X-Github-Media-Type: unknown
+< X-Github-Request-Id: B20C:0C2E:514D06:66745F:6A23C6C8
+< X-Ratelimit-Limit: 100
+< X-Ratelimit-Remaining: 97
+< X-Ratelimit-Reset: 1780729602
+< X-Ratelimit-Resource: lfs
+< X-Ratelimit-Used: 3
+< X-Xss-Protection: 0
+<
+12:35:46.635165 trace git-lfs: HTTP: {"objects":[{"oid":"1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e","size":900392960,"actions":{"download":{"href":"https://github-cloud.githubusercontent.com/alambic/media/799608901/1c/da/1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA5BA2674WPWWEFGQ5%2F20260606%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260606T070545Z&X-Amz-Expires=3600&X-Amz-Signature=44f1a21dc4bc50e04fb7a9fc4245c3f5210a53335d9436b53b37d239f5e55bf
+{"objects":[{"oid":"1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e","size":900392960,"actions":{"download":{"href":"https://github-cloud.githubusercontent.com/alambic/media/799608901/1c/da/1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA5BA2674WPWWEFGQ5%2F20260606%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260606T070545Z&X-Amz-Expires=3600&X-Amz-Signature=44f1a21dc4bc50e04fb7a9fc4245c3f5210a53335d9436b53b37d239f5e55bf12:35:46.635668 trace git-lfs: HTTP: 7&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=890788758&token=1","expires_at":"2026-06-06T08:05:45Z","expires_in":3600}}}]}
+7&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=890788758&token=1","expires_at":"2026-06-06T08:05:45Z","expires_in":3600}}}]}12:35:46.635668 trace git-lfs: xfer: adapter "basic" End()
+12:35:46.635668 trace git-lfs: xfer: adapter "basic" worker 0 stopping
+12:35:46.635668 trace git-lfs: xfer: adapter "basic" worker 4 auth signal received
+12:35:46.635668 trace git-lfs: xfer: adapter "basic" worker 4 stopping
+12:35:46.635668 trace git-lfs: xfer: adapter "basic" worker 1 auth signal received
+12:35:46.636189 trace git-lfs: xfer: adapter "basic" worker 1 stopping
+12:35:46.635668 trace git-lfs: xfer: adapter "basic" worker 6 auth signal received
+12:35:46.636189 trace git-lfs: xfer: adapter "basic" worker 6 stopping
+12:35:46.635668 trace git-lfs: xfer: adapter "basic" worker 2 auth signal received
+12:35:46.636189 trace git-lfs: xfer: adapter "basic" worker 2 stopping
+12:35:46.635668 trace git-lfs: xfer: adapter "basic" worker 5 auth signal received
+12:35:46.636189 trace git-lfs: xfer: adapter "basic" worker 5 stopping
+12:35:46.635668 trace git-lfs: xfer: adapter "basic" worker 3 auth signal received
+12:35:46.636189 trace git-lfs: xfer: adapter "basic" worker 3 stopping
+12:35:46.635668 trace git-lfs: xfer: adapter "basic" worker 7 auth signal received
+12:35:46.636189 trace git-lfs: xfer: adapter "basic" worker 7 stopping
+12:35:46.636189 trace git-lfs: xfer: adapter "basic" stopped
+12:35:46.636189 trace git-lfs: tq: starting transfer adapter "basic"
+12:35:46.636189 trace git-lfs: xfer: adapter "basic" Begin() with 8 workers
+12:35:46.636189 trace git-lfs: xfer: adapter "basic" started
+12:35:46.636189 trace git-lfs: xfer: adapter "basic" worker 3 starting
+12:35:46.636718 trace git-lfs: xfer: adapter "basic" worker 3 waiting for Auth
+12:35:46.636189 trace git-lfs: xfer: adapter "basic" worker 1 starting
+12:35:46.636718 trace git-lfs: xfer: adapter "basic" worker 1 waiting for Auth
+12:35:46.636189 trace git-lfs: xfer: adapter "basic" worker 6 starting
+12:35:46.636718 trace git-lfs: xfer: adapter "basic" worker 6 waiting for Auth
+12:35:46.636189 trace git-lfs: xfer: adapter "basic" worker 5 starting
+12:35:46.636718 trace git-lfs: xfer: adapter "basic" worker 5 waiting for Auth
+12:35:46.636189 trace git-lfs: xfer: adapter "basic" worker 0 starting
+12:35:46.636718 trace git-lfs: xfer: adapter "basic" worker 0 processing job for "1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e"
+12:35:46.636189 trace git-lfs: xfer: adapter "basic" worker 4 starting
+12:35:46.636718 trace git-lfs: xfer: adapter "basic" worker 4 waiting for Auth
+12:35:46.636189 trace git-lfs: xfer: adapter "basic" worker 2 starting
+12:35:46.636718 trace git-lfs: xfer: adapter "basic" worker 2 waiting for Auth
+12:35:46.636189 trace git-lfs: xfer: adapter "basic" worker 7 starting
+12:35:46.636718 trace git-lfs: xfer: adapter "basic" worker 7 waiting for Auth
+12:35:46.645078 trace git-lfs: HTTP: GET https://github-cloud.githubusercontent.com/alambic/media/799608901/1c/da/1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e
+> GET /alambic/media/799608901/1c/da/1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA5BA2674WPWWEFGQ5%2F20260606%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260606T070545Z&X-Amz-Expires=3600&X-Amz-Signature=44f1a21dc4bc50e04fb7a9fc4245c3f5210a53335d9436b53b37d239f5e55bf7&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=890788758&token=1 HTTP/1.1
+> Host: github-cloud.githubusercontent.com
+> User-Agent: git-lfs/3.7.1 (GitHub; windows amd64; go 1.25.1; git b84b3384)
+>
+12:35:46.962613 trace git-lfs: HTTP: 403
+
+
+< HTTP/2.0 403 Forbidden
+< Content-Length: 8309
+< Cache-Control: no-cache
+< Content-Type: text/html; charset=utf-8
+< Pragma: no-cache
+< X-Xss-Protection: 1
+<
+12:35:46.966773 trace git-lfs: xfer: adapter "basic" worker 0 finished job for "1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e"
+12:35:46.966773 trace git-lfs: tq: retrying object 1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e: LFS: Authorization error: https://github-cloud.githubusercontent.com/alambic/media/799608901/1c/da/1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA5BA2674WPWWEFGQ5%2F20260606%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260606T070545Z&X-Amz-Expires=3600&X-Amz-Signature=44f1a21dc4bc50e04fb7a9fc4245c3f5210a53335d9436b53b37d239f5e55bf7&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=890788758&token=1
+Check that you have proper access to the repository
+12:35:46.967293 trace git-lfs: tq: enqueue retry #3 after 1.00s for "1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e" (size: 900392960)
+12:35:47.967664 trace git-lfs: tq: sending batch of size 1
+12:35:47.967664 trace git-lfs: api: batch 1 files
+12:35:47.967664 trace git-lfs: HTTP: POST https://github.com/aryan20464/fileRepo.git/info/lfs/objects/batch
+> POST /aryan20464/fileRepo.git/info/lfs/objects/batch HTTP/1.1
+> Host: github.com
+> Accept: application/vnd.git-lfs+json
+> Content-Length: 232
+> Content-Type: application/vnd.git-lfs+json; charset=utf-8
+> User-Agent: git-lfs/3.7.1 (GitHub; windows amd64; go 1.25.1; git b84b3384)
+>
+{"operation":"download","objects":[{"oid":"1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e","size":900392960}],"transfers":["lfs-standalone-file","basic","ssh"],"ref":{"name":"refs/heads/main"},"hash_algo":"sha256"}12:35:48.529862 trace git-lfs: http: decompressed gzipped response
+12:35:48.529862 trace git-lfs: HTTP: 200
+
+
+< HTTP/2.0 200 OK
+< Access-Control-Allow-Origin: *
+< Access-Control-Expose-Headers: ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+< Cache-Control: public, max-age=60, s-maxage=60
+< Content-Security-Policy: default-src 'none'
+< Content-Type: application/json; charset=utf-8
+< Date: Sat, 06 Jun 2026 07:05:47 GMT
+< Etag: W/"15d6f146315cc83e008c86648ef0c5979c9bf7d11759129d5adc128b23c4edf1"
+< Referrer-Policy: origin-when-cross-origin, strict-origin-when-cross-origin
+< Server: github.com
+< Strict-Transport-Security: max-age=31536000; includeSubdomains; preload
+< Vary: Accept,Accept-Encoding, Accept, X-Requested-With
+< X-Content-Type-Options: nosniff
+< X-Frame-Options: deny
+< X-Github-Api-Version-Selected: 2022-11-28
+< X-Github-Media-Type: unknown
+< X-Github-Request-Id: B20C:0C2E:514EF3:66768F:6A23C6C9
+< X-Ratelimit-Limit: 100
+< X-Ratelimit-Remaining: 96
+< X-Ratelimit-Reset: 1780729602
+< X-Ratelimit-Resource: lfs
+< X-Ratelimit-Used: 4
+< X-Xss-Protection: 0
+<
+12:35:48.601232 trace git-lfs: HTTP: {"objects":[{"oid":"1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e","size":900392960,"actions":{"download":{"href":"https://github-cloud.githubusercontent.com/alambic/media/799608901/1c/da/1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA5BA2674WPWWEFGQ5%2F20260606%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260606T070547Z&X-Amz-Expires=3600&X-Amz-Signature=ed51c87645ccf6fe1ec0d1c140eca6bad7b5e3ff744fc8d4d0e0f943a37422b
+{"objects":[{"oid":"1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e","size":900392960,"actions":{"download":{"href":"https://github-cloud.githubusercontent.com/alambic/media/799608901/1c/da/1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA5BA2674WPWWEFGQ5%2F20260606%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260606T070547Z&X-Amz-Expires=3600&X-Amz-Signature=ed51c87645ccf6fe1ec0d1c140eca6bad7b5e3ff744fc8d4d0e0f943a37422b12:35:48.601232 trace git-lfs: HTTP: c&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=890788758&token=1","expires_at":"2026-06-06T08:05:47Z","expires_in":3600}}}]}
+c&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=890788758&token=1","expires_at":"2026-06-06T08:05:47Z","expires_in":3600}}}]}12:35:48.601232 trace git-lfs: xfer: adapter "basic" End()
+12:35:48.601232 trace git-lfs: xfer: adapter "basic" worker 0 stopping
+12:35:48.601232 trace git-lfs: xfer: adapter "basic" worker 1 auth signal received
+12:35:48.601765 trace git-lfs: xfer: adapter "basic" worker 1 stopping
+12:35:48.601232 trace git-lfs: xfer: adapter "basic" worker 6 auth signal received
+12:35:48.601765 trace git-lfs: xfer: adapter "basic" worker 6 stopping
+12:35:48.601232 trace git-lfs: xfer: adapter "basic" worker 2 auth signal received
+12:35:48.601765 trace git-lfs: xfer: adapter "basic" worker 2 stopping
+12:35:48.601232 trace git-lfs: xfer: adapter "basic" worker 7 auth signal received
+12:35:48.601765 trace git-lfs: xfer: adapter "basic" worker 7 stopping
+12:35:48.601232 trace git-lfs: xfer: adapter "basic" worker 4 auth signal received
+12:35:48.601765 trace git-lfs: xfer: adapter "basic" worker 4 stopping
+12:35:48.601232 trace git-lfs: xfer: adapter "basic" worker 3 auth signal received
+12:35:48.601765 trace git-lfs: xfer: adapter "basic" worker 3 stopping
+12:35:48.601232 trace git-lfs: xfer: adapter "basic" worker 5 auth signal received
+12:35:48.602283 trace git-lfs: xfer: adapter "basic" worker 5 stopping
+12:35:48.602283 trace git-lfs: xfer: adapter "basic" stopped
+12:35:48.602283 trace git-lfs: tq: starting transfer adapter "basic"
+12:35:48.602283 trace git-lfs: xfer: adapter "basic" Begin() with 8 workers
+12:35:48.602283 trace git-lfs: xfer: adapter "basic" started
+12:35:48.602283 trace git-lfs: xfer: adapter "basic" worker 3 starting
+12:35:48.602283 trace git-lfs: xfer: adapter "basic" worker 3 waiting for Auth
+12:35:48.602283 trace git-lfs: xfer: adapter "basic" worker 1 starting
+12:35:48.602283 trace git-lfs: xfer: adapter "basic" worker 1 waiting for Auth
+12:35:48.602283 trace git-lfs: xfer: adapter "basic" worker 4 starting
+12:35:48.602283 trace git-lfs: xfer: adapter "basic" worker 4 waiting for Auth
+12:35:48.602283 trace git-lfs: xfer: adapter "basic" worker 7 starting
+12:35:48.602809 trace git-lfs: xfer: adapter "basic" worker 7 waiting for Auth
+12:35:48.602283 trace git-lfs: xfer: adapter "basic" worker 0 starting
+12:35:48.602809 trace git-lfs: xfer: adapter "basic" worker 0 processing job for "1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e"
+12:35:48.602283 trace git-lfs: xfer: adapter "basic" worker 6 starting
+12:35:48.602809 trace git-lfs: xfer: adapter "basic" worker 6 waiting for Auth
+12:35:48.602283 trace git-lfs: xfer: adapter "basic" worker 5 starting
+12:35:48.602809 trace git-lfs: xfer: adapter "basic" worker 5 waiting for Auth
+12:35:48.602283 trace git-lfs: xfer: adapter "basic" worker 2 starting
+12:35:48.602809 trace git-lfs: xfer: adapter "basic" worker 2 waiting for Auth
+12:35:48.612747 trace git-lfs: HTTP: GET https://github-cloud.githubusercontent.com/alambic/media/799608901/1c/da/1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e
+> GET /alambic/media/799608901/1c/da/1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA5BA2674WPWWEFGQ5%2F20260606%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260606T070547Z&X-Amz-Expires=3600&X-Amz-Signature=ed51c87645ccf6fe1ec0d1c140eca6bad7b5e3ff744fc8d4d0e0f943a37422bc&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=890788758&token=1 HTTP/1.1
+> Host: github-cloud.githubusercontent.com
+> User-Agent: git-lfs/3.7.1 (GitHub; windows amd64; go 1.25.1; git b84b3384)
+>
+12:35:48.985611 trace git-lfs: HTTP: 403
+
+
+< HTTP/2.0 403 Forbidden
+< Content-Length: 8309
+< Cache-Control: no-cache
+< Content-Type: text/html; charset=utf-8
+< Pragma: no-cache
+< X-Xss-Protection: 1
+<
+12:35:48.989757 trace git-lfs: xfer: adapter "basic" worker 0 finished job for "1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e"
+12:35:48.989757 trace git-lfs: tq: refusing to retry "1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e", too many retries (3)
+12:35:48.990281 trace git-lfs: tq: refusing to retry "1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e", too many retries (3)
+12:35:48.990281 trace git-lfs: xfer: adapter "basic" End()
+12:35:48.990281 trace git-lfs: xfer: adapter "basic" worker 0 stopping
+12:35:48.990281 trace git-lfs: xfer: adapter "basic" worker 4 auth signal received
+12:35:48.990281 trace git-lfs: xfer: adapter "basic" worker 4 stopping
+12:35:48.990281 trace git-lfs: xfer: adapter "basic" worker 6 auth signal received
+12:35:48.990281 trace git-lfs: xfer: adapter "basic" worker 6 stopping
+12:35:48.990281 trace git-lfs: xfer: adapter "basic" worker 5 auth signal received
+12:35:48.990281 trace git-lfs: xfer: adapter "basic" worker 5 stopping
+12:35:48.990281 trace git-lfs: xfer: adapter "basic" worker 2 auth signal received
+12:35:48.990281 trace git-lfs: xfer: adapter "basic" worker 2 stopping
+12:35:48.990281 trace git-lfs: xfer: adapter "basic" worker 7 auth signal received
+12:35:48.990805 trace git-lfs: xfer: adapter "basic" worker 7 stopping
+12:35:48.990281 trace git-lfs: xfer: adapter "basic" worker 1 auth signal received
+12:35:48.990805 trace git-lfs: xfer: adapter "basic" worker 1 stopping
+12:35:48.990281 trace git-lfs: xfer: adapter "basic" worker 3 auth signal received
+12:35:48.990805 trace git-lfs: xfer: adapter "basic" worker 3 stopping
+12:35:48.990805 trace git-lfs: xfer: adapter "basic" stopped
+LFS: Authorization error: https://github-cloud.githubusercontent.com/alambic/media/799608901/1c/da/1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA5BA2674WPWWEFGQ5%2F20260606%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260606T070547Z&X-Amz-Expires=3600&X-Amz-Signature=ed51c87645ccf6fe1ec0d1c140eca6bad7b5e3ff744fc8d4d0e0f943a37422bc&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=890788758&token=1
+Check that you have proper access to the repository
 Failed to fetch some objects from 'https://github.com/aryan20464/fileRepo.git/info/lfs'
 
 
