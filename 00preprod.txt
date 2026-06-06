@@ -1,3 +1,5 @@
+imagetool create --tag wls:14.1.1.0.0 --version 14.1.1.0.0 --jdkVersion 8u361 --type wls --fromImage oraclelinux:8-slim --wdtVersion latest
+
 @echo off
 echo --- TIMER DIAGNOSTIC MODE ACTIVE ---
 echo.
