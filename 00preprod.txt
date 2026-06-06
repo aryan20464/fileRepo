@@ -1,3 +1,100 @@
+git-lfs/3.7.1 (GitHub; windows amd64; go 1.25.1; git b84b3384)
+git version 2.53.0.windows.1
+
+$ git-lfs.exe filter-process
+Error downloading object: weblogic-image-tool-wls-image.tar (1cdab55): Smudge error: Error downloading weblogic-image-tool-wls-image.tar (1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e): batch response: Post "https://github.com/aryan20464/fileRepo.git/info/lfs/objects/batch": proxyconnect tcp: dial tcp: lookup http: no such host
+
+batch response: Post "https://github.com/aryan20464/fileRepo.git/info/lfs/objects/batch": proxyconnect tcp: dial tcp: lookup http: no such host
+Error downloading weblogic-image-tool-wls-image.tar (1cdab55d90bcd11e91b9efd2d399e4599fbdb72da4d229e543371a60ac7b210e)
+github.com/git-lfs/git-lfs/v3/errors.newWrappedError
+	github.com/git-lfs/git-lfs/v3/errors/types.go:228
+github.com/git-lfs/git-lfs/v3/errors.Wrap
+	github.com/git-lfs/git-lfs/v3/errors/errors.go:74
+github.com/git-lfs/git-lfs/v3/lfs.(*GitFilter).downloadFile
+	github.com/git-lfs/git-lfs/v3/lfs/gitfilter_smudge.go:124
+github.com/git-lfs/git-lfs/v3/lfs.(*GitFilter).Smudge
+	github.com/git-lfs/git-lfs/v3/lfs/gitfilter_smudge.go:83
+github.com/git-lfs/git-lfs/v3/commands.smudge
+	github.com/git-lfs/git-lfs/v3/commands/command_smudge.go:128
+github.com/git-lfs/git-lfs/v3/commands.filterCommand
+	github.com/git-lfs/git-lfs/v3/commands/command_filter_process.go:132
+github.com/spf13/cobra.(*Command).execute
+	github.com/spf13/cobra@v1.7.0/command.go:944
+github.com/spf13/cobra.(*Command).ExecuteC
+	github.com/spf13/cobra@v1.7.0/command.go:1068
+github.com/spf13/cobra.(*Command).Execute
+	github.com/spf13/cobra@v1.7.0/command.go:992
+github.com/git-lfs/git-lfs/v3/commands.Run
+	github.com/git-lfs/git-lfs/v3/commands/run.go:154
+main.main
+	github.com/git-lfs/git-lfs/v3/git-lfs.go:34
+runtime.main
+	runtime/proc.go:285
+runtime.goexit
+	runtime/asm_amd64.s:1693
+Smudge error
+github.com/git-lfs/git-lfs/v3/errors.newWrappedError
+	github.com/git-lfs/git-lfs/v3/errors/types.go:228
+github.com/git-lfs/git-lfs/v3/errors.NewSmudgeError
+	github.com/git-lfs/git-lfs/v3/errors/types.go:314
+github.com/git-lfs/git-lfs/v3/lfs.(*GitFilter).Smudge
+	github.com/git-lfs/git-lfs/v3/lfs/gitfilter_smudge.go:100
+github.com/git-lfs/git-lfs/v3/commands.smudge
+	github.com/git-lfs/git-lfs/v3/commands/command_smudge.go:128
+github.com/git-lfs/git-lfs/v3/commands.filterCommand
+	github.com/git-lfs/git-lfs/v3/commands/command_filter_process.go:132
+github.com/spf13/cobra.(*Command).execute
+	github.com/spf13/cobra@v1.7.0/command.go:944
+github.com/spf13/cobra.(*Command).ExecuteC
+	github.com/spf13/cobra@v1.7.0/command.go:1068
+github.com/spf13/cobra.(*Command).Execute
+	github.com/spf13/cobra@v1.7.0/command.go:992
+github.com/git-lfs/git-lfs/v3/commands.Run
+	github.com/git-lfs/git-lfs/v3/commands/run.go:154
+main.main
+	github.com/git-lfs/git-lfs/v3/git-lfs.go:34
+runtime.main
+	runtime/proc.go:285
+runtime.goexit
+	runtime/asm_amd64.s:1693
+
+Current time in UTC:
+2026-06-06 06:42:55
+
+Environment:
+LocalWorkingDir=D:\idea-sts-projects-dump\fileRepo
+LocalGitDir=D:\idea-sts-projects-dump\fileRepo\.git
+LocalGitStorageDir=D:\idea-sts-projects-dump\fileRepo\.git
+LocalMediaDir=D:\idea-sts-projects-dump\fileRepo\.git\lfs\objects
+LocalReferenceDirs=
+TempDir=D:\idea-sts-projects-dump\fileRepo\.git\lfs\tmp
+ConcurrentTransfers=8
+TusTransfers=false
+BasicTransfersOnly=false
+SkipDownloadErrors=false
+FetchRecentAlways=false
+FetchRecentRefsDays=7
+FetchRecentCommitsDays=0
+FetchRecentRefsIncludeRemotes=true
+PruneOffsetDays=3
+PruneVerifyRemoteAlways=false
+PruneVerifyUnreachableAlways=false
+PruneRemoteName=origin
+LfsStorageDir=D:\idea-sts-projects-dump\fileRepo\.git\lfs
+AccessDownload=none
+AccessUpload=none
+DownloadTransfers=basic,lfs-standalone-file,ssh
+UploadTransfers=basic,lfs-standalone-file,ssh
+GIT_DIR=D:/idea-sts-projects-dump/fileRepo/.git
+GIT_EXEC_PATH=C:/Program Files/Git/mingw64/libexec/git-core
+
+Client IP addresses:
+fe80::f6d6:e052:cd5d:bc63 10.30.130.32
+fe80::929d:b753:d12d:d1c6 172.25.64.1
+
+
+
+
 imagetool cache addInstaller --type jdk --version 8u361 --path java_1.8.361.tar.gz --architecture amd64
 
 imagetool cache addInstaller --type wls --version 14.1.1.0.0 --path fmw_14.1.1.0.0_wls_Disk1_1of1.zip --architecture amd64
