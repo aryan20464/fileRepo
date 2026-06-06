@@ -1,20 +1,20 @@
-git config --list --local
-core.repositoryformatversion=0
-core.filemode=false
-core.bare=false
-core.logallrefupdates=true
-core.symlinks=false
-core.ignorecase=true
-remote.origin.url=https://github.com/aryan20464/weblogic-image-tool.git
-remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
-branch.main.remote=origin
-branch.main.merge=refs/heads/main
-lfs.repositoryformatversion=0
-lfs.contenttype=false
-lfs.https://com.extraheader=
-http.proxy=http://12345:cri%402@swg.s.in:9090
-https.proxy=http://12345:cri%402@swg.s.in:9090
-lfs.proxy.auth=basic
+:: Remove the broken configuration strings
+git config --local --unset lfs.https://com.extraheader
+git config --local --unset http.proxy
+git config --local --unset https.proxy
+
+:: Set direct, dedicated LFS proxy pathways
+git config --local lfs.proxy "http://12345:cri%402@swg.s.in:9090"
+git config --local lfs.https://github-cloud.githubusercontent.com.extraheader ""
+
+
+git config --local --unset lfs.contenttype
+
+
+set HTTP_PROXY=
+set HTTPS_PROXY=
+set http_proxy=
+set https_proxy=
 
 
 Cloning into 'weblogic-image-tool'...
