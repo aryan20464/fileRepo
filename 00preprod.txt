@@ -1,3 +1,16 @@
+# Remove global identity and credential settings
+git config --global --unset-all user.name
+git config --global --unset-all user.email
+git config --global --unset credential.helper
+
+# Remove all global proxy configurations (Common cause for organizational 503 errors)
+git config --global --unset http.proxy
+git config --global --unset https.proxy
+git config --global --unset-all http.postBuffer
+
+
+glpat-Bhf3VReBV0ULIoix-s31P2M6MQpvOjEKdTpuNXI4dg8.01.1708p1sjw
+
 #6 [os_update 2/3] RUN microdnf update     && microdnf install gzip tar unzip libaio libnsl jq findutils diffutils make fontconfig freetype     && microdnf clean all
 #6 0.440 Downloading metadata...
 #6 0.861 error: cannot update repo 'ol8_baseos_latest': Cannot download repomd.xml: Cannot download repodata/repomd.xml: All mirrors were tried; Last error: Curl error (6): Couldn't resolve host name for https://yum.oracle.com/repo/OracleLinux/OL8/baseos/latest/x86_64/repodata/repomd.xml [Could not resolve host: yum.oracle.com]
