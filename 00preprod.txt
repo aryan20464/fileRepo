@@ -9,13 +9,13 @@ Initializing WebLogic Scripting Tool (WLST) ...
 Jython scans all the jar files it can find at first startup. Depending on the system, this process may take a few minutes to complete, and WLST may not return a prompt right away.
 Welcome to WebLogic Server Administration Scripting Shell
 Type help() for help on available commands
-####<Jun 8, 2026 8:22:48 AM> <INFO> <WebLogicDeployToolingVersion> <logVersionInfo> <WLSDPLY-01750> <The WebLogic Deploy Tooling deployApps version is 4.4.5:.3208151:Apr 24, 2026 03:43 UTC>
-####<Jun 8, 2026 8:22:48 AM> <INFO> <WLSDeployLoggingConfig> <logLoggingDirectory> <WLSDPLY-01755> <The deployApps program will write its log to directory /builds/it-tss/irm/backend/RFMIndentsModule/logs>
-####<Jun 8, 2026 8:22:48 AM> <INFO> <deploy> <main> <WLSDPLY-20043> </builds/it-tss/irm/backend/RFMIndentsModule/weblogic-deploy/lib/python/deploy.py running with Java version 1.8.0_361 on operating system Linux 4.18.0-553.126.1.el8_10.x86_64 (amd64)>
-####<Jun 8, 2026 8:22:49 AM> <INFO> <deploy> <main> <WLSDPLY-20044> </builds/it-tss/irm/backend/RFMIndentsModule/weblogic-deploy/lib/python/deploy.py is running on a Java version that supports the encryption algorithms used by WDT encryption>
-####<Jun 8, 2026 8:22:49 AM> <INFO> <PathHelper> <__init__> <WLSDPLY-02100> <Setting local file system to use Posix-style paths>
-####<Jun 8, 2026 8:22:49 AM> <INFO> <ModelContext> <__copy_from_args> <WLSDPLY-01050> <Local WebLogic version is 14.1.1.0.0>
-####<Jun 8, 2026 8:22:49 AM> <SEVERE> <deploy> <main> <WLSDPLY-20008> <deployApps argument processing failed: connect(nrm_idea, <masked_password>, http://10.191.158.42:7111, timeout=120000) in online mode failed: Failed to initialize JNDI context, tried 2 time or times totally, the interval of each time is 0ms. 
+####<Jun 8, 2026 8:29:35 AM> <INFO> <WebLogicDeployToolingVersion> <logVersionInfo> <WLSDPLY-01750> <The WebLogic Deploy Tooling deployApps version is 4.4.5:.3208151:Apr 24, 2026 03:43 UTC>
+####<Jun 8, 2026 8:29:35 AM> <INFO> <WLSDeployLoggingConfig> <logLoggingDirectory> <WLSDPLY-01755> <The deployApps program will write its log to directory /builds/it-tss/irm/backend/RFMIndentsModule/logs>
+####<Jun 8, 2026 8:29:35 AM> <INFO> <deploy> <main> <WLSDPLY-20043> </builds/it-tss/irm/backend/RFMIndentsModule/weblogic-deploy/lib/python/deploy.py running with Java version 1.8.0_361 on operating system Linux 4.18.0-553.126.1.el8_10.x86_64 (amd64)>
+####<Jun 8, 2026 8:29:35 AM> <INFO> <deploy> <main> <WLSDPLY-20044> </builds/it-tss/irm/backend/RFMIndentsModule/weblogic-deploy/lib/python/deploy.py is running on a Java version that supports the encryption algorithms used by WDT encryption>
+####<Jun 8, 2026 8:29:35 AM> <INFO> <PathHelper> <__init__> <WLSDPLY-02100> <Setting local file system to use Posix-style paths>
+####<Jun 8, 2026 8:29:35 AM> <INFO> <ModelContext> <__copy_from_args> <WLSDPLY-01050> <Local WebLogic version is 14.1.1.0.0>
+####<Jun 8, 2026 8:29:38 AM> <SEVERE> <deploy> <main> <WLSDPLY-20008> <deployApps argument processing failed: connect(nrm_idea, <masked_password>, http://10.191.158.42:7111, timeout=120000) in online mode failed: Failed to initialize JNDI context, tried 2 time or times totally, the interval of each time is 0ms. 
 http://10.191.158.42:7111: Destination 10.191.158.42, 7111 unreachable.; nested exception is: 
 	java.io.IOException: Could not connect to http://10.191.158.42:7111; No available router to destination.; nested exception is: 
 	java.rmi.ConnectException: No available router to destination.>
@@ -28,5 +28,47 @@ http://10.191.158.42:7111: Destination 10.191.158.42, 7111 unreachable.; nested 
 Total:   SEVERE :    1  WARNING :    0
 deployApps.sh failed (exit code = 2)
 Cleaning up project directory and file based variables
-00:01
+00:00
 ERROR: Job failed: exit code 1
+
+
+
+$ curl -ikv http://10.191.158.42:7111/console
+*   Trying 10.191.158.42:7111...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Connected to 10.191.158.42 (10.191.158.42) port 7111 (#0)
+> GET /console HTTP/1.1
+> Host: 10.191.158.42:7111
+> User-Agent: curl/7.76.1
+> Accept: */*
+> 
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 302 Moved Temporarily
+< Date: Mon, 08 Jun 2026 08:28:44 GMT
+< Location: http://10.191.158.42:7111/console/
+< Content-Length: 265
+< Content-Type: text/html; charset=UTF-8
+< X-ORACLE-DMS-RID: 0
+< X-Content-Type-Options: nosniff
+< X-ORACLE-DMS-ECID: 113a9c6c-d86e-401b-8083-1f325848e210-000044ba
+< X-Frame-Options: DENY
+< 
+{ [265 bytes data]
+100   265  100   265    0     0  66250      0 --:--:-- --:--:-- --:--:-- 88333
+HTTP/1.1 302 Moved Temporarily
+Date: Mon, 08 Jun 2026 08:28:44 GMT
+Location: http://10.191.158.42:7111/console/
+Content-Length: 265
+Content-Type: text/html; charset=UTF-8
+X-ORACLE-DMS-RID: 0
+X-Content-Type-Options: nosniff
+X-ORACLE-DMS-ECID: 113a9c6c-d86e-401b-8083-1f325848e210-000044ba
+X-Frame-Options: DENY
+<html><head><title>302 Moved Temporarily</title></head>
+<body bgcolor="#FFFFFF">
+<p>This document you requested has moved 
+temporarily.</p>
+<p>It's now at <a href="http://10.191.158.42:7111/console/">http://10.191.158.42:7111/console/</a>.</p>
+</body></html>
+* Connection #0 to host 10.191.158.42 left intact
