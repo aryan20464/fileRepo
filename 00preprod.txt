@@ -1,78 +1,32 @@
-deploy_job:
-  stage: deploy
-  tags: [runner55]
-  image: artifactory.jfrog.sbi:443/itfo-ittss-idea-docker-local/wls:14.1.1.0.0
-  variables:
-    APP_NAME: "RfmIndentsService"
-    TARGET_NAME: "IDEAAPP"
-    WAR_INTERNAL_PATH: "wlsdeploy/applications/RfmIndentsService.war"
-
-  before_script:
-    # ── Locate ORACLE_HOME inside the WIT image ───────────────────────────────
-    - |
-      if [ -d "/u01/app/oracle/middleware/wlserver" ]; then
-        export ORACLE_HOME="/u01/app/oracle/middleware"
-      elif [ -d "/u01/oracle/wlserver" ]; then
-        export ORACLE_HOME="/u01/oracle"
-      else
-        echo "ERROR: Cannot locate ORACLE_HOME in WIT image"
-        find /u01 -name "wlst.sh" 2>/dev/null
-        exit 1
-      fi
-    - echo "ORACLE_HOME=${ORACLE_HOME}"
-    - ls ${ORACLE_HOME}/wlserver/common/bin/wlst.sh
-
-    # ── Verify archive structure ──────────────────────────────────────────────
-    - echo "=== Archive contents ===" && unzip -l ./archive.zip
-    - |
-      if ! unzip -l ./archive.zip | grep -q "${WAR_INTERNAL_PATH}"; then
-        echo "ERROR: ${WAR_INTERNAL_PATH} not found inside archive.zip"
-        unzip -l ./archive.zip
-        exit 1
-      fi
-    - echo "=== Pre-deploy checks passed ==="
-
-  script:
-    # ── Generate model.yaml ───────────────────────────────────────────────────
-    - |
-      cat > model.yaml << EOF
-      appDeployments:
-        Application:
-          ${APP_NAME}:
-            SourcePath: '${WAR_INTERNAL_PATH}'
-            Target: '${TARGET_NAME}'
-            ModuleType: war
-            StagingMode: stage
-      EOF
-    - echo "=== model.yaml ===" && cat model.yaml
-
-    # ── Execute WDT deployApps ────────────────────────────────────────────────
-    # NOTE: -verbose removed (not supported in WDT 4.4.5)
-    # NOTE: -admin_pass_env takes variable NAME without $ sign
-    # NOTE: -admin_user takes the value directly with $ sign
-    - |
-      ./weblogic-deploy/bin/deployApps.sh \
-        -oracle_home ${ORACLE_HOME} \
-        -model_file model.yaml \
-        -archive_file ./archive.zip \
-        -admin_url "$WLS_UAT_ADMIN_URL" \
-        -admin_user "$WLS_UAT_USER" \
-        -admin_pass_env WLS_UAT_PASSWORD \
-        -domain_type WLS \
-        -remote
-
-    # ── Exit code handling ────────────────────────────────────────────────────
-    - |
-      EXIT_CODE=$?
-      if [ $EXIT_CODE -eq 0 ]; then
-        echo ">>> Deployment successful."
-      elif [ $EXIT_CODE -eq 2 ]; then
-        echo ">>> Deployment succeeded with warnings."
-        exit 0
-      else
-        echo "ERROR: WDT deployApps failed with exit code: ${EXIT_CODE}"
-        exit 1
-      fi
-
-  only:
-    - rfm-integration-devsecops
+$ ./weblogic-deploy/bin/deployApps.sh \ # collapsed multi-line command
+JDK version is 1.8.0_361-b09
+JAVA_HOME = /u01/jdk
+WLST_EXT_CLASSPATH = /builds/it-tss/irm/backend/RFMIndentsModule/weblogic-deploy/lib/weblogic-deploy-core.jar
+CLASSPATH = /builds/it-tss/irm/backend/RFMIndentsModule/weblogic-deploy/lib/weblogic-deploy-core.jar
+WLST_PROPERTIES = -Dcom.oracle.cie.script.throwException=true -Djava.util.logging.config.class=oracle.weblogic.deploy.logging.WLSDeployLoggingConfig -Dslf4j.provider=org.slf4j.jul.JULServiceProvider -Dslf4j.internal.verbosity=ERROR 
+/u01/oracle/oracle_common/common/bin/wlst.sh /builds/it-tss/irm/backend/RFMIndentsModule/weblogic-deploy/lib/python/deploy.py -oracle_home /u01/oracle -model_file model.yaml -archive_file ./archive.zip -admin_url http://10.191.158.42:7111 -admin_user nrm_idea -admin_pass_env WLS_UAT_PASSWORD -domain_type WLS -remote
+Initializing WebLogic Scripting Tool (WLST) ...
+Jython scans all the jar files it can find at first startup. Depending on the system, this process may take a few minutes to complete, and WLST may not return a prompt right away.
+Welcome to WebLogic Server Administration Scripting Shell
+Type help() for help on available commands
+####<Jun 8, 2026 8:22:48 AM> <INFO> <WebLogicDeployToolingVersion> <logVersionInfo> <WLSDPLY-01750> <The WebLogic Deploy Tooling deployApps version is 4.4.5:.3208151:Apr 24, 2026 03:43 UTC>
+####<Jun 8, 2026 8:22:48 AM> <INFO> <WLSDeployLoggingConfig> <logLoggingDirectory> <WLSDPLY-01755> <The deployApps program will write its log to directory /builds/it-tss/irm/backend/RFMIndentsModule/logs>
+####<Jun 8, 2026 8:22:48 AM> <INFO> <deploy> <main> <WLSDPLY-20043> </builds/it-tss/irm/backend/RFMIndentsModule/weblogic-deploy/lib/python/deploy.py running with Java version 1.8.0_361 on operating system Linux 4.18.0-553.126.1.el8_10.x86_64 (amd64)>
+####<Jun 8, 2026 8:22:49 AM> <INFO> <deploy> <main> <WLSDPLY-20044> </builds/it-tss/irm/backend/RFMIndentsModule/weblogic-deploy/lib/python/deploy.py is running on a Java version that supports the encryption algorithms used by WDT encryption>
+####<Jun 8, 2026 8:22:49 AM> <INFO> <PathHelper> <__init__> <WLSDPLY-02100> <Setting local file system to use Posix-style paths>
+####<Jun 8, 2026 8:22:49 AM> <INFO> <ModelContext> <__copy_from_args> <WLSDPLY-01050> <Local WebLogic version is 14.1.1.0.0>
+####<Jun 8, 2026 8:22:49 AM> <SEVERE> <deploy> <main> <WLSDPLY-20008> <deployApps argument processing failed: connect(nrm_idea, <masked_password>, http://10.191.158.42:7111, timeout=120000) in online mode failed: Failed to initialize JNDI context, tried 2 time or times totally, the interval of each time is 0ms. 
+http://10.191.158.42:7111: Destination 10.191.158.42, 7111 unreachable.; nested exception is: 
+	java.io.IOException: Could not connect to http://10.191.158.42:7111; No available router to destination.; nested exception is: 
+	java.rmi.ConnectException: No available router to destination.>
+Issue Log for deployApps version 4.4.5 running WebLogic version 14.1.1.0.0 in online mode against server using WebLogic version UNKNOWN:
+SEVERE Messages:
+        1. WLSDPLY-20008: deployApps argument processing failed: connect(nrm_idea, <masked_password>, http://10.191.158.42:7111, timeout=120000) in online mode failed: Failed to initialize JNDI context, tried 2 time or times totally, the interval of each time is 0ms. 
+http://10.191.158.42:7111: Destination 10.191.158.42, 7111 unreachable.; nested exception is: 
+	java.io.IOException: Could not connect to http://10.191.158.42:7111; No available router to destination.; nested exception is: 
+	java.rmi.ConnectException: No available router to destination.
+Total:   SEVERE :    1  WARNING :    0
+deployApps.sh failed (exit code = 2)
+Cleaning up project directory and file based variables
+00:01
+ERROR: Job failed: exit code 1
