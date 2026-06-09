@@ -1,113 +1,136 @@
-Error: alloy-config.hcl:88:1: Failed to build component: building component: invalid stage config template source value is required
+local.file_match "swift_listener" {
+  path_targets = [{ "__path__" = "/weblogic/app_logs/in_swift_listner/service.log" }]
+}
+ 
+loki.source.file "swift_listener" {
+  targets    = local.file_match.swift_listener.targets
+  forward_to = [loki.process.add_swift_listener_labels.receiver]
+}
+ 
+loki.process "add_swift_listener_labels" {
+  
+  stage.template {
+	source = ""
+	template = "S1 - {{.Entry}}" 
+  } 
+  
+  stage.static_labels {
+    values = {
+      service_name = "Inward-Swift-Listener-S1",
+	  job = "Inward-Swift-Listener",
+    }
+  }
+  forward_to = [loki.write.default.receiver]
+}
 
- 87 |
- 88 |   loki.process "add_accounting_labels" {
-    |  _^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 89 | |
- 90 | |   stage.template {
- 91 | |     source = ""
- 92 | |     template = "S1 - {{.Entry}}"
- 93 | |   }
- 94 | |
- 95 | |   stage.static_labels {
- 96 | |     values = {
- 97 | |       service_name = "Accounting-S1",
- 98 | |       job = "Accounting",
- 99 | |     }
-100 | |   }
-101 | |   forward_to = [loki.write.default.receiver]
-102 | | }
-    | |_^
-103 |
 
-Error: alloy-config.hcl:10:1: Failed to build component: building component: invalid stage config template source value is required
+local.file_match "in_swift" {
+  path_targets = [{ "__path__" = "/weblogic/app_logs/in_swift/service.log" }]
+}
+ 
+loki.source.file "in_swift" {
+  targets    = local.file_match.in_swift.targets
+  forward_to = [loki.process.add_in_swift_labels.receiver]
+}
+ 
+loki.process "add_in_swift_labels" {
 
- 9 |
-10 |   loki.process "add_swift_listener_labels" {
-   |  _^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-11 | |
-12 | |   stage.template {
-13 | |     source = ""
-14 | |     template = "S1 - {{.Entry}}"
-15 | |   }
-16 | |
-17 | |   stage.static_labels {
-18 | |     values = {
-19 | |       service_name = "Inward-Swift-Listener-S1",
-20 | |       job = "Inward-Swift-Listener",
-21 | |     }
-22 | |   }
-23 | |   forward_to = [loki.write.default.receiver]
-24 | | }
-   | |_^
-25 |
+  stage.template {
+	source = ""
+	template = "S1 - {{.Entry}}" 
+  }
 
-Error: alloy-config.hcl:62:1: Failed to build component: building component: invalid stage config template source value is required
+  stage.static_labels {
+    values = {
+      service_name = "Inward-Swift-Service-S1",
+	  job = "Inward-Swift-Service",
+    }
+  }
+  forward_to = [loki.write.default.receiver]
+}
 
-61 |
-62 |   loki.process "add_in_swift_sender_labels" {
-   |  _^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-63 | |
-64 | |   stage.template {
-65 | |     source = ""
-66 | |     template = "S1 - {{.Entry}}"
-67 | |   }
-68 | |
-69 | |   stage.static_labels {
-70 | |     values = {
-71 | |       service_name = "Inward-Swift-Sender-S1",
-72 | |       job = "Inward-Swift-Sender",
-73 | |     }
-74 | |   }
-75 | |   forward_to = [loki.write.default.receiver]
-76 | | }
-   | |_^
-77 |
 
-Error: alloy-config.hcl:36:1: Failed to build component: building component: invalid stage config template source value is required
+local.file_match "in_swift_sender" {
+  path_targets = [{ "__path__" = "/weblogic/app_logs/in_swift_sender/service.log" }]
+}
+ 
+loki.source.file "in_swift_sender" {
+  targets    = local.file_match.in_swift_sender.targets
+  forward_to = [loki.process.add_in_swift_sender_labels.receiver]
+}
+ 
+loki.process "add_in_swift_sender_labels" {
 
-35 |
-36 |   loki.process "add_in_swift_labels" {
-   |  _^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-37 | |
-38 | |   stage.template {
-39 | |     source = ""
-40 | |     template = "S1 - {{.Entry}}"
-41 | |   }
-42 | |
-43 | |   stage.static_labels {
-44 | |     values = {
-45 | |       service_name = "Inward-Swift-Service-S1",
-46 | |       job = "Inward-Swift-Service",
-47 | |     }
-48 | |   }
-49 | |   forward_to = [loki.write.default.receiver]
-50 | | }
-   | |_^
-51 |
+  stage.template {
+	source = ""
+	template = "S1 - {{.Entry}}" 
+  }
+  
+  stage.static_labels {
+    values = {
+      service_name = "Inward-Swift-Sender-S1",
+	  job = "Inward-Swift-Sender",
+    }
+  }
+  forward_to = [loki.write.default.receiver]
+}
 
-Error: alloy-config.hcl:114:1: Failed to build component: building component: invalid stage config template source value is required
 
-113 |
-114 |   loki.process "add_fxout_labels" {
-    |  _^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-115 | |
-116 | |   stage.template {
-117 | |     source = ""
-118 | |     template = "S1 - {{.Entry}}"
-119 | |   }
-120 | |
-121 | |   stage.static_labels {
-122 | |     values = {
-123 | |       service_name = "FXOUT-S1",
-124 | |       job = "FXOUT",
-125 | |     }
-126 | |   }
-127 | |   forward_to = [loki.write.default.receiver]
-128 | | }
-    | |_^
-129 |
+local.file_match "accounting" {
+  path_targets = [{ "__path__" = "/weblogic/app_logs/Accounting/service.log" }]
+}
+ 
+loki.source.file "accounting" {
+  targets    = local.file_match.accounting.targets
+  forward_to = [loki.process.add_accounting_labels.receiver]
+}
+ 
+loki.process "add_accounting_labels" {
 
-ts=2026-06-09T10:52:23.710009578Z level=error msg="failed to evaluate config" controller_path=/ controller_id="" node=loki.process.add_swift_listener_labels err="building component: invalid stage config template source value is required"
-ts=2026-06-09T10:52:23.710148344Z level=error msg="failed to start reporter" err="context canceled"
-interrupt rec
+  stage.template {
+	source = ""
+	template = "S1 - {{.Entry}}" 
+  }
+  
+  stage.static_labels {
+    values = {
+      service_name = "Accounting-S1",
+	  job = "Accounting",
+    }
+  }
+  forward_to = [loki.write.default.receiver]
+}
+
+
+local.file_match "fxout" {
+  path_targets = [{ "__path__" = "/weblogic/app_logs/fxout.log" }]
+}
+ 
+loki.source.file "fxout" {
+  targets    = local.file_match.fxout.targets
+  forward_to = [loki.process.add_fxout_labels.receiver]
+}
+ 
+loki.process "add_fxout_labels" {
+
+  stage.template {
+	source = ""
+	template = "S1 - {{.Entry}}" 
+  }
+  
+  stage.static_labels {
+    values = {
+      service_name = "FXOUT-S1",
+	  job = "FXOUT",
+    }
+  }
+  forward_to = [loki.write.default.receiver]
+}
+
+
+
+loki.write "default" {
+  endpoint {
+    url = "http://10.191.151.163:5112/loki/api/v1/push"
+  }
+}
