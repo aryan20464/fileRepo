@@ -1,136 +1,130 @@
 local.file_match "swift_listener" {
   path_targets = [{ "__path__" = "/weblogic/app_logs/in_swift_listner/service.log" }]
 }
- 
+
 loki.source.file "swift_listener" {
   targets    = local.file_match.swift_listener.targets
   forward_to = [loki.process.add_swift_listener_labels.receiver]
 }
- 
+
 loki.process "add_swift_listener_labels" {
-  
-  stage.template {
-	source = ""
-	template = "S1 - {{.Entry}}" 
-  } 
-  
+  stage.replace {
+    expression = "^"
+    replace    = "S1 - "
+  }
+
   stage.static_labels {
     values = {
       service_name = "Inward-Swift-Listener-S1",
-	  job = "Inward-Swift-Listener",
+      job          = "Inward-Swift-Listener",
     }
   }
+
   forward_to = [loki.write.default.receiver]
 }
-
 
 local.file_match "in_swift" {
   path_targets = [{ "__path__" = "/weblogic/app_logs/in_swift/service.log" }]
 }
- 
+
 loki.source.file "in_swift" {
   targets    = local.file_match.in_swift.targets
   forward_to = [loki.process.add_in_swift_labels.receiver]
 }
- 
-loki.process "add_in_swift_labels" {
 
-  stage.template {
-	source = ""
-	template = "S1 - {{.Entry}}" 
+loki.process "add_in_swift_labels" {
+  stage.replace {
+    expression = "^"
+    replace    = "S1 - "
   }
 
   stage.static_labels {
     values = {
       service_name = "Inward-Swift-Service-S1",
-	  job = "Inward-Swift-Service",
+      job          = "Inward-Swift-Service",
     }
   }
+
   forward_to = [loki.write.default.receiver]
 }
-
 
 local.file_match "in_swift_sender" {
   path_targets = [{ "__path__" = "/weblogic/app_logs/in_swift_sender/service.log" }]
 }
- 
+
 loki.source.file "in_swift_sender" {
   targets    = local.file_match.in_swift_sender.targets
   forward_to = [loki.process.add_in_swift_sender_labels.receiver]
 }
- 
-loki.process "add_in_swift_sender_labels" {
 
-  stage.template {
-	source = ""
-	template = "S1 - {{.Entry}}" 
+loki.process "add_in_swift_sender_labels" {
+  stage.replace {
+    expression = "^"
+    replace    = "S1 - "
   }
-  
+
   stage.static_labels {
     values = {
       service_name = "Inward-Swift-Sender-S1",
-	  job = "Inward-Swift-Sender",
+      job          = "Inward-Swift-Sender",
     }
   }
+
   forward_to = [loki.write.default.receiver]
 }
-
 
 local.file_match "accounting" {
   path_targets = [{ "__path__" = "/weblogic/app_logs/Accounting/service.log" }]
 }
- 
+
 loki.source.file "accounting" {
   targets    = local.file_match.accounting.targets
   forward_to = [loki.process.add_accounting_labels.receiver]
 }
- 
-loki.process "add_accounting_labels" {
 
-  stage.template {
-	source = ""
-	template = "S1 - {{.Entry}}" 
+loki.process "add_accounting_labels" {
+  stage.replace {
+    expression = "^"
+    replace    = "S1 - "
   }
-  
+
   stage.static_labels {
     values = {
       service_name = "Accounting-S1",
-	  job = "Accounting",
+      job          = "Accounting",
     }
   }
+
   forward_to = [loki.write.default.receiver]
 }
-
 
 local.file_match "fxout" {
   path_targets = [{ "__path__" = "/weblogic/app_logs/fxout.log" }]
 }
- 
+
 loki.source.file "fxout" {
   targets    = local.file_match.fxout.targets
   forward_to = [loki.process.add_fxout_labels.receiver]
 }
- 
-loki.process "add_fxout_labels" {
 
-  stage.template {
-	source = ""
-	template = "S1 - {{.Entry}}" 
+loki.process "add_fxout_labels" {
+  stage.replace {
+    expression = "^"
+    replace    = "S1 - "
   }
-  
+
   stage.static_labels {
     values = {
       service_name = "FXOUT-S1",
-	  job = "FXOUT",
+      job          = "FXOUT",
     }
   }
+
   forward_to = [loki.write.default.receiver]
 }
 
-
-
 loki.write "default" {
   endpoint {
-    url = "http://10.191.151.163:5112/loki/api/v1/push"
+    url = "http://<ip>:5112/loki/api/v1/push"
   }
 }
