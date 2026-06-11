@@ -1,130 +1,229 @@
-local.file_match "swift_listener" {
-  path_targets = [{ "__path__" = "/weblogic/app_logs/in_swift_listner/service.log" }]
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.5.14</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>in.co.xec.rfm</groupId>
+	<artifactId>RfmIndentsService</artifactId>
+	<version>1</version>
+	<packaging>war</packaging>
+	<name>IndentsService</name>
+	<description>Indents Service For RFM</description>
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
-loki.source.file "swift_listener" {
-  targets    = local.file_match.swift_listener.targets
-  forward_to = [loki.process.add_swift_listener_labels.receiver]
-}
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>5.6.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-config -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>5.6.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>5.6.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-envers</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc8</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-lang3</artifactId>
+		</dependency>																								
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.13.4</version>
+		</dependency>
+		<!-- JSON WEB TOKEN -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.0</version>
+		</dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>17.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+		<!--added by chakri on 20241023 for sending email -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+	</dependencies>
 
-loki.process "add_swift_listener_labels" {
-  stage.replace {
-    expression = "^"
-    replace    = "S1 - "
-  }
 
-  stage.static_labels {
-    values = {
-      service_name = "Inward-Swift-Listener-S1",
-      job          = "Inward-Swift-Listener",
-    }
-  }
+	<build>
+		<finalName>${project.artifactId}</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
 
-  forward_to = [loki.write.default.receiver]
-}
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>8</source>
+					<target>8</target>
+				</configuration>
+			</plugin>
+		</plugins>
 
-local.file_match "in_swift" {
-  path_targets = [{ "__path__" = "/weblogic/app_logs/in_swift/service.log" }]
-}
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.properties</include>
+					<include>**/*.txt</include>
+				</includes>
+			</resource>
+		</resources>
+	</build>
 
-loki.source.file "in_swift" {
-  targets    = local.file_match.in_swift.targets
-  forward_to = [loki.process.add_in_swift_labels.receiver]
-}
+	<profiles>
+		<profile>
+			<id>local2</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<spring.profiles.active>local2</spring.profiles.active>
+			</properties>
+		</profile>
+		<profile>
+			<id>local1</id>
+			<properties>
+				<spring.profiles.active>local1</spring.profiles.active>
+			</properties>
+		</profile>
+		<profile>
+			<id>local</id>
+			<properties>
+				<spring.profiles.active>local</spring.profiles.active>
+			</properties>
+		</profile>
 
-loki.process "add_in_swift_labels" {
-  stage.replace {
-    expression = "^"
-    replace    = "S1 - "
-  }
+		<profile>
+			<id>uat</id>
+			<properties>
+				<spring.profiles.active>uat</spring.profiles.active>
+			</properties>
+		</profile>
 
-  stage.static_labels {
-    values = {
-      service_name = "Inward-Swift-Service-S1",
-      job          = "Inward-Swift-Service",
-    }
-  }
+		<profile>
+			<id>prod</id>
+			<properties>
+				<spring.profiles.active>prod</spring.profiles.active>
+			</properties>
+		</profile>
+		<profile>
+			<id>dr</id>
+			<properties>
+				<spring.profiles.active>dr</spring.profiles.active>
+			</properties>
+		</profile>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<spring.profiles.active>dev</spring.profiles.active>
+			</properties>
+		</profile>
 
-  forward_to = [loki.write.default.receiver]
-}
+	</profiles>
 
-local.file_match "in_swift_sender" {
-  path_targets = [{ "__path__" = "/weblogic/app_logs/in_swift_sender/service.log" }]
-}
-
-loki.source.file "in_swift_sender" {
-  targets    = local.file_match.in_swift_sender.targets
-  forward_to = [loki.process.add_in_swift_sender_labels.receiver]
-}
-
-loki.process "add_in_swift_sender_labels" {
-  stage.replace {
-    expression = "^"
-    replace    = "S1 - "
-  }
-
-  stage.static_labels {
-    values = {
-      service_name = "Inward-Swift-Sender-S1",
-      job          = "Inward-Swift-Sender",
-    }
-  }
-
-  forward_to = [loki.write.default.receiver]
-}
-
-local.file_match "accounting" {
-  path_targets = [{ "__path__" = "/weblogic/app_logs/Accounting/service.log" }]
-}
-
-loki.source.file "accounting" {
-  targets    = local.file_match.accounting.targets
-  forward_to = [loki.process.add_accounting_labels.receiver]
-}
-
-loki.process "add_accounting_labels" {
-  stage.replace {
-    expression = "^"
-    replace    = "S1 - "
-  }
-
-  stage.static_labels {
-    values = {
-      service_name = "Accounting-S1",
-      job          = "Accounting",
-    }
-  }
-
-  forward_to = [loki.write.default.receiver]
-}
-
-local.file_match "fxout" {
-  path_targets = [{ "__path__" = "/weblogic/app_logs/fxout.log" }]
-}
-
-loki.source.file "fxout" {
-  targets    = local.file_match.fxout.targets
-  forward_to = [loki.process.add_fxout_labels.receiver]
-}
-
-loki.process "add_fxout_labels" {
-  stage.replace {
-    expression = "^"
-    replace    = "S1 - "
-  }
-
-  stage.static_labels {
-    values = {
-      service_name = "FXOUT-S1",
-      job          = "FXOUT",
-    }
-  }
-
-  forward_to = [loki.write.default.receiver]
-}
-
-loki.write "default" {
-  endpoint {
-    url = "http://<ip>:5112/loki/api/v1/push"
-  }
-}
+</project>
