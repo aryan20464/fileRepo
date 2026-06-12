@@ -1,67 +1,77 @@
-2.4.3. Unique X.509 Mapping should be present
-
-applications:1. For Your Applications (Web Applications & APIs)This is the primary area of impact. If you build a web application hosted on WebLogic and secure it using Two-Way SSL (Client Certificate Authentication), WebLogic handles the authentication behind the scenes.When a user hits your application URL, their browser prompts them to select an X.509 certificate.The DefaultIdentityAsserter intercepts this certificate, maps the attribute (e.g., CN or E) to a WebLogic user, and automatically logs them into your application.The Risk here: If your application relies on this mapping, John Smith A could accidentally log into John Smith B's application account.2. For the WebLogic Administration Console LoginBy default, when you access the WebLogic Administration Console (https://hostname:7001/console), you see a standard username and password web form.If you use the standard username/password form: This X.509 unique mapping control does not apply to you. The DefaultIdentityAsserter is not triggered by a standard password login.If you have configured Console Redirection for SSL Authentication: If your administrators explicitly configured the WebLogic Console to
-bypass passwords and log admins in using their physical smart cards (like CAC/PIV cards) or browser certificates, then yes, this mapping applies to the Console.The Risk here: A low-privileged user with a similar certificate attribute could inadvertently get logged into the Console with full Admin server privileges.SummaryIf you only log into the WebLogic Console using a username and password, this CIS control is dormant for the console itself. However, security auditors flag it because the underlying WebLogic security framework (the security realm) is always active and vulnerable to exploitation if any application on the server utilizes certificate-based logins.
-
-
--Dweblogic.security.SSL.minimumProtocolVersion=TLSv1.2
--Djdk.tls.client.protocols=TLSv1.2
-
-
-3.1	3.1.4	Min Alphabetic Characters	min-alphabetic-characters is not set
-3.1	3.1.6	Min Uppercase Characters	min-uppercase-characters is not set
-3.1	3.1.7	Min Lowercase Characters	min-lowercase-characters is not set
-3.1	3.1.9	Min Numeric Or Special Characters	min-non-alphanumeric-characters is not set
-3.1	3.1.10	Reject Equal Or Contain Username	reject-equal-or-contain-username is not set
-3.1	3.1.11	Reject Equal Or Contain Reverse Username	reject-equal-or-contain-reverse-username is not set
-
-
-# configure_password_policy.py
-# Run with: $WL_HOME/common/bin/wlst.sh configure_password_policy.py
-
-adminUrl  = 't3://localhost:7001'   # change to your Admin Server URL
-adminUser = 'weblogic'              # change to your admin username
-adminPass = 'yourpassword'          # change to your admin password
-realmName = 'myrealm'              # change if your realm name differs
-
-connect(adminUser, adminPass, adminUrl)
-
-edit()
-startEdit()
-
-# Navigate to the Password Validation Provider MBean
-cd('/SecurityConfiguration/' + realmName + '/Realms/' + realmName + '/PasswordValidators/SystemPasswordValidator')
-
-# 3.1.4 - Min Alphabetic Characters
-set('MinAlphabeticCharacters', 1)
-
-# 3.1.6 - Min Uppercase Characters
-set('MinUppercaseCharacters', 1)
-
-# 3.1.7 - Min Lowercase Characters
-set('MinLowercaseCharacters', 1)
-
-# 3.1.9 - Min Numeric or Special Characters (non-alphanumeric)
-set('MinNonAlphanumericCharacters', 1)
-
-# 3.1.10 - Reject if password equals or contains username
-set('RejectEqualOrContainUsername', true)
-
-# 3.1.11 - Reject if password equals or contains reverse username
-set('RejectEqualOrContainReverseUsername', true)
-
-save()
-activate()
-
-print("Password validation policy applied successfully.")
-disconnect()
-exit()
-
-
-$WL_HOME/common/bin/wlst.sh configure_password_policy.py
-
-connect('weblogic', 'yourpassword', 't3://localhost:7001')
-cd('/SecurityConfiguration/myrealm/Realms/myrealm/PasswordValidators/SystemPasswordValidator')
-ls()
-
-
+Connecting to t3://10.177.142.173:6001 with userid irm_idea ...
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+  File "/weblogic/oracle/middleware/oracle_common/common/bin/configure_password_policy.py", line 9, in <module>
+    connect(adminUser, adminPass, adminUrl)
+  File "<iostream>", line 19, in connect
+  File "<iostream>", line 550, in raiseWLSTException
+        at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+        at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
+        at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+        at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
+        at org.python.core.PyObject.proxyInit(PyObject.java:188)
+        at org.python.core.Deriveds.dispatch__init__(Deriveds.java:25)
+        at org.python.core.PyObjectDerived.dispatch__init__(PyObjectDerived.java:1112)
+        at org.python.core.PyType.type___call__(PyType.java:2408)
+        at org.python.core.PyType.__call__(PyType.java:2389)
+        at org.python.core.PyObject.__call__(PyObject.java:461)
+        at org.python.core.PyObject.__call__(PyObject.java:465)
+        at org.python.pycode._pyx39.raiseWLSTException$28(<iostream>:550)
+        at org.python.pycode._pyx39.call_function(<iostream>)
+        at org.python.core.PyTableCode.call(PyTableCode.java:173)
+        at org.python.core.PyBaseCode.call(PyBaseCode.java:134)
+        at org.python.core.PyFunction.__call__(PyFunction.java:416)
+        at org.python.pycode._pyx8.connect$1(<iostream>:22)
+        at org.python.pycode._pyx8.call_function(<iostream>)
+        at org.python.core.PyTableCode.call(PyTableCode.java:173)
+        at org.python.core.PyBaseCode.call(PyBaseCode.java:306)
+        at org.python.core.PyBaseCode.call(PyBaseCode.java:158)
+        at org.python.core.PyFunction.__call__(PyFunction.java:437)
+        at org.python.pycode._pyx34.f$0(/weblogic/oracle/middleware/oracle_common/common/bin/configure_password_policy.py:40)
+        at org.python.pycode._pyx34.call_function(/weblogic/oracle/middleware/oracle_common/common/bin/configure_password_policy.py)
+        at org.python.core.PyTableCode.call(PyTableCode.java:173)
+        at org.python.core.PyCode.call(PyCode.java:18)
+        at org.python.core.Py.runCode(Py.java:1703)
+        at org.python.core.__builtin__.execfile_flags(__builtin__.java:535)
+        at org.python.core.__builtin__.execfile(__builtin__.java:512)
+        at org.python.core.__builtin__.execfile(__builtin__.java:543)
+        at org.python.core.BuiltinFunctions.__call__(__builtin__.java:88)
+        at org.python.core.PyObject.__call__(PyObject.java:465)
+        at org.python.pycode._pyx33.f$0(<console>:1)
+        at org.python.pycode._pyx33.call_function(<console>)
+        at org.python.core.PyTableCode.call(PyTableCode.java:173)
+        at org.python.core.PyCode.call(PyCode.java:18)
+        at org.python.core.Py.runCode(Py.java:1703)
+        at org.python.core.Py.exec(Py.java:1747)
+        at org.python.util.PythonInterpreter.exec(PythonInterpreter.java:277)
+        at org.python.util.InteractiveInterpreter.runcode(InteractiveInterpreter.java:130)
+        at org.python.util.InteractiveInterpreter.runsource(InteractiveInterpreter.java:115)
+        at org.python.util.InteractiveInterpreter.runsource(InteractiveInterpreter.java:62)
+        at weblogic.management.scripting.utils.WLSTInterpreter.runsource(WLSTInterpreter.java:1168)
+        at weblogic.management.scripting.WLST.main(WLST.java:244)
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.lang.reflect.Method.invoke(Method.java:498)
+        at weblogic.WLST.main(WLST.java:47)
+Caused by: javax.naming.CommunicationException: Failed to initialize JNDI context, tried 2 time or times totally, the interval of each time is 0ms.
+[Login failed for an unknown reason: P] [Root exception is weblogic.socket.UnrecoverableConnectException: [Login failed for an unknown reason: P]]
+        at weblogic.jndi.WLInitialContextFactoryDelegate.throwRetryException(WLInitialContextFactoryDelegate.java:467)
+        at weblogic.jndi.WLInitialContextFactoryDelegate.getInitialContext(WLInitialContextFactoryDelegate.java:403)
+        at weblogic.jndi.Environment.getContext(Environment.java:353)
+        at weblogic.jndi.Environment.getContext(Environment.java:322)
+        at weblogic.jndi.WLInitialContextFactory.getInitialContext(WLInitialContextFactory.java:131)
+        at javax.naming.spi.NamingManager.getInitialContext(NamingManager.java:694)
+        at javax.naming.InitialContext.getDefaultInitCtx(InitialContext.java:313)
+        at javax.naming.InitialContext.init(InitialContext.java:244)
+        at javax.naming.InitialContext.<init>(InitialContext.java:216)
+        at weblogic.management.scripting.WLSTHelper.populateInitialContext(WLSTHelper.java:805)
+        at weblogic.management.scripting.WLSTHelper.connect(WLSTHelper.java:283)
+        at weblogic.management.scripting.WLScriptContext.connect(WLScriptContext.java:70)
+        at weblogic.management.scripting.utils.WLSTUtil.initializeOnlineWLST(WLSTUtil.java:241)
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.lang.reflect.Method.invoke(Method.java:498)
+__main__.WLSTException: Error occurred while performing connect : Error getting the initial context. There is no server running at t3://10.177.142.173:6001 : Failed to initialize JNDI context, tried 2 time or times totally, the interval of each time is 0ms.
+[Login failed for an unknown reason: P]
