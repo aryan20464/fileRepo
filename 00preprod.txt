@@ -1,104 +1,43 @@
-Started edit session, be sure to save and activate your changes once you are done.
-No stack trace available.
-Traceback (most recent call last):
-  File "/weblogic/oracle/middleware/oracle_common/common/bin/configure_password_policy.py", line 15, in <module>
-    cd('/SecurityConfiguration/' + realmName + '/Realms/' + realmName + '/PasswordValidators/SystemPasswordValidator')
-  File "<iostream>", line 170, in cd
-  File "<iostream>", line 550, in raiseWLSTException
-        at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
-        at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
-        at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
-        at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
-        at org.python.core.PyObject.proxyInit(PyObject.java:188)
-        at org.python.core.Deriveds.dispatch__init__(Deriveds.java:25)
-        at org.python.core.PyObjectDerived.dispatch__init__(PyObjectDerived.java:1112)
-        at org.python.core.PyType.type___call__(PyType.java:2408)
-        at org.python.core.PyType.__call__(PyType.java:2389)
-        at org.python.core.PyObject.__call__(PyObject.java:461)
-        at org.python.core.PyObject.__call__(PyObject.java:465)
-        at org.python.pycode._pyx5.raiseWLSTException$28(<iostream>:550)
-        at org.python.pycode._pyx5.call_function(<iostream>)
-        at org.python.core.PyTableCode.call(PyTableCode.java:173)
-        at org.python.core.PyBaseCode.call(PyBaseCode.java:134)
-        at org.python.core.PyFunction.__call__(PyFunction.java:416)
-        at org.python.pycode._pyx33.cd$3(<iostream>:172)
-        at org.python.pycode._pyx33.call_function(<iostream>)
-        at org.python.core.PyTableCode.call(PyTableCode.java:173)
-        at org.python.core.PyBaseCode.call(PyBaseCode.java:134)
-        at org.python.core.PyFunction.__call__(PyFunction.java:416)
-        at org.python.pycode._pyx32.f$0(/weblogic/oracle/middleware/oracle_common/common/bin/configure_password_policy.py:40)
-        at org.python.pycode._pyx32.call_function(/weblogic/oracle/middleware/oracle_common/common/bin/configure_password_policy.py)
-        at org.python.core.PyTableCode.call(PyTableCode.java:173)
-        at org.python.core.PyCode.call(PyCode.java:18)
-        at org.python.core.Py.runCode(Py.java:1703)
-        at org.python.util.PythonInterpreter.execfile(PythonInterpreter.java:297)
-        at weblogic.management.scripting.WLST.main(WLST.java:198)
-        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-        at java.lang.reflect.Method.invoke(Method.java:498)
-        at weblogic.WLST.main(WLST.java:47)
-Caused by: weblogic.management.scripting.ScriptException: Error occurred while performing cd : Attribute myrealm not found. Use ls('a') to view the attributes
-        at weblogic.management.scripting.core.ExceptionCoreHandler.handleException(ExceptionCoreHandler.java:63)
-        at weblogic.management.scripting.WLSTUtils.throwWLSTException(WLSTUtils.java:338)
-        at weblogic.management.scripting.BrowseHandler.regularPush(BrowseHandler.java:262)
-        at weblogic.management.scripting.BrowseHandler.splitPush(BrowseHandler.java:135)
-        at weblogic.management.scripting.BrowseHandler.cd(BrowseHandler.java:731)
-        at weblogic.management.scripting.BrowseHandler.cd(BrowseHandler.java:714)
-        at weblogic.management.scripting.WLScriptContext.cd(WLScriptContext.java:196)
-        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-        at java.lang.reflect.Method.invoke(Method.java:498)
-__main__.WLSTException: Error cding to the MBean
-Problem invoking WLST - Traceback (most recent call last):
-  File "/weblogic/oracle/middleware/oracle_common/common/bin/configure_password_policy.py", line 15, in <module>
-    cd('/SecurityConfiguration/' + realmName + '/Realms/' + realmName + '/PasswordValidators/SystemPasswordValidator')
-  File "<iostream>", line 170, in cd
-  File "<iostream>", line 550, in raiseWLSTException
-        at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
-        at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
-        at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
-        at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
-        at org.python.core.PyObject.proxyInit(PyObject.java:188)
-        at org.python.core.Deriveds.dispatch__init__(Deriveds.java:25)
-        at org.python.core.PyObjectDerived.dispatch__init__(PyObjectDerived.java:1112)
-        at org.python.core.PyType.type___call__(PyType.java:2408)
-        at org.python.core.PyType.__call__(PyType.java:2389)
-        at org.python.core.PyObject.__call__(PyObject.java:461)
-        at org.python.core.PyObject.__call__(PyObject.java:465)
-        at org.python.pycode._pyx5.raiseWLSTException$28(<iostream>:550)
-        at org.python.pycode._pyx5.call_function(<iostream>)
-        at org.python.core.PyTableCode.call(PyTableCode.java:173)
-        at org.python.core.PyBaseCode.call(PyBaseCode.java:134)
-        at org.python.core.PyFunction.__call__(PyFunction.java:416)
-        at org.python.pycode._pyx33.cd$3(<iostream>:172)
-        at org.python.pycode._pyx33.call_function(<iostream>)
-        at org.python.core.PyTableCode.call(PyTableCode.java:173)
-        at org.python.core.PyBaseCode.call(PyBaseCode.java:134)
-        at org.python.core.PyFunction.__call__(PyFunction.java:416)
-        at org.python.pycode._pyx32.f$0(/weblogic/oracle/middleware/oracle_common/common/bin/configure_password_policy.py:40)
-        at org.python.pycode._pyx32.call_function(/weblogic/oracle/middleware/oracle_common/common/bin/configure_password_policy.py)
-        at org.python.core.PyTableCode.call(PyTableCode.java:173)
-        at org.python.core.PyCode.call(PyCode.java:18)
-        at org.python.core.Py.runCode(Py.java:1703)
-        at org.python.util.PythonInterpreter.execfile(PythonInterpreter.java:297)
-        at weblogic.management.scripting.WLST.main(WLST.java:198)
-        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-        at java.lang.reflect.Method.invoke(Method.java:498)
-        at weblogic.WLST.main(WLST.java:47)
-Caused by: weblogic.management.scripting.ScriptException: Error occurred while performing cd : Attribute myrealm not found. Use ls('a') to view the attributes
-        at weblogic.management.scripting.core.ExceptionCoreHandler.handleException(ExceptionCoreHandler.java:63)
-        at weblogic.management.scripting.WLSTUtils.throwWLSTException(WLSTUtils.java:338)
-        at weblogic.management.scripting.BrowseHandler.regularPush(BrowseHandler.java:262)
-        at weblogic.management.scripting.BrowseHandler.splitPush(BrowseHandler.java:135)
-        at weblogic.management.scripting.BrowseHandler.cd(BrowseHandler.java:731)
-        at weblogic.management.scripting.BrowseHandler.cd(BrowseHandler.java:714)
-        at weblogic.management.scripting.WLScriptContext.cd(WLScriptContext.java:196)
-        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-        at java.lang.reflect.Method.invoke(Method.java:498)
-__main__.WLSTException: Error cding to the MBean
+-Xms6G -Xmx12G -XX:MaxPermSize=2G -Xss4m -Dweblogic.security.SSL.minimumProtocolVersion=TLSv1.2 -Djdk.tls.client.protocols=TLSv1.2
+
+# Run with: $WL_HOME/common/bin/wlst.sh configure_password_policy.py
+
+adminUrl  = 't3://10.177.142.173:6001'   # change to your Admin Server URL
+adminUser = 'irm_idea'              # change to your admin username
+adminPass = 'Idea2020irm#'          # change to your admin password
+realmName = 'myrealm'              # change if your realm name differs
+
+connect(adminUser, adminPass, adminUrl)
+
+edit()
+startEdit()
+
+# Navigate to the Password Validation Provider MBean
+cd('/SecurityConfiguration/' + realmName + '/Realms/' + realmName + '/PasswordValidators/SystemPasswordValidator')
+
+# 3.1.4 - Min Alphabetic Characters
+set('MinAlphabeticCharacters', 1)
+
+# 3.1.6 - Min Uppercase Characters
+set('MinUppercaseCharacters', 1)
+
+# 3.1.7 - Min Lowercase Characters
+set('MinLowercaseCharacters', 1)
+
+# 3.1.9 - Min Numeric or Special Characters (non-alphanumeric)
+set('MinNonAlphanumericCharacters', 1)
+
+# 3.1.10 - Reject if password equals or contains username
+set('RejectEqualOrContainUsername', true)
+
+# 3.1.11 - Reject if password equals or contains reverse username
+set('RejectEqualOrContainReverseUsername', true)
+
+save()
+activate()
+
+print("Password validation policy applied successfully.")
+disconnect()
+exit()
+
+cd /weblogic/oracle/middleware/oracle_common/common/bin
