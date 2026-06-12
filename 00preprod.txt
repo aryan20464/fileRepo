@@ -14,3 +14,54 @@ bypass passwords and log admins in using their physical smart cards (like CAC/PI
 3.1	3.1.9	Min Numeric Or Special Characters	min-non-alphanumeric-characters is not set
 3.1	3.1.10	Reject Equal Or Contain Username	reject-equal-or-contain-username is not set
 3.1	3.1.11	Reject Equal Or Contain Reverse Username	reject-equal-or-contain-reverse-username is not set
+
+
+# configure_password_policy.py
+# Run with: $WL_HOME/common/bin/wlst.sh configure_password_policy.py
+
+adminUrl  = 't3://localhost:7001'   # change to your Admin Server URL
+adminUser = 'weblogic'              # change to your admin username
+adminPass = 'yourpassword'          # change to your admin password
+realmName = 'myrealm'              # change if your realm name differs
+
+connect(adminUser, adminPass, adminUrl)
+
+edit()
+startEdit()
+
+# Navigate to the Password Validation Provider MBean
+cd('/SecurityConfiguration/' + realmName + '/Realms/' + realmName + '/PasswordValidators/SystemPasswordValidator')
+
+# 3.1.4 - Min Alphabetic Characters
+set('MinAlphabeticCharacters', 1)
+
+# 3.1.6 - Min Uppercase Characters
+set('MinUppercaseCharacters', 1)
+
+# 3.1.7 - Min Lowercase Characters
+set('MinLowercaseCharacters', 1)
+
+# 3.1.9 - Min Numeric or Special Characters (non-alphanumeric)
+set('MinNonAlphanumericCharacters', 1)
+
+# 3.1.10 - Reject if password equals or contains username
+set('RejectEqualOrContainUsername', true)
+
+# 3.1.11 - Reject if password equals or contains reverse username
+set('RejectEqualOrContainReverseUsername', true)
+
+save()
+activate()
+
+print("Password validation policy applied successfully.")
+disconnect()
+exit()
+
+
+$WL_HOME/common/bin/wlst.sh configure_password_policy.py
+
+connect('weblogic', 'yourpassword', 't3://localhost:7001')
+cd('/SecurityConfiguration/myrealm/Realms/myrealm/PasswordValidators/SystemPasswordValidator')
+ls()
+
+
