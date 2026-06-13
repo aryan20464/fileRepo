@@ -1,20 +1,2 @@
-<Jun 13, 2026 8:41:58 AM UTC> <Info> <Security> <BEA-090905> <Disabling the CryptoJ JCE Provider self-integrity check for better startup performance. To enable this check, specify -Dweblogic.security.allowCryptoJDefaultJCEVerification=true.> 
-<Jun 13, 2026 8:41:58 AM UTC> <Info> <Security> <BEA-090906> <Changing the default Random Number Generator in RSA CryptoJ from ECDRBG128 to HMACDRBG. To disable this change, specify -Dweblogic.security.allowCryptoJDefaultPRNG=true.> 
-<Jun 13, 2026 8:41:58 AM UTC> <Info> <Security> <BEA-090908> <Using the default WebLogic SSL Wildcard Hostname Verifier implementation.> 
-<Jun 13, 2026 8:41:58 AM UTC> <Warning> <Security> <BEA-090504> <Certificate chain received from 10.191.70.108 - 10.191.70.108 failed hostname verification check. Certificate contained *.sbi* but check expected 10.191.70.108> 
-<Jun 13, 2026 8:41:58 AM UTC> <Warning> <Security> <BEA-090504> <Certificate chain received from 10.191.70.108 - 10.191.70.108 failed hostname verification check. Certificate contained *.sbi* but check expected 10.191.70.108> 
-####<Jun 13, 2026 8:41:58 AM> <SEVERE> <deploy> <main> <WLSDPLY-20008> <deployApps argument processing failed: connect(irm_idea, <masked_password>, t3s://10.191.70.108:6001, timeout=120000) in online mode failed: Failed to initialize JNDI context, tried 2 time or times totally, the interval of each time is 0ms. 
-t3s://10.191.70.108:6001: Destination 10.191.70.108, 6001 unreachable.; nested exception is: 
-	javax.net.ssl.SSLKeyException: Hostname verification failed: HostnameVerifier=weblogic.security.utils.SSLWLSHostnameVerifier, hostname=10.191.70.108.; No available router to destination.; nested exception is: 
-	java.rmi.ConnectException: No available router to destination.>
-Issue Log for deployApps version 4.4.5 running WebLogic version 14.1.1.0.0 in online mode against server using WebLogic version UNKNOWN:
-SEVERE Messages:
-        1. WLSDPLY-20008: deployApps argument processing failed: connect(irm_idea, <masked_password>, t3s://10.191.70.108:6001, timeout=120000) in online mode failed: Failed to initialize JNDI context, tried 2 time or times totally, the interval of each time is 0ms. 
-t3s://10.191.70.108:6001: Destination 10.191.70.108, 6001 unreachable.; nested exception is: 
-	javax.net.ssl.SSLKeyException: Hostname verification failed: HostnameVerifier=weblogic.security.utils.SSLWLSHostnameVerifier, hostname=10.191.70.108.; No available router to destination.; nested exception is: 
-	java.rmi.ConnectException: No available router to destination.
-Total:   SEVERE :    1  WARNING :    0
-deployApps.sh failed (exit code = 2)
-Cleaning up project directory and file based variables
-00:01
-ERROR: Job failed: exit code 1
+export WLST_PROPERTIES="${WLST_PROPERTIES} -Dweblogic.security.SSL.ignoreHostnameVerification=true"
+        export WLS_ADMIN_URL="t3s://10.191.70.108:6001"
