@@ -1,5 +1,351 @@
-Downloading from central: https://artifactory.jfrog.sbi:443/artifactory/devsecops-libs-release/org/springframework/boot/spring-boot-starter-parent/2.7.0/spring-boot-starter-parent-2.7.0.pom
-[WARNING] Failed to create parent directories for tracking file /root/.m2/repository/org/springframework/boot/spring-boot-starter-parent/2.7.0/spring-boot-starter-parent-2.7.0.pom.lastUpdated
-[ERROR] [ERROR] Some problems were encountered while processing the POMs:
-[FATAL] Non-resolvable parent POM for in.co.sbi.rfm:RfmIndentsService:1: Could not transfer artifact org.springframework.boot:spring-boot-starter-parent:pom:2.7.0 from/to central (https://artifactory.jfrog.sbi:443/artifactory/devsecops-libs-release): /root/.m2/repository/org/springframework/boot/spring-boot-starter-parent/2.7.0/spring-boot-starter-parent-2.7.0.pom.part.lock (Permission denied) and 'parent.relativePath' points at no local POM @ line 5, column 10
- @ 
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.3.3.RELEASE</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>in.co.sbi.nrsmodule</groupId>
+	<artifactId>nrm</artifactId>
+	<version>2.3.2</version>
+	<name>nrs</name>
+	<description>NRS</description>
+	<packaging>war</packaging>
+
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.tomcat.embed</groupId>
+					<artifactId>tomcat-embed-websocket</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc8</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+        		<exclusion>
+            		<groupId>com.vaadin.external.google</groupId>
+            		<artifactId>android-json</artifactId>
+        		</exclusion>
+    </exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-resources-plugin</artifactId>
+			<version>3.0.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.prowidesoftware</groupId>
+			<artifactId>pw-swift-core</artifactId>
+			<version>SRU2019-8.0.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-envers -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-envers</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- JSON WEB TOKEN -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20160810</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.8.8</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.openhtmltopdf/openhtmltopdf-core -->
+		<dependency>
+    		<groupId>com.openhtmltopdf</groupId>
+    		<artifactId>openhtmltopdf-core</artifactId>
+    		<version>1.0.10</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.openhtmltopdf/openhtmltopdf-pdfbox -->
+		<dependency>
+    		<groupId>com.openhtmltopdf</groupId>
+    		<artifactId>openhtmltopdf-pdfbox</artifactId>
+    		<version>1.0.10</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+
+		<!-- <dependency> <groupId>org.json</groupId> <artifactId>json</artifactId> 
+			<version>20160810</version> </dependency> -->
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-config -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
+		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
+<dependency>
+    <groupId>commons-io</groupId>
+    <artifactId>commons-io</artifactId>
+    <version>2.15.0</version>
+</dependency>
+	
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>5.2.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>5.2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+		 <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<optional>true</optional>
+		</dependency> 
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+		<!-- for scheduler -->
+		<dependency>
+			<groupId>org.awaitility</groupId>
+			<artifactId>awaitility</artifactId>
+			<version>3.1.2</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.opencsv/opencsv -->
+		<dependency>
+			<groupId>com.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>4.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.velocity/velocity -->
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>1.7</version>
+		</dependency>
+		<!-- Email -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.hierynomus</groupId>
+			<artifactId>sshj</artifactId>
+			<version>0.38.0</version>
+		</dependency>
+		
+		<dependency>
+   			 <groupId>com.querydsl</groupId>
+    		 <artifactId>querydsl-jpa</artifactId>
+             <version>4.4.0</version>
+        </dependency>
+        
+        <!-- Annotation processor to generate Q-classes -->
+		<dependency>
+		    <groupId>com.querydsl</groupId>
+		    <artifactId>querydsl-apt</artifactId>
+		    <version>4.4.0</version>
+		    <scope>provided</scope>
+		</dependency>
+		<dependency>
+		<groupId>javax.annotation</groupId>
+		<artifactId>javax.annotation-api</artifactId>
+		<version>1.3.2</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>net.javacrumbs.shedlock</groupId>
+			<artifactId>shedlock-spring</artifactId>
+			<version>4.26.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.javacrumbs.shedlock</groupId>
+			<artifactId>shedlock-provider-jdbc-template</artifactId>
+			<version>4.26.0</version>
+		</dependency>
+		
+
+	</dependencies>
+
+	<build>
+		<finalName>${project.artifactId}</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludeDevtools>true</excludeDevtools>
+				</configuration>
+			</plugin>
+			<plugin>
+            <groupId>com.mysema.maven</groupId>
+            <artifactId>apt-maven-plugin</artifactId>
+            <version>1.1.3</version>
+            <executions>
+                <execution>
+                    <goals><goal>process</goal></goals>
+                    <configuration>
+                        <outputDirectory>target/generated-sources/java</outputDirectory>
+                        <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+        
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>3.2.0</version>
+            <executions>
+                <execution>
+                    <id>add-source</id>
+                    <phase>generate-sources</phase>
+                    <goals><goal>add-source</goal></goals>
+                    <configuration>
+                        <sources>
+                            <source>target/generated-sources/java</source>
+                        </sources>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
+		</plugins>
+
+	</build>
+
+
+
+	<profiles>
+		<profile>
+			<id>local</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<spring.profiles.active>local</spring.profiles.active>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>uat</id>
+			<properties>
+				<spring.profiles.active>uat</spring.profiles.active>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>prod</id>
+			<properties>
+				<spring.profiles.active>prod</spring.profiles.active>
+			</properties>
+		</profile>
+		<profile>
+			<id>dr</id>
+			<properties>
+				<spring.profiles.active>dr</spring.profiles.active>
+			</properties>
+		</profile>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<spring.profiles.active>dev</spring.profiles.active>
+			</properties>
+		</profile>
+
+
+
+	</profiles>
+
+</project>
+
+
+Downloading from central: https://artifactory.jfrog.xec:443/artifactory/itfo-treasury-tss-idea-maven-virtual/org/apache/maven/maven-project/2.2.0/maven-project-2.2.0.pom
+[WARNING] The POM for org.apache.maven:maven-project:jar:2.2.0 is missing, no dependency information available
+Downloading from central: https://artifactory.jfrog.xec:443/artifactory/itfo-treasury-tss-idea-maven-virtual/org/apache/commons/commons-io/1.3.2/commons-io-1.3.2.pom
+[WARNING] The POM for org.apache.commons:commons-io:jar:1.3.2 is missing, no dependency information available
+Downloading from central: https://artifactory.jfrog.xec:443/artifactory/itfo-treasury-tss-idea-maven-virtual/org/apache/maven/maven-plugin-api/2.2.0/maven-plugin-api-2.2.0.jar
+Downloading from central: https://artifactory.jfrog.xec:443/artifactory/itfo-treasury-tss-idea-maven-virtual/org/apache/maven/maven-model/2.2.0/maven-model-2.2.0.jar
+Downloading from central: https://artifactory.jfrog.xec:443/artifactory/itfo-treasury-tss-idea-maven-virtual/org/apache/maven/maven-project/2.2.0/maven-project-2.2.0.jar
+Downloading from central: https://artifactory.jfrog.xec:443/artifactory/itfo-treasury-tss-idea-maven-virtual/org/apache/commons/commons-io/1.3.2/commons-io-1.3.2.jar
+Downloaded from central: https://artifactory.jfrog.xec:443/artifactory/itfo-treasury-tss-idea-maven-virtual/org/apache/maven/maven-model/2.2.0/maven-model-2.2.0.jar (87 kB at 961 kB/s)
+Downloaded from central: https://artifactory.jfrog.xec:443/artifactory/itfo-treasury-tss-idea-maven-virtual/org/apache/maven/maven-plugin-api/2.2.0/maven-plugin-api-2.2.0.jar (12 kB at 41 kB/s)
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  10.674 s
+[INFO] Finished at: 2026-06-15T16:33:46+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal com.mysema.maven:apt-maven-plugin:1.1.3:process (default) on project nrm: Execution default of goal com.mysema.maven:apt-maven-plugin:1.1.3:process failed: Plugin com.mysema.maven:apt-maven-plugin:1.1.3 or one of its dependencies could not be resolved: The following artifacts could not be resolved: org.apache.maven:maven-project:jar:2.2.0, org.apache.commons:commons-io:jar:1.3.2: Could not find artifact org.apache.maven:maven-project:jar:2.2.0 in central (https://artifactory.jfrog.xec:443/artifactory/itfo-treasury-tss-idea-maven-virtual) -> [Help 1]     
