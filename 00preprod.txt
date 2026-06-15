@@ -1,26 +1,155 @@
-Welcome to WebLogic Server Administration Scripting Shell
-Type help() for help on available commands
-####<Jun 15, 2026 5:19:33 AM> <INFO> <WebLogicDeployToolingVersion> <logVersionInfo> <WLSDPLY-01750> <The WebLogic Deploy Tooling deployApps version is 4.4.5:.3208151:Apr 24, 2026 03:43 UTC>
-####<Jun 15, 2026 5:19:33 AM> <INFO> <WLSDeployLoggingConfig> <logLoggingDirectory> <WLSDPLY-01755> <The deployApps program will write its log to directory /builds/it-tss/irm/backend/RFMIndentsModule/logs>
-####<Jun 15, 2026 5:19:33 AM> <INFO> <deploy> <main> <WLSDPLY-20043> </builds/it-tss/irm/backend/RFMIndentsModule/weblogic-deploy/lib/python/deploy.py running with Java version 1.8.0_361 on operating system Linux 4.18.0-553.126.1.el8_10.x86_64 (amd64)>
-####<Jun 15, 2026 5:19:33 AM> <INFO> <deploy> <main> <WLSDPLY-20044> </builds/it-tss/irm/backend/RFMIndentsModule/weblogic-deploy/lib/python/deploy.py is running on a Java version that supports the encryption algorithms used by WDT encryption>
-####<Jun 15, 2026 5:19:33 AM> <INFO> <PathHelper> <__init__> <WLSDPLY-02100> <Setting local file system to use Posix-style paths>
-####<Jun 15, 2026 5:19:33 AM> <INFO> <ModelContext> <__copy_from_args> <WLSDPLY-01050> <Local WebLogic version is 14.1.1.0.0>
-<Jun 15, 2026 5:19:34 AM UTC> <Info> <Security> <BEA-090905> <Disabling the CryptoJ JCE Provider self-integrity check for better startup performance. To enable this check, specify -Dweblogic.security.allowCryptoJDefaultJCEVerification=true.> 
-<Jun 15, 2026 5:19:34 AM UTC> <Info> <Security> <BEA-090906> <Changing the default Random Number Generator in RSA CryptoJ from ECDRBG128 to HMACDRBG. To disable this change, specify -Dweblogic.security.allowCryptoJDefaultPRNG=true.> 
-<Jun 15, 2026 5:19:34 AM UTC> <Info> <Security> <BEA-090908> <Using the default WebLogic SSL Wildcard Hostname Verifier implementation.> 
-<Jun 15, 2026 5:19:34 AM UTC> <Warning> <Security> <BEA-090504> <Certificate chain received from 10.176.39.224 - 10.176.39.224 failed hostname verification check. Certificate contained *.sbi* but check expected 10.176.39.224> 
-<Jun 15, 2026 5:19:34 AM UTC> <Warning> <Security> <BEA-090504> <Certificate chain received from 10.176.39.224 - 10.176.39.224 failed hostname verification check. Certificate contained *.sbi* but check expected 10.176.39.224> 
-####<Jun 15, 2026 5:19:34 AM> <SEVERE> <deploy> <main> <WLSDPLY-20008> <deployApps argument processing failed: connect(weblogic, <masked_password>, t3s://10.176.39.224:6001, timeout=120000) in online mode failed: Failed to initialize JNDI context, tried 2 time or times totally, the interval of each time is 0ms. 
-t3s://10.176.39.224:6001: Destination 10.176.39.224, 6001 unreachable.; nested exception is: 
-	javax.net.ssl.SSLKeyException: Hostname verification failed: HostnameVerifier=weblogic.security.utils.SSLWLSHostnameVerifier, hostname=10.176.39.224.; No available router to destination.; nested exception is: 
-	java.rmi.ConnectException: No available router to destination.>
-Issue Log for deployApps version 4.4.5 running WebLogic version 14.1.1.0.0 in online mode against server using WebLogic version UNKNOWN:
-SEVERE Messages:
-        1. WLSDPLY-20008: deployApps argument processing failed: connect(weblogic, <masked_password>, t3s://10.176.39.224:6001, timeout=120000) in online mode failed: Failed to initialize JNDI context, tried 2 time or times totally, the interval of each time is 0ms. 
-t3s://10.176.39.224:6001: Destination 10.176.39.224, 6001 unreachable.; nested exception is: 
-	javax.net.ssl.SSLKeyException: Hostname verification failed: HostnameVerifier=weblogic.security.utils.SSLWLSHostnameVerifier, hostname=10.176.39.224.; No available router to destination.; nested exception is: 
-	java.rmi.ConnectException: No available router to destination.
-Total:   SEVERE :    1  WARNING :    0
-deployApps.sh failed (exit code = 2)
-Cleaning up project directory and file based variables
+default:
+  tags:
+    - deploy_runner
+
+stages:
+  - build
+  - application-zipper
+  - deploy
+
+
+variables:
+  MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode"
+
+build_job:
+  stage: build
+  image: artifactory.jfrog.sbi:443/dso-base-image/java-maven-images/rhel-jdk-17-maven3.8.5:0.0.1
+  before_script:
+    # ── JFrog setup ───────────────────────────────────────────────────────────
+    - jf config add --url="$JF_URL" --user="$JF_USER" --access-token="$JF_TOKEN" --interactive=false
+    - jf rt ping
+
+    # ── Download WDT ──────────────────────────────────────────────────────────
+    - jf rt dl "itfo-treasury-tss-idea-custom-maven-libs/weblogic-deploy/**" "./" --flat=false --recursive=true
+    - chmod +x ./weblogic-deploy/bin/*.sh
+
+    # ── Confirm WDT version ───────────────────────────────────────────────────
+    - echo "=== WDT Version ===" && cat ./weblogic-deploy/VERSION.txt
+
+    # ── Confirm Java ──────────────────────────────────────────────────────────
+    - java -version
+    - curl -ikv https://10.191.70.108:6001/console
+  script:    
+    - mvn clean package -U -P prod
+  artifacts:
+    paths:
+      - target/
+      - weblogic-deploy/
+    expire_in: 1 day
+  only:
+    - rfm-integration
+
+zip_job:
+  stage: application-zipper
+  image: artifactory.jfrog.sbi:443/itfo-ittss-idea-docker-local/linx-tools:zip
+  script:    
+    - ls -lrth
+    - mkdir -p wlsdeploy/applications
+    - cp target/RfmIndentsService.war wlsdeploy/applications/
+    - zip -r archive.zip wlsdeploy
+    - ls -lrth  
+  artifacts:
+    paths:
+      - archive.zip
+    expire_in: 1 day
+  only:
+    - rfm-integration
+
+deploy_job:
+  stage: deploy
+  image: artifactory.jfrog.sbi:443/itfo-ittss-idea-docker-local/wls:14.1.1.0.0
+  variables:
+    APP_NAME: "RfmIndentsService"
+    TARGET_NAME: "IRM_SERVER_SWIFT"
+    WAR_INTERNAL_PATH: "wlsdeploy/applications/RfmIndentsService.war"
+
+  before_script:
+    # ── Locate ORACLE_HOME inside the WIT image ───────────────────────────────
+    - |
+      if [ -d "/u01/app/oracle/middleware/wlserver" ]; then
+        export ORACLE_HOME="/u01/app/oracle/middleware"
+      elif [ -d "/u01/oracle/wlserver" ]; then
+        export ORACLE_HOME="/u01/oracle"
+      else
+        echo "ERROR: Cannot locate ORACLE_HOME in WIT image"
+        find /u01 -name "wlst.sh" 2>/dev/null
+        exit 1
+      fi
+    - echo "ORACLE_HOME=${ORACLE_HOME}"
+    - ls ${ORACLE_HOME}/wlserver/common/bin/wlst.sh
+
+    # ── Verify archive structure ──────────────────────────────────────────────
+    - echo "=== Archive contents ===" && unzip -l ./archive.zip
+    - |
+      if ! unzip -l ./archive.zip | grep -q "${WAR_INTERNAL_PATH}"; then
+        echo "ERROR: ${WAR_INTERNAL_PATH} not found inside archive.zip"
+        unzip -l ./archive.zip
+        exit 1
+      fi
+    - echo "=== Pre-deploy checks passed ==="
+
+    # ── Import WLS SSL certificate into JDK truststore ────────────────────────
+    # WLS_ADMIN_CERT must be set in GitLab CI/CD Variables as a file variable
+    # containing the PEM certificate extracted from the WLS admin server
+    - |
+      if [ -n "$WLS_ADMIN_CERT" ]; then
+        echo ">>> Importing WLS SSL certificate into truststore..."
+        echo "$WLS_ADMIN_CERT" > /tmp/wls-admin.crt
+        /u01/jdk/bin/keytool -import \
+          -alias wls-admin-cert \
+          -file /tmp/wls-admin.crt \
+          -keystore /u01/jdk/jre/lib/security/cacerts \
+          -storepass changeit \
+          -noprompt
+        echo ">>> Certificate imported successfully."
+        export JAVA_OPTIONS="-Dweblogic.security.SSL.ignoreHostnameVerification=true"
+      else
+        echo "ERROR: WLS_ADMIN_CERT variable not set — SSL handshake will fail"
+        exit 1
+      fi
+
+
+  script:
+    # ── Generate model.yaml ───────────────────────────────────────────────────
+    - |
+      cat > model.yaml << EOF
+      appDeployments:
+        Application:
+          ${APP_NAME}:
+            SourcePath: '${WAR_INTERNAL_PATH}'
+            Target: '${TARGET_NAME}'
+            ModuleType: war
+            StagingMode: stage
+      EOF
+    - echo "=== model.yaml ===" && cat model.yaml
+
+    # ── Execute WDT deployApps ────────────────────────────────────────────────
+    # NOTE: -verbose removed (not supported in WDT 4.4.5)
+    # NOTE: -admin_pass_env takes variable NAME without $ sign
+    # NOTE: -admin_user takes the value directly with $ sign
+    - |
+      ./weblogic-deploy/bin/deployApps.sh \
+        -oracle_home ${ORACLE_HOME} \
+        -model_file model.yaml \
+        -archive_file ./archive.zip \
+        -admin_url "$WLS_PROD_ADMIN_URL" \
+        -admin_user "$WLS_PROD_USER" \
+        -admin_pass_env WLS_PROD_PASSWORD \
+        -domain_type WLS \
+        -remote
+
+    # ── Exit code handling ────────────────────────────────────────────────────
+    - |
+      EXIT_CODE=$?
+      if [ $EXIT_CODE -eq 0 ]; then
+        echo ">>> Deployment successful."
+      elif [ $EXIT_CODE -eq 2 ]; then
+        echo ">>> Deployment succeeded with warnings."
+        exit 0
+      else
+        echo "ERROR: WDT deployApps failed with exit code: ${EXIT_CODE}"
+        exit 1
+      fi
+
+  only:
+    - rfm-integration
