@@ -1,2 +1,26 @@
-export WLST_PROPERTIES="${WLST_PROPERTIES} -Dweblogic.security.SSL.ignoreHostnameVerification=true"
-        export WLS_ADMIN_URL="t3s://10.191.70.108:6001"
+Welcome to WebLogic Server Administration Scripting Shell
+Type help() for help on available commands
+####<Jun 15, 2026 5:19:33 AM> <INFO> <WebLogicDeployToolingVersion> <logVersionInfo> <WLSDPLY-01750> <The WebLogic Deploy Tooling deployApps version is 4.4.5:.3208151:Apr 24, 2026 03:43 UTC>
+####<Jun 15, 2026 5:19:33 AM> <INFO> <WLSDeployLoggingConfig> <logLoggingDirectory> <WLSDPLY-01755> <The deployApps program will write its log to directory /builds/it-tss/irm/backend/RFMIndentsModule/logs>
+####<Jun 15, 2026 5:19:33 AM> <INFO> <deploy> <main> <WLSDPLY-20043> </builds/it-tss/irm/backend/RFMIndentsModule/weblogic-deploy/lib/python/deploy.py running with Java version 1.8.0_361 on operating system Linux 4.18.0-553.126.1.el8_10.x86_64 (amd64)>
+####<Jun 15, 2026 5:19:33 AM> <INFO> <deploy> <main> <WLSDPLY-20044> </builds/it-tss/irm/backend/RFMIndentsModule/weblogic-deploy/lib/python/deploy.py is running on a Java version that supports the encryption algorithms used by WDT encryption>
+####<Jun 15, 2026 5:19:33 AM> <INFO> <PathHelper> <__init__> <WLSDPLY-02100> <Setting local file system to use Posix-style paths>
+####<Jun 15, 2026 5:19:33 AM> <INFO> <ModelContext> <__copy_from_args> <WLSDPLY-01050> <Local WebLogic version is 14.1.1.0.0>
+<Jun 15, 2026 5:19:34 AM UTC> <Info> <Security> <BEA-090905> <Disabling the CryptoJ JCE Provider self-integrity check for better startup performance. To enable this check, specify -Dweblogic.security.allowCryptoJDefaultJCEVerification=true.> 
+<Jun 15, 2026 5:19:34 AM UTC> <Info> <Security> <BEA-090906> <Changing the default Random Number Generator in RSA CryptoJ from ECDRBG128 to HMACDRBG. To disable this change, specify -Dweblogic.security.allowCryptoJDefaultPRNG=true.> 
+<Jun 15, 2026 5:19:34 AM UTC> <Info> <Security> <BEA-090908> <Using the default WebLogic SSL Wildcard Hostname Verifier implementation.> 
+<Jun 15, 2026 5:19:34 AM UTC> <Warning> <Security> <BEA-090504> <Certificate chain received from 10.176.39.224 - 10.176.39.224 failed hostname verification check. Certificate contained *.sbi* but check expected 10.176.39.224> 
+<Jun 15, 2026 5:19:34 AM UTC> <Warning> <Security> <BEA-090504> <Certificate chain received from 10.176.39.224 - 10.176.39.224 failed hostname verification check. Certificate contained *.sbi* but check expected 10.176.39.224> 
+####<Jun 15, 2026 5:19:34 AM> <SEVERE> <deploy> <main> <WLSDPLY-20008> <deployApps argument processing failed: connect(weblogic, <masked_password>, t3s://10.176.39.224:6001, timeout=120000) in online mode failed: Failed to initialize JNDI context, tried 2 time or times totally, the interval of each time is 0ms. 
+t3s://10.176.39.224:6001: Destination 10.176.39.224, 6001 unreachable.; nested exception is: 
+	javax.net.ssl.SSLKeyException: Hostname verification failed: HostnameVerifier=weblogic.security.utils.SSLWLSHostnameVerifier, hostname=10.176.39.224.; No available router to destination.; nested exception is: 
+	java.rmi.ConnectException: No available router to destination.>
+Issue Log for deployApps version 4.4.5 running WebLogic version 14.1.1.0.0 in online mode against server using WebLogic version UNKNOWN:
+SEVERE Messages:
+        1. WLSDPLY-20008: deployApps argument processing failed: connect(weblogic, <masked_password>, t3s://10.176.39.224:6001, timeout=120000) in online mode failed: Failed to initialize JNDI context, tried 2 time or times totally, the interval of each time is 0ms. 
+t3s://10.176.39.224:6001: Destination 10.176.39.224, 6001 unreachable.; nested exception is: 
+	javax.net.ssl.SSLKeyException: Hostname verification failed: HostnameVerifier=weblogic.security.utils.SSLWLSHostnameVerifier, hostname=10.176.39.224.; No available router to destination.; nested exception is: 
+	java.rmi.ConnectException: No available router to destination.
+Total:   SEVERE :    1  WARNING :    0
+deployApps.sh failed (exit code = 2)
+Cleaning up project directory and file based variables
