@@ -1,47 +1,32 @@
-before_script:
-    # ── Locate ORACLE_HOME ────────────────────────────────────────────────────
-    - |
-      if [ -d "/u01/app/oracle/middleware/wlserver" ]; then
-        export ORACLE_HOME="/u01/app/oracle/middleware"
-      elif [ -d "/u01/oracle/wlserver" ]; then
-        export ORACLE_HOME="/u01/oracle"
-      else
-        echo "ERROR: Cannot locate ORACLE_HOME in WIT image"
-        find /u01 -name "wlst.sh" 2>/dev/null
-        exit 1
-      fi
-    - echo "ORACLE_HOME=${ORACLE_HOME}"
-    - ls ${ORACLE_HOME}/wlserver/common/bin/wlst.sh
-
-    # ── Verify archive ────────────────────────────────────────────────────────
-    - echo "=== Archive contents ===" && unzip -l ./archive.zip
-    - |
-      if ! unzip -l ./archive.zip | grep -q "${WAR_INTERNAL_PATH}"; then
-        echo "ERROR: ${WAR_INTERNAL_PATH} not found inside archive.zip"
-        unzip -l ./archive.zip
-        exit 1
-      fi
-    - echo "=== Pre-deploy checks passed ==="
-
-    # ── Import WLS SSL certificate ────────────────────────────────────────────
-    - |
-      if [ -n "$WLS_ADMIN_CERT" ]; then
-        echo ">>> Importing WLS SSL certificate into truststore..."
-        echo "$WLS_ADMIN_CERT" > /tmp/wls-admin.crt
-        /u01/jdk/bin/keytool -import \
-          -alias wls-admin-cert \
-          -file /tmp/wls-admin.crt \
-          -keystore /u01/jdk/jre/lib/security/cacerts \
-          -storepass changeit \
-          -noprompt
-        echo ">>> Certificate imported successfully."
-      else
-        echo "ERROR: WLS_ADMIN_CERT variable not set"
-        exit 1
-      fi
-
-    # ── Disable hostname verification via CONFIG_JVM_ARGS ─────────────────────
-    # CONFIG_JVM_ARGS is the variable WDT appends to its internal JVM call
-    # This is the correct way — JAVA_OPTIONS is NOT read by WDT/WLST
-    - export CONFIG_JVM_ARGS="-Dweblogic.security.SSL.ignoreHostnameVerification=true"
-    - echo "CONFIG_JVM_ARGS=${CONFIG_JVM_ARGS}"
+####<Jun 15, 2026 5:30:16 AM> <INFO> <deploy> <__deploy_online> <WLSDPLY-09005> <Connecting to domain at t3s://10.176.39.224:6001 with timeout value of 120000 ...>
+####<Jun 15, 2026 5:30:18 AM> <INFO> <deploy> <__deploy_online> <WLSDPLY-09007> <Connected to domain at t3s://10.176.39.224:6001>
+####<Jun 15, 2026 5:30:20 AM> <INFO> <AttributeSetter> <set_attribute> <WLSDPLY-20011> <No WLST key for model attribute StagingMode>
+####<Jun 15, 2026 5:30:30 AM> <INFO> <OnlineApplicationsDeployer> <__stop_app> <WLSDPLY-09312> <Stopping application RfmIndentsService for update>
+<Jun 15, 2026 5:30:34 AM UTC> <Info> <J2EE Deployment SPI> <BEA-260121> <Initiating stop operation for application, RfmIndentsService [archive: null], to IRM_SERVER_SWIFT .> 
+####<Jun 15, 2026 5:30:35 AM> <INFO> <OnlineApplicationsDeployer> <__undeploy_app> <WLSDPLY-09314> <Undeploying Application RfmIndentsService for update>
+<Jun 15, 2026 5:30:38 AM UTC> <Info> <J2EE Deployment SPI> <BEA-260121> <Initiating undeploy operation for application, RfmIndentsService [archive: null], to IRM_SERVER_SWIFT .> 
+####<Jun 15, 2026 5:30:39 AM> <INFO> <OnlineApplicationsDeployer> <__deploy_app_or_library> <WLSDPLY-09316> <Deploying Application RfmIndentsService>
+<Jun 15, 2026 5:30:41 AM UTC> <Info> <J2EE Deployment SPI> <BEA-260121> <Initiating deploy operation for application, RfmIndentsService [archive: /tmp/wdt-uploadtemp6877077823595039490/wlsdeploy/applications/RfmIndentsService.war], to IRM_SERVER_SWIFT .> 
+####<Jun 15, 2026 5:30:55 AM> <SEVERE> <deploy> <main> <WLSDPLY-09015> <deployApps deployment failed: deployApplication(RfmIndentsService, (), {'upload': 'true', 'targets': u'IRM_SERVER_SWIFT', 'timeout': 180000L, 'path': u'/tmp/wdt-uploadtemp6877077823595039490/wlsdeploy/applications/RfmIndentsService.war', 'stageMode': u'stage'} Error occurred while performing deploy : Deployment Failed.) failed: Deploying application from /tmp/wdt-uploadtemp6877077823595039490/wlsdeploy/applications/RfmIndentsService.war to targets IRM_SERVER_SWIFT (upload=true) ...
+...Failed to deploy the application with status failed
+Current Status of your Deployment:
+Deployment command type: deploy
+Deployment State : failed
+Deployment Message : weblogic.application.ModuleException: java.lang.RuntimeException: Driver oracle.jdbc.OracleDriver claims to not accept jdbcUrl, jdbc:derby:memory:bac51414-35e0-4f25-9f36-573f35986514;create=true
+>
+Issue Log for deployApps version 4.4.5 running WebLogic version 14.1.1.0.0 in online mode against server using WebLogic version 14.1.1.0.0.260403:
+DEPRECATION Messages:
+        1. WLSDPLY-09020: The deployApps tool has been deprecated with WebLogic Deploy Tooling release 4.0. The direction moving forward will be to use the updateDomain tool in its place.
+SEVERE Messages:
+        1. WLSDPLY-09015: deployApps deployment failed: deployApplication(RfmIndentsService, (), {'upload': 'true', 'targets': u'IRM_SERVER_SWIFT', 'timeout': 180000L, 'path': u'/tmp/wdt-uploadtemp6877077823595039490/wlsdeploy/applications/RfmIndentsService.war', 'stageMode': u'stage'} Error occurred while performing deploy : Deployment Failed.) failed: Deploying application from /tmp/wdt-uploadtemp6877077823595039490/wlsdeploy/applications/RfmIndentsService.war to targets IRM_SERVER_SWIFT (upload=true) ...
+...Failed to deploy the application with status failed
+Current Status of your Deployment:
+Deployment command type: deploy
+Deployment State : failed
+Deployment Message : weblogic.application.ModuleException: java.lang.RuntimeException: Driver oracle.jdbc.OracleDriver claims to not accept jdbcUrl, jdbc:derby:memory:bac51414-35e0-4f25-9f36-573f35986514;create=true
+Total:   SEVERE :    1  WARNING :    0  DEPRECATION :    1
+<Jun 15, 2026 5:30:55 AM UTC> <Warning> <JNDI> <BEA-050001> <WLContext.close() was called in a different thread than the one in which it was created.> 
+deployApps.sh failed (exit code = 2)
+Cleaning up project directory and file based variables
+00:01
+ERROR: Job failed: exit code 1
