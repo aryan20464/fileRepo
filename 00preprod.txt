@@ -1,15 +1,43 @@
-:: 1. Set your configuration variables
-set "GITLAB_URL=https://example.com"
+@echo off
+:: --- CONFIGURATION ---
+set "GITLAB_URL=https://gitlab.com"
 set "TOKEN=your_personal_access_token"
+:: ---------------------
 
-:: 2. Fetch projects, loop through branches, and delete protection
-for /f "tokens=1,2" %A in ('curl -s --header "PRIVATE-TOKEN: %TOKEN%" "%GITLAB_URL%/api/v4/projects?per_page=100" ^| jq -r ".[] | \"\(.id) \(.path_with_namespace)\""') do (
-    echo Checking Project: %B
+echo Fetching projects from GitLab...
+echo.
+
+:: Fetch project IDs and names, saving them to a temporary text file to avoid CMD parsing errors
+curl -s --header "PRIVATE-TOKEN: %TOKEN%" "%GITLAB_URL%/api/v4/projects?per_page=100" | jq -r ".[] | \"\(.id) \(.path_with_namespace)\"" > "%temp%\gitlab_projects.txt"
+
+:: Loop through each project found
+for /f "tokens=1,2" %%A in (%temp%\gitlab_projects.txt) do (
+    echo ----------------------------------------------------
+    echo Current Project: %%B (ID: %%A)
+    echo ----------------------------------------------------
     
-    for /f "delims=" %C in ('curl -s --header "PRIVATE-TOKEN: %TOKEN%" "%GITLAB_URL%/api/v4/projects/%A/protected_branches" ^| jq -r ".[].name"') do (
-        echo --> Unprotecting: %C
+    :: Fetch protected branches for this project and save to a temp file
+    curl -s --header "PRIVATE-TOKEN: %TOKEN%" "%GITLAB_URL%/api/v4/projects/%%A/protected_branches" | jq -r ".[].name" > "%temp%\gitlab_branches.txt"
+    
+    :: Check if any branches were found
+    for /f "delims=" %%C in (%temp%\gitlab_branches.txt) do (
+        echo Found protected branch: %%C
+        echo Sending DELETE request to unprotect...
         
-        :: Note: This simple loop assumes standard branch names. If names have slashes like "feature/test", use the PowerShell method above.
-        curl -s -X DELETE --header "PRIVATE-TOKEN: %TOKEN%" "%GITLAB_URL%/api/v4/projects/%A/protected_branches/%C"
+        :: Send the delete request
+        curl -s -X DELETE --header "PRIVATE-TOKEN: %TOKEN%" "%GITLAB_URL%/api/v4/projects/%%A/protected_branches/%%C"
+        
+        echo Action completed for branch: %%C
+        echo.
+        echo [PAUSED] Press any key to check the next branch/project...
+        pause > nul
     )
 )
+
+echo.
+echo All done! Clean up temporary files...
+del "%temp%\gitlab_projects.txt" 2>nul
+del "%temp%\gitlab_branches.txt" 2>nul
+
+echo Script finished execution.
+pause
