@@ -1,24 +1,58 @@
 @echo off
+setlocal enabledelayedexpansion
+
 :: --- CONFIGURATION ---
 :: Put your JSON filename here (must be in the same folder as this script)
 set "JSON_FILE=your_file.json"
 :: ---------------------
 
-echo Reading %JSON_FILE% and extracting IDs and Names...
+echo Parsing JSON using built-in engine...
 echo ----------------------------------------------------
 
-:: Use built-in PowerShell to parse the JSON, extract id and name, and format them
-powershell -Command "$json = Get-Content -Raw -Path '%cd%\%JSON_FILE%' | ConvertFrom-Json; foreach ($item in $json) { Write-Output \"$($item.id)|$($item.name)\" }" > "%cd%\extracted_projects.txt"
+:: Verify the JSON file exists
+if not exist "%cd%\%JSON_FILE%" (
+    echo ERROR: Cannot find file %JSON_FILE% in the current folder.
+    pause
+    exit /b
+)
 
-echo Extraction complete! Checking the results...
+:: Create a temporary VBScript parser in the current directory
+set "VBS_PARSER=%cd%\json_parser.vbs"
+(
+echo Set html = CreateObject^("htmlfile"^)
+echo Set window = html.parentWindow
+echo window.execScript "function parseJSON(json) { return eval('(' + json + ')'); }", "JScript"
+echo Set fso = CreateObject^("Scripting.FileSystemObject"^)
+echo Set file = fso.OpenTextFile^("%cd:\=\\%\\%JSON_FILE%", 1^)
+echo jsonText = file.ReadAll
+echo file.Close
+echo Set data = window.parseJSON^(jsonText^)
+echo For Each item In data
+echo     WScript.Echo item.id ^& "|" ^& item.name
+echo Next
+) > "%VBS_PARSER%"
+
+:: Run the parser and redirect output to a clean text file in PWD
+cscript //nologo "%VBS_PARSER%" > "%cd%\extracted_projects.txt" 2>nul
+
+:: Delete the temporary VBScript helper immediately
+del "%VBS_PARSER%" 2>nul
+
+echo Extraction complete! Processing text file line-by-line...
 echo ----------------------------------------------------
 
-:: Loop through the newly created file item by item and display them
+:: Loop through the text file step-by-step
 for /f "usebackq tokens=1,2 delims=|" %%A in ("%cd%\extracted_projects.txt") do (
     echo.
-    echo [Processing Item]
+    echo [Extracted Item]
     echo ID:   %%A
     echo Name: %%B
     echo ----------------------------------------------------
-    echo [PAUSED] Press any key to move to the next item...
+    echo [PAUSED] Press any key to process the next item...
     pause > nul
+)
+
+echo.
+echo ----------------------------------------------------
+echo Finished processing all items!
+pause
