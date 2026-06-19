@@ -1,43 +1,24 @@
 @echo off
 :: --- CONFIGURATION ---
-set "GITLAB_URL=https://gitlab.com"
-set "TOKEN=your_personal_access_token"
+:: Put your JSON filename here (must be in the same folder as this script)
+set "JSON_FILE=your_file.json"
 :: ---------------------
 
-echo Fetching projects from GitLab...
-echo.
+echo Reading %JSON_FILE% and extracting IDs and Names...
+echo ----------------------------------------------------
 
-:: Fetch project IDs and names, saving them to a temporary text file to avoid CMD parsing errors
-curl -s --header "PRIVATE-TOKEN: %TOKEN%" "%GITLAB_URL%/api/v4/projects?per_page=100" | jq -r ".[] | \"\(.id) \(.path_with_namespace)\"" > "%temp%\gitlab_projects.txt"
+:: Use built-in PowerShell to parse the JSON, extract id and name, and format them
+powershell -Command "$json = Get-Content -Raw -Path '%cd%\%JSON_FILE%' | ConvertFrom-Json; foreach ($item in $json) { Write-Output \"$($item.id)|$($item.name)\" }" > "%cd%\extracted_projects.txt"
 
-:: Loop through each project found
-for /f "tokens=1,2" %%A in (%temp%\gitlab_projects.txt) do (
+echo Extraction complete! Checking the results...
+echo ----------------------------------------------------
+
+:: Loop through the newly created file item by item and display them
+for /f "usebackq tokens=1,2 delims=|" %%A in ("%cd%\extracted_projects.txt") do (
+    echo.
+    echo [Processing Item]
+    echo ID:   %%A
+    echo Name: %%B
     echo ----------------------------------------------------
-    echo Current Project: %%B (ID: %%A)
-    echo ----------------------------------------------------
-    
-    :: Fetch protected branches for this project and save to a temp file
-    curl -s --header "PRIVATE-TOKEN: %TOKEN%" "%GITLAB_URL%/api/v4/projects/%%A/protected_branches" | jq -r ".[].name" > "%temp%\gitlab_branches.txt"
-    
-    :: Check if any branches were found
-    for /f "delims=" %%C in (%temp%\gitlab_branches.txt) do (
-        echo Found protected branch: %%C
-        echo Sending DELETE request to unprotect...
-        
-        :: Send the delete request
-        curl -s -X DELETE --header "PRIVATE-TOKEN: %TOKEN%" "%GITLAB_URL%/api/v4/projects/%%A/protected_branches/%%C"
-        
-        echo Action completed for branch: %%C
-        echo.
-        echo [PAUSED] Press any key to check the next branch/project...
-        pause > nul
-    )
-)
-
-echo.
-echo All done! Clean up temporary files...
-del "%temp%\gitlab_projects.txt" 2>nul
-del "%temp%\gitlab_branches.txt" 2>nul
-
-echo Script finished execution.
-pause
+    echo [PAUSED] Press any key to move to the next item...
+    pause > nul
