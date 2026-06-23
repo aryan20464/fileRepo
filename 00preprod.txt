@@ -1,58 +1,17 @@
-@echo off
-setlocal enabledelayedexpansion
+: "http://unix:/var/opt/gitlab/gitlab-workhorse/sockets/socket:/", host: "ideagit.sbi.co.in:10000"
+2026/06/23 15:21:02 [crit] 1382118#1382118: *21022 open() "/devtools/nginx/proxy/9/08/0000000089" failed (13: Permission denied) while reading upstream, client: 10.30.130.32, server: ideagit.sbi.co.in, request: "GET / HTTP/2.0", upstream: "http://unix:/var/opt/gitlab/gitlab-workhorse/sockets/socket:/", host: "ideagit.sbi.co.in:10000", referrer: "https://ideagit.sbi.co.in:10000/"
+2026/06/23 15:22:46 [crit] 1382118#1382118: *21223 open() "/devtools/nginx/body/0000000090" failed (13: Permission denied), client: 10.30.130.32, server: ideagit.sbi.co.in, request: "POST /rfm/rfmindentsmodule.git/git-receive-pack HTTP/1.1", host: "ideagit.sbi.co.in:10000"
+2026/06/23 15:23:53 [crit] 1382118#1382118: *21244 open() "/devtools/nginx/body/0000000091" failed (13: Permission denied), client: 10.30.130.32, server: ideagit.sbi.co.in, request: "POST /rfm/rfmindentsmodule.git/git-receive-pack HTTP/1.1", host: "ideagit.sbi.co.in:10000"
+2026/06/23 15:25:32 [crit] 1394228#1394228: *21309 open() "/devtools/nginx/proxy/2/09/0000000092" failed (13: Permission denied) while reading upstream, client: 10.30.130.32, server: ideagit.sbi.co.in, request: "GET / HTTP/2.0", upstream: "http://unix:/var/opt/gitlab/gitlab-workhorse/sockets/socket:/", host: "ideagit.sbi.co.in:10000"
+2026/06/23 15:25:41 [crit] 1394228#1394228: *21318 open() "/devtools/nginx/body/0000000093" failed (13: Permission denied), client: 10.30.130.32, server: ideagit.sbi.co.in, request: "POST /rfm/rfmindentsmodule.git/git-receive-pack HTTP/1.1", host: "ideagit.sbi.co.in:10000"
+2026/06/23 15:30:11 [crit] 1394228#1394228: *21357 open() "/devtools/nginx/body/0000000094" failed (13: Permission denied), client: 10.30.130.32, server: ideagit.sbi.co.in, request: "POST /rfm/rfmindentsmodule.git/git-receive-pack HTTP/1.1", host: "ideagit.sbi.co.in:10000"
+2026/06/23 15:34:42 [crit] 1395188#1395188: *1 open() "/devtools/nginx/proxy/1/00/0000000001" failed (13: Permission denied) while reading upstream, client: 10.30.130.32, server: ideagit.sbi.co.in, request: "GET / HTTP/2.0", upstream: "http://unix:/var/opt/gitlab/gitlab-workhorse/sockets/socket:/", host: "ideagit.sbi.co.in:10000"
+2026/06/23 15:34:59 [crit] 1395188#1395188: *13 open() "/devtools/nginx/body/0000000002" failed (13: Permission denied), client: 10.30.130.32, server: ideagit.sbi.co.in, request: "POST /rfm/rfmindentsmodule.git/git-receive-pack HTTP/1.1", host: "ideagit.sbi.co.in:10000"
+2026/06/23 15:35:40 [crit] 1395188#1395188: *41 open() "/devtools/nginx/body/0000000003" failed (13: Permission denied), client: 10.30.130.32, server: ideagit.sbi.co.in, request: "POST /rfm/rfmindentsmodule.git/git-receive-pack HTTP/1.1", host: "ideagit.sbi.co.in:10000"
+2026/06/23 15:36:18 [crit] 1395188#1395188: *71 open() "/devtools/nginx/body/0000000004" failed (13: Permission denied), client: 10.30.130.32, server: ideagit.sbi.co.in, request: "POST /rfm/rfmindentsmodule.git/git-receive-pack HTTP/1.1", host: "ideagit.sbi.co.in:10000"
+2026/06/23 15:38:07 [crit] 1395188#1395188: *86 open() "/devtools/nginx/body/0000000005" failed (13: Permission denied), client: 10.30.130.32, server: ideagit.sbi.co.in, request: "POST /rfm/rfmindentsmodule.git/git-receive-pack HTTP/1.1", host: "ideagit.sbi.co.in:10000"
+2026/06/23 15:39:14 [crit] 1395188#1395188: *95 open() "/devtools/nginx/body/0000000006" failed (13: Permission denied), client: 10.30.130.32, server: ideagit.sbi.co.in, request: "POST /rfm/rfmindentsmodule.git/git-receive-pack HTTP/1.1", host: "ideagit.sbi.co.in:10000"
+2026/06/23 15:39:38 [crit] 1395188#1395188: *98 open() "/devtools/nginx/body/0000000007" failed (13: Permission denied), client: 10.30.130.32, server: ideagit.sbi.co.in, request: "POST /rfm/rfmindentsmodule.git/git-receive-pack HTTP/1.1", host: "ideagit.sbi.co.in:10000"
+2026/06/23 15:43:06 [crit] 1395188#1395188: *236 open() "/devtools/nginx/body/0000000008" failed (13: Permission denied), client: 10.30.130.32, server: ideagit.sbi.co.in, request: "POST /rfm/rfmindentsmodule.git/git-receive-pack HTTP/1.1", host: "ideagit.sbi.co.in:10000"
+2026/06/23 15:43:26 [crit] 1395188#1395188: *274 open() "/devtools/nginx/body/0000000009" failed (13: Permission denied), client: 10.30.130.32, server: ideagit.sbi.co.in, request: "POST /rfm/rfmindentsmodule.git/git-receive-pack HTTP/1.1", host: "ideagit.sbi.co.in:10000"
 
-:: --- CONFIGURATION ---
-:: Put your JSON filename here (must be in the same folder as this script)
-set "JSON_FILE=your_file.json"
-:: ---------------------
-
-echo Parsing JSON using built-in engine...
-echo ----------------------------------------------------
-
-:: Verify the JSON file exists
-if not exist "%cd%\%JSON_FILE%" (
-    echo ERROR: Cannot find file %JSON_FILE% in the current folder.
-    pause
-    exit /b
-)
-
-:: Create a temporary VBScript parser in the current directory
-set "VBS_PARSER=%cd%\json_parser.vbs"
-(
-echo Set html = CreateObject^("htmlfile"^)
-echo Set window = html.parentWindow
-echo window.execScript "function parseJSON(json) { return eval('(' + json + ')'); }", "JScript"
-echo Set fso = CreateObject^("Scripting.FileSystemObject"^)
-echo Set file = fso.OpenTextFile^("%cd:\=\\%\\%JSON_FILE%", 1^)
-echo jsonText = file.ReadAll
-echo file.Close
-echo Set data = window.parseJSON^(jsonText^)
-echo For Each item In data
-echo     WScript.Echo item.id ^& "|" ^& item.name
-echo Next
-) > "%VBS_PARSER%"
-
-:: Run the parser and redirect output to a clean text file in PWD
-cscript //nologo "%VBS_PARSER%" > "%cd%\extracted_projects.txt" 2>nul
-
-:: Delete the temporary VBScript helper immediately
-del "%VBS_PARSER%" 2>nul
-
-echo Extraction complete! Processing text file line-by-line...
-echo ----------------------------------------------------
-
-:: Loop through the text file step-by-step
-for /f "usebackq tokens=1,2 delims=|" %%A in ("%cd%\extracted_projects.txt") do (
-    echo.
-    echo [Extracted Item]
-    echo ID:   %%A
-    echo Name: %%B
-    echo ----------------------------------------------------
-    echo [PAUSED] Press any key to process the next item...
-    pause > nul
-)
-
-echo.
-echo ----------------------------------------------------
-echo Finished processing all items!
-pause
