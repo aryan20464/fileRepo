@@ -5,7 +5,11 @@ export CATALINA_OPTS="$CATALINA_OPTS -Xms6G -Xmx6G -XX:+UseG1GC -XX:MaxGCPauseMi
 export JAVA_HOME=/weblogic/setups/jdk-21.0.9
 export CATALINA_HOME=/weblogic/apache-tomcat
 export CATALINA_BASE=/weblogic/apache-tomcat
-export JAVA_OPTS="-Xms6G -Xmx6G -XX:+UseG1GC -Djava.security.egd=file:/dev/./urandom"
+
+# Updated with optimized G1 GC flags for a 6GB heap
+export JAVA_OPTS="-Xms6G -Xmx6G -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=45 -XX:G1HeapRegionSize=4m -Djava.security.egd=file:/dev/./urandom"
+
 export CATALINA_OPTS="$CATALINA_OPTS -Djavax.net.ssl.trustStore=/weblogic/certs/custom-truststore.jks -Djavax.net.ssl.trustStorePassword=changeit"
+
 
 
