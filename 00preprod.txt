@@ -3,3 +3,4 @@ jstack -l 2403774 | grep -E 'THREAD|RUNNABLE|BLOCKED|WAITING' | head -n 30
 
 ps -p 2403774 -o pid,rss,vsz,pcpu,time
 d
+s
