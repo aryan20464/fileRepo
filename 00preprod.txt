@@ -12,3 +12,39 @@ jstack  jstat   jstatd
   0.00 100.00  64.30  27.15  93.43  93.08    106   16.557     1    0.366   16.922
   0.00 100.00  64.30  27.15  93.43  93.08    106   16.557     1    0.366   16.922
 
+-bash-4.4$ echo "Total threads: $(/weblogic/java/bin/jstack -l 2403774 | grep -c '"')"
+Total threads: 258
+-bash-4.4$ /weblogic/java/bin/jstack -l 2403774 | grep -E 'THREAD|RUNNABLE|BLOCKED|WAITING' | head -n 30
+   java.lang.Thread.State: RUNNABLE
+   java.lang.Thread.State: RUNNABLE
+   java.lang.Thread.State: WAITING (on object monitor)
+   java.lang.Thread.State: WAITING (on object monitor)
+   java.lang.Thread.State: WAITING (on object monitor)
+   java.lang.Thread.State: WAITING (on object monitor)
+   java.lang.Thread.State: WAITING (on object monitor)
+   java.lang.Thread.State: WAITING (on object monitor)
+   java.lang.Thread.State: WAITING (on object monitor)
+   java.lang.Thread.State: WAITING (on object monitor)
+   java.lang.Thread.State: WAITING (on object monitor)
+   java.lang.Thread.State: WAITING (on object monitor)
+   java.lang.Thread.State: WAITING (on object monitor)
+   java.lang.Thread.State: WAITING (on object monitor)
+   java.lang.Thread.State: WAITING (on object monitor)
+   java.lang.Thread.State: WAITING (on object monitor)
+   java.lang.Thread.State: WAITING (on object monitor)
+   java.lang.Thread.State: WAITING (parking)
+   java.lang.Thread.State: WAITING (parking)
+   java.lang.Thread.State: TIMED_WAITING (on object monitor)
+   java.lang.Thread.State: TIMED_WAITING (on object monitor)
+   java.lang.Thread.State: TIMED_WAITING (on object monitor)
+   java.lang.Thread.State: TIMED_WAITING (on object monitor)
+   java.lang.Thread.State: WAITING (on object monitor)
+   java.lang.Thread.State: WAITING (on object monitor)
+   java.lang.Thread.State: WAITING (on object monitor)
+   java.lang.Thread.State: WAITING (on object monitor)
+   java.lang.Thread.State: WAITING (on object monitor)
+   java.lang.Thread.State: WAITING (on object monitor)
+   java.lang.Thread.State: WAITING (on object monitor)
+-bash-4.4$ ps -p 2403774 -o pid,rss,vsz,pcpu,time
+    PID   RSS    VSZ %CPU     TIME
+2403774 26290408 37907344 79.5 00:57:35
