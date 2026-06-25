@@ -1,1 +1,3 @@
 -Xms24G -Xmx24G -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=45 -XX:G1HeapRegionSize=16m
+export CATALINA_OPTS="$CATALINA_OPTS -Xms6G -Xmx6G -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=45 -XX:G1HeapRegionSize=4m"
+
