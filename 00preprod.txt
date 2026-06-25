@@ -1,30 +1,4 @@
-top - 12:31:19 up 61 days, 14:19,  1 user,  load average: 0.66, 0.71, 0.88
-Threads: 249 total,   0 running, 249 sleeping,   0 stopped,   0 zombie
-%Cpu(s):  1.0 us,  1.0 sy,  0.0 ni, 98.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
-MiB Mem :  48013.9 total,   8435.0 free,  30273.8 used,   9305.1 buff/cache
-MiB Swap:   4096.0 total,   2584.8 free,   1511.2 used.  14854.8 avail Mem
+echo "Total threads: $(jstack -l 2403774 | grep -c '"')"
+jstack -l 2403774 | grep -E 'THREAD|RUNNABLE|BLOCKED|WAITING' | head -n 30
 
-    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
-2403774 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:00.00 java
-2403775 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:02.42 java
-2403777 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:00.26 OAasyncsender
-2403778 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:00.02 OAjumboasyncsen
-2403779 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:00.00 OArequesthandle
-2403780 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:00.07 OAswitchurl
-2403781 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:01.14 OAperiodicreque
-2403782 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:00.28 OAperiodicevent
-2403785 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:00.29 OAmetrics
-2403786 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:00.63 OAperiodicevent
-2403787 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.95 Gang worker#0 (
-2403788 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.88 Gang worker#1 (
-2403789 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.86 Gang worker#2 (
-2403790 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.95 Gang worker#3 (
-2403791 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.98 Gang worker#4 (
-2403792 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.92 Gang worker#5 (
-2403793 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.95 Gang worker#6 (
-2403794 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.91 Gang worker#7 (
-2403795 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.79 Gang worker#8 (
-2403796 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.90 Gang worker#9 (
-2403797 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.96 Gang worker#10
-2403798 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.86 Gang worker#11
-2403799 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.94 Gang worker#12
+ps -p 2403774 -o pid,rss,vsz,pcpu,time
