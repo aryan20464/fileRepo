@@ -13,3 +13,58 @@ export CATALINA_OPTS="$CATALINA_OPTS -Djavax.net.ssl.trustStore=/weblogic/certs/
 
 
 
+Threads: 1476 total,   2 running, 1474 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  5.5 us,  1.9 sy,  0.0 ni, 92.1 id,  0.0 wa,  0.2 hi,  0.2 si,  0.0 st
+MiB Mem :  48013.9 total,   9239.4 free,  29885.2 used,   8889.4 buff/cache
+MiB Swap:   4096.0 total,   2583.4 free,   1512.6 used.  15259.3 avail Mem
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+2403912 weblogic  20   0   36.1g  24.9g 171692 S   5.5  53.1   0:25.34 weblogic.socket
+2043573 dtuser    20   0  187664   4568   1888 R   5.1   0.0 431:33.76 oneagentnettrac
+2403907 weblogic  20   0   36.1g  24.9g 171692 S   5.1  53.1   0:23.89 ExecuteThread:
+2403909 weblogic  20   0   36.1g  24.9g 171692 S   5.1  53.1   0:24.20 ExecuteThread:
+ 223605 root      20   0 9425060 208024  26888 S   4.5   0.4   1298:16 pool-19
+2403908 weblogic  20   0   36.1g  24.9g 171692 S   4.5  53.1   0:24.27 ExecuteThread:
+2403910 weblogic  20   0   36.1g  24.9g 171692 S   3.9  53.1   0:23.75 ExecuteThread:
+2458474 weblogic  20   0  269004   6988   4336 R   3.5   0.0   0:01.32 top
+2404701 weblogic  20   0   36.1g  24.9g 171692 S   3.2  53.1   0:14.96 [ACTIVE] Execut
+2403871 weblogic  20   0   36.1g  24.9g 171692 S   2.6  53.1   1:21.41 C2 CompilerThre
+ 223035 root      20   0 3980112 528084  13204 S   2.3   1.1   1025:18 dsp.am.service
+2403967 weblogic  20   0   36.1g  24.9g 171692 S   2.3  53.1   0:19.52 [STANDBY] Execu
+2403968 weblogic  20   0   36.1g  24.9g 171692 S   2.3  53.1   0:37.40 [ACTIVE] Execut
+2404936 weblogic  20   0   36.1g  24.9g 171692 S   2.3  53.1   0:32.28 [STANDBY] Execu
+2451854 weblogic  20   0   36.1g  24.9g 171692 S   2.3  53.1   0:01.64 [ACTIVE] Execut
+2404084 weblogic  20   0   36.1g  24.9g 171692 S   1.9  53.1   0:30.53 [STANDBY] Execu
+2404110 weblogic  20   0   36.1g  24.9g 171692 S   1.9  53.1   0:22.79 [STANDBY] Execu
+2404941 weblogic  20   0   36.1g  24.9g 171692 S   1.9  53.1   0:11.77 [STANDBY] Execu
+2446959 weblogic  20   0   36.1g  24.9g 171692 S   1.9  53.1   0:01.44 [ACTIVE] Execut
+2451853 weblogic  20   0   36.1g  24.9g 171692 S   1.9  53.1   0:00.29 [ACTIVE] Execut
+2403869 weblogic  20   0   36.1g  24.9g 171692 S   1.6  53.1   1:19.81 C2 CompilerThre
+2403900 weblogic  20   0   36.1g  24.9g 171692 S   1.6  53.1   0:59.89 [ACTIVE] Execut
+2403911 weblogic  20   0   36.1g  24.9g 171692 S   1.6  53.1   0:09.63 [STANDBY] Execu
+2404063 weblogic  20   0   36.1g  24.9g 171692 S   1.6  53.1   0:16.26 [STANDBY] Execu
+2446957 weblogic  20   0   36.1g  24.9g 171692 S   1.6  53.1   0:00.46 [ACTIVE] Execut
+2446958 weblogic  20   0   36.1g  24.9g 171692 S   1.6  53.1   0:00.47 [ACTIVE] Execut
+2451847 weblogic  20   0   36.1g  24.9g 171692 S   1.6  53.1   0:00.95 [ACTIVE] Execut
+2403905 weblogic  20   0   36.1g  24.9g 171692 S   1.3  53.1   0:29.77 [STANDBY] Execu
+2404088 weblogic  20   0   36.1g  24.9g 171692 S   1.3  53.1   0:42.05 [STANDBY] Execu
+2404938 weblogic  20   0   36.1g  24.9g 171692 S   1.3  53.1   0:24.86 [STANDBY] Execu
+2451849 weblogic  20   0   36.1g  24.9g 171692 S   1.3  53.1   0:00.78 [ACTIVE] Execut
+ 223107 root      20   0 3980112 528084  13204 S   1.0   1.1 299:22.18 wrs.sendEvent_0
+2403875 weblogic  20   0   36.1g  24.9g 171692 S   1.0  53.1   1:16.40 C2 CompilerThre
+ 223117 root      20   0 3980112 528084  13204 S   0.6   1.1 195:30.62 dsa.Scheduler_0
+ 223125 root      20   0 3980112 528084  13204 S   0.6   1.1 199:54.70 dsa.Scheduler_0
+ 223673 root      20   0 3980112 528084  13204 S   0.6   1.1 196:04.83 dsa.Scheduler_0
+2411206 root      20   0 9425060 208024  26888 S   0.6   0.4   0:02.10 pool-119575
+2413574 root      20   0 9425060 208024  26888 S   0.6   0.4   0:02.07 pool-120053
+2413605 root      20   0 9425060 208024  26888 S   0.6   0.4   0:02.01 pool-120059
+2423502 root      20   0 9425060 208024  26888 S   0.6   0.4   0:01.38 pool-121175
+2423508 root      20   0 9425060 208024  26888 S   0.6   0.4   0:01.40 pool-121181
+2431140 root      20   0 9425060 208024  26888 S   0.6   0.4   0:01.35 pool-121192
+2431142 root      20   0 9425060 208024  26888 S   0.6   0.4   0:01.29 pool-121194
+2043789 dtuser    20   0  175064   5188   4776 S   0.6   0.0  16:24.80 parser
+2403904 weblogic  20   0   36.1g  24.9g 171692 S   0.6  53.1   0:21.79 [STANDBY] Execu
+2403906 weblogic  20   0   36.1g  24.9g 171692 S   0.6  53.1   0:06.20 [STANDBY] Execu
+2404064 weblogic  20   0   36.1g  24.9g 171692 S   0.6  53.1   0:38.10 [STANDBY] Execu
+2404089 weblogic  20   0   36.1g  24.9g 171692 S   0.6  53.1   0:11.58 [STANDBY] Execu
+
