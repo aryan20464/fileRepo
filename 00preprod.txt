@@ -1,31 +1,30 @@
--bash-4.4$ top
-top - 12:26:08 up 61 days, 14:14,  1 user,  load average: 0.48, 0.75, 0.96
-Tasks: 420 total,   1 running, 419 sleeping,   0 stopped,   0 zombie
-%Cpu(s):  1.8 us,  0.7 sy,  0.0 ni, 97.3 id,  0.0 wa,  0.1 hi,  0.1 si,  0.0 st
-MiB Mem :  48013.9 total,   8509.7 free,  30233.3 used,   9270.9 buff/cache
-MiB Swap:   4096.0 total,   2584.8 free,   1511.2 used.  14895.2 avail Mem
+top - 12:31:19 up 61 days, 14:19,  1 user,  load average: 0.66, 0.71, 0.88
+Threads: 249 total,   0 running, 249 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  1.0 us,  1.0 sy,  0.0 ni, 98.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+MiB Mem :  48013.9 total,   8435.0 free,  30273.8 used,   9305.1 buff/cache
+MiB Swap:   4096.0 total,   2584.8 free,   1511.2 used.  14854.8 avail Mem
 
     PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
-2403774 weblogic  20   0   36.1g  25.0g 171692 S  12.5  53.4  50:15.53 java
- 223366 root      20   0 9425060 210584  27920 S   5.0   0.4   2832:13 ds_am
- 222543 root      20   0 3980112 543324  13336 S   4.6   1.1   4085:01 ds_agent
-2043553 dtuser    20   0  187664   4568   1888 S   3.6   0.0 449:07.73 oneagentnettrac
-1707623 root      20   0 1302196  39356  12396 S   1.0   0.1 147:48.19 tmxbc
-2043404 dtuser    20   0  710692  27712   5816 S   1.0   0.1  23:51.30 oneagentextensi
-2598237 weblogic  20   0  267800   5760   4332 R   1.0   0.0   0:00.20 top
- 528779 root      20   0   10.8g 394352   6508 S   0.7   0.8 177:26.25 java
-2104953 weblogic  20   0 3354348  84444  20044 S   0.7   0.2 184:50.72 alloy-linux-amd
-   1015 root      20   0  177284  67144  40520 S   0.3   0.1 167:04.29 systemd-journal
-   1437 root      20   0  575664   3184   1916 S   0.3   0.0 106:14.03 vmtoolsd
-   1517 root      20   0  850248  47792  47072 S   0.3   0.1  33:41.18 abrt-dump-journ
-2043368 dtuser    20   0 1408084  66340  20032 S   0.3   0.1 336:53.66 oneagentos
-2043402 dtuser    20   0  376040  65696  23728 S   0.3   0.1  54:41.56 oneagentnetwork
-2043434 dtuser    20   0  175064   5188   4776 S   0.3   0.0  19:58.65 oneagenteventst
-2087504 root      20   0 4457008  44384  10976 S   0.3   0.1 125:39.48 vls_am
-2402819 weblogic  20   0 7891972 917348  74236 S   0.3   1.9   3:10.88 java
-2403543 weblogic  20   0 5065556 268768  64108 S   0.3   0.5   0:17.56 java
-2418145 root      20   0       0      0      0 I   0.3   0.0   0:00.13 kworker/7:1-mm_percpu_wq
-2562813 root      20   0       0      0      0 I   0.3   0.0   0:00.14 kworker/u33:1-flush-253:6
-      1 root      20   0  248396  10308   4040 S   0.0   0.0 999:01.40 systemd
-      2 root      20   0       0      0      0 S   0.0   0.0   0:11.85 kthreadd
-      3 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 rcu_gp
+2403774 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:00.00 java
+2403775 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:02.42 java
+2403777 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:00.26 OAasyncsender
+2403778 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:00.02 OAjumboasyncsen
+2403779 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:00.00 OArequesthandle
+2403780 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:00.07 OAswitchurl
+2403781 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:01.14 OAperiodicreque
+2403782 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:00.28 OAperiodicevent
+2403785 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:00.29 OAmetrics
+2403786 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:00.63 OAperiodicevent
+2403787 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.95 Gang worker#0 (
+2403788 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.88 Gang worker#1 (
+2403789 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.86 Gang worker#2 (
+2403790 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.95 Gang worker#3 (
+2403791 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.98 Gang worker#4 (
+2403792 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.92 Gang worker#5 (
+2403793 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.95 Gang worker#6 (
+2403794 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.91 Gang worker#7 (
+2403795 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.79 Gang worker#8 (
+2403796 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.90 Gang worker#9 (
+2403797 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.96 Gang worker#10
+2403798 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.86 Gang worker#11
+2403799 weblogic  20   0   36.1g  25.0g 171692 S   0.0  53.4   0:06.94 Gang worker#12
