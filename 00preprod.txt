@@ -1,111 +1,18 @@
-Threads: 1561 total,   1 running, 1560 sleeping,   0 stopped,   0 zombie
-%Cpu(s):  1.2 us,  0.7 sy,  0.0 ni, 98.0 id,  0.0 wa,  0.1 hi,  0.0 si,  0.0 st
-MiB Mem :  48013.9 total,    327.5 free,  43886.5 used,   3800.0 buff/cache
-MiB Swap:   4096.0 total,      0.0 free,   4096.0 used.   1257.5 avail Mem
-
-    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
-2031486 weblogic  20   0  269160   7028   4324 R   3.5   0.0   0:00.40 top
-2043573 dtuser    20   0  187692   4552   1892 S   3.5   0.0 427:42.22 oneagentnettrac
- 223035 root      20   0 3980112 528120  13296 S   1.9   1.1   1021:34 dsp.am.service
- 223107 root      20   0 3980112 528120  13296 S   1.0   1.1 298:13.93 wrs.sendEvent_0
- 223011 root      20   0 3980112 528120  13296 S   0.6   1.1  56:54.07 dsa.Scheduler
- 223125 root      20   0 3980112 528120  13296 S   0.6   1.1 198:57.85 dsa.Scheduler_0
- 223128 root      20   0 3980112 528120  13296 S   0.6   1.1 189:57.71 dsa.Scheduler_0
- 223676 root      20   0 3980112 528120  13296 S   0.6   1.1 186:48.89 dsa.Scheduler_0
-1734406 root      20   0 3980112 528120  13296 S   0.6   1.1 157:23.22 dsa.Scheduler_0
-1711657 splunkf+  20   0  601096 135544  11816 S   0.6   0.3   0:39.51 tailreader0
-2104962 weblogic  20   0 3288744  57200   8932 S   0.6   0.1   9:37.04 alloy-linux-amd
- 222207 weblogic  20   0 3288744  57200   8932 S   0.6   0.1   3:28.56 alloy-linux-amd
-   1437 root      20   0  575664   3440   2172 S   0.3   0.0 103:37.43 vmtoolsd
- 223005 root      20   0 3980112 528120  13296 S   0.3   1.1  60:52.91 dsa.threadMgr
- 223030 root      20   0 3980112 528120  13296 S   0.3   1.1  32:06.06 dsp.im.service
-1057646 root      20   0 3980112 528120  13296 S   0.3   1.1 129:16.81 dsa.Scheduler_0
- 223510 root      20   0 9228452 210780  26012 S   0.3   0.4  30:43.11 ds_am
- 223605 root      20   0 9228452 210780  26012 S   0.3   0.4   1289:17 pool-19
-2018147 root      20   0 9228452 210780  26012 S   0.3   0.4   0:00.60 pool-116486
-2018166 root      20   0 9228452 210780  26012 S   0.3   0.4   0:00.59 pool-116505
-2018189 root      20   0 9228452 210780  26012 S   0.3   0.4   0:01.19 pool-116528
- 469786 weblogic  20   0   48.1g  37.8g  10648 S   0.3  80.7  12:02.77 VM Periodic Tas
- 115268 weblogic  20   0   48.1g  37.8g  10648 S   0.3  80.7   3:43.21 csig-IDA0-11
-2833750 weblogic  20   0   48.1g  37.8g  10648 S   0.3  80.7   3:10.07 murex-0-19
- 528819 root      20   0   10.8g 392380   4608 S   0.3   0.8   2:41.61 OAmetrics
- 528953 root      20   0   10.8g 392380   4608 S   0.3   0.8  99:27.53 Log4j2-TF-9-Asy
-1707629 root      20   0 1302196  40116  12460 S   0.3   0.1   6:37.20 tmxbc
-1722342 root      20   0 1302196  40116  12460 S   0.3   0.1   6:49.31 tmxbc
-1711595 splunkf+  20   0  601096 135544  11816 S   0.3   0.3   0:01.77 WatchdogThread
-1711603 splunkf+  20   0  601096 135544  11816 S   0.3   0.3   0:00.06 DiagDownloadThr
-2043410 dtuser    20   0 1408084  63672  17048 S   0.3   0.1   6:12.25 OAperiodicreque
-2043767 dtuser    20   0  376040  64576  22608 S   0.3   0.1  17:30.15 oneagentnetwork
-2043817 dtuser    20   0  376040  64576  22608 S   0.3   0.1  18:06.72 oneagentnetwork
-2043779 dtuser    20   0 2279132   9888    408 S   0.3   0.0   0:55.09 oneagentsources
-2087671 root      20   0 4457008  41404   8656 S   0.3   0.1  47:29.02 vls_am
-2087751 root      20   0 4457008  41404   8656 S   0.3   0.1  14:54.34 vls_am
-3596009 root      20   0  736124  35324  33556 S   0.3   0.1 137:02.78 in:imjournal
-      1 root      20   0  248396  10168   3840 S   0.0   0.0 996:58.34 systemd
-      2 root      20   0       0      0      0 S   0.0   0.0   0:11.79 kthreadd
-
-
-
-
-Threads: 1694 total,   1 running, 1693 sleeping,   0 stopped,   0 zombie
-%Cpu(s):  0.9 us,  0.6 sy,  0.0 ni, 98.4 id,  0.0 wa,  0.1 hi,  0.1 si,  0.0 st
-MiB Mem :  48013.9 total,    996.3 free,  39267.2 used,   7750.4 buff/cache
-MiB Swap:   4096.0 total,    120.7 free,   3975.3 used.   5631.8 avail Mem
-
-    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
-1174216 root      20   0 3870032 573460  17964 S   4.2   1.2 931:34.76 dsp.am.service
-1424016 weblogic  20   0  269280   7244   4328 R   3.5   0.0   0:00.34 top
- 404091 dtuser    20   0  187848   2708   2028 S   2.6   0.0 416:39.20 oneagentnettrac
-3797044 weblogic  20   0   48.3g  32.3g  18060 S   1.3  69.0   6:10.73 [STANDBY] Execu
-1174273 root      20   0 3870032 573460  17964 S   0.6   1.2 263:54.38 wrs.sendEvent_0
-2575212 weblogic  20   0   48.3g  32.3g  18060 S   0.6  69.0   8:44.05 C2 CompilerThre
-3283487 weblogic  20   0 3280872  80964  22812 S   0.6   0.2   9:16.54 alloy-linux-amd
-     15 root      20   0       0      0      0 I   0.3   0.0  74:44.28 rcu_sched
-   1403 root      20   0  575660   4832   2900 S   0.3   0.0 101:38.16 vmtoolsd
- 403991 dtuser    20   0 1404096  60048  17276 S   0.3   0.1   2:17.14 OAasyncsender
-1174211 root      20   0 3870032 573460  17964 S   0.3   1.2  29:18.02 dsp.im.service
-1992269 root      20   0 3870032 573460  17964 S   0.3   1.2  56:12.02 dsa.Scheduler_0
-1174422 root      20   0 9256588 184192  11756 S   0.3   0.4  25:44.72 ds_am
-1174525 root      20   0 9256588 184192  11756 S   0.3   0.4   4:26.30 ds_am
-1174604 root      20   0 9256588 184192  11756 S   0.3   0.4  33:36.72 ds_am
-1174610 root      20   0 9256588 184192  11756 S   0.3   0.4 770:28.30 pool-19
-1366183 root      20   0 9256588 184192  11756 S   0.3   0.4   1:19.44 pool-64324
-1401593 root      20   0 9256588 184192  11756 S   0.3   0.4   0:01.42 pool-64391
-1413179 root      20   0 9256588 184192  11756 S   0.3   0.4   0:00.61 pool-64429
-1420600 root      20   0 9256588 184192  11756 S   0.3   0.4   0:00.19 pool-64462
-1344708 weblogic  20   0   20.3g 684648  19328 S   0.3   1.4  33:31.19 org.springframe
-1423393 root      20   0       0      0      0 I   0.3   0.0   0:00.01 kworker/u33:0-writeback
-1634065 root      20   0  735896  48880  45112 S   0.3   0.1 135:30.86 in:imjournal
-1723697 root      20   0 5833264  43228   9496 S   0.3   0.1   6:36.08 vls_am
-2574378 weblogic  20   0   21.8g 590840  14472 S   0.3   1.2   7:10.55 OAperiodicreque
-2574970 weblogic  20   0 5064848 156864  11960 S   0.3   0.3   7:32.80 OAperiodicreque
-2575125 weblogic  20   0 5064848 156864  11960 S   0.3   0.3  13:43.82 server monitor
-2575204 weblogic  20   0   48.3g  32.3g  18060 S   0.3  69.0  18:46.65 VM Thread
-2575211 weblogic  20   0   48.3g  32.3g  18060 S   0.3  69.0   9:16.13 C2 CompilerThre
-2575213 weblogic  20   0   48.3g  32.3g  18060 S   0.3  69.0   8:51.83 C2 CompilerThre
-2575214 weblogic  20   0   48.3g  32.3g  18060 S   0.3  69.0   8:58.51 C2 CompilerThre
-2575215 weblogic  20   0   48.3g  32.3g  18060 S   0.3  69.0   8:51.04 C2 CompilerThre
-2575218 weblogic  20   0   48.3g  32.3g  18060 S   0.3  69.0   8:52.97 C2 CompilerThre
-2575220 weblogic  20   0   48.3g  32.3g  18060 S   0.3  69.0   1:23.72 C1 CompilerThre
-2575222 weblogic  20   0   48.3g  32.3g  18060 S   0.3  69.0   1:24.62 C1 CompilerThre
-2575251 weblogic  20   0   48.3g  32.3g  18060 S   0.3  69.0  25:48.77 weblogic.socket
-2577851 weblogic  20   0   48.3g  32.3g  18060 S   0.3  69.0   8:38.35 RcvThread: com.
-2578485 weblogic  20   0   48.3g  32.3g  18060 S   0.3  69.0   6:58.21 csig-IDA0-5
-2704301 weblogic  20   0   48.3g  32.3g  18060 S   0.3  69.0   6:20.68 murex-0-5
-2776340 weblogic  20   0   48.3g  32.3g  18060 S   0.3  69.0   6:20.26 murex-0-6
-3794237 weblogic  20   0   48.3g  32.3g  18060 S   0.3  69.0   4:32.91 [ACTIVE] Execut
-2797744 weblogic  20   0   48.3g  32.3g  18060 S   0.3  69.0   2:07.55 [ACTIVE] Execut
-  51722 weblogic  20   0   48.3g  32.3g  18060 S   0.3  69.0   0:36.31 MQ-LISTENER
-3283478 weblogic  20   0 3280872  80964  22812 S   0.3   0.2  10:21.29 alloy-linux-amd
-3283481 weblogic  20   0 3280872  80964  22812 S   0.3   0.2  10:52.44 alloy-linux-amd
-3283512 weblogic  20   0 3280872  80964  22812 S   0.3   0.2   8:31.46 alloy-linux-amd
-      1 root      20   0  248384  11156   4620 S   0.0   0.0 988:29.23 systemd
-      2 root      20   0       0      0      0 S   0.0   0.0   0:09.85 kthreadd
-      3 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 rcu_gp
-      4 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 rcu_par_gp
-      5 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 slub_flushwq
-      7 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/0:0H-events_highpri
-     10 root      20   0       0      0      0 I   0.0   0.0   0:00.00 kworker/u32:0-scsi_tmf_3
-     11 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 mm_percpu_wq
-     12 root      20   0       0      0      0 S   0.0   0.0   0:00.00 rcu_tasks_rude_
-     13 root      20   0       0      0      0 S   0.0   0.0   0:00.00 rcu_tasks_trace
+-bash-4.4$ ps -ef | grep weblogic
+weblogic   11591       1  0 Apr24 ?        00:00:36 /usr/lib/systemd/systemd --user
+weblogic   11595   11591  0 Apr24 ?        00:00:00 (sd-pam)
+weblogic  468492   11591  0 Jun09 ?        00:35:50 /weblogic/application/bc-service/java/bin/java -jar /weblogic/application/bc-service/BouncyCastleService.war
+weblogic  468818       1  0 Jun09 ?        00:00:00 /bin/sh ./startWebLogic.sh
+weblogic  468870  468818  0 Jun09 ?        01:19:26 /weblogic/java/bin/java -server -Xms256m -Xmx512m -cp /weblogic/oracle/middleware/wlserver/server/lib/weblogic-launcher.jar -Dlaunch.use.env.classpath=true -Dweblogic.Name=AdminServer -Djava.security.policy=/weblogic/oracle/middleware/wlserver/server/lib/weblogic.policy -Dweblogic.ProductionModeEnabled=true -Djava.system.class.loader=com.oracle.classloader.weblogic.LaunchClassLoader -javaagent:/weblogic/oracle/middleware/wlserver/server/lib/debugpatch-agent.jar -da -Dwls.home=/weblogic/oracle/middleware/wlserver/server -Dweblogic.home=/weblogic/oracle/middleware/wlserver/server -Djava.ext.dirs=/weblogic/java/jre/lib/ext -Dweblogic.security.SSL.enforceConstraints=off -Dssl.debug=true -Dweblogic.security.SSL.ignoreHostnameVerification=true weblogic.Server
+weblogic  469442       1  0 Jun09 ?        00:00:00 /bin/sh ./startNodeManager.sh
+weblogic  469443  469442  0 Jun09 ?        00:00:00 /bin/sh /weblogic/oracle/middleware/wlserver/server/bin/startNodeManager.sh
+weblogic  469490  469443  0 Jun09 ?        00:39:15 /weblogic/java/bin/java -server -Xms32m -Xmx200m -Djdk.tls.ephemeralDHKeySize=2048 -Dcoherence.home=/weblogic/oracle/middleware/wlserver/../coherence -Dbea.home=/weblogic/oracle/middleware/wlserver/.. -Dweblogic.RootDirectory=/weblogic/oracle/middleware/user_projects/domains/IDEA -Djdk.security.allowNonCaAnchor=true -Dweblogic.security.SSL.enforceConstraints=off -Dssl.debug=true -Dweblogic.nodemanager.sslHostNameVerificationEnabled=false -Djava.system.class.loader=com.oracle.classloader.weblogic.LaunchClassLoader -Djava.security.policy=/weblogic/oracle/middleware/wlserver/server/lib/weblogic.policy -Dweblogic.nodemanager.JavaHome=/weblogic/java weblogic.NodeManager -v
+weblogic  469688  469490  0 Jun09 ?        00:00:00 /bin/sh /weblogic/oracle/middleware/user_projects/domains/IDEA/bin/startWebLogic.sh
+weblogic  469739  469688 60 Jun09 ?        9-08:36:23 /weblogic/java/bin/java -server -Xms256m -Xmx512m -cp /weblogic/oracle/middleware/wlserver/server/lib/weblogic-launcher.jar -Dlaunch.use.env.classpath=true -Dweblogic.Name=FXS_SERVER1 -Djava.security.policy=/weblogic/oracle/middleware/wlserver/server/lib/weblogic.policy -Dweblogic.ProductionModeEnabled=true -Dweblogic.system.BootIdentityFile=/weblogic/oracle/middleware/user_projects/domains/IDEA/servers/FXS_SERVER1/data/nodemanager/boot.properties -Dweblogic.nodemanager.ServiceEnabled=true -Dweblogic.nmservice.RotationEnabled=true -Dweblogic.security.SSL.ignoreHostnameVerification=true -Dweblogic.ReverseDNSAllowed=false -Xms12G -Xmx36G -Dweblogic.security.SSL.protocolVersion=TLS1 -Dweblogic.security.SSL.minimumProtocolVersion=TLSv1.2 -Djava.system.class.loader=com.oracle.classloader.weblogic.LaunchClassLoader -javaagent:/weblogic/oracle/middleware/wlserver/server/lib/debugpatch-agent.jar -da -Dwls.home=/weblogic/oracle/middleware/wlserver/server -Dweblogic.home=/weblogic/oracle/middleware/wlserver/server -Djava.ext.dirs=/weblogic/java/jre/lib/ext -Dweblogic.management.server=http://10.191.151.161:6002 -Dweblogic.security.SSL.enforceConstraints=off -Dssl.debug=true -Dweblogic.security.SSL.ignoreHostnameVerification=true weblogic.Server
+root     2027528 4119651  0 09:25 ?        00:00:00 sshd: weblogic [priv]
+weblogic 2027534 2027528  0 09:25 ?        00:00:00 sshd: weblogic@pts/0
+weblogic 2027535 2027534  0 09:25 pts/0    00:00:00 -bash
+weblogic 2037237 2027535  0 09:34 pts/0    00:00:00 ps -ef
+weblogic 2037238 2027535  0 09:34 pts/0    00:00:00 grep --color=auto weblogic
+weblogic 2056566   11591  0 Jun01 ?        00:00:00 /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+weblogic 2104953       1  0 Jun10 ?        03:02:30 ./alloy-linux-amd64 run alloy-config.hcl --server.http.listen-addr=0.0.0.0:5113
