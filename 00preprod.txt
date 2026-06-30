@@ -1,50 +1,55 @@
-jstack  jstat   jstatd
--bash-4.4$ /weblogic/java/bin/jstat -gcutil 2403774 1000 10
-  S0     S1     E      O      M     CCS    YGC     YGCT    FGC    FGCT     GCT
-  0.00 100.00  58.77  27.15  93.43  93.08    106   16.557     1    0.366   16.922
-  0.00 100.00  60.02  27.15  93.43  93.08    106   16.557     1    0.366   16.922
-  0.00 100.00  60.65  27.15  93.43  93.08    106   16.557     1    0.366   16.922
-  0.00 100.00  60.96  27.15  93.43  93.08    106   16.557     1    0.366   16.922
-  0.00 100.00  62.21  27.15  93.43  93.08    106   16.557     1    0.366   16.922
-  0.00 100.00  62.63  27.15  93.43  93.08    106   16.557     1    0.366   16.922
-  0.00 100.00  63.05  27.15  93.43  93.08    106   16.557     1    0.366   16.922
-  0.00 100.00  63.78  27.15  93.43  93.08    106   16.557     1    0.366   16.922
-  0.00 100.00  64.30  27.15  93.43  93.08    106   16.557     1    0.366   16.922
-  0.00 100.00  64.30  27.15  93.43  93.08    106   16.557     1    0.366   16.922
+stages:
+  - build
+  - deploy
 
--bash-4.4$ echo "Total threads: $(/weblogic/java/bin/jstack -l 2403774 | grep -c '"')"
-Total threads: 258
--bash-4.4$ /weblogic/java/bin/jstack -l 2403774 | grep -E 'THREAD|RUNNABLE|BLOCKED|WAITING' | head -n 30
-   java.lang.Thread.State: RUNNABLE
-   java.lang.Thread.State: RUNNABLE
-   java.lang.Thread.State: WAITING (on object monitor)
-   java.lang.Thread.State: WAITING (on object monitor)
-   java.lang.Thread.State: WAITING (on object monitor)
-   java.lang.Thread.State: WAITING (on object monitor)
-   java.lang.Thread.State: WAITING (on object monitor)
-   java.lang.Thread.State: WAITING (on object monitor)
-   java.lang.Thread.State: WAITING (on object monitor)
-   java.lang.Thread.State: WAITING (on object monitor)
-   java.lang.Thread.State: WAITING (on object monitor)
-   java.lang.Thread.State: WAITING (on object monitor)
-   java.lang.Thread.State: WAITING (on object monitor)
-   java.lang.Thread.State: WAITING (on object monitor)
-   java.lang.Thread.State: WAITING (on object monitor)
-   java.lang.Thread.State: WAITING (on object monitor)
-   java.lang.Thread.State: WAITING (on object monitor)
-   java.lang.Thread.State: WAITING (parking)
-   java.lang.Thread.State: WAITING (parking)
-   java.lang.Thread.State: TIMED_WAITING (on object monitor)
-   java.lang.Thread.State: TIMED_WAITING (on object monitor)
-   java.lang.Thread.State: TIMED_WAITING (on object monitor)
-   java.lang.Thread.State: TIMED_WAITING (on object monitor)
-   java.lang.Thread.State: WAITING (on object monitor)
-   java.lang.Thread.State: WAITING (on object monitor)
-   java.lang.Thread.State: WAITING (on object monitor)
-   java.lang.Thread.State: WAITING (on object monitor)
-   java.lang.Thread.State: WAITING (on object monitor)
-   java.lang.Thread.State: WAITING (on object monitor)
-   java.lang.Thread.State: WAITING (on object monitor)
--bash-4.4$ ps -p 2403774 -o pid,rss,vsz,pcpu,time
-    PID   RSS    VSZ %CPU     TIME
-2403774 26290408 37907344 79.5 00:57:35
+variables:
+  MAVEN_REPO: "/devtools/gitlab-runner/.m2/repository"
+  MAVEN_CLI_OPTS: "-B -o -Dmaven.test.skip=true -Dmaven.repo.local=$MAVEN_REPO -Djansi.tmpdir=/devtools/maven/apache-maven-3.8.5/maven-tmp"
+  MAVEN_HOME: "/devtools/maven/apache-maven-3.8.5"
+
+build-war:
+  stage: build
+  tags:
+    - cicd-fileupload-auto
+  script:
+    - echo "Using Maven repo at $MAVEN_REPO"
+    - mkdir -p $MAVEN_REPO
+    - export PATH="$MAVEN_HOME/bin:$PATH"
+
+    # Verify Java & Maven versions being used
+    - java -version
+    - mvn -version
+
+    # Build the WAR
+    - mvn $MAVEN_CLI_OPTS clean package
+  artifacts:
+    paths:
+      - target/*.war
+  only:
+    - rfm-integration
+
+build-and-deploy:
+  stage: deploy
+  tags:
+    - cicd-fileupload-auto
+  dependencies:
+    - build-war
+  script:
+    - echo "Generating Docker image tag with short commit and timestamp"
+    - TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
+    - DOCKER_IMAGE="tkgsharedharbor.corp.ad.sbi/uat-cmm/rfm-indents:${CI_COMMIT_SHORT_SHA}-${TIMESTAMP}"
+    - echo "Docker image will be $DOCKER_IMAGE and contains timestamp."
+
+    # Build & push Docker image
+    - docker build -t $DOCKER_IMAGE .
+    - docker push $DOCKER_IMAGE
+
+    # Update Deployment YAML with new image
+    - >
+      sed -i "s|image: .*rfm-indents:.*|image: ${DOCKER_IMAGE}|g" indents-backend-k8s.yaml
+
+    # Deploy to Kubernetes
+    - kubectl apply -f indents-backend-k8s.yaml
+
+  only:
+    - rfm-integration
