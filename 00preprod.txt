@@ -1,3 +1,11 @@
- Resolved [org.springframework.web.bind.MissingServletRequestParameterException: Required request parameter 'message' for method parameter type String is not present]
-^C
--bash-4.4$ curl -iv -X POST http://localhost:5800/RfxKafkaUtil/api/rforex/publish?topic=sbi.ittss.idea.drupgrade.test&message="Hello"
+registry.redhat.io/amq-streams/strimzi-rhel9-operator@sha256:231861dd89a01b949e9713dc2b0049530643059b44ad711e3ba17509ab21564b
+
+registry.redhat.io/amq-streams/kafka-40-rhel9@sha256:352ab87382fc1d1d3b68833a16770c75e081a0dd07788a8ba0ab9792837c628e
+
+registry.redhat.io/amq-streams/console-api-rhel9@sha256:ce399e40e9467bce9b81c8d280d523732ba3e75d8f6c67e15cfcecd1842e024f
+
+registry.redhat.io/amq-streams/console-ui-rhel9@sha256:c46d792cbb95b26679150c6733251d838b281da28f1925c8270201560cb357bc
+
+registry.redhat.io/amq-streams/bridge-rhel9@sha256:5d1e188d3e7b12fbb1b94ed1ac58ea059609a53243ded1bee6d1f179c2b48b4a
+
+registry.redhat.io/amq-streams/bridge-rhel9@sha256:1ac2b6cb3ed34484a66a6856c47a1fd68be03c1bea83fca212f49c471f4b2d56
