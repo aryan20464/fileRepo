@@ -1,37 +1,48 @@
-stages:
-  - build
-  - deploy
-
-variables:
-  MAVEN_REPO: "${CI_PROJECT_DIR}/.m2/repository"   # Better to use project dir for caching
-  MAVEN_CLI_OPTS: "-B --no-transfer-progress -Dmaven.test.skip=true -Dmaven.repo.local=${MAVEN_REPO}"
-  MAVEN_HOME: "/devtools/maven/apache-maven-3.8.5"
-  JAVA_HOME: "/devtools/jdk21/jdk-21.0.6"
-
-cache:                                      # ← Add this at root level
-  key: ${CI_COMMIT_REF_SLUG}-maven
-  paths:
-    - .m2/repository/
-
-build-war:
-  stage: build
-  tags:
-    - cicd-fileupload-auto
-  script:
-    - echo "Using Maven repo at $MAVEN_REPO"
-    - mkdir -p $MAVEN_REPO
-    - export PATH="$MAVEN_HOME/bin:$PATH"
-    
-    - java -version
-    - mvn -version
-    
-    # First run: download dependencies (no -o)
-    - mvn $MAVEN_CLI_OPTS dependency:go-offline -U -P preprod -s /devtools/gitlab-runner/.m2/settings.xml || true
-    
-    # Actual build (still without -o)
-    - mvn $MAVEN_CLI_OPTS clean package -U -X -P preprod -s /devtools/gitlab-runner/.m2/settings.xml
-  artifacts:
-    paths:
-      - target/*.war
-  only:
-    - rforex-integration
+Running with gitlab-runner 16.8.1 (a6097117)
+  on custom-runner TAP5h3h8a, system ID: s_03cc683b0faa
+Preparing the "shell" executor
+00:00
+Using Shell (bash) executor...
+Preparing environment
+00:00
+Running on tss-ideasvnuat...
+Getting source from Git repository
+00:01
+Fetching changes with git depth set to 20...
+Reinitialized existing Git repository in /devtools/gitlab-runner/builds/TAP5h3h8a/0/rfm/rfmindentsmodule/.git/
+Checking out 47f53699 as detached HEAD (ref is rforex-integration)...
+Skipping Git submodules setup
+Executing "step_script" stage of the job script
+00:01
+$ echo "Using Maven repo at $MAVEN_REPO"
+Using Maven repo at /devtools/gitlab-runner/.m2/repository
+$ mkdir -p $MAVEN_REPO
+$ export PATH="$MAVEN_HOME/bin:$PATH"
+$ java -version
+java version "1.8.0_271"
+Java(TM) SE Runtime Environment (build 1.8.0_271-b09)
+Java HotSpot(TM) 64-Bit Server VM (build 25.271-b09, mixed mode)
+$ mvn -version
+Apache Maven 3.8.5 (3599d3414f046de2324203b78ddcf9b5e4388aa0)
+Maven home: /devtools/maven/apache-maven-3.8.5
+Java version: 21.0.6, vendor: Oracle Corporation, runtime: /devtools/jdk21/jdk-21.0.6
+Default locale: en_IN, platform encoding: UTF-8
+OS name: "linux", version: "4.18.0-553.129.1.el8_10.x86_64", arch: "amd64", family: "unix"
+$ mvn $MAVEN_CLI_OPTS clean package -U -P preprod -s /devtools/gitlab-runner/.m2/settings.xml
+[INFO] Scanning for projects...
+[INFO] Downloading from central: https://artifactory.jfrog.sbi:443/artifactory/itfo-treasury-tss-idea-maven-virtual/org/apache/logging/log4j/log4j-bom/2.25.4/log4j-bom-2.25.4.pom
+[ERROR] [ERROR] Some problems were encountered while processing the POMs:
+[ERROR] Non-resolvable import POM: Could not transfer artifact org.apache.logging.log4j:log4j-bom:pom:2.25.4 from/to central (https://artifactory.jfrog.sbi:443/artifactory/itfo-treasury-tss-idea-maven-virtual): transfer failed for https://artifactory.jfrog.sbi:443/artifactory/itfo-treasury-tss-idea-maven-virtual/org/apache/logging/log4j/log4j-bom/2.25.4/log4j-bom-2.25.4.pom @ org.springframework.boot:spring-boot-dependencies:3.5.14, /devtools/gitlab-runner/.m2/repository/org/springframework/boot/spring-boot-dependencies/3.5.14/spring-boot-dependencies-3.5.14.pom, line 2243, column 19
+ @ 
+[ERROR] The build could not read 1 project -> [Help 1]
+[ERROR]   
+[ERROR]   The project in.co.sbi.rfm:RfmIndentsService:1 (/devtools/gitlab-runner/builds/TAP5h3h8a/0/rfm/rfmindentsmodule/pom.xml) has 1 error
+[ERROR]     Non-resolvable import POM: Could not transfer artifact org.apache.logging.log4j:log4j-bom:pom:2.25.4 from/to central (https://artifactory.jfrog.sbi:443/artifactory/itfo-treasury-tss-idea-maven-virtual): transfer failed for https://artifactory.jfrog.sbi:443/artifactory/itfo-treasury-tss-idea-maven-virtual/org/apache/logging/log4j/log4j-bom/2.25.4/log4j-bom-2.25.4.pom @ org.springframework.boot:spring-boot-dependencies:3.5.14, /devtools/gitlab-runner/.m2/repository/org/springframework/boot/spring-boot-dependencies/3.5.14/spring-boot-dependencies-3.5.14.pom, line 2243, column 19: Unexpected error: java.security.InvalidAlgorithmParameterException: the trustAnchors parameter must be non-empty -> [Help 2]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/ProjectBuildingException
+[ERROR] [Help 2] http://cwiki.apache.org/confluence/display/MAVEN/UnresolvableModelException
+Cleaning up project directory and file based variables
