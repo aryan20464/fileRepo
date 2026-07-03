@@ -1,131 +1,136 @@
-package com.example.security;
+/**
 
-public class UserContext {
+ * @author chakri94
+ * @date 20260403
+ */
 
-    private final String pfId;
-    private final String branchCode;
+package in.co.sbi.rfx.indents.components;
 
-    public UserContext(String pfId, String branchCode) {
-        this.pfId = pfId;
-        this.branchCode = branchCode;
-    }
-
-    public String getPfId() {
-        return pfId;
-    }
-
-    public String getBranchCode() {
-        return branchCode;
-    }
-}
-
-
-
-
-
-
-package com.example.security;
-
-public final class UserContextHolder {
-
-    private static final ThreadLocal<UserContext> USER_CONTEXT =
-            new ThreadLocal<>();
-
-    private UserContextHolder() {
-    }
-
-    public static void set(UserContext context) {
-        USER_CONTEXT.set(context);
-    }
-
-    public static UserContext get() {
-        return USER_CONTEXT.get();
-    }
-
-    public static void clear() {
-        USER_CONTEXT.remove();
-    }
-}
-
-
-
-
-
-private void extractUserInfo(String payloadJson) {
-
-    try {
-
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode root = mapper.readTree(payloadJson);
-
-        JsonNode user = root.get("user");
-
-        if (user != null) {
-
-            String pfId =
-                    user.path("pfId").asText("unknown");
-
-            String branch =
-                    user.path("branchCode").asText("unknown");
-
-            MDC.put(
-                    "user_info",
-                    String.format("PF-%s|BCODE-%s", pfId, branch)
-            );
-
-            UserContextHolder.set(
-                    new UserContext(pfId, branch)
-            );
-        }
-
-    } catch (Exception e) {
-
-        MDC.put("user_info", "token-un-parsable");
-
-        UserContextHolder.set(
-                new UserContext("unknown", "unknown")
-        );
-    }
-}
-
-finally {
-
-    MDC.remove("clientIp");
-    MDC.remove("user_info");
-
-    UserContextHolder.clear();
-}
-
-
-
-package com.example.security;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
 @Component
-public class CurrentUser {
+public class ClientIpLoggingFilter implements Filter {
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-    public String getPfId() {
+        final Logger sLogger = LoggerFactory.getLogger("asdf");
 
-        UserContext context =
-                UserContextHolder.get();
 
-        return context != null
-                ? context.getPfId()
-                : "unknown";
+        // Use X-Forwarded-For if behind a load balancer, else getRemoteAddr()
+        String clientIp = httpRequest.getHeader("X-Forwarded-For");
+        if (clientIp == null || clientIp.isEmpty()) {
+            clientIp = httpRequest.getRemoteAddr();
+        } else {
+            // X-Forwarded-For can be a comma-separated list; take the first one
+            clientIp = clientIp.split(",")[0].trim();
+        }
+
+        // Inside your filter's doFilterInternal method
+        String header = httpRequest.getHeader("Authorization");
+
+        if (header != null && header.startsWith("Bearer ")) {
+            String token = header.substring(7); // Extract the token string
+            String User = decodeJwtPayload(header);
+            extractUserInfo(User);
+        }
+
+
+        try {
+            MDC.put("clientIp", "IP-"+clientIp);
+            chain.doFilter(request, response);
+        } finally {
+            MDC.remove("clientIp"); // Always clear to prevent leaking to other threads
+        }
     }
 
-    public String getBranchCode() {
+    public String decodeJwtPayload(String bearerToken) {
+        try {
+            // 1. Remove the "Bearer " prefix (7 characters)
+            if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
+                return "Internal-User";
+            }
+            String token = bearerToken.substring(7);
 
-        UserContext context =
-                UserContextHolder.get();
+            // 2. Split by the dot
+            String[] parts = token.split("\\.");
+            if (parts.length < 2) return "invalid-token";
 
-        return context != null
-                ? context.getBranchCode()
-                : "unknown";
+            // 3. Decode the second part (the Payload)
+            byte[] decodedBytes = Base64.getUrlDecoder().decode(parts[1]);
+            return new String(decodedBytes, StandardCharsets.UTF_8);
+
+        } catch (Exception e) {
+            return "error-decoding";
+        }
     }
 
-    public UserContext getUserContext() {
-        return UserContextHolder.get();
+    /*private void extractUserInfo(String payloadJson) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(payloadJson);
+
+            // Navigate to the "user" object
+            JsonNode user = root.get("user");
+
+            if (user != null) {
+                String pfId = user.path("pfId").asText("unknown");
+                String branch = user.path("branchCode").asText("unknown");
+                //String name = user.path("userName").asText("unknown");
+
+                // Put them into MDC for your logs
+                MDC.put("user_info", String.format("PF-%s|BCODE-%s", pfId, branch));
+            }
+        } catch (Exception e) {
+            MDC.put("user_info", "token-un-parsable");
+        }
+    }*/
+    private void extractUserInfo(String payloadJson) {
+
+        try {
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(payloadJson);
+
+            JsonNode user = root.get("user");
+
+            if (user != null) {
+
+                String pfId =
+                        user.path("pfId").asText("unknown");
+
+                String branch =
+                        user.path("branchCode").asText("unknown");
+
+                MDC.put(
+                        "user_info",
+                        String.format("PF-%s|BCODE-%s", pfId, branch)
+                );
+
+                UserContextHolder.set(
+                        new UserContext(pfId, branch)
+                );
+            }
+
+        } catch (Exception e) {
+
+            MDC.put("user_info", "token-un-parsable");
+
+            UserContextHolder.set(
+                    new UserContext("unknown", "unknown")
+            );
+        }
     }
 }
