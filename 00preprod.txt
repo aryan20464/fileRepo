@@ -1,29 +1,103 @@
-PR OLD
+/**
 
-registry.redhat.io/amq-streams/strimzi-rhel9-operator@sha256:231861dd89a01b949e9713dc2b0049530643059b44ad711e3ba17509ab21564b
+ * @author chakri94
+ * @date 20260403
+ */
 
-registry.redhat.io/amq-streams/kafka-40-rhel9@sha256:352ab87382fc1d1d3b68833a16770c75e081a0dd07788a8ba0ab9792837c628e
+package in.co.sbi.rfx.indents.components;
 
-registry.redhat.io/amq-streams/console-api-rhel9@sha256:ce399e40e9467bce9b81c8d280d523732ba3e75d8f6c67e15cfcecd1842e024f
 
-registry.redhat.io/amq-streams/console-ui-rhel9@sha256:c46d792cbb95b26679150c6733251d838b281da28f1925c8270201560cb357bc
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+import org.springframework.stereotype.Component;
 
-registry.redhat.io/amq-streams/bridge-rhel9@sha256:5d1e188d3e7b12fbb1b94ed1ac58ea059609a53243ded1bee6d1f179c2b48b4a
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
-registry.redhat.io/amq-streams/bridge-rhel9@sha256:1ac2b6cb3ed34484a66a6856c47a1fd68be03c1bea83fca212f49c471f4b2d56
+@Component
+public class ClientIpLoggingFilter implements Filter {
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-DR NEW
+        final Logger sLogger = LoggerFactory.getLogger("asdf");
 
-registry.redhat.io/amq-streams/console-api-rhel9@sha256:ef1c4cdc8aa0a5c2104f6a6e99ce34456369d36d958d01d2cc003a7fc19f3120
 
-registry.redhat.io/amq-streams/console-ui-rhel9@sha256:1704fd8c8d20927e891d8ba781220210b876090a55c14133aaf3d199b164d107
+        // Use X-Forwarded-For if behind a load balancer, else getRemoteAddr()
+        String clientIp = httpRequest.getHeader("X-Forwarded-For");
+        if (clientIp == null || clientIp.isEmpty()) {
+            clientIp = httpRequest.getRemoteAddr();
+        } else {
+            // X-Forwarded-For can be a comma-separated list; take the first one
+            clientIp = clientIp.split(",")[0].trim();
+        }
 
-registry.redhat.io/amq-streams/console-api-rhel9@sha256:e04851a6bd1e1d444103b9f674d75225a8ac0b3c0267ca8156e5a13b09987c9f
+        // Inside your filter's doFilterInternal method
+        String header = httpRequest.getHeader("Authorization");
 
-registry.redhat.io/amq-streams/bridge-rhel9@sha256:c1c4046ba5ad92db4540204edd2775b69898357c87827b787f43b036c22216af
+        if (header != null && header.startsWith("Bearer ")) {
+            String token = header.substring(7); // Extract the token string
+            String User = decodeJwtPayload(header);
+            extractUserInfo(User);
+            //sLogger.info("Logger token {}", token);
+            //sLogger.info("Logger token - User {}", User);
+        }
 
-registry.redhat.io/amq-streams/kafka-42-rhel9@sha256:91aff28878ec1bbce9b8cf8900f15d8204f5f1308b4b91acb784006ec6607d2d
 
-registry.redhat.io/amq-streams/kafka-42-rhel9@sha256:1921e2620e848f75ac5c4aa3a09a93e21ef2e8449b678668efd8ce3439ece426
+        try {
+            MDC.put("clientIp", "IP-"+clientIp);
+            chain.doFilter(request, response);
+        } finally {
+            MDC.remove("clientIp"); // Always clear to prevent leaking to other threads
+        }
+    }
 
-registry.redhat.io/amq-streams/strimzi-rhel9-operator@sha256:9ae0e1ba5f994ef6c3b03f9566f5c0aff4d54f5be7133eec5f14b11ca80b8d48
+    public String decodeJwtPayload(String bearerToken) {
+        try {
+            // 1. Remove the "Bearer " prefix (7 characters)
+            if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
+                return "Internal-User";
+            }
+            String token = bearerToken.substring(7);
+
+            // 2. Split by the dot
+            String[] parts = token.split("\\.");
+            if (parts.length < 2) return "invalid-token";
+
+            // 3. Decode the second part (the Payload)
+            byte[] decodedBytes = Base64.getUrlDecoder().decode(parts[1]);
+            return new String(decodedBytes, StandardCharsets.UTF_8);
+
+        } catch (Exception e) {
+            return "error-decoding";
+        }
+    }
+
+    private void extractUserInfo(String payloadJson) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(payloadJson);
+
+            // Navigate to the "user" object
+            JsonNode user = root.get("user");
+
+            if (user != null) {
+                String pfId = user.path("pfId").asText("unknown");
+                String branch = user.path("branchCode").asText("unknown");
+                //String name = user.path("userName").asText("unknown");
+
+                // Put them into MDC for your logs
+                MDC.put("user_info", String.format("PF-%s|BCODE-%s", pfId, branch));
+            }
+        } catch (Exception e) {
+            MDC.put("user_info", "token-un-parsable");
+        }
+    }
+}
