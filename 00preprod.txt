@@ -1,406 +1,65 @@
-@if(responseData) {
-    <div>
-        <h4>{{responseData}}</h4>
-    </div>
-}
-<mat-tab-group class="custom-tab-group" style="margin-top: 1%">             
-    <mat-tab label="Pending for Approval">        
-        <div class="tab-content table-scroll">
-            <div class="order-form-container">
-                <div class="actions" style="float:right;margin-bottom:5px">
-                    <button mat-button color="accent" class="btn-export" (click)="exportToExcelPendingIndents()">Export to Excel</button>
-                </div>
-                <table id="pending-indents">
-                    <thead style="background-color:thistle;">
-                        <tr>
-                            <th>SNo</th>
-                            <th>IndentID</th>
-                            <!-- <th>BCode</th>
-                            <th>Branch Name</th> -->
-                            <th>Vendor Name</th>
-                            <th>Foreign Currency</th>
-                            <th>Amount</th>
-                            <th>Request Type</th>
-                            <!-- <th>Requested on</th>
-                            <th>Amount Received</th>
-                            <th>Received On</th> -->
-                            <th>Created On</th>
-                            <th>Status</th>
-                            <th>Operation</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for(record of records;track $index; let i = $index) {
-                            <tr [ngStyle]="{'background-color': getRowColor(record.indentID)}">
-                                <td>{{i+1}}</td>
-                                <td>{{record.indentID}}</td>
-                                <!-- <td>{{record.branchCode}}</td>
-                                <td>{{record.branchName}}</td> -->
-                                <td>{{branchVendorList[record.vendorRes]}}-{{record.vendorBranch}}</td>
-                                <td>{{currencyData[record.currencyType]}}</td>
-                                <td>{{record.requestedCurrencyValue}}</td>
-                                <td>{{currencyMode[record.currencyMode]}}</td>
-                                <!-- <td>{{convertHRF(record.requestedDate)}}</td>
-                                <td>{{record.receivedCurrencyValue}}</td>                        
-                                <td>{{convertHRF(record.receivedDate)}}</td> -->
-                                <td>{{convertHRF(record.createdAt)}}</td>
-                                <td>{{appStatus[record.indentStatus]}}
-                                    @if(record.indentStatus==1) {
-                                        <span>-({{record.makerName}})</span>
-                                    }
-                                </td><!--{{uniqueIndentCount[record.indentID]}}-->
-                            <!-- Last column with button, using rowspan -->
-                                @if(i === firstIndexMap[record.indentID]) {
-                                    <td [attr.rowspan]="uniqueIndentCount[record.indentID]">
-                                        <button class="btn-approve" (click)="onApprove(record.indentID)">Approve</button><button class="btn-reject" (click)="openModal(modalTemplate,record.indentID)">Reject</button>
-                                    </td>
-                                }
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </mat-tab>
-
-    <mat-tab label="Accepted & Pending at Branch">
-        <div class="tab-content table-scroll">
-            <div class="order-form-container">     
-                <div class="actions" style="float:right;margin-bottom:5px">
-                    <button mat-button color="accent" class="btn-export" (click)="exportToExcelAcceptedIndents()">Export to Excel</button>
-                </div>          
-                <table id="accepted-indents">
-                    <thead style="background-color:thistle;">
-                        <tr>
-                            <th>SNo</th>
-                            <th>Indent ID</th>
-                            <th>Indent Date</th>
-                            <th>Branch Name</th>
-                            <th>Vendor Name/ID</th>
-                            <th>Foreign Currency</th>
-                            <th>Request Type</th>
-                            <th>Amount Requested</th>
-                            <th>Pending Since</th>
-                            <th>Amount Received</th>
-                            <th>Received Date</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for(sdata of pendingRTOIndents;track sdata.indentID; let i = $index) {
-                            <tr [ngStyle]="{'background-color': getRowColor(sdata.indentID)}">
-                                <td>{{i+1}}</td>
-                                <td>{{sdata.indentID}}</td>
-                                <td>{{convertHRF(sdata.createdAt)}}</td>
-                                <td>{{sdata.branchName}}</td>
-                                <td>{{branchVendorList[sdata.vendorRes]}} - {{sdata.vendorBranch}}</td>
-                                <td>{{currencyData[sdata.currencyType]}}</td>
-                                <td>{{currencyMode[sdata.currencyMode]}}</td>
-                                <td>{{sdata.requestedCurrencyValue}}</td>
-                                <td>{{convertHRF(sdata.requestedDate)}}</td>
-                                <td>{{sdata.receivedCurrencyValue}}</td>
-                                <td>{{convertHRF(sdata.receivedDate)}}</td>
-                                <td>{{appStatus[sdata.indentStatus]}} </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div> 
-        </div>
-    </mat-tab>
-
-    <mat-tab label="Rejected by Checker">
-        <div class="tab-content table-scroll">
-            <div class="order-form-container">
-                <div class="actions" style="float:right;margin-bottom:5px">
-                    <button mat-button color="accent" class="btn-export" (click)="exportToExcelRejectedIndents()">Export to Excel</button>
-                </div>
-                <table id="rejected-indents">
-                    <thead style="background-color:thistle;">
-                        <tr>
-                            <th>SNo</th>
-                            <th>Indent ID</th>
-                            <th>Branch Name</th>
-                            <th>Vendor Name/ID</th>
-                            <th>Foreign Currency</th>
-                            <th>Amount Requested</th>
-                            <th>Request Type</th>
-                            <th>Rejected On</th>                           
-                            <th>Status</th>
-                            <th>Remarks</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for(sdata of rejectedIndents;track sdata.indentID; let i = $index) {
-                            <tr [ngStyle]="{'background-color': getRowColor(sdata.indentID)}">
-                                <td>{{i+1}}</td>
-                                <td>{{sdata.indentID}}</td>
-                                <td>{{convertHRF(sdata.createdAt)}}</td>
-                                <td>{{sdata.branchName}}</td>
-                                <td>{{branchVendorList[sdata.vendorRes]}} - {{sdata.vendorBranch}}</td>
-                                <td>{{currencyData[sdata.currencyType]}}</td>
-                                <td>{{sdata.requestedCurrencyValue}}</td>
-                                <td>{{currencyMode[sdata.currencyMode]}}</td>
-                                <td>{{convertHRF(sdata.updatedAt)}}</td>
-                                <td>{{appStatus[sdata.indentStatus]}}</td>
-                                <td>{{sdata.indentRemarks}}</td>
-                            </tr> 
-                        }  
-                    </tbody>
-                </table>
-            </div> 
-        </div>
-    </mat-tab>
-
-    <mat-tab label="Completed Indents">
-        <div class="tab-content table-scroll">
-            <div class="order-form-container">
-                <div class="actions" style="float:right;margin-bottom:5px">
-                    <button mat-button color="accent" class="btn-export" (click)="exportToExcelCompletedIndents()">Export to Excel</button>
-                </div>
-                <table id="completed-indents">
-                    <thead style="background-color:thistle;">
-                        <tr>
-                            <th>SNo</th>
-                            <th>Indent ID</th>
-                            <th>Indent Date</th>
-                            <th>Branch Name</th>
-                            <th>Vendor Name/ID</th>
-                            <th>Foreign Currency</th>
-                            <th>Request Type</th>
-                            <th>Amount Requested</th>
-                            <th>Amount Received</th>
-                            <th>Requested On</th>
-                            <th>Received On</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for(sdata of completedIndents;track sdata.indentID; let i = $index) {
-                            <tr [ngStyle]="{'background-color': getRowColor(sdata.indentID)}">
-                                <td>{{i+1}}</td>
-                                <td>{{sdata.indentID}}</td>
-                                <td>{{convertHRF(sdata.createdAt)}}</td>
-                                <td>{{sdata.branchName}}</td>
-                                <td>{{branchVendorList[sdata.vendorRes]}} - {{sdata.vendorBranch}}</td>
-                                <td>{{currencyData[sdata.currencyType]}}</td>
-                                <td>{{currencyMode[sdata.currencyMode]}}</td>
-                                <td>{{sdata.requestedCurrencyValue}}</td>
-                                <td>{{sdata.receivedCurrencyValue}}</td>
-                                <td>{{convertHRF(sdata.requestedDate)}}</td>
-                                <td>{{convertHRF(sdata.receivedDate)}}</td>
-                                <td>{{appStatus[sdata.indentStatus]}}</td>
-                            </tr>
-                        } 
-                    </tbody>
-                </table>
-            </div> 
-        </div>
-    </mat-tab>  
-    
-    <!-- All Indents tab: rebuilt with Bootstrap table + Angular Material (sort/paginate/select), PrimeNG p-table removed -->
-    <mat-tab label="All Indents">
-        <div class="tab-content">
-            <div class="order-form-container">
-
-                <div class="d-flex justify-content-end align-items-center mb-2" style="gap: 8px;">
-                    <button mat-icon-button color="primary" matTooltip="Export to Excel" (click)="exportExcel()">
-                        <mat-icon>file_download</mat-icon>
-                    </button>
-                </div>
-
-                <div class="table-responsive table-scroll">
-                    <table class="table table-bordered table-striped table-hover all-indents-table" id="table_print">
-                        <thead style="--bs-table-bg: thistle;">
-                            <tr>
-                                <th style="width:3%">
-                                    <mat-checkbox [checked]="isAllSelected()" (change)="toggleAll()"></mat-checkbox>
-                                </th>
-                                <th style="width:5%">SNo</th>
-                                <th style="width:10%; cursor:pointer" (click)="sortData('indentID')">
-                                    Indent ID <mat-icon class="sort-icon">{{ getSortIcon('indentID') }}</mat-icon>
-                                </th>
-                                <th style="width:10%; cursor:pointer" (click)="sortData('createdAt')">
-                                    Indent Date <mat-icon class="sort-icon">{{ getSortIcon('createdAt') }}</mat-icon>
-                                </th>
-                                <th style="cursor:pointer" (click)="sortData('branchName')">
-                                    Branch Name <mat-icon class="sort-icon">{{ getSortIcon('branchName') }}</mat-icon>
-                                </th>
-                                <th style="width:10%; cursor:pointer" (click)="sortData('vendorRes')">
-                                    Vendor Name <mat-icon class="sort-icon">{{ getSortIcon('vendorRes') }}</mat-icon>
-                                </th>
-                                <th style="width:12%; cursor:pointer" (click)="sortData('currencyType')">
-                                    Foreign Currency <mat-icon class="sort-icon">{{ getSortIcon('currencyType') }}</mat-icon>
-                                </th>
-                                <th style="cursor:pointer" (click)="sortData('currencyMode')">
-                                    Request Type <mat-icon class="sort-icon">{{ getSortIcon('currencyMode') }}</mat-icon>
-                                </th>
-                                <th style="cursor:pointer" (click)="sortData('requestedCurrencyValue')">
-                                    Req Amt <mat-icon class="sort-icon">{{ getSortIcon('requestedCurrencyValue') }}</mat-icon>
-                                </th>
-                                <th style="cursor:pointer" (click)="sortData('receivedCurrencyValue')">
-                                    Rec Amt <mat-icon class="sort-icon">{{ getSortIcon('receivedCurrencyValue') }}</mat-icon>
-                                </th>
-                                <th style="cursor:pointer" (click)="sortData('requestedDate')">
-                                    Requested On <mat-icon class="sort-icon">{{ getSortIcon('requestedDate') }}</mat-icon>
-                                </th>
-                                <th style="cursor:pointer" (click)="sortData('receivedDate')">
-                                    Received On <mat-icon class="sort-icon">{{ getSortIcon('receivedDate') }}</mat-icon>
-                                </th>
-                                <th style="width:12%; cursor:pointer" (click)="sortData('indentStatus')">
-                                    Status <mat-icon class="sort-icon">{{ getSortIcon('indentStatus') }}</mat-icon>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th></th>
-                                <th></th>
-                                <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'indentID', 'contains')" placeholder="Indent ID"></th>
-                                <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'createdAt', 'contains')" placeholder="Indent Date"></th>
-                                <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'branchName', 'contains')" placeholder="Branch Name"></th>
-                                <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'vendorRes', 'contains')" placeholder="Vendor"></th>
-                                <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'currencyType', 'contains')" placeholder="Currency"></th>
-                                <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'currencyMode', 'contains')" placeholder="Req Type"></th>
-                                <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'requestedCurrencyValue', 'contains')" placeholder="Req Amt"></th>
-                                <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'receivedCurrencyValue', 'contains')" placeholder="Rec Amt"></th>
-                                <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'requestedDate', 'contains')" placeholder="Req Dt"></th>
-                                <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'receivedDate', 'contains')" placeholder="Rec Dt"></th>
-                                <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'indentStatus', 'contains')" placeholder="Status"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @for(sdata of displayedIndents; track sdata.indentID; let i = $index) {
-                                <tr [style.--bs-table-bg]="getRowColor(sdata.indentID)">
-                                    <td>
-                                        <mat-checkbox [checked]="isSelected(sdata)" (change)="toggleSelection(sdata)"></mat-checkbox>
-                                    </td>
-                                    <td>{{ pageIndex * pageSize + i + 1 }}</td>
-                                    <td>{{sdata.indentID}}</td>
-                                    <td>{{convertHRF(sdata.createdAt)}}</td>
-                                    <td>{{sdata.branchName}}</td>
-                                    <td>{{branchVendorList[sdata.vendorRes]}} - {{sdata.vendorBranch}}</td>
-                                    <td>{{currencyData[sdata.currencyType]}}</td>
-                                    <td>{{currencyMode[sdata.currencyMode]}}</td>
-                                    <td>{{sdata.requestedCurrencyValue}}</td>
-                                    <td>{{sdata.receivedCurrencyValue}}</td>
-                                    <td>{{convertHRF(sdata.requestedDate)}}</td>
-                                    <td>{{convertHRF(sdata.receivedDate)}}</td>
-                                    <td>{{appStatus[sdata.indentStatus]}}</td>
-                                </tr>
-                            }
-                            @empty {
-                                <tr>
-                                    <td colspan="13" class="text-center">No indents found.</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-
-                <mat-paginator
-                    [length]="filteredIndents.length"
-                    [pageIndex]="pageIndex"
-                    [pageSize]="pageSize"
-                    [pageSizeOptions]="pageSizeOptions"
-                    (page)="onPageChange($event)"
-                    showFirstLastButtons>
-                </mat-paginator>
-
-            </div> 
-        </div>
-    </mat-tab>
-
-    <mat-tab label="Vendor Details">
-        <div class="tab-content table-scroll">
-            <div class="actions" style="float:right;margin-bottom:5px">
-                <button mat-button color="accent" class="btn-export" (click)="exportToExcelVendorDetails()">Export to Excel</button>
-            </div>
-            <table id="table_vendor_list">
-                <thead style="background-color:thistle;">
-                    <tr>
-                        <th>SNo</th>
-                        <th>Vendor Name</th>
-                        <th>Vendor Branch</th>
-                        <th>Vendor Email</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for(record of vendors; track $index; let i = $index) {
-                        <tr>
-                            <td>{{i+1}}</td>
-                            <td>{{record.vendorName}}</td>
-                            <td>{{record.locationName}}</td>
-                            <td>{{record.emails}}</td>
-                        </tr>   
-                    }
-                </tbody>
-            </table>
-        </div>
-    </mat-tab>   
-    
-    <mat-tab label="Mailing List of Branch">
-        <div class="tab-content">
-            <div class="actions" style="float:right;margin-bottom:5px">
-                <button mat-button color="accent" class="btn-export" (click)="exportToExcelMailingList()">Export to Excel</button>
-            </div>
-            <div class="table-scroll">
-                <table id="table_mailing_list">
-                    <thead style="background-color:thistle;">
-                        <tr>
-                            <th>SNo</th>
-                            <th>Branch Code</th>
-                            <th>Branch Name</th>
-                            <th>Indent ID</th>                            
-                            <th>Mail Sent to</th>
-                            <th>Mail Address</th>
-                            <th>Sent Date </th>
-                            <th>Response</th>
-                            <!-- <th>Operation</th> -->
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for(record of branchEmailRecords; track $index; let i = $index) {
-                            <tr [ngStyle]="{'background-color': getRowColorMail(record.mailIndentID)}">
-                                <td>{{i+1}}</td>
-                                <td>{{record.mailBranchCode}}</td>
-                                <td>{{record.mailBranchName}}</td>
-                                <td>{{record.mailIndentID}}</td>
-                                <td>{{record.mailInsType}}</td>
-                                <td>{{record.mailAddress}}</td>
-                                <td>{{convertHRF(record.mailIndentCreatedAt)}}</td>
-                                <td>{{record.mailResponseStatus}}</td>
-                                <!-- <td *ngIf="i === firstIndexMapMail[record.mailIndentID]" [attr.rowspan]="uniqueIndentCountMail[record.mailIndentID]">
-                                    <button class="btn-mail-resend" (click)="onResendMail(record.mailIndentID)">Resend Email</button>
-                                </td> -->
-                            </tr>
-                        } 
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </mat-tab>
-</mat-tab-group>
-    <!-- Modal HTML structure -->
-    <ng-template #modalTemplate>
-        <div class="modal-backdrop" (click)="closeModal()"></div>
-        <div class="modal-container">
-            <form (ngSubmit)="onSubmit(orderForm)" #orderForm="ngForm" class="order-form">
-                <h2>Enter Rejection Remarks of Indent : {{this.hidIndentID}}</h2>
-                <mat-dialog-content>
-                    <textarea class="text_input_remarks"
-                        matInput
-                        placeholder="Enter the remarks for rejecting the indent."
-                        [(ngModel)]="rejectionReason"
-                        rows="10"
-                        cols="100"
-                        required
-                        name="text_input_remarks"
-                ></textarea>
-                    <input type="hidden" name="hiddenIndentRejID"  [(ngModel)]="hidIndentID" value="{{this.hidIndentID}}">
-                </mat-dialog-content>
-                <div class="modal-actions">
-                    <button type="submit" class="btn-submit mt-5" [disabled]="!orderForm.valid">Submit</button>
-                    <button mat-button mat-dialog-close class="btn-reject">Go Back</button>
-                </div>
-            </form>
-        </div>
-    </ng-template>
+2026-07-04 16:01:59 +0530 [] [] INFO  1162494 --- [o-9080-exec-100] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-04 16:01:59 +0530 [] [] INFO  1162494 --- [o-9080-exec-100] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-07-04 16:01:59 +0530 [] [] INFO  1162494 --- [o-9080-exec-100] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-07-04 16:02:00 +0530 [] [] WARN  1162494 --- [o-9080-exec-100] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-07-04 16:02:00 +0530 [] [] INFO  1162494 --- [o-9080-exec-100] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-07-04 16:02:00 +0530 [] [] INFO  1162494 --- [o-9080-exec-100] c.sbi.fxRetail.FxRetailSwapApplication   : Started FxRetailSwapApplication in 2.907 seconds (process running for 782536.424)
+2026-07-04 16:02:00 +0530 [] [] WARN  1162494 --- [o-9080-exec-100] i.m.core.instrument.MeterRegistry        : This FunctionCounter has been already registered (MeterId{name='tomcat.servlet.error', tags=[tag(name=jsp)]}), the registration will be ignored. Note that subsequent logs will be logged at debug level.
+2026-07-04 16:02:00 +0530 [] [] INFO  1162494 --- [o-9080-exec-100] c.s.f.controller.FxRetailSwapController  : Root context already created (using as parent).
+04-Jul-2026 16:02:00.663 SEVERE [http-nio-9080-exec-100] org.apache.catalina.startup.HostConfig.deployWAR Error deploying web application archive [/weblogic/apache-tomcat/webapps/rforex#rforexfxretailservice.war]
+        java.lang.IllegalStateException: Error starting child
+                at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:567)
+                at org.apache.catalina.core.StandardHost.addChild(StandardHost.java:663)
+                at org.apache.catalina.startup.HostConfig.deployWAR(HostConfig.java:923)
+                at org.apache.catalina.startup.HostConfig.deployApps(HostConfig.java:445)
+                at org.apache.catalina.startup.HostConfig.check(HostConfig.java:1653)
+                at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+                at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+                at org.apache.tomcat.util.modeler.BaseModelMBean.invoke(BaseModelMBean.java:249)
+                at java.management/com.sun.jmx.interceptor.DefaultMBeanServerInterceptor.invoke(DefaultMBeanServerInterceptor.java:803)
+                at java.management/com.sun.jmx.mbeanserver.JmxMBeanServer.invoke(JmxMBeanServer.java:802)
+                at org.apache.catalina.manager.ManagerServlet.check(ManagerServlet.java:1449)
+                at org.apache.catalina.manager.ManagerServlet.deploy(ManagerServlet.java:943)
+                at org.apache.catalina.manager.HTMLManagerServlet.deployInternal(HTMLManagerServlet.java:279)
+                at org.apache.catalina.manager.HTMLManagerServlet.doPost(HTMLManagerServlet.java:180)
+                at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:649)
+                at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
+                at org.apache.catalina.filters.CsrfPreventionFilter.doFilter(CsrfPreventionFilter.java:429)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+                at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+                at org.apache.catalina.filters.HttpHeaderSecurityFilter.doFilter(HttpHeaderSecurityFilter.java:114)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+                at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+                at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
+                at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:607)
+                at org.apache.catalina.valves.RequestFilterValve.process(RequestFilterValve.java:352)
+                at org.apache.catalina.valves.RemoteAddrValve.invoke(RemoteAddrValve.java:55)
+                at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
+                at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
+                at org.apache.catalina.valves.AbstractAccessLogValve.invoke(AbstractAccessLogValve.java:654)
+                at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
+                at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
+                at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
+                at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+                at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+                at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1779)
+                at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+                at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
+                at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
+                at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
+                at java.base/java.lang.Thread.run(Thread.java:1583)
+        Caused by: org.apache.catalina.LifecycleException: Failed to start component [StandardEngine[Catalina].StandardHost[localhost].StandardContext[/rforex/rforexfxretailservice]]
+                at org.apache.catalina.util.LifecycleBase.handleSubClassException(LifecycleBase.java:404)
+                at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:179)
+                at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:564)
+                ... 41 more
+        Caused by: java.lang.IllegalStateException: No SpringApplication sources have been defined. Either override the configure method or add an @Configuration annotation
+                at org.springframework.util.Assert.state(Assert.java:79)
+                at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.createRootApplicationContext(SpringBootServletInitializer.java:166)
+                at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.onStartup(SpringBootServletInitializer.java:102)
+                at org.springframework.web.SpringServletContainerInitializer.onStartup(SpringServletContainerInitializer.java:171)
+                at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:4416)
+                at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164)
+                ... 42 more
