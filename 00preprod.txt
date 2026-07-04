@@ -1,100 +1,12 @@
-04-Jul-2026 16:21:59.948 INFO [http-nio-9080-exec-117] org.apache.catalina.startup.HostConfig.deployWAR Deploying web application archive [/weblogic/apache-tomcat/webapps/rforex#rforexfxretailservice.war]
-04-Jul-2026 16:22:01.457 INFO [http-nio-9080-exec-117] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+@SpringBootApplication
+public class FxRetailSwapApplication extends SpringBootServletInitializer {
 
-  .   ____          _            __ _ _
- /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
-( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
- \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
-  '  |____| .__|_| |_|_| |_\__, | / / / /
- =========|_|==============|___/=/_/_/_/
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+        return builder.sources(FxRetailSwapApplication.class);
+    }
 
- :: Spring Boot ::               (v3.5.14)
-
-2026-07-04 16:22:01 +0530 [] [] INFO  1162494 --- [o-9080-exec-117] c.sbi.fxRetail.FxRetailSwapApplication   : Starting FxRetailSwapApplication v3.5.14 using Java 21.0.9 with PID 1162494 (/weblogic/apache-tomcat/webapps/rforex#rforexfxretailservice/WEB-INF/classes started by weblogic in /weblogic/apache-tomcat/bin)
-2026-07-04 16:22:01 +0530 [] [] INFO  1162494 --- [o-9080-exec-117] c.sbi.fxRetail.FxRetailSwapApplication   : The following 1 profile is active: "uat"
-2026-07-04 16:22:02 +0530 [] [] INFO  1162494 --- [o-9080-exec-117] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-07-04 16:22:02 +0530 [] [] INFO  1162494 --- [o-9080-exec-117] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 38 ms. Found 2 JPA repository interfaces.
-2026-07-04 16:22:02 +0530 [] [] INFO  1162494 --- [o-9080-exec-117] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 744 ms
-2026-07-04 16:22:02 +0530 [] [] INFO  1162494 --- [o-9080-exec-117] com.zaxxer.hikari.HikariDataSource       : HikariPool-22 - Starting...
-2026-07-04 16:22:02 +0530 [] [] INFO  1162494 --- [o-9080-exec-117] com.zaxxer.hikari.pool.HikariPool        : HikariPool-22 - Added connection oracle.jdbc.driver.T4CConnection@7c3c7343
-2026-07-04 16:22:02 +0530 [] [] INFO  1162494 --- [o-9080-exec-117] com.zaxxer.hikari.HikariDataSource       : HikariPool-22 - Start completed.
-2026-07-04 16:22:02 +0530 [] [] INFO  1162494 --- [o-9080-exec-117] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-07-04 16:22:02 +0530 [] [] INFO  1162494 --- [o-9080-exec-117] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.49.Final
-2026-07-04 16:22:02 +0530 [] [] INFO  1162494 --- [o-9080-exec-117] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2026-07-04 16:22:03 +0530 [] [] INFO  1162494 --- [o-9080-exec-117] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-07-04 16:22:03 +0530 [] [] WARN  1162494 --- [o-9080-exec-117] org.hibernate.orm.deprecation            : HHH90000025: OracleDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-07-04 16:22:03 +0530 [] [] INFO  1162494 --- [o-9080-exec-117] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
-        Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-22)']
-        Database driver: undefined/unknown
-        Database version: 19.31
-        Autocommit mode: undefined/unknown
-        Isolation level: undefined/unknown
-        Minimum pool size: undefined/unknown
-        Maximum pool size: undefined/unknown
-2026-07-04 16:22:03 +0530 [] [] INFO  1162494 --- [o-9080-exec-117] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-07-04 16:22:03 +0530 [] [] INFO  1162494 --- [o-9080-exec-117] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-07-04 16:22:03 +0530 [] [] INFO  1162494 --- [o-9080-exec-117] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-07-04 16:22:04 +0530 [] [] WARN  1162494 --- [o-9080-exec-117] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-07-04 16:22:04 +0530 [] [] INFO  1162494 --- [o-9080-exec-117] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
-2026-07-04 16:22:04 +0530 [] [] INFO  1162494 --- [o-9080-exec-117] c.sbi.fxRetail.FxRetailSwapApplication   : Started FxRetailSwapApplication in 2.94 seconds (process running for 783740.243)
-2026-07-04 16:22:04 +0530 [] [] WARN  1162494 --- [o-9080-exec-117] i.m.core.instrument.MeterRegistry        : This FunctionCounter has been already registered (MeterId{name='tomcat.servlet.error', tags=[tag(name=jsp)]}), the registration will be ignored. Note that subsequent logs will be logged at debug level.
-2026-07-04 16:22:04 +0530 [] [] INFO  1162494 --- [o-9080-exec-117] c.s.f.controller.FxRetailSwapController  : Root context already created (using as parent).
-04-Jul-2026 16:22:04.482 SEVERE [http-nio-9080-exec-117] org.apache.catalina.startup.HostConfig.deployWAR Error deploying web application archive [/weblogic/apache-tomcat/webapps/rforex#rforexfxretailservice.war]
-        java.lang.IllegalStateException: Error starting child
-                at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:567)
-                at org.apache.catalina.core.StandardHost.addChild(StandardHost.java:663)
-                at org.apache.catalina.startup.HostConfig.deployWAR(HostConfig.java:923)
-                at org.apache.catalina.startup.HostConfig.deployApps(HostConfig.java:445)
-                at org.apache.catalina.startup.HostConfig.check(HostConfig.java:1653)
-                at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
-                at java.base/java.lang.reflect.Method.invoke(Method.java:580)
-                at org.apache.tomcat.util.modeler.BaseModelMBean.invoke(BaseModelMBean.java:249)
-                at java.management/com.sun.jmx.interceptor.DefaultMBeanServerInterceptor.invoke(DefaultMBeanServerInterceptor.java:803)
-                at java.management/com.sun.jmx.mbeanserver.JmxMBeanServer.invoke(JmxMBeanServer.java:802)
-                at org.apache.catalina.manager.ManagerServlet.check(ManagerServlet.java:1449)
-                at org.apache.catalina.manager.ManagerServlet.deploy(ManagerServlet.java:943)
-                at org.apache.catalina.manager.HTMLManagerServlet.deployInternal(HTMLManagerServlet.java:279)
-                at org.apache.catalina.manager.HTMLManagerServlet.doPost(HTMLManagerServlet.java:180)
-                at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:649)
-                at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
-                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
-                at org.apache.catalina.filters.CsrfPreventionFilter.doFilter(CsrfPreventionFilter.java:429)
-                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-                at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
-                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-                at org.apache.catalina.filters.HttpHeaderSecurityFilter.doFilter(HttpHeaderSecurityFilter.java:114)
-                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
-                at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
-                at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
-                at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:607)
-                at org.apache.catalina.valves.RequestFilterValve.process(RequestFilterValve.java:352)
-                at org.apache.catalina.valves.RemoteAddrValve.invoke(RemoteAddrValve.java:55)
-                at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
-                at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
-                at org.apache.catalina.valves.AbstractAccessLogValve.invoke(AbstractAccessLogValve.java:654)
-                at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
-                at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
-                at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
-                at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
-                at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
-                at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1779)
-                at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
-                at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
-                at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
-                at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
-                at java.base/java.lang.Thread.run(Thread.java:1583)
-        Caused by: org.apache.catalina.LifecycleException: Failed to start component [StandardEngine[Catalina].StandardHost[localhost].StandardContext[/rforex/rforexfxretailservice]]
-                at org.apache.catalina.util.LifecycleBase.handleSubClassException(LifecycleBase.java:404)
-                at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:179)
-                at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:564)
-                ... 41 more
-        Caused by: java.lang.IllegalStateException: No SpringApplication sources have been defined. Either override the configure method or add an @Configuration annotation
-                at org.springframework.util.Assert.state(Assert.java:79)
-                at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.createRootApplicationContext(SpringBootServletInitializer.java:166)
-                at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.onStartup(SpringBootServletInitializer.java:102)
-                at org.springframework.web.SpringServletContainerInitializer.onStartup(SpringServletContainerInitializer.java:171)
-                at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:4416)
-                at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164)
-                ... 42 more
-04-Jul-2026 16:22:04.483 INFO [http-nio-9080-exec-117] org.apache.catalina.startup.HostConfig.deployWAR Deployment of web application archive [/weblogic/apache-tomcat/webapps/rforex#rforexfxretailservice.war] has finished in [4,535] ms
-^C
+    public static void main(String[] args) {
+        SpringApplication.run(FxRetailSwapApplication.class, args);
+    }
+}
