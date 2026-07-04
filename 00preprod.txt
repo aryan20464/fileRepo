@@ -211,7 +211,7 @@
 
                 <div class="table-responsive table-scroll">
                     <table class="table table-bordered table-striped table-hover all-indents-table" id="table_print">
-                        <thead style="background-color:thistle;">
+                        <thead style="--bs-table-bg: thistle;">
                             <tr>
                                 <th style="width:3%">
                                     <mat-checkbox [checked]="isAllSelected()" (change)="toggleAll()"></mat-checkbox>
