@@ -1,284 +1,47 @@
-Based on the code you provided, you do NOT need to replace the entire HTML or TS file.
+branchchecker.component.html:33 NG0955: The provided track expression resulted in duplicated keys for a given collection. Adjust the tracking expression such that it uniquely identifies all the items in the collection. Duplicated keys were: 
+key "BR_04430_2" at index "8" and "9", 
+key "BR_04430_1" at index "10" and "11". Find more at https://v21.angular.dev/errors/NG0955
 
-You only need these changes.
-
-1. Add these imports to branchchecker.component.ts
-import { ViewChild, AfterViewInit } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-2. Change class declaration
-
-Current:
-
-export class BranchcheckerComponent implements OnInit{
-
-Change to:
-
-export class BranchcheckerComponent implements OnInit, AfterViewInit{
-3. Add these variables inside the class
-
-Place after:
-
-filteredIndents: any[] = [];
-
-Add:
-
-dataSource = new MatTableDataSource<any>();
-
-displayedColumns: string[] = [
-  'sno',
-  'indentID',
-  'createdAt',
-  'branchName',
-  'vendorRes',
-  'currencyType',
-  'currencyMode',
-  'requestedCurrencyValue',
-  'receivedCurrencyValue',
-  'requestedDate',
-  'receivedDate',
-  'indentStatus'
-];
-
-@ViewChild(MatPaginator)
-paginator!: MatPaginator;
-
-@ViewChild(MatSort)
-sort!: MatSort;
-4. Add ngAfterViewInit()
-
-Place anywhere inside class:
-
-ngAfterViewInit(): void {
-  this.dataSource.paginator = this.paginator;
-  this.dataSource.sort = this.sort;
-}
-5. Add search method
-
-Place near bottom of class:
-
-applyFilter(event: Event): void {
-
-  const filterValue =
-    (event.target as HTMLInputElement).value;
-
-  this.dataSource.filter =
-    filterValue.trim().toLowerCase();
-}
-6. Fix fetchAllOrderData()
-
-Find:
-
-this.filteredIndents = [...this.allIndents];
-
-Immediately after it add:
-
-this.dataSource.data = this.filteredIndents;
-
-Result:
-
-this.filteredIndents = [...this.allIndents];
-this.dataSource.data = this.filteredIndents;
-
-this.rejectedIndents = this.allIndents.filter((item) => item.indentStatus==3);
-7. Fix closeModal error
-
-Add:
-
-closeModal(): void {
-  this.dialog.closeAll();
-}
-8. Replace ONLY the "All Indents" tab
-
-Delete everything from:
-
-<mat-tab label="All Indents">
-
-until
-
-</mat-tab>
-
-and replace with:
-
-<mat-tab label="All Indents">
-    <div class="tab-content">
-        <div class="order-form-container">
-
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-
-                <mat-form-field appearance="outline">
-                    <mat-label>Search</mat-label>
-                    <input matInput
-                           (keyup)="applyFilter($event)"
-                           placeholder="Search">
-                </mat-form-field>
-
-                <button mat-raised-button
-                        color="primary"
-                        (click)="exportExcel()">
-                    Export Excel
-                </button>
-
-            </div>
-
-            <table
-                id="table_print"
-                mat-table
-                [dataSource]="dataSource"
-                matSort
-                class="mat-elevation-z8"
-                style="width:100%">
-
-                <ng-container matColumnDef="sno">
-                    <th mat-header-cell *matHeaderCellDef>SNo</th>
-                    <td mat-cell *matCellDef="let row; let i=index">
-                        {{i+1}}
-                    </td>
-                </ng-container>
-
-                <ng-container matColumnDef="indentID">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                        Indent ID
-                    </th>
-                    <td mat-cell *matCellDef="let row">
-                        {{row.indentID}}
-                    </td>
-                </ng-container>
-
-                <ng-container matColumnDef="createdAt">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                        Indent Date
-                    </th>
-                    <td mat-cell *matCellDef="let row">
-                        {{convertHRF(row.createdAt)}}
-                    </td>
-                </ng-container>
-
-                <ng-container matColumnDef="branchName">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                        Branch Name
-                    </th>
-                    <td mat-cell *matCellDef="let row">
-                        {{row.branchName}}
-                    </td>
-                </ng-container>
-
-                <ng-container matColumnDef="vendorRes">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                        Vendor Name
-                    </th>
-                    <td mat-cell *matCellDef="let row">
-                        {{branchVendorList[row.vendorRes]}} - {{row.vendorBranch}}
-                    </td>
-                </ng-container>
-
-                <ng-container matColumnDef="currencyType">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                        Foreign Currency
-                    </th>
-                    <td mat-cell *matCellDef="let row">
-                        {{currencyData[row.currencyType]}}
-                    </td>
-                </ng-container>
-
-                <ng-container matColumnDef="currencyMode">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                        Request Type
-                    </th>
-                    <td mat-cell *matCellDef="let row">
-                        {{currencyMode[row.currencyMode]}}
-                    </td>
-                </ng-container>
-
-                <ng-container matColumnDef="requestedCurrencyValue">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                        Req Amt
-                    </th>
-                    <td mat-cell *matCellDef="let row">
-                        {{row.requestedCurrencyValue}}
-                    </td>
-                </ng-container>
-
-                <ng-container matColumnDef="receivedCurrencyValue">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                        Rec Amt
-                    </th>
-                    <td mat-cell *matCellDef="let row">
-                        {{row.receivedCurrencyValue}}
-                    </td>
-                </ng-container>
-
-                <ng-container matColumnDef="requestedDate">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                        Requested On
-                    </th>
-                    <td mat-cell *matCellDef="let row">
-                        {{convertHRF(row.requestedDate)}}
-                    </td>
-                </ng-container>
-
-                <ng-container matColumnDef="receivedDate">
-                    <th mat-header-cell *matHeaderDef mat-sort-header>
-                        Received On
-                    </th>
-                    <td mat-cell *matCellDef="let row">
-                        {{convertHRF(row.receivedDate)}}
-                    </td>
-                </ng-container>
-
-                <ng-container matColumnDef="indentStatus">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                        Status
-                    </th>
-                    <td mat-cell *matCellDef="let row">
-                        {{appStatus[row.indentStatus]}}
-                    </td>
-                </ng-container>
-
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-
-                <tr
-                    mat-row
-                    *matRowDef="let row; columns: displayedColumns"
-                    [ngStyle]="{'background-color': getRowColor(row.indentID)}">
-                </tr>
-
-            </table>
-
-            <mat-paginator
-                [pageSize]="10"
-                [pageSizeOptions]="[10,25,50,100]"
-                showFirstLastButtons>
-            </mat-paginator>
-
-        </div>
-    </div>
-</mat-tab>
-One more import is missing
-
-Your new HTML uses:
-
-<mat-form-field>
-
-So add:
-
-import { MatFormFieldModule } from '@angular/material/form-field';
-
-and add it to imports:
-
-imports: [
-  CommonModule,
-  MatTabsModule,
-  MatDialogModule,
-  FormsModule,
-  ScrollingModule,
-  MatTableModule,
-  MatPaginatorModule,
-  MatSortModule,
-  MatInputModule,
-  MatButtonModule,
-  MatFormFieldModule
-]
-
-After these changes, all PrimeNG errors (p-table, p-sortIcon, pInputText, pButton, etc.) will be gone. The remaining compilation should succeed.
+branchchecker.component.html:374 NG0955: The provided track expression resulted in duplicated keys for a given collection. Adjust the tracking expression such that it uniquely identifies all the items in the collection. Duplicated keys were: 
+key "BAHRAIN FINANCING COMPANY" at index "0" and "1", 
+key "BAHRAIN FINANCING COMPANY" at index "1" and "2", 
+key "BAHRAIN FINANCING COMPANY" at index "2" and "3", 
+key "EBIX CASH" at index "4" and "5", 
+key "EBIX CASH" at index "5" and "6", 
+key "EBIX CASH" at index "6" and "7", 
+key "EBIX CASH" at index "7" and "8", 
+key "EBIX CASH" at index "8" and "9", 
+key "EBIX CASH" at index "9" and "10", 
+key "EBIX CASH" at index "10" and "11", 
+key "EBIX CASH" at index "11" and "12", 
+key "EBIX CASH" at index "12" and "13", 
+key "EBIX CASH" at index "13" and "14", 
+key "EBIX CASH" at index "14" and "15", 
+key "EBIX CASH" at index "15" and "16", 
+key "EBIX CASH" at index "16" and "17", 
+key "EBIX CASH" at index "17" and "18", 
+key "EBIX CASH" at index "18" and "19", 
+key "EBIX CASH" at index "19" and "20", 
+key "EBIX CASH" at index "20" and "21", 
+key "EBIX CASH" at index "21" and "22", 
+key "EBIX CASH" at index "22" and "23", 
+key "EBIX CASH" at index "23" and "24", 
+key "EBIX CASH" at index "24" and "25", 
+key "EBIX CASH" at index "25" and "26", 
+key "EBIX CASH" at index "26" and "27", 
+key "EBIX CASH" at index "27" and "28", 
+key "EBIX CASH" at index "28" and "29", 
+key "EBIX CASH" at index "29" and "30", 
+key "EBIX CASH" at index "30" and "31", 
+key "EBIX CASH" at index "31" and "32", 
+key "EBIX CASH" at index "32" and "33", 
+key "EBIX CASH" at index "33" and "34", 
+key "EBIX CASH" at index "34" and "35", 
+key "EBIX CASH" at index "35" and "36", 
+key "EBIX CASH" at index "36" and "37", 
+key "EBIX CASH" at index "37" and "38", 
+key "EBIX CASH" at index "38" and "39", 
+key "EBIX CASH" at index "39" and "40", 
+key "THOMAS COOK" at index "41" and "42", 
+key "PRITHVI EXCHANGE" at index "43" and "44", 
+key "PRITHVI EXCHANGE" at index "44" and "45". Find more at https://v21.angular.dev/errors/NG0955
