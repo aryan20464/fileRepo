@@ -1,47 +1,1014 @@
-branchchecker.component.html:33 NG0955: The provided track expression resulted in duplicated keys for a given collection. Adjust the tracking expression such that it uniquely identifies all the items in the collection. Duplicated keys were: 
-key "BR_04430_2" at index "8" and "9", 
-key "BR_04430_1" at index "10" and "11". Find more at https://v21.angular.dev/errors/NG0955
+import { Component, OnInit, TemplateRef } from '@angular/core';
+import { HttpClient } from '@angular/common/http'; // Import HttpClient for service
+import { Router } from '@angular/router';
+import { DatePipe, CommonModule } from '@angular/common';
+import { environment } from '../../../../environments/environment';
+import { MatDialog, MatDialogContent, MatDialogClose, MatDialogModule } from '@angular/material/dialog';
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
+import { AuthService } from '../../../auth/auth.service';
+import { CURRENCYMODE } from '../../../models/fcny-module/currencymode';
+import { RandomNumberGeneratorService } from '../../../services/fcny-services/random-number-generator.service';
+import { MatTabsModule } from '@angular/material/tabs';
+import { FormsModule } from '@angular/forms';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { MatInputModule } from '@angular/material/input';
 
-branchchecker.component.html:374 NG0955: The provided track expression resulted in duplicated keys for a given collection. Adjust the tracking expression such that it uniquely identifies all the items in the collection. Duplicated keys were: 
-key "BAHRAIN FINANCING COMPANY" at index "0" and "1", 
-key "BAHRAIN FINANCING COMPANY" at index "1" and "2", 
-key "BAHRAIN FINANCING COMPANY" at index "2" and "3", 
-key "EBIX CASH" at index "4" and "5", 
-key "EBIX CASH" at index "5" and "6", 
-key "EBIX CASH" at index "6" and "7", 
-key "EBIX CASH" at index "7" and "8", 
-key "EBIX CASH" at index "8" and "9", 
-key "EBIX CASH" at index "9" and "10", 
-key "EBIX CASH" at index "10" and "11", 
-key "EBIX CASH" at index "11" and "12", 
-key "EBIX CASH" at index "12" and "13", 
-key "EBIX CASH" at index "13" and "14", 
-key "EBIX CASH" at index "14" and "15", 
-key "EBIX CASH" at index "15" and "16", 
-key "EBIX CASH" at index "16" and "17", 
-key "EBIX CASH" at index "17" and "18", 
-key "EBIX CASH" at index "18" and "19", 
-key "EBIX CASH" at index "19" and "20", 
-key "EBIX CASH" at index "20" and "21", 
-key "EBIX CASH" at index "21" and "22", 
-key "EBIX CASH" at index "22" and "23", 
-key "EBIX CASH" at index "23" and "24", 
-key "EBIX CASH" at index "24" and "25", 
-key "EBIX CASH" at index "25" and "26", 
-key "EBIX CASH" at index "26" and "27", 
-key "EBIX CASH" at index "27" and "28", 
-key "EBIX CASH" at index "28" and "29", 
-key "EBIX CASH" at index "29" and "30", 
-key "EBIX CASH" at index "30" and "31", 
-key "EBIX CASH" at index "31" and "32", 
-key "EBIX CASH" at index "32" and "33", 
-key "EBIX CASH" at index "33" and "34", 
-key "EBIX CASH" at index "34" and "35", 
-key "EBIX CASH" at index "35" and "36", 
-key "EBIX CASH" at index "36" and "37", 
-key "EBIX CASH" at index "37" and "38", 
-key "EBIX CASH" at index "38" and "39", 
-key "EBIX CASH" at index "39" and "40", 
-key "THOMAS COOK" at index "41" and "42", 
-key "PRITHVI EXCHANGE" at index "43" and "44", 
-key "PRITHVI EXCHANGE" at index "44" and "45". Find more at https://v21.angular.dev/errors/NG0955
+@Component({
+    selector: 'rfm-branchchecker',
+    standalone: true,
+    templateUrl: './branchchecker.component.html',
+    styleUrls: ['./branchchecker.component.css'],
+    imports: [CommonModule, MatTabsModule, MatDialogModule, FormsModule, ScrollingModule, MatInputModule]
+})
+
+export class BranchcheckerComponent implements OnInit{
+
+  
+  submitted = false;
+  date = new Date();
+  pendingForApproval: any = {};
+  declaration_check = false;
+  makerPendingTempEntries: any[] = [];
+  makerRTOTempEntries: any[] = [];
+  makerRejectedTempEntries: any[] = [];
+  completedIndents: any[] = [];
+  appStatus = new Array(4);
+  allIndents: any[] = [];
+  selectedIndents: any[] = [];
+  filteredIndents: any[] = [];
+  pendingRTOIndents: any[] = [];
+  rejectedIndents: any[] = [];
+  applicationReturnStatusMessage = '';
+  hiddenIndentRejID = '';
+  branchName = '';
+  vendors: any[] = [];
+  branchEmailRecords:any;
+
+  // New additions after DB access
+  records: any[] = [];
+  uniqueIndents: any;
+  uniqueIndentCount: any;
+  firstIndexMap: any = {};
+
+  uniqueIndentsMail: any;
+  uniqueIndentCountMail: any;
+  firstIndexMapMail: any = {};
+ 
+  responseData: {};
+  branchCode: any;
+  vendorDetails: any[] = [];
+  //currencyData: any[] = [];
+  currencyData: Record<string, any> = {};
+  vendorArray: any[] = [];
+  currencyMode: { [key: string]: string };
+  cols: any[];
+
+  exportColumns: any[];
+
+  checkerStatusUpdateData = {
+    declaration_check: false,
+    checkercode: 0,
+    checkerName: '',
+    status: 0,
+    indentID: '',
+    remarks: ''
+  };
+
+  //changes after second dropdown addition
+  branchVendorMappingDetailsData:any;
+  branchVendorList: { [key: string]: any } = {};
+  isDropdownOpen: boolean = false;
+  selectedValue: string | null = null;
+  hoveredKey: string | null = null;
+
+  constructor(private http: HttpClient,
+              private router: Router,
+              private datePipe: DatePipe,
+              public dialog: MatDialog,
+              private authenticationService: AuthService,
+              private randomNumberService: RandomNumberGeneratorService){}
+  
+  ngOnInit(): void {
+    this.currencyMode = CURRENCYMODE;
+    this.branchCode = this.getBranchCode();
+    this.branchName = this.authenticationService.getUser().branchCode;
+    this.getBranchVendorMappingDetailsData();
+    this.getCurrencyDetails();
+    this.fetchAllOrderData();
+    this.pendingForApprovalData();
+    this.fetchBranchEmailsList();
+    this.appStatus[1] = 'Created by Maker';
+    this.appStatus[2] = 'Approved by checker';
+    this.appStatus[3] = 'Rejected by checker';
+    this.appStatus[4] = 'Currency Received';
+    this.appStatus[5] = 'Completed';
+    const storedResponse = sessionStorage.getItem('applicationReturnStatusMessage');
+    this.checkerStatusUpdateData.checkerName = this.authenticationService.getUser().userName;
+
+    if (storedResponse === 'undefined') {
+      this.responseData = {};
+      sessionStorage.removeItem('applicationReturnStatusMessage');
+    } else {
+      this.responseData = JSON.parse(storedResponse);
+      sessionStorage.removeItem('applicationReturnStatusMessage');
+    }
+    this.cols = [
+      { field: 'indentID', header: 'Indent ID' },
+      { field: 'createdAt', header: 'Indent Date' },
+      { field: 'branchName', header: 'Branch Name' },
+      { field: 'vendorRes', header: 'Vendor Name' },
+      { field: 'currencyType', header: 'Foreign Currency' },
+      { field: 'currencyMode', header: 'Request Type' },
+      { field: 'requestedCurrencyValue', header: 'Req Amt' },
+      { field: 'receivedCurrencyValue', header: 'Rec Amt' },
+      { field: 'requestedDate', header: 'Requested On' },
+      { field: 'receivedDate', header: 'Received On' },
+      { field: 'indentStatus', header: 'Status' }
+    ];
+    this.exportColumns = this.cols.map(col => ({ title: col.header, dataKey: col.field }));
+  }
+
+  exportToExcel() {     
+    const table = document.getElementById('table_print'); // Get the table element by its ID
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(table); // Convert HTML table to a worksheet// Create a new workbook and add the worksheet
+    const wb: XLSX.WorkBook = { Sheets: { 'Sheet1': ws }, SheetNames: ['Sheet1'] };     // Generate Excel file and trigger download
+    XLSX.writeFile(wb, 'Indents of the branch - '+ this.branchCode +'-'+this.branchName+' as on '+this.datePipe.transform(new Date(),'dd-MM-yyyy hh:mm aa')+'.xlsx'); 
+  }
+
+  exportToExcelPendingIndents() {     
+    const table = document.getElementById('pending-indents'); // Get the table element by its ID
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(table); // Convert HTML table to a worksheet// Create a new workbook and add the worksheet
+    const wb: XLSX.WorkBook = { Sheets: { 'Sheet1': ws }, SheetNames: ['Sheet1'] };     // Generate Excel file and trigger download
+    XLSX.writeFile(wb, 'Pending at Checker Indents of the branch - '+ this.branchCode +'-'+this.branchName+' as on '+this.datePipe.transform(new Date(),'dd-MM-yyyy hh:mm aa')+'.xlsx'); 
+  }
+
+  exportToExcelAcceptedIndents() {     
+    const table = document.getElementById('accepted-indents'); // Get the table element by its ID
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(table); // Convert HTML table to a worksheet// Create a new workbook and add the worksheet
+    const wb: XLSX.WorkBook = { Sheets: { 'Sheet1': ws }, SheetNames: ['Sheet1'] };     // Generate Excel file and trigger download
+    XLSX.writeFile(wb, 'Accepted at Checker Indents of the branch - '+ this.branchCode +'-'+this.branchName+' as on '+this.datePipe.transform(new Date(),'dd-MM-yyyy hh:mm aa')+'.xlsx'); 
+  }
+
+  exportToExcelRejectedIndents() {     
+    const table = document.getElementById('rejected-indents'); // Get the table element by its ID
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(table); // Convert HTML table to a worksheet// Create a new workbook and add the worksheet
+    const wb: XLSX.WorkBook = { Sheets: { 'Sheet1': ws }, SheetNames: ['Sheet1'] };     // Generate Excel file and trigger download
+    XLSX.writeFile(wb, 'Rejected at Checker Indents of the branch - '+ this.branchCode +'-'+this.branchName +' as on '+this.datePipe.transform(new Date(),'dd-MM-yyyy hh:mm aa')+'.xlsx'); 
+  }
+
+  exportToExcelCompletedIndents() {     
+    const table = document.getElementById('completed-indents'); // Get the table element by its ID
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(table); // Convert HTML table to a worksheet// Create a new workbook and add the worksheet
+    const wb: XLSX.WorkBook = { Sheets: { 'Sheet1': ws }, SheetNames: ['Sheet1'] };     // Generate Excel file and trigger download
+    XLSX.writeFile(wb, 'Completed Indents of the branch - '+ this.branchCode +'-'+this.branchName+' as on '+this.datePipe.transform(new Date(),'dd-MM-yyyy hh:mm aa')+'.xlsx'); 
+  }
+
+  exportToExcelVendorDetails() {     
+      const table = document.getElementById('table_vendor_list'); // Get the table element by its ID
+      const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(table); // Convert HTML table to a worksheet// Create a new workbook and add the worksheet
+      const wb: XLSX.WorkBook = { Sheets: { 'Sheet1': ws }, SheetNames: ['Sheet1'] };     // Generate Excel file and trigger download
+      XLSX.writeFile(wb, 'Vendor Mapping Details of the branch - '+ this.branchCode+'-'+this.branchName+' as on '+this.datePipe.transform(new Date(),'dd-MM-yyyy hh:mm aa')+'.xlsx'); 
+    }
+  
+  
+    exportToExcelMailingList() {     
+      const table = document.getElementById('table_mailing_list'); // Get the table element by its ID
+      const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(table); // Convert HTML table to a worksheet// Create a new workbook and add the worksheet
+      const wb: XLSX.WorkBook = { Sheets: { 'Sheet1': ws }, SheetNames: ['Sheet1'] };     // Generate Excel file and trigger download
+      XLSX.writeFile(wb, 'Mailling List of the branch - '+ this.branchCode+'-'+this.branchName+'.xlsx'); 
+    }
+
+  
+ 
+ rejectionReason='';
+ hidIndentID='';
+
+ // Open the modal
+ openModal(templateRef: TemplateRef<any>,indent1:string) {
+  const dialogRef = this.dialog.open(templateRef);
+  this.hidIndentID=indent1;
+  this.rejectionReason='';
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+        //console.log('Rejection closure with remarks :', this.rejectionReason);
+      }
+    });
+  }
+
+  fetchBranchEmailsList(): void{
+
+    const apiUrl = `${environment.rfmIndentService}/getMailsOfABranch?bcode=`+this.branchCode; // Replace with your API endpoint
+ 
+    this.http.get<any[]>(apiUrl).subscribe(
+      (data) => {
+        this.branchEmailRecords = data;
+        this.getUniqueValuesMail();
+        this.getUniqueIndentRecordsMail(this.branchEmailRecords);
+        this.uniqueIndentCountMail=this.getUniqueIndentCountsMail(this.branchEmailRecords);
+        this.calculateFirstIndexMail(this.branchEmailRecords);
+      },
+      (error) => {
+        console.error('Error fetching records:', error);
+      }
+    );
+    
+  }
+ 
+
+  // Handle submission within the modal
+  onSubmit(form: any) {
+    this.dialog.closeAll();
+    //console.log(this.rejectionReason);
+    //console.log(this.hidIndentID);
+    this.checkerStatusUpdateData.checkercode = Number(this.authenticationService.getUser().pfId);
+    this.checkerStatusUpdateData.declaration_check=true;
+    this.checkerStatusUpdateData.indentID=this.hidIndentID;
+    this.checkerStatusUpdateData.status=3;
+    this.checkerStatusUpdateData.remarks=this.rejectionReason;
+    //console.log(this.checkerStatusUpdateData);
+    this.http.post(`${environment.rfmIndentService}/updateBranchIndentAtChecker`, this.checkerStatusUpdateData).subscribe((response: any) => {
+      this.applicationReturnStatusMessage = response.applicationReturnStatusMessage;
+      sessionStorage.setItem('applicationReturnStatusMessage', JSON.stringify(this.applicationReturnStatusMessage));          
+      // Navigate to a temporary route and then back to fcnBranchChecker to reload the page
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate(['/fcnBranchChecker']);
+      });
+    });
+  }
+
+  onResendMail(indent:string){
+    if(window.confirm("Are you sure to submit the indent ??")){
+      this.checkerStatusUpdateData.checkercode = Number(this.authenticationService.getUser().pfId);
+      this.checkerStatusUpdateData.declaration_check=true;
+      this.checkerStatusUpdateData.indentID=indent;
+      this.checkerStatusUpdateData.status=2;
+      this.http.post(`${environment.rfmIndentService}/sendEmailToBranch`, this.checkerStatusUpdateData).subscribe((response: any) => {
+        this.applicationReturnStatusMessage = response.applicationReturnStatusMessage;
+        sessionStorage.setItem('applicationReturnStatusMessage', JSON.stringify(this.applicationReturnStatusMessage));          
+        // Navigate to a temporary route and then back to fcnBranchChecker to reload the page
+        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+          this.router.navigate(['/fcnBranchChecker']);
+        });
+      });
+      return true;
+    }
+    else{
+      return false;
+    }
+    
+  }
+
+
+  onApprove(indent: string){
+    //console.log(indent);
+    this.checkerStatusUpdateData.checkercode = Number(this.authenticationService.getUser().pfId);
+    this.checkerStatusUpdateData.declaration_check=true;
+    this.checkerStatusUpdateData.indentID=indent;
+    this.checkerStatusUpdateData.status=2;
+    this.http.post(`${environment.rfmIndentService}/updateBranchIndentAtChecker`, this.checkerStatusUpdateData).subscribe((response: any) => {
+      this.applicationReturnStatusMessage = response.applicationReturnStatusMessage;
+      sessionStorage.setItem('applicationReturnStatusMessage', JSON.stringify(this.applicationReturnStatusMessage));          
+      // Navigate to a temporary route and then back to fcnBranchChecker to reload the page
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate(['/fcnBranchChecker']);
+      });
+    });
+  }
+
+  onReject(indent: string)
+  {
+    //console.log(indent);
+    //console.log(this.rejectionReason);   
+    this.checkerStatusUpdateData.checkercode = Number(this.authenticationService.getUser().pfId);
+    this.checkerStatusUpdateData.declaration_check=true;
+    this.checkerStatusUpdateData.indentID=indent;
+    this.checkerStatusUpdateData.status=3;
+    this.http.post(`${environment.rfmIndentService}/updateBranchIndentAtChecker`, this.checkerStatusUpdateData).subscribe((response: any) => {
+      this.applicationReturnStatusMessage = response.applicationReturnStatusMessage;
+      sessionStorage.setItem('applicationReturnStatusMessage', JSON.stringify(this.applicationReturnStatusMessage));          
+      // Navigate to a temporary route and then back to fcnBranchChecker to reload the page
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate(['/fcnBranchChecker']);
+      });
+    });
+  }
+
+  fetchAllOrderData() {    
+    const apiUrl = `${environment.rfmIndentService}/getBranchIndents?bcode=`+this.getBranchCode(); // Replace with your API endpoint
+    this.http.get<any[]>(apiUrl).subscribe(
+      (data) => {
+        this.allIndents = data;
+        //console.log(this.allIndents)
+        this.filteredIndents = [...this.allIndents];
+        this.rejectedIndents = this.allIndents.filter((item) => item.indentStatus==3);  
+        this.completedIndents = this.allIndents.filter((item) => item.indentStatus==5);
+        this.pendingRTOIndents = this.allIndents.filter((item) => (item.indentStatus==2 || item.indentStatus==4));
+      },
+      (error) => {
+        console.error('Error fetching records:', error);
+      }
+    );
+  }
+   
+  pendingForApprovalData(){ //Showing pending for approval entries at checker
+    const apiUrl = `${environment.rfmIndentService}/getPendingEntriesAtChecker?bcode=`+this.getBranchCode(); // Replace with your API endpoint
+ 
+    this.http.get<any[]>(apiUrl).subscribe(
+      (data) => {
+        this.records = data; // Store response data in records variable
+        //console.log(data);
+        this.getUniqueValues();
+        this.getUniqueIndentRecords(this.records);
+        this.uniqueIndentCount=this.getUniqueIndentCounts(this.records);
+        this.calculateFirstIndex(this.records);
+      },
+      (error) => {
+        console.error('Error fetching records:', error);
+      }
+    );
+  }
+
+  getBranchCode(): string{
+    return (this.authenticationService.getUser().branchCode);
+  }
+
+  getBranchName(): string{
+    return this.authenticationService.getUser().branchCode;
+  }
+
+  getCurrencyDetails()
+  {
+    const apiUrl = `${environment.rfmIndentService}/findCurrencyDetails`; // Replace with your API endpoint 
+    this.http.get(apiUrl).subscribe(
+      (data) => {
+        Object.keys(data).forEach(key=>
+          {
+            //console.log(key+" "+data[key]);
+            this.currencyData[key]=data[key as keyof typeof data];
+            
+          }
+          );
+         //console.log(this.currencyData);
+      },
+      (error) => {
+        console.error('Error fetching records:', error);
+      }
+    );
+    
+  }
+
+  getBranchVendorMappingDetailsData() //New function to fetch details based on branch's state.
+  {
+    const apiUrl = `${environment.rfmIndentService}/getBranchVendorMappingData?bcode=`+this.branchCode; // Replace with your API endpoint 
+    this.http.get(apiUrl).subscribe(
+      (data) => {
+        this.branchVendorMappingDetailsData=data;
+        this.branchVendorMappingDetailsData.branchVendors.forEach((obj: { [key: string]: string }) => {
+          const key = Object.keys(obj)[0];
+          const value = obj[key];
+          this.branchVendorList[key] = value;
+        });
+        const branchVendors = this.branchVendorMappingDetailsData.branchVendors;
+        branchVendors.forEach((vendor: { [key: string]: string }) => {
+          const key = Object.keys(vendor)[0];
+          const vendorName = vendor[key];
+          const locations = this.branchVendorMappingDetailsData[key];
+          
+          locations.forEach((location: { [key: string]: string[] }) => {
+            const locationName = Object.keys(location)[0];
+            const emails = location[locationName];
+            this.vendors.push({ vendorName, locationName, emails });
+          });
+        });
+      },
+      (error) => {
+        console.error('Error fetching records:', error);
+      }
+    );
+    
+  }
+  
+
+  getTodayDate(){
+    
+    return this.date = new Date();
+    
+  }
+
+  onCheckBoxChange(event: Event){
+    const target = event.target as HTMLInputElement;
+    if(target.checked)
+    {
+      this.declaration_check=true;
+    }
+    else
+    {
+      this.declaration_check=false;
+    }
+  }
+
+  
+  colors1 = [
+    '#FF5733', '#33FF57', '#5733FF', '#FF33A1', '#A133FF',
+    '#33A1FF', '#FF8333', '#33FF83', '#8333FF', '#FF5733',
+    '#F0E68C', '#D3D3D3'
+  ];
+
+  colors = [
+    '#F7D1CD', '#E3F1D1', '#D1F0F4', '#EAD1F7', '#F7F1D1', // Soft pastels
+    '#FFD700', '#FF6347', '#90EE90', '#ADD8E6', '#FFB6C1', // Lively colors
+    '#FAFAD2', '#D8BFD8', '#E0FFFF', '#F5FFFA', '#FFDEAD', // Light but vibrant
+    '#F4A300', '#A7F2D1' // Light but saturated tones
+  ];
+
+  colorMap: { [key: string]: string } = {};  // Store the color for each indentID
+  previousColorIndex: number = -1;  // To track the previous color index
+
+  getRowColor(indentID: string): string {
+    // Check if the color for this indentID is already assigned
+    if (!this.colorMap[indentID]) {
+      // Get a color index ensuring no two successive indentIDs have the same color
+      let colorIndex: number;
+  
+      do {
+        // Pick a random color index
+        //colorIndex = Math.floor(Math.random() * this.colors.length); // removing this as per ISD observations
+        colorIndex = this.randomNumberService.generateRandomNumber(this.colors.length);
+
+    } while (colorIndex === this.previousColorIndex); // Ensure no same color for successive indentIDs
+ 
+    // Assign color and update the previous color index
+    this.colorMap[indentID] = this.colors[colorIndex];
+    this.previousColorIndex = colorIndex; // Update previous color index
+  }
+ 
+    return this.colorMap[indentID];  // Return the assigned color
+  }
+
+
+  colorMapMail: { [key: string]: string } = {};  // Store the color for each indentID
+  previousColorIndexMail: number = -1;  // To track the previous color index
+
+  getRowColorMail(indentID: string): string {
+    // Check if the color for this indentID is already assigned
+    if (!this.colorMapMail[indentID]) {
+      // Get a color index ensuring no two successive indentIDs have the same color
+      let colorIndex: number;
+  
+      do {
+        // Pick a random color index
+        //colorIndex = Math.floor(Math.random() * this.colors.length); // removing this as per ISD observations
+        colorIndex = this.randomNumberService.generateRandomNumber(this.colors.length);
+
+    } while (colorIndex === this.previousColorIndexMail); // Ensure no same color for successive indentIDs
+ 
+    // Assign color and update the previous color index
+    this.colorMapMail[indentID] = this.colors[colorIndex];
+    this.previousColorIndexMail = colorIndex; // Update previous color index
+  }
+ 
+    return this.colorMapMail[indentID];  // Return the assigned color
+  }
+    
+  
+  getUniqueValues(){
+    this.uniqueIndents = Array.from(new Set(this.records.map(record => record['indentID'])));
+  }
+
+  getUniqueIndentCounts(records: any[]): { [key: string]: number } {
+    const indentCountsMap = new Map();
+   
+    records.forEach(record => {
+      const indentId = record.indentID;
+      indentCountsMap.set(indentId, (indentCountsMap.get(indentId) || 0) + 1);
+    });
+   
+    // Manually construct the object
+    const result: { [key: string]: number } = {};
+    indentCountsMap.forEach((count, indent_id) => {
+      result[indent_id] = count;
+    });
+    return result;
+  }
+
+  getUniqueIndentRecords(records: any[]): { indent_number: any, request_date: any, status: any }[] {
+    const uniqueRecordsMap = new Map();   
+    records.forEach(record => {
+      if (!uniqueRecordsMap.has(record.indentID)) {
+        uniqueRecordsMap.set(record.indentID, {
+          indent_number: record.indentID,
+          request_date: record.createdAt,
+          status: record.indentStatus
+        });
+      }
+    });
+   
+    //console.log(Array.from(uniqueRecordsMap.values()));
+    return Array.from(uniqueRecordsMap.values());
+  }
+
+  calculateFirstIndex(records: any[]) {     
+    this.records.forEach((record, index) => {    
+      //console.log(record.indentID+"</br>");         
+      if (this.firstIndexMap[record.indentID] === undefined) {
+        this.firstIndexMap[record.indentID] = index; 
+      }
+      //console.log(this.firstIndexMap[record.indentID]+ record.indentID); 
+    }); 
+  }
+
+  getUniqueValuesMail(){
+    this.uniqueIndentsMail = Array.from(new Set(this.branchEmailRecords.map((record:any) => record['mailIndentID'])));
+  }
+  
+	getUniqueIndentRecordsMail(records: any[]): { indent_number: any, status: any }[] {
+	const uniqueRecordsMapMail = new Map();   
+	records.forEach(record => {
+	  if (!uniqueRecordsMapMail.has(record.mailIndentID)) {
+      uniqueRecordsMapMail.set(record.mailIndentID, {
+		  indent_number: record.mailIndentID,
+		  status: record.mailResponseStatus
+		});
+	  }
+	});
+
+	//console.log(Array.from(uniqueRecordsMapMail.values()));
+	return Array.from(uniqueRecordsMapMail.values());
+  }
+  
+  getUniqueIndentCountsMail(records: any[]): { [key: string]: number } {
+    const indentCountsMapMail = new Map();
+   
+    records.forEach(record => {
+      const indentId = record.mailIndentID;
+      indentCountsMapMail.set(indentId, (indentCountsMapMail.get(indentId) || 0) + 1);
+    });
+   
+    // Manually construct the object
+    const result: { [key: string]: number } = {};
+    indentCountsMapMail.forEach((count, indent_id) => {
+      result[indent_id] = count;
+    });
+    return result;
+  }
+
+  calculateFirstIndexMail(records: any[]) {     
+    this.branchEmailRecords.forEach((record:any, index:any) => {    
+      //console.log(record.mailIndentID+"</br>");         
+      if (this.firstIndexMapMail[record.mailIndentID]=== undefined) {
+        this.firstIndexMapMail[record.mailIndentID] = index; 
+      }
+      //console.log(this.firstIndexMapMail[record.mailIndentID]+ record.mailIndentID); 
+    }); 
+  }
+
+  convertHRF(dt: string)
+  {
+    return this.datePipe.transform(dt,'dd-MM-yyyy hh:mm aa');
+    //const date = new Date(dt);
+    //return date.toLocaleString();
+  }
+
+  //Prime NG Filteration Logic
+
+  customFilter(value: string, field: string, mode: string): void {
+    const filteredValue = value.toLowerCase();
+    this.filteredIndents = this.allIndents.filter(sdata => {
+      switch (field) {
+        case 'vendorRes':
+          return (this.branchVendorList[sdata.vendorRes] + sdata.vendorBranch).toLowerCase().includes(filteredValue);
+        case 'currencyType':
+          return this.currencyData[sdata.currencyType].toLowerCase().includes(filteredValue);
+        case 'currencyMode':
+          return this.currencyMode[sdata.currencyMode].toLowerCase().includes(filteredValue);
+        case 'indentStatus':
+          return this.appStatus[sdata.indentStatus].toLowerCase().includes(filteredValue);
+        default:
+          return sdata[field].toString().toLowerCase().includes(filteredValue);
+      }
+    });
+  }
+
+  exportExcel() {
+    import("xlsx").then(xlsx => {
+      // Check if selectedIndents is populated
+      //console.log('Selected Indents:', this.selectedIndents);
+
+      // Use filteredIndents if no selection is made
+      const dataToExport = this.selectedIndents.length ? this.selectedIndents : this.filteredIndents;
+
+      // Filter the data to export
+      const selectedData = dataToExport.map(indent => {
+        let filteredIndent: Record<string, any> = {};
+        this.cols.forEach(col => {              
+          //console.log(col.field);
+          filteredIndent[col.field] = indent[col.field];
+          switch (col.field) {
+            case 'vendorRes':
+              filteredIndent[col.field] = this.branchVendorList[indent[col.field]]+" - "+indent["vendorBranch"];break;
+            case 'currencyType':
+              filteredIndent[col.field] = this.currencyData[indent[col.field]];break;
+            case 'currencyMode':
+              filteredIndent[col.field] = this.currencyMode[indent[col.field]];break;
+            case 'indentStatus':
+              filteredIndent[col.field] = this.appStatus[indent[col.field]];break;
+            case 'requestedDate':
+              filteredIndent[col.field] = this.convertHRF(indent[col.field]);break;
+            case 'receivedDate':
+              filteredIndent[col.field] = this.convertHRF(indent[col.field]);break;    
+            case 'createdAt':
+              filteredIndent[col.field] = this.convertHRF(indent[col.field]);break;               
+            default:
+              filteredIndent[col.field] = indent[col.field];
+          }
+        });
+        return filteredIndent;
+      });
+
+      // Check the filtered data structure
+      //console.log('Filtered Data:', selectedData);
+
+      // Convert the filtered data to a worksheet
+      const worksheet = xlsx.utils.json_to_sheet(selectedData);
+      const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+      const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+      // Save the Excel file
+      this.saveAsExcelFile(excelBuffer, "Indents Data of "+this.branchCode+"-"+this.branchName+" as on " );
+    });
+  }
+
+  private saveAsExcelFile(buffer: any, fileName: string): void {
+    const data: Blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
+    FileSaver.saveAs(data, fileName + '_' + this.datePipe.transform(new Date(),'dd-MM-yyyy hh:mm aa') + '.xlsx');
+  }
+
+  // saveAsExcelFile(buffer: any, fileName: string): void {
+  //   import("file-saver").then(FileSaver => {
+  //     const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+  //     const EXCEL_EXTENSION = '.xlsx';
+  //     const data: Blob = new Blob([buffer], {
+  //       type: EXCEL_TYPE
+  //     });
+  //     FileSaver.saveAs(data, fileName + this.datePipe.transform(new Date(),'dd-MM-yyyy hh:mm aa') + EXCEL_EXTENSION);
+  //   });
+  // }
+  
+}  @if(responseData) {
+    <div>
+        <h4>{{responseData}}</h4>
+    </div>
+}
+<mat-tab-group class="custom-tab-group" style="margin-top: 1%">             
+    <mat-tab label="Pending for Approval">        
+        <div class="tab-content table-scroll">
+            <div class="order-form-container">
+                <div class="actions" style="float:right;margin-bottom:5px">
+                    <button mat-button color="accent" class="btn-export" (click)="exportToExcelPendingIndents()">Export to Excel</button>
+                </div>
+                <table id="pending-indents">
+                    <thead style="background-color:thistle;">
+                        <tr>
+                            <th>SNo</th>
+                            <th>IndentID</th>
+                            <!-- <th>BCode</th>
+                            <th>Branch Name</th> -->
+                            <th>Vendor Name</th>
+                            <th>Foreign Currency</th>
+                            <th>Amount</th>
+                            <th>Request Type</th>
+                            <!-- <th>Requested on</th>
+                            <th>Amount Received</th>
+                            <th>Received On</th> -->
+                            <th>Created On</th>
+                            <th>Status</th>
+                            <th>Operation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for(record of records;track record.indentID; let i = $index) {
+                            <tr [ngStyle]="{'background-color': getRowColor(record.indentID)}">
+                                <td>{{i+1}}</td>
+                                <td>{{record.indentID}}</td>
+                                <!-- <td>{{record.branchCode}}</td>
+                                <td>{{record.branchName}}</td> -->
+                                <td>{{branchVendorList[record.vendorRes]}}-{{record.vendorBranch}}</td>
+                                <td>{{currencyData[record.currencyType]}}</td>
+                                <td>{{record.requestedCurrencyValue}}</td>
+                                <td>{{currencyMode[record.currencyMode]}}</td>
+                                <!-- <td>{{convertHRF(record.requestedDate)}}</td>
+                                <td>{{record.receivedCurrencyValue}}</td>                        
+                                <td>{{convertHRF(record.receivedDate)}}</td> -->
+                                <td>{{convertHRF(record.createdAt)}}</td>
+                                <td>{{appStatus[record.indentStatus]}}
+                                    @if(record.indentStatus==1) {
+                                        <span>-({{record.makerName}})</span>
+                                    }
+                                </td><!--{{uniqueIndentCount[record.indentID]}}-->
+                            <!-- Last column with button, using rowspan -->
+                                @if(i === firstIndexMap[record.indentID]) {
+                                    <td [attr.rowspan]="uniqueIndentCount[record.indentID]">
+                                        <button class="btn-approve" (click)="onApprove(record.indentID)">Approve</button><button class="btn-reject" (click)="openModal(modalTemplate,record.indentID)">Reject</button>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </mat-tab>
+
+    <mat-tab label="Accepted & Pending at Branch">
+        <div class="tab-content table-scroll">
+            <div class="order-form-container">     
+                <div class="actions" style="float:right;margin-bottom:5px">
+                    <button mat-button color="accent" class="btn-export" (click)="exportToExcelAcceptedIndents()">Export to Excel</button>
+                </div>          
+                <table id="accepted-indents">
+                    <thead style="background-color:thistle;">
+                        <tr>
+                            <th>SNo</th>
+                            <th>Indent ID</th>
+                            <th>Indent Date</th>
+                            <th>Branch Name</th>
+                            <th>Vendor Name/ID</th>
+                            <th>Foreign Currency</th>
+                            <th>Request Type</th>
+                            <th>Amount Requested</th>
+                            <th>Pending Since</th>
+                            <th>Amount Received</th>
+                            <th>Received Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for(sdata of pendingRTOIndents;track sdata.indentID; let i = $index) {
+                            <tr [ngStyle]="{'background-color': getRowColor(sdata.indentID)}">
+                                <td>{{i+1}}</td>
+                                <td>{{sdata.indentID}}</td>
+                                <td>{{convertHRF(sdata.createdAt)}}</td>
+                                <td>{{sdata.branchName}}</td>
+                                <td>{{branchVendorList[sdata.vendorRes]}} - {{sdata.vendorBranch}}</td>
+                                <td>{{currencyData[sdata.currencyType]}}</td>
+                                <td>{{currencyMode[sdata.currencyMode]}}</td>
+                                <td>{{sdata.requestedCurrencyValue}}</td>
+                                <td>{{convertHRF(sdata.requestedDate)}}</td>
+                                <td>{{sdata.receivedCurrencyValue}}</td>
+                                <td>{{convertHRF(sdata.receivedDate)}}</td>
+                                <td>{{appStatus[sdata.indentStatus]}} </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div> 
+        </div>
+    </mat-tab>
+
+    <mat-tab label="Rejected by Checker">
+        <div class="tab-content table-scroll">
+            <div class="order-form-container">
+                <div class="actions" style="float:right;margin-bottom:5px">
+                    <button mat-button color="accent" class="btn-export" (click)="exportToExcelRejectedIndents()">Export to Excel</button>
+                </div>
+                <table id="rejected-indents">
+                    <thead style="background-color:thistle;">
+                        <tr>
+                            <th>SNo</th>
+                            <th>Indent ID</th>
+                            <th>Branch Name</th>
+                            <th>Vendor Name/ID</th>
+                            <th>Foreign Currency</th>
+                            <th>Amount Requested</th>
+                            <th>Request Type</th>
+                            <th>Rejected On</th>                           
+                            <th>Status</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for(sdata of rejectedIndents;track sdata.indentID; let i = $index) {
+                            <tr [ngStyle]="{'background-color': getRowColor(sdata.indentID)}">
+                                <td>{{i+1}}</td>
+                                <td>{{sdata.indentID}}</td>
+                                <td>{{convertHRF(sdata.createdAt)}}</td>
+                                <td>{{sdata.branchName}}</td>
+                                <td>{{branchVendorList[sdata.vendorRes]}} - {{sdata.vendorBranch}}</td>
+                                <td>{{currencyData[sdata.currencyType]}}</td>
+                                <td>{{sdata.requestedCurrencyValue}}</td>
+                                <td>{{currencyMode[sdata.currencyMode]}}</td>
+                                <td>{{convertHRF(sdata.updatedAt)}}</td>
+                                <td>{{appStatus[sdata.indentStatus]}}</td>
+                                <td>{{sdata.indentRemarks}}</td>
+                            </tr> 
+                        }  
+                    </tbody>
+                </table>
+            </div> 
+        </div>
+    </mat-tab>
+
+    <mat-tab label="Completed Indents">
+        <div class="tab-content table-scroll">
+            <div class="order-form-container">
+                <div class="actions" style="float:right;margin-bottom:5px">
+                    <button mat-button color="accent" class="btn-export" (click)="exportToExcelCompletedIndents()">Export to Excel</button>
+                </div>
+                <table id="completed-indents">
+                    <thead style="background-color:thistle;">
+                        <tr>
+                            <th>SNo</th>
+                            <th>Indent ID</th>
+                            <th>Indent Date</th>
+                            <th>Branch Name</th>
+                            <th>Vendor Name/ID</th>
+                            <th>Foreign Currency</th>
+                            <th>Request Type</th>
+                            <th>Amount Requested</th>
+                            <th>Amount Received</th>
+                            <th>Requested On</th>
+                            <th>Received On</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for(sdata of completedIndents;track sdata.indentID; let i = $index) {
+                            <tr [ngStyle]="{'background-color': getRowColor(sdata.indentID)}">
+                                <td>{{i+1}}</td>
+                                <td>{{sdata.indentID}}</td>
+                                <td>{{convertHRF(sdata.createdAt)}}</td>
+                                <td>{{sdata.branchName}}</td>
+                                <td>{{branchVendorList[sdata.vendorRes]}} - {{sdata.vendorBranch}}</td>
+                                <td>{{currencyData[sdata.currencyType]}}</td>
+                                <td>{{currencyMode[sdata.currencyMode]}}</td>
+                                <td>{{sdata.requestedCurrencyValue}}</td>
+                                <td>{{sdata.receivedCurrencyValue}}</td>
+                                <td>{{convertHRF(sdata.requestedDate)}}</td>
+                                <td>{{convertHRF(sdata.receivedDate)}}</td>
+                                <td>{{appStatus[sdata.indentStatus]}}</td>
+                            </tr>
+                        } 
+                    </tbody>
+                </table>
+            </div> 
+        </div>
+    </mat-tab>  
+    
+    <!--Applied filtering of data-->
+    <mat-tab label="All Indents">
+        <div class="tab-content">
+            <div class="order-form-container">
+                <p-table #dt [value]="filteredIndents" [paginator]="true" [rows]="10" [sortField]="'indentID'" [sortOrder]="1" [globalFilterFields]="['createdAt', 'branchName', 'vendorRes', 'currencyType', 'currencyMode', 'requestedCurrencyValue', 'receivedCurrencyValue', 'requestedDate', 'receivedDate', 'indentStatus']" stripedRows [tableStyle]="{'border':'2px solid black'}" [(selection)]="selectedIndents">
+                    <ng-template pTemplate="caption">
+                        <div class="p-d-flex">
+                            <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success p-mr-2" pTooltip="XLS" tooltipPosition="bottom"></button>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th [ngStyle]="{'width':'5%'}">SNo</th>
+                            <th pSortableColumn="indentID" [ngStyle]="{'width':'10%'}">Indent ID <p-sortIcon field="indentID"></p-sortIcon></th>
+                            <th pSortableColumn="createdAt" [ngStyle]="{'width':'10%'}">Indent Date <p-sortIcon field="createdAt"></p-sortIcon></th>
+                            <th pSortableColumn="branchName">Branch Name <p-sortIcon field="branchName"></p-sortIcon></th>
+                            <th pSortableColumn="vendorRes" [ngStyle]="{'width':'10%'}">Vendor Name <p-sortIcon field="vendorRes"></p-sortIcon></th>
+                            <th pSortableColumn="currencyType" [ngStyle]="{'width':'12%'}">Foreign Currency <p-sortIcon field="currencyType"></p-sortIcon></th>
+                            <th pSortableColumn="currencyMode">Request Type <p-sortIcon field="currencyMode"></p-sortIcon></th>
+                            <th pSortableColumn="requestedCurrencyValue">Req Amt<p-sortIcon field="requestedCurrencyValue"></p-sortIcon></th>
+                            <th pSortableColumn="receivedCurrencyValue">Rec Amt<p-sortIcon field="receivedCurrencyValue"></p-sortIcon></th>
+                            <th pSortableColumn="requestedDate">Requested On <p-sortIcon field="requestedDate"></p-sortIcon></th>
+                            <th pSortableColumn="receivedDate">Received On <p-sortIcon field="receivedDate"></p-sortIcon></th>
+                            <th pSortableColumn="indentStatus" [ngStyle]="{'width':'12%'}">Status <p-sortIcon field="indentStatus"></p-sortIcon></th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th><input pInputText type="text" (input)="customFilter($event.target.value, 'indentID', 'contains')" placeholder="Indent ID"></th>
+                            <th><input pInputText type="text" (input)="customFilter($event.target.value, 'createdAt', 'contains')" placeholder="Indent Date"></th>
+                            <th><input pInputText type="text" (input)="customFilter($event.target.value, 'branchName', 'contains')" placeholder="Branch Name"></th>
+                            <th><input pInputText type="text" (input)="customFilter($event.target.value, 'vendorRes', 'contains')" placeholder="Vendor"></th>
+                            <th><input pInputText type="text" (input)="customFilter($event.target.value, 'currencyType', 'contains')" placeholder="Currency"></th>
+                            <th><input pInputText type="text" (input)="customFilter($event.target.value, 'currencyMode', 'contains')" placeholder="Req Type"></th>
+                            <th><input pInputText type="text" (input)="customFilter($event.target.value, 'requestedCurrencyValue', 'contains')" placeholder="Req Amt"></th>
+                            <th><input pInputText type="text" (input)="customFilter($event.target.value, 'receivedCurrencyValue', 'contains')" placeholder="Rec Amt"></th>
+                            <th><input pInputText type="text" (input)="customFilter($event.target.value, 'requestedDate', 'contains')" placeholder="Req Dt"></th>
+                            <th><input pInputText type="text" (input)="customFilter($event.target.value, 'receivedDate', 'contains')" placeholder="Rec Dt"></th>
+                            <th><input pInputText type="text" (input)="customFilter($event.target.value, 'indentStatus', 'contains')" placeholder="Status"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-sdata let-i="rowIndex">
+                        <tr [ngStyle]="{'background-color': getRowColor(sdata.indentID)}">
+                            <td>{{i+1}}</td>
+                            <td>{{sdata.indentID}}</td>
+                            <td>{{convertHRF(sdata.createdAt)}}</td>
+                            <td>{{sdata.branchName}}</td>
+                            <td>{{branchVendorList[sdata.vendorRes]}} - {{sdata.vendorBranch}}</td>
+                            <td>{{currencyData[sdata.currencyType]}}</td>
+                            <td>{{currencyMode[sdata.currencyMode]}}</td>
+                            <td>{{sdata.requestedCurrencyValue}}</td>
+                            <td>{{sdata.receivedCurrencyValue}}</td>
+                            <td>{{convertHRF(sdata.requestedDate)}}</td>
+                            <td>{{convertHRF(sdata.receivedDate)}}</td>
+                            <td>{{appStatus[sdata.indentStatus]}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div> 
+        </div>
+    </mat-tab>
+
+    <mat-tab label="Vendor Details">
+        <div class="tab-content table-scroll">
+            <div class="actions" style="float:right;margin-bottom:5px">
+                <button mat-button color="accent" class="btn-export" (click)="exportToExcelVendorDetails()">Export to Excel</button>
+            </div>
+            <table id="table_vendor_list">
+                <thead style="background-color:thistle;">
+                    <tr>
+                        <th>SNo</th>
+                        <th>Vendor Name</th>
+                        <th>Vendor Branch</th>
+                        <th>Vendor Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for(record of vendors; track record.vendorName; let i = $index) {
+                        <tr>
+                            <td>{{i+1}}</td>
+                            <td>{{record.vendorName}}</td>
+                            <td>{{record.locationName}}</td>
+                            <td>{{record.emails}}</td>
+                        </tr>   
+                    }
+                </tbody>
+            </table>
+        </div>
+    </mat-tab>   
+    
+    <mat-tab label="Mailing List of Branch">
+        <div class="tab-content">
+            <div class="actions" style="float:right;margin-bottom:5px">
+                <button mat-button color="accent" class="btn-export" (click)="exportToExcelMailingList()">Export to Excel</button>
+            </div>
+            <div class="table-scroll">
+                <table id="table_mailing_list">
+                    <thead style="background-color:thistle;">
+                        <tr>
+                            <th>SNo</th>
+                            <th>Branch Code</th>
+                            <th>Branch Name</th>
+                            <th>Indent ID</th>                            
+                            <th>Mail Sent to</th>
+                            <th>Mail Address</th>
+                            <th>Sent Date </th>
+                            <th>Response</th>
+                            <!-- <th>Operation</th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for(record of branchEmailRecords; track record.mailBranchCode;let i = $index) {
+                            <tr [ngStyle]="{'background-color': getRowColorMail(record.mailIndentID)}">
+                                <td>{{i+1}}</td>
+                                <td>{{record.mailBranchCode}}</td>
+                                <td>{{record.mailBranchName}}</td>
+                                <td>{{record.mailIndentID}}</td>
+                                <td>{{record.mailInsType}}</td>
+                                <td>{{record.mailAddress}}</td>
+                                <td>{{convertHRF(record.mailIndentCreatedAt)}}</td>
+                                <td>{{record.mailResponseStatus}}</td>
+                                <!-- <td *ngIf="i === firstIndexMapMail[record.mailIndentID]" [attr.rowspan]="uniqueIndentCountMail[record.mailIndentID]">
+                                    <button class="btn-mail-resend" (click)="onResendMail(record.mailIndentID)">Resend Email</button>
+                                </td> -->
+                            </tr>
+                        } 
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </mat-tab>
+</mat-tab-group>
+    <!-- Modal HTML structure -->
+    <ng-template #modalTemplate>
+        <div class="modal-backdrop" (click)="closeModal()"></div>
+        <div class="modal-container">
+            <form (ngSubmit)="onSubmit(orderForm)" #orderForm="ngForm" class="order-form">
+                <h2>Enter Rejection Remarks of Indent : {{this.hidIndentID}}</h2>
+                <mat-dialog-content>
+                    <textarea class="text_input_remarks"
+                        matInput
+                        placeholder="Enter the remarks for rejecting the indent."
+                        [(ngModel)]="rejectionReason"
+                        rows="10"
+                        cols="100"
+                        required
+                        name="text_input_remarks"
+                ></textarea>
+                    <input type="hidden" name="hiddenIndentRejID"  [(ngModel)]="hidIndentID" value="{{this.hidIndentID}}">
+                </mat-dialog-content>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-submit mt-5" [disabled]="!orderForm.valid">Submit</button>
+                    <button mat-button mat-dialog-close class="btn-reject">Go Back</button>
+                </div>
+            </form>
+        </div>
+    </ng-template>
