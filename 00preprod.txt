@@ -1,1 +1,683 @@
-LoginUser [userName=Chakravarthy, password=null, token=null, pfId=456789, email=gajvell@dfr.co.in, branchCode=5432, roles=[Roles [roleId=null, roleName=FCN_BRANCH_CHECKER, description=null, startTime=null, endTime=null, module=null, urlPermitted=]], entity=IT] how to extract the pfid from this
+
+
+X [ERROR] NG8001: 'p-table' is not a known element:
+1. If 'p-table' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'p-table' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.html:205:16:
+      205 │ ...          <p-table #dt [value]="filteredIndents" [paginator]="...
+          ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component BranchcheckerComponent.
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.ts:20:17:
+      20 │     templateUrl: './branchchecker.component.html',
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8002: Can't bind to 'value' since it isn't a known property of 'p-table'.
+1. If 'p-table' is an Angular component and it has 'value' input, then verify that it is included in the '@Component.imports' of this component.
+2. If 'p-table' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
+3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. [plugin angular-compiler]
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.html:205:29:
+      205 │ ...      <p-table #dt [value]="filteredIndents" [paginator]="true...
+          ╵                       ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component BranchcheckerComponent.
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.ts:20:17:
+      20 │     templateUrl: './branchchecker.component.html',
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8002: Can't bind to 'paginator' since it isn't a known property of 'p-table'.
+1. If 'p-table' is an Angular component and it has 'paginator' input, then verify that it is included in the '@Component.imports' of this component.
+2. If 'p-table' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
+3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. [plugin angular-compiler]
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.html:205:55:
+      205 │ ...ue]="filteredIndents" [paginator]="true" [rows]="10" [sortFiel...
+          ╵                          ~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component BranchcheckerComponent.
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.ts:20:17:
+      20 │     templateUrl: './branchchecker.component.html',
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8002: Can't bind to 'rows' since it isn't a known property of 'p-table'.
+1. If 'p-table' is an Angular component and it has 'rows' input, then verify that it is included in the '@Component.imports' of this component.
+2. If 'p-table' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
+3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. [plugin angular-compiler]
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.html:205:74:
+      205 │ ...dents" [paginator]="true" [rows]="10" [sortField]="'indentID'"...
+          ╵                              ~~~~~~~~~~~
+
+  Error occurs in the template of component BranchcheckerComponent.
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.ts:20:17:
+      20 │     templateUrl: './branchchecker.component.html',
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8002: Can't bind to 'sortField' since it isn't a known property of 'p-table'.
+1. If 'p-table' is an Angular component and it has 'sortField' input, then verify that it is included in the '@Component.imports' of this component.
+2. If 'p-table' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
+3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. [plugin angular-compiler]
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.html:205:86:
+      205 │ ..."true" [rows]="10" [sortField]="'indentID'" [sortOrder]="1" [g...
+          ╵                       ~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component BranchcheckerComponent.
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.ts:20:17:
+      20 │     templateUrl: './branchchecker.component.html',
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8002: Can't bind to 'sortOrder' since it isn't a known property of 'p-table'.
+1. If 'p-table' is an Angular component and it has 'sortOrder' input, then verify that it is included in the '@Component.imports' of this component.
+2. If 'p-table' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
+3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. [plugin angular-compiler]
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.html:205:111:
+      205 │ ...sortField]="'indentID'" [sortOrder]="1" [globalFilterFields]="...
+          ╵                            ~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component BranchcheckerComponent.
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.ts:20:17:
+      20 │     templateUrl: './branchchecker.component.html',
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8002: Can't bind to 'globalFilterFields' since it isn't a known property of 'p-table'.
+1. If 'p-table' is an Angular component and it has 'globalFilterFields' input, then verify that it is included in the '@Component.imports' of this component.
+2. If 'p-table' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
+3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. [plugin angular-compiler]
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.html:205:127:
+      205 │ ...rder]="1" [globalFilterFields]="['createdAt', 'branchName', 'v...
+          ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component BranchcheckerComponent.
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.ts:20:17:
+      20 │     templateUrl: './branchchecker.component.html',
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8002: Can't bind to 'tableStyle' since it isn't a known property of 'p-table'.
+1. If 'p-table' is an Angular component and it has 'tableStyle' input, then verify that it is included in the '@Component.imports' of this component.
+2. If 'p-table' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
+3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. [plugin angular-compiler]
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.html:205:335:
+      205 │ ...ripedRows [tableStyle]="{'border':'2px solid black'}" [(select...
+          ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component BranchcheckerComponent.
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.ts:20:17:
+      20 │     templateUrl: './branchchecker.component.html',
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8002: Can't bind to 'selection' since it isn't a known property of 'p-table'.
+1. If 'p-table' is an Angular component and it has 'selection' input, then verify that it is included in the '@Component.imports' of this component.
+2. If 'p-table' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
+3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. [plugin angular-compiler]
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.html:205:379:
+      205 │ ...]="{'border':'2px solid black'}" [(selection)]="selectedIndents">
+          ╵                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component BranchcheckerComponent.
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.ts:20:17:
+      20 │     templateUrl: './branchchecker.component.html',
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8001: 'p-sortIcon' is not a known element:
+1. If 'p-sortIcon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'p-sortIcon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.html:214:97:
+      214 │ ...'10%'}">Indent ID <p-sortIcon field="indentID"></p-sortIcon></th>
+          ╵                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component BranchcheckerComponent.
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.ts:20:17:
+      20 │     templateUrl: './branchchecker.component.html',
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8001: 'p-sortIcon' is not a known element:
+1. If 'p-sortIcon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'p-sortIcon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.html:215:100:
+      215 │ ...%'}">Indent Date <p-sortIcon field="createdAt"></p-sortIcon></th>
+          ╵                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component BranchcheckerComponent.
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.ts:20:17:
+      20 │     templateUrl: './branchchecker.component.html',
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8001: 'p-sortIcon' is not a known element:
+1. If 'p-sortIcon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'p-sortIcon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.html:216:73:
+      216 │ ...me">Branch Name <p-sortIcon field="branchName"></p-sortIcon></th>
+          ╵                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component BranchcheckerComponent.
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.ts:20:17:
+      20 │     templateUrl: './branchchecker.component.html',
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8001: 'p-sortIcon' is not a known element:
+1. If 'p-sortIcon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'p-sortIcon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.html:217:100:
+      217 │ ...%'}">Vendor Name <p-sortIcon field="vendorRes"></p-sortIcon></th>
+          ╵                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component BranchcheckerComponent.
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.ts:20:17:
+      20 │     templateUrl: './branchchecker.component.html',
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8001: 'p-sortIcon' is not a known element:
+1. If 'p-sortIcon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'p-sortIcon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.html:218:108:
+      218 │ ...reign Currency <p-sortIcon field="currencyType"></p-sortIcon><...
+          ╵                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component BranchcheckerComponent.
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.ts:20:17:
+      20 │     templateUrl: './branchchecker.component.html',
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8001: 'p-sortIcon' is not a known element:
+1. If 'p-sortIcon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'p-sortIcon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.html:219:76:
+      219 │ ...">Request Type <p-sortIcon field="currencyMode"></p-sortIcon><...
+          ╵                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component BranchcheckerComponent.
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.ts:20:17:
+      20 │     templateUrl: './branchchecker.component.html',
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8001: 'p-sortIcon' is not a known element:
+1. If 'p-sortIcon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'p-sortIcon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.html:220:80:
+      220 │ ...e">Req Amt<p-sortIcon field="requestedCurrencyValue"></p-sortI...
+          ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component BranchcheckerComponent.
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.ts:20:17:
+      20 │     templateUrl: './branchchecker.component.html',
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8001: 'p-sortIcon' is not a known element:
+1. If 'p-sortIcon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'p-sortIcon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.html:221:79:
+      221 │ ...e">Rec Amt<p-sortIcon field="receivedCurrencyValue"></p-sortIc...
+          ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component BranchcheckerComponent.
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.ts:20:17:
+      20 │     templateUrl: './branchchecker.component.html',
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8001: 'p-sortIcon' is not a known element:
+1. If 'p-sortIcon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'p-sortIcon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.html:222:77:
+      222 │ ...>Requested On <p-sortIcon field="requestedDate"></p-sortIcon><...
+          ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component BranchcheckerComponent.
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.ts:20:17:
+      20 │     templateUrl: './branchchecker.component.html',
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8001: 'p-sortIcon' is not a known element:
+1. If 'p-sortIcon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'p-sortIcon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.html:223:75:
+      223 │ ...e">Received On <p-sortIcon field="receivedDate"></p-sortIcon><...
+          ╵                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component BranchcheckerComponent.
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.ts:20:17:
+      20 │     templateUrl: './branchchecker.component.html',
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8001: 'p-sortIcon' is not a known element:
+1. If 'p-sortIcon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
+2. If 'p-sortIcon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.html:224:98:
+      224 │ ...'12%'}">Status <p-sortIcon field="indentStatus"></p-sortIcon><...
+          ╵                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component BranchcheckerComponent.
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.ts:20:17:
+      20 │     templateUrl: './branchchecker.component.html',
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2339: Property 'closeModal' does not exist on type 'BranchcheckerComponent'. [plugin angular-compiler]
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.html:334:45:
+      334 │         <div class="modal-backdrop" (click)="closeModal()"></div>
+          ╵                                              ~~~~~~~~~~
+
+  Error occurs in the template of component BranchcheckerComponent.
+
+    src/app/modules/fcny-module/branchchecker/branchchecker.component.ts:20:17:
+      20 │     templateUrl: './branchchecker.component.html',
+
+
+
+
+
+
+
+@if(responseData) {
+    <div>
+        <h4>{{responseData}}</h4>
+    </div>
+}
+<mat-tab-group class="custom-tab-group" style="margin-top: 1%">             
+    <mat-tab label="Pending for Approval">        
+        <div class="tab-content table-scroll">
+            <div class="order-form-container">
+                <div class="actions" style="float:right;margin-bottom:5px">
+                    <button mat-button color="accent" class="btn-export" (click)="exportToExcelPendingIndents()">Export to Excel</button>
+                </div>
+                <table id="pending-indents">
+                    <thead style="background-color:thistle;">
+                        <tr>
+                            <th>SNo</th>
+                            <th>IndentID</th>
+                            <!-- <th>BCode</th>
+                            <th>Branch Name</th> -->
+                            <th>Vendor Name</th>
+                            <th>Foreign Currency</th>
+                            <th>Amount</th>
+                            <th>Request Type</th>
+                            <!-- <th>Requested on</th>
+                            <th>Amount Received</th>
+                            <th>Received On</th> -->
+                            <th>Created On</th>
+                            <th>Status</th>
+                            <th>Operation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for(record of records;track record.indentID; let i = $index) {
+                            <tr [ngStyle]="{'background-color': getRowColor(record.indentID)}">
+                                <td>{{i+1}}</td>
+                                <td>{{record.indentID}}</td>
+                                <!-- <td>{{record.branchCode}}</td>
+                                <td>{{record.branchName}}</td> -->
+                                <td>{{branchVendorList[record.vendorRes]}}-{{record.vendorBranch}}</td>
+                                <td>{{currencyData[record.currencyType]}}</td>
+                                <td>{{record.requestedCurrencyValue}}</td>
+                                <td>{{currencyMode[record.currencyMode]}}</td>
+                                <!-- <td>{{convertHRF(record.requestedDate)}}</td>
+                                <td>{{record.receivedCurrencyValue}}</td>                        
+                                <td>{{convertHRF(record.receivedDate)}}</td> -->
+                                <td>{{convertHRF(record.createdAt)}}</td>
+                                <td>{{appStatus[record.indentStatus]}}
+                                    @if(record.indentStatus==1) {
+                                        <span>-({{record.makerName}})</span>
+                                    }
+                                </td><!--{{uniqueIndentCount[record.indentID]}}-->
+                            <!-- Last column with button, using rowspan -->
+                                @if(i === firstIndexMap[record.indentID]) {
+                                    <td [attr.rowspan]="uniqueIndentCount[record.indentID]">
+                                        <button class="btn-approve" (click)="onApprove(record.indentID)">Approve</button><button class="btn-reject" (click)="openModal(modalTemplate,record.indentID)">Reject</button>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </mat-tab>
+
+    <mat-tab label="Accepted & Pending at Branch">
+        <div class="tab-content table-scroll">
+            <div class="order-form-container">     
+                <div class="actions" style="float:right;margin-bottom:5px">
+                    <button mat-button color="accent" class="btn-export" (click)="exportToExcelAcceptedIndents()">Export to Excel</button>
+                </div>          
+                <table id="accepted-indents">
+                    <thead style="background-color:thistle;">
+                        <tr>
+                            <th>SNo</th>
+                            <th>Indent ID</th>
+                            <th>Indent Date</th>
+                            <th>Branch Name</th>
+                            <th>Vendor Name/ID</th>
+                            <th>Foreign Currency</th>
+                            <th>Request Type</th>
+                            <th>Amount Requested</th>
+                            <th>Pending Since</th>
+                            <th>Amount Received</th>
+                            <th>Received Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for(sdata of pendingRTOIndents;track sdata.indentID; let i = $index) {
+                            <tr [ngStyle]="{'background-color': getRowColor(sdata.indentID)}">
+                                <td>{{i+1}}</td>
+                                <td>{{sdata.indentID}}</td>
+                                <td>{{convertHRF(sdata.createdAt)}}</td>
+                                <td>{{sdata.branchName}}</td>
+                                <td>{{branchVendorList[sdata.vendorRes]}} - {{sdata.vendorBranch}}</td>
+                                <td>{{currencyData[sdata.currencyType]}}</td>
+                                <td>{{currencyMode[sdata.currencyMode]}}</td>
+                                <td>{{sdata.requestedCurrencyValue}}</td>
+                                <td>{{convertHRF(sdata.requestedDate)}}</td>
+                                <td>{{sdata.receivedCurrencyValue}}</td>
+                                <td>{{convertHRF(sdata.receivedDate)}}</td>
+                                <td>{{appStatus[sdata.indentStatus]}} </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div> 
+        </div>
+    </mat-tab>
+
+    <mat-tab label="Rejected by Checker">
+        <div class="tab-content table-scroll">
+            <div class="order-form-container">
+                <div class="actions" style="float:right;margin-bottom:5px">
+                    <button mat-button color="accent" class="btn-export" (click)="exportToExcelRejectedIndents()">Export to Excel</button>
+                </div>
+                <table id="rejected-indents">
+                    <thead style="background-color:thistle;">
+                        <tr>
+                            <th>SNo</th>
+                            <th>Indent ID</th>
+                            <th>Branch Name</th>
+                            <th>Vendor Name/ID</th>
+                            <th>Foreign Currency</th>
+                            <th>Amount Requested</th>
+                            <th>Request Type</th>
+                            <th>Rejected On</th>                           
+                            <th>Status</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for(sdata of rejectedIndents;track sdata.indentID; let i = $index) {
+                            <tr [ngStyle]="{'background-color': getRowColor(sdata.indentID)}">
+                                <td>{{i+1}}</td>
+                                <td>{{sdata.indentID}}</td>
+                                <td>{{convertHRF(sdata.createdAt)}}</td>
+                                <td>{{sdata.branchName}}</td>
+                                <td>{{branchVendorList[sdata.vendorRes]}} - {{sdata.vendorBranch}}</td>
+                                <td>{{currencyData[sdata.currencyType]}}</td>
+                                <td>{{sdata.requestedCurrencyValue}}</td>
+                                <td>{{currencyMode[sdata.currencyMode]}}</td>
+                                <td>{{convertHRF(sdata.updatedAt)}}</td>
+                                <td>{{appStatus[sdata.indentStatus]}}</td>
+                                <td>{{sdata.indentRemarks}}</td>
+                            </tr> 
+                        }  
+                    </tbody>
+                </table>
+            </div> 
+        </div>
+    </mat-tab>
+
+    <mat-tab label="Completed Indents">
+        <div class="tab-content table-scroll">
+            <div class="order-form-container">
+                <div class="actions" style="float:right;margin-bottom:5px">
+                    <button mat-button color="accent" class="btn-export" (click)="exportToExcelCompletedIndents()">Export to Excel</button>
+                </div>
+                <table id="completed-indents">
+                    <thead style="background-color:thistle;">
+                        <tr>
+                            <th>SNo</th>
+                            <th>Indent ID</th>
+                            <th>Indent Date</th>
+                            <th>Branch Name</th>
+                            <th>Vendor Name/ID</th>
+                            <th>Foreign Currency</th>
+                            <th>Request Type</th>
+                            <th>Amount Requested</th>
+                            <th>Amount Received</th>
+                            <th>Requested On</th>
+                            <th>Received On</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for(sdata of completedIndents;track sdata.indentID; let i = $index) {
+                            <tr [ngStyle]="{'background-color': getRowColor(sdata.indentID)}">
+                                <td>{{i+1}}</td>
+                                <td>{{sdata.indentID}}</td>
+                                <td>{{convertHRF(sdata.createdAt)}}</td>
+                                <td>{{sdata.branchName}}</td>
+                                <td>{{branchVendorList[sdata.vendorRes]}} - {{sdata.vendorBranch}}</td>
+                                <td>{{currencyData[sdata.currencyType]}}</td>
+                                <td>{{currencyMode[sdata.currencyMode]}}</td>
+                                <td>{{sdata.requestedCurrencyValue}}</td>
+                                <td>{{sdata.receivedCurrencyValue}}</td>
+                                <td>{{convertHRF(sdata.requestedDate)}}</td>
+                                <td>{{convertHRF(sdata.receivedDate)}}</td>
+                                <td>{{appStatus[sdata.indentStatus]}}</td>
+                            </tr>
+                        } 
+                    </tbody>
+                </table>
+            </div> 
+        </div>
+    </mat-tab>  
+    
+    <!--Applied filtering of data-->
+    <mat-tab label="All Indents">
+        <div class="tab-content">
+            <div class="order-form-container">
+                <p-table #dt [value]="filteredIndents" [paginator]="true" [rows]="10" [sortField]="'indentID'" [sortOrder]="1" [globalFilterFields]="['createdAt', 'branchName', 'vendorRes', 'currencyType', 'currencyMode', 'requestedCurrencyValue', 'receivedCurrencyValue', 'requestedDate', 'receivedDate', 'indentStatus']" stripedRows [tableStyle]="{'border':'2px solid black'}" [(selection)]="selectedIndents">
+                    <ng-template pTemplate="caption">
+                        <div class="p-d-flex">
+                            <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success p-mr-2" pTooltip="XLS" tooltipPosition="bottom"></button>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th [ngStyle]="{'width':'5%'}">SNo</th>
+                            <th pSortableColumn="indentID" [ngStyle]="{'width':'10%'}">Indent ID <p-sortIcon field="indentID"></p-sortIcon></th>
+                            <th pSortableColumn="createdAt" [ngStyle]="{'width':'10%'}">Indent Date <p-sortIcon field="createdAt"></p-sortIcon></th>
+                            <th pSortableColumn="branchName">Branch Name <p-sortIcon field="branchName"></p-sortIcon></th>
+                            <th pSortableColumn="vendorRes" [ngStyle]="{'width':'10%'}">Vendor Name <p-sortIcon field="vendorRes"></p-sortIcon></th>
+                            <th pSortableColumn="currencyType" [ngStyle]="{'width':'12%'}">Foreign Currency <p-sortIcon field="currencyType"></p-sortIcon></th>
+                            <th pSortableColumn="currencyMode">Request Type <p-sortIcon field="currencyMode"></p-sortIcon></th>
+                            <th pSortableColumn="requestedCurrencyValue">Req Amt<p-sortIcon field="requestedCurrencyValue"></p-sortIcon></th>
+                            <th pSortableColumn="receivedCurrencyValue">Rec Amt<p-sortIcon field="receivedCurrencyValue"></p-sortIcon></th>
+                            <th pSortableColumn="requestedDate">Requested On <p-sortIcon field="requestedDate"></p-sortIcon></th>
+                            <th pSortableColumn="receivedDate">Received On <p-sortIcon field="receivedDate"></p-sortIcon></th>
+                            <th pSortableColumn="indentStatus" [ngStyle]="{'width':'12%'}">Status <p-sortIcon field="indentStatus"></p-sortIcon></th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th><input pInputText type="text" (input)="customFilter($event.target.value, 'indentID', 'contains')" placeholder="Indent ID"></th>
+                            <th><input pInputText type="text" (input)="customFilter($event.target.value, 'createdAt', 'contains')" placeholder="Indent Date"></th>
+                            <th><input pInputText type="text" (input)="customFilter($event.target.value, 'branchName', 'contains')" placeholder="Branch Name"></th>
+                            <th><input pInputText type="text" (input)="customFilter($event.target.value, 'vendorRes', 'contains')" placeholder="Vendor"></th>
+                            <th><input pInputText type="text" (input)="customFilter($event.target.value, 'currencyType', 'contains')" placeholder="Currency"></th>
+                            <th><input pInputText type="text" (input)="customFilter($event.target.value, 'currencyMode', 'contains')" placeholder="Req Type"></th>
+                            <th><input pInputText type="text" (input)="customFilter($event.target.value, 'requestedCurrencyValue', 'contains')" placeholder="Req Amt"></th>
+                            <th><input pInputText type="text" (input)="customFilter($event.target.value, 'receivedCurrencyValue', 'contains')" placeholder="Rec Amt"></th>
+                            <th><input pInputText type="text" (input)="customFilter($event.target.value, 'requestedDate', 'contains')" placeholder="Req Dt"></th>
+                            <th><input pInputText type="text" (input)="customFilter($event.target.value, 'receivedDate', 'contains')" placeholder="Rec Dt"></th>
+                            <th><input pInputText type="text" (input)="customFilter($event.target.value, 'indentStatus', 'contains')" placeholder="Status"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-sdata let-i="rowIndex">
+                        <tr [ngStyle]="{'background-color': getRowColor(sdata.indentID)}">
+                            <td>{{i+1}}</td>
+                            <td>{{sdata.indentID}}</td>
+                            <td>{{convertHRF(sdata.createdAt)}}</td>
+                            <td>{{sdata.branchName}}</td>
+                            <td>{{branchVendorList[sdata.vendorRes]}} - {{sdata.vendorBranch}}</td>
+                            <td>{{currencyData[sdata.currencyType]}}</td>
+                            <td>{{currencyMode[sdata.currencyMode]}}</td>
+                            <td>{{sdata.requestedCurrencyValue}}</td>
+                            <td>{{sdata.receivedCurrencyValue}}</td>
+                            <td>{{convertHRF(sdata.requestedDate)}}</td>
+                            <td>{{convertHRF(sdata.receivedDate)}}</td>
+                            <td>{{appStatus[sdata.indentStatus]}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div> 
+        </div>
+    </mat-tab>
+
+    <mat-tab label="Vendor Details">
+        <div class="tab-content table-scroll">
+            <div class="actions" style="float:right;margin-bottom:5px">
+                <button mat-button color="accent" class="btn-export" (click)="exportToExcelVendorDetails()">Export to Excel</button>
+            </div>
+            <table id="table_vendor_list">
+                <thead style="background-color:thistle;">
+                    <tr>
+                        <th>SNo</th>
+                        <th>Vendor Name</th>
+                        <th>Vendor Branch</th>
+                        <th>Vendor Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for(record of vendors; track record.vendorName; let i = $index) {
+                        <tr>
+                            <td>{{i+1}}</td>
+                            <td>{{record.vendorName}}</td>
+                            <td>{{record.locationName}}</td>
+                            <td>{{record.emails}}</td>
+                        </tr>   
+                    }
+                </tbody>
+            </table>
+        </div>
+    </mat-tab>   
+    
+    <mat-tab label="Mailing List of Branch">
+        <div class="tab-content">
+            <div class="actions" style="float:right;margin-bottom:5px">
+                <button mat-button color="accent" class="btn-export" (click)="exportToExcelMailingList()">Export to Excel</button>
+            </div>
+            <div class="table-scroll">
+                <table id="table_mailing_list">
+                    <thead style="background-color:thistle;">
+                        <tr>
+                            <th>SNo</th>
+                            <th>Branch Code</th>
+                            <th>Branch Name</th>
+                            <th>Indent ID</th>                            
+                            <th>Mail Sent to</th>
+                            <th>Mail Address</th>
+                            <th>Sent Date </th>
+                            <th>Response</th>
+                            <!-- <th>Operation</th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for(record of branchEmailRecords; track record.mailBranchCode;let i = $index) {
+                            <tr [ngStyle]="{'background-color': getRowColorMail(record.mailIndentID)}">
+                                <td>{{i+1}}</td>
+                                <td>{{record.mailBranchCode}}</td>
+                                <td>{{record.mailBranchName}}</td>
+                                <td>{{record.mailIndentID}}</td>
+                                <td>{{record.mailInsType}}</td>
+                                <td>{{record.mailAddress}}</td>
+                                <td>{{convertHRF(record.mailIndentCreatedAt)}}</td>
+                                <td>{{record.mailResponseStatus}}</td>
+                                <!-- <td *ngIf="i === firstIndexMapMail[record.mailIndentID]" [attr.rowspan]="uniqueIndentCountMail[record.mailIndentID]">
+                                    <button class="btn-mail-resend" (click)="onResendMail(record.mailIndentID)">Resend Email</button>
+                                </td> -->
+                            </tr>
+                        } 
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </mat-tab>
+</mat-tab-group>
+    <!-- Modal HTML structure -->
+    <ng-template #modalTemplate>
+        <div class="modal-backdrop" (click)="closeModal()"></div>
+        <div class="modal-container">
+            <form (ngSubmit)="onSubmit(orderForm)" #orderForm="ngForm" class="order-form">
+                <h2>Enter Rejection Remarks of Indent : {{this.hidIndentID}}</h2>
+                <mat-dialog-content>
+                    <textarea class="text_input_remarks"
+                        matInput
+                        placeholder="Enter the remarks for rejecting the indent."
+                        [(ngModel)]="rejectionReason"
+                        rows="10"
+                        cols="100"
+                        required
+                        name="text_input_remarks"
+                ></textarea>
+                    <input type="hidden" name="hiddenIndentRejID"  [(ngModel)]="hidIndentID" value="{{this.hidIndentID}}">
+                </mat-dialog-content>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-submit mt-5" [disabled]="!orderForm.valid">Submit</button>
+                    <button mat-button mat-dialog-close class="btn-reject">Go Back</button>
+                </div>
+            </form>
+        </div>
+    </ng-template>
