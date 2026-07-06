@@ -1598,3 +1598,83 @@ export class LhouserComponent implements OnInit{
         </form>
     </div>
 </ng-template> -->
+   <mat-tab label="Daily Indent Report">
+        <div class="tab-content">
+            
+            <div class="actions" style="margin-bottom:5px">
+                <form (ngSubmit)="onDateSubmit(gmukReport)" #gmukReport="ngForm" class="order-form">
+                    <div class="row container-fluid main-form">                                      
+                        <div class="col-md-2xx">
+                        <div class="form-group">
+                            <label for="fromDate">From Date : &nbsp;&nbsp;</label>
+                            <input type="date" id="fromDate" name="fromDate" [(ngModel)]="fromDate" class="form-control dateField" required>
+                        </div>
+                        </div>
+                        <div class="col-md-2xx">
+                        <div class="form-group">
+                            <label for="toDate">&nbsp;&nbsp;To Date : &nbsp;&nbsp;</label>
+                            <input type="date" id="toDate" name="toDate" [(ngModel)]="toDate" class="form-control dateField" required>
+                        </div>
+                        </div>                   
+                        <div class="col-md-1xs">
+                            <button type="submit" class="btn-search-report">Submit</button>
+                        </div>
+                        <div class="col-md-4" [ngStyle]="{'float':'right','margin-left':'5px'}">
+                            <button mat-button color="accent" class="btn-export" (click)="exportToExcelBranchReportGMUK()">Export to Excel</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <p-table #dt [value]="filteredbranchReportData" [paginator]="true" [rows]="10" [sortField]="'indentID'" [sortOrder]="1" [globalFilterFields]="['createdAt', 'indentID', 'branchName','currencyType','requestedCurrencyValue','vendorBranch','indentStatus','requestedDate','receivedDate','TAT','circle']" stripedRows [tableStyle]="{'border':'2px solid black'}"  [(selection)]="selectedbranchReportDataArray">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th rowspan="2" [ngStyle]="{'width':'5%'}">SNo</th>
+                        <th pSortableColumn='createdAt' >IndentDate <p-sortIcon field='createdAt'></p-sortIcon></th>
+                        <th pSortableColumn='indentID'>IndentID <p-sortIcon field='indentID'></p-sortIcon></th>
+                        <th pSortableColumn='branchName' >Branch <p-sortIcon field='branchName'></p-sortIcon></th>
+                        <th pSortableColumn='circleName' >Circle <p-sortIcon field='circleName'></p-sortIcon></th>
+                        <th pSortableColumn='currencyType' >Currency <p-sortIcon field='currencyType'></p-sortIcon></th>
+                        <th pSortableColumn='requestedCurrencyValue' >ReqAmount <p-sortIcon field='requestedCurrencyValue'></p-sortIcon></th>
+                        <th pSortableColumn='receivedCurrencyValue' >RecAmount <p-sortIcon field='receivedCurrencyValue'></p-sortIcon></th>
+                        <th pSortableColumn='vendorBranch' >Vendor <p-sortIcon field='vendorBranch'></p-sortIcon></th>
+                        <th pSortableColumn='indentStatus' >Status <p-sortIcon field='indentStatus'></p-sortIcon></th>
+                        <th pSortableColumn='requestedDate' >ReqDate <p-sortIcon field='requestedDate'></p-sortIcon></th>
+                        <th pSortableColumn='receivedDate' >CompDate <p-sortIcon field='receivedDate'></p-sortIcon></th>
+                        <th pSortableColumn='TAT' >TAT <p-sortIcon field='TAT'></p-sortIcon></th>
+                    </tr>
+                    <tr>
+                        <th><input pInputText type='date' (input)="customFilterReportDate($event.target.value, 'createdAt', 'contains')" placeholder='IndentDate'></th>
+                        <th><input pInputText type='text' (input)="customFilterReportDate($event.target.value, 'indentID', 'contains')" placeholder='IndentID'></th>
+                        <th><input pInputText type='text' (input)="customFilterReportDate($event.target.value, 'branchName', 'contains')" placeholder='Branch'></th>
+                        <th><input pInputText type='text' (input)="customFilterReportDate($event.target.value, 'circleName', 'contains')" placeholder='Circle'></th>
+                        <th><input pInputText type='text' (input)="customFilterReportDate($event.target.value, 'currencyType', 'contains')" placeholder='Currency'></th>
+                        <th><input pInputText type='text' (input)="customFilterReportDate($event.target.value, 'requestedCurrencyValue', 'contains')" placeholder='Amount'></th>
+                        <th><input pInputText type='text' (input)="customFilterReportDate($event.target.value, 'receivedCurrencyValue', 'contains')" placeholder='Amount'></th>
+                        <th><input pInputText type='text' (input)="customFilterReportDate($event.target.value, 'vendorBranch', 'contains')" placeholder='Vendor'></th>
+                        <th><input pInputText type='text' (input)="customFilterReportDate($event.target.value, 'indentStatus', 'contains')" placeholder='Status'></th>
+                        <th><input pInputText type='date' (input)="customFilterReportDate($event.target.value, 'requestedDate', 'contains')" placeholder='ReqDate'></th>
+                        <th><input pInputText type='date' (input)="customFilterReportDate($event.target.value, 'receivedDate', 'contains')" placeholder='CompDate'></th>
+                        <th><input pInputText type='text' (input)="customFilterReportDate($event.target.value, 'TAT', 'contains')" placeholder='TAT'></th>
+
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-branchRecord let-i="rowIndex">
+                    <tr>
+                        <td>{{i+1}}</td>
+                        <td>{{branchRecord.createdAt | date:'dd-MM-yyyy'}}</td>
+                        <td>{{branchRecord.indentID}}</td>
+                        <td>{{branchRecord.branchName}} </td>
+                        <td>{{circleNames[branchRecord.circleCode]}}</td>
+                        <td>{{currencyData[branchRecord.currencyType]}} ({{branchRecord.currencyType}})</td>
+                        <td>{{branchRecord.requestedCurrencyValue}}</td>
+                        <td>{{branchRecord.receivedCurrencyValue}}</td>
+                        <td>{{branchRecord.vendorBranch}}</td>
+                        <td>{{appStatus[branchRecord.indentStatus]}}</td>
+                        <td>{{branchRecord.requestedDate | date:'dd-MM-yyyy'}}</td>
+                        <td>{{branchRecord.receivedDate | date:'dd-MM-yyyy'}}</td>
+                        <td>{{branchRecord.tatHours ? branchRecord.tatHours + ' (hrs)':'' }} {{branchRecord.TAT ? '~'+branchRecord.TAT + ' (days)':''}}</td>
+                    </tr>
+                </ng-template>
+            </p-table> 
+        </div>
+    </mat-tab>
