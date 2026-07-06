@@ -11,9 +11,12 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import {formatDate} from '@angular/common';
 import { MatTabsModule } from '@angular/material/tabs';
 import { FormsModule } from '@angular/forms';
-import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { CdkScrollableModule } from '@angular/cdk/scrolling';
 
 @Component({
@@ -21,8 +24,9 @@ import { CdkScrollableModule } from '@angular/cdk/scrolling';
     standalone: true,
     templateUrl: './lhouser.component.html',
     styleUrls: ['./lhouser.component.css'],
-    imports: [CommonModule, MatTabsModule, RouterLink, FormsModule, MatTableModule, MatDialogModule,
-              MatInputModule, MatButtonModule, CdkScrollableModule]
+    imports: [CommonModule, MatTabsModule, RouterLink, FormsModule, MatDialogModule,
+              MatInputModule, MatButtonModule, MatIconModule, MatCheckboxModule,
+              MatTooltipModule, MatPaginatorModule, CdkScrollableModule]
 })
 
 export class LhouserComponent implements OnInit{
@@ -121,6 +125,27 @@ export class LhouserComponent implements OnInit{
     serialID:0,
     makerCode:0,
   }
+
+  // -------- Daily Indent Report table: sorting / pagination / selection (replaces PrimeNG p-table) --------
+  reportSortField: string = 'indentID';
+  reportSortOrder: number = 1;
+  reportPageIndex: number = 0;
+  reportPageSize: number = 10;
+  reportPageSizeOptions: number[] = [5, 10, 25, 50];
+
+  // -------- Circle User and Controller Mail table: sorting / pagination / selection --------
+  circleSortField: string = 'branchCode';
+  circleSortOrder: number = 1;
+  circlePageIndex: number = 0;
+  circlePageSize: number = 10;
+  circlePageSizeOptions: number[] = [5, 10, 25, 50];
+
+  // -------- Vendor Details Update table: sorting / pagination --------
+  vendorSortField: string = 'branchName';
+  vendorSortOrder: number = 1;
+  vendorPageIndex: number = 0;
+  vendorPageSize: number = 10;
+  vendorPageSizeOptions: number[] = [5, 10, 25, 50];
 
   constructor(private http: HttpClient,
               private router: Router,
@@ -399,7 +424,7 @@ export class LhouserComponent implements OnInit{
   }
 
   customFilter(value: string, field: string, mode: string): void {
-    const filteredValue = value.toLowerCase();
+    const filteredValue = (value || '').toLowerCase();
     this.filteredcircleUserAndEmailsArray = this.circleUserAndEmailsArray.filter((sdata:any) => {
       switch (field) {
         case 'vendorRes':
@@ -408,10 +433,11 @@ export class LhouserComponent implements OnInit{
           return sdata[field].toString().toLowerCase().includes(filteredValue);
       }
     });
+    this.circlePageIndex = 0;
   }
 
   customFilterVendor(value: string, field: string, mode: string): void {
-    const filteredValue = value.toLowerCase();
+    const filteredValue = (value || '').toLowerCase();
     this.filteredvendorEmailsArray = this.vendorEmailsArray.filter((sdata:any) => {
       switch (field) {
         case 'vendorRes':
@@ -420,12 +446,13 @@ export class LhouserComponent implements OnInit{
           return sdata[field].toString().toLowerCase().includes(filteredValue);
       }
     });
+    this.vendorPageIndex = 0;
   }
 
 
   // Filter for branch report at GMUK for daily indents. 22-06-2025
   customFilterReportDate(value: string, field: string, mode: string): void {
-    const filteredValue = value.toLowerCase();
+    const filteredValue = (value || '').toLowerCase();
     this.filteredbranchReportData = this.branchReportData.filter(sdata => {
       switch (field) {
         case 'createdAt':
@@ -446,6 +473,7 @@ export class LhouserComponent implements OnInit{
           return sdata[field].toString().toLowerCase().includes(filteredValue);
       }
     });
+    this.reportPageIndex = 0;
   }
 
   // updateVendorMailEntry = {
@@ -699,6 +727,11 @@ export class LhouserComponent implements OnInit{
 
   }
 
+  // Close the modal (bound to the backdrop click in the template)
+  closeModal(): void {
+    this.dialog.closeAll();
+  }
+
   onVendorSubmit(form: any) {
     if (form.valid) {      
       if (form.valid) {
@@ -877,7 +910,200 @@ export class LhouserComponent implements OnInit{
     });
   }  
 
-}   
+  // -------- Daily Indent Report table: sorting / pagination / selection helpers --------
+
+  reportSortData(field: string): void {
+    if (this.reportSortField === field) {
+      this.reportSortOrder = -this.reportSortOrder;
+    } else {
+      this.reportSortField = field;
+      this.reportSortOrder = 1;
+    }
+    this.reportPageIndex = 0;
+  }
+
+  reportGetSortIcon(field: string): string {
+    if (this.reportSortField !== field) return 'unfold_more';
+    return this.reportSortOrder === 1 ? 'arrow_upward' : 'arrow_downward';
+  }
+
+  private getReportSortValue(row: any, field: string): any {
+    switch (field) {
+      case 'circleName':
+        return this.circleNames[row.circleCode] || '';
+      case 'currencyType':
+        return this.currencyData[row.currencyType] || '';
+      case 'indentStatus':
+        return this.appStatus[row.indentStatus] || '';
+      default:
+        return row[field];
+    }
+  }
+
+  private compareReportRows(a: any, b: any): number {
+    const valA = this.getReportSortValue(a, this.reportSortField);
+    const valB = this.getReportSortValue(b, this.reportSortField);
+    if (valA == null && valB == null) return 0;
+    if (valA == null) return -1 * this.reportSortOrder;
+    if (valB == null) return 1 * this.reportSortOrder;
+    if (valA < valB) return -1 * this.reportSortOrder;
+    if (valA > valB) return 1 * this.reportSortOrder;
+    return 0;
+  }
+
+  get displayedBranchReportData(): any[] {
+    const sorted = [...this.filteredbranchReportData].sort((a, b) => this.compareReportRows(a, b));
+    const start = this.reportPageIndex * this.reportPageSize;
+    return sorted.slice(start, start + this.reportPageSize);
+  }
+
+  onReportPageChange(event: PageEvent): void {
+    this.reportPageIndex = event.pageIndex;
+    this.reportPageSize = event.pageSize;
+  }
+
+  isReportSelected(row: any): boolean {
+    return this.selectedbranchReportDataArray.includes(row);
+  }
+
+  toggleReportSelection(row: any): void {
+    const idx = this.selectedbranchReportDataArray.indexOf(row);
+    if (idx > -1) this.selectedbranchReportDataArray.splice(idx, 1);
+    else this.selectedbranchReportDataArray.push(row);
+  }
+
+  isAllReportSelected(): boolean {
+    const page = this.displayedBranchReportData;
+    return page.length > 0 && page.every(r => this.isReportSelected(r));
+  }
+
+  toggleAllReport(): void {
+    const page = this.displayedBranchReportData;
+    if (this.isAllReportSelected()) {
+      page.forEach(r => {
+        const idx = this.selectedbranchReportDataArray.indexOf(r);
+        if (idx > -1) this.selectedbranchReportDataArray.splice(idx, 1);
+      });
+    } else {
+      page.forEach(r => { if (!this.isReportSelected(r)) this.selectedbranchReportDataArray.push(r); });
+    }
+  }
+
+  // -------- Circle User and Controller Mail table: sorting / pagination / selection helpers --------
+
+  circleSortData(field: string): void {
+    if (this.circleSortField === field) {
+      this.circleSortOrder = -this.circleSortOrder;
+    } else {
+      this.circleSortField = field;
+      this.circleSortOrder = 1;
+    }
+    this.circlePageIndex = 0;
+  }
+
+  circleGetSortIcon(field: string): string {
+    if (this.circleSortField !== field) return 'unfold_more';
+    return this.circleSortOrder === 1 ? 'arrow_upward' : 'arrow_downward';
+  }
+
+  private compareCircleRows(a: any, b: any): number {
+    const valA = a[this.circleSortField];
+    const valB = b[this.circleSortField];
+    if (valA == null && valB == null) return 0;
+    if (valA == null) return -1 * this.circleSortOrder;
+    if (valB == null) return 1 * this.circleSortOrder;
+    if (valA < valB) return -1 * this.circleSortOrder;
+    if (valA > valB) return 1 * this.circleSortOrder;
+    return 0;
+  }
+
+  get displayedCircleUserAndEmails(): any[] {
+    const sorted = [...this.filteredcircleUserAndEmailsArray].sort((a, b) => this.compareCircleRows(a, b));
+    const start = this.circlePageIndex * this.circlePageSize;
+    return sorted.slice(start, start + this.circlePageSize);
+  }
+
+  onCirclePageChange(event: PageEvent): void {
+    this.circlePageIndex = event.pageIndex;
+    this.circlePageSize = event.pageSize;
+  }
+
+  isCircleSelected(row: any): boolean {
+    return this.selectedcircleUserAndEmailsArray.includes(row);
+  }
+
+  toggleCircleSelection(row: any): void {
+    const idx = this.selectedcircleUserAndEmailsArray.indexOf(row);
+    if (idx > -1) this.selectedcircleUserAndEmailsArray.splice(idx, 1);
+    else this.selectedcircleUserAndEmailsArray.push(row);
+  }
+
+  isAllCircleSelected(): boolean {
+    const page = this.displayedCircleUserAndEmails;
+    return page.length > 0 && page.every(r => this.isCircleSelected(r));
+  }
+
+  toggleAllCircle(): void {
+    const page = this.displayedCircleUserAndEmails;
+    if (this.isAllCircleSelected()) {
+      page.forEach(r => {
+        const idx = this.selectedcircleUserAndEmailsArray.indexOf(r);
+        if (idx > -1) this.selectedcircleUserAndEmailsArray.splice(idx, 1);
+      });
+    } else {
+      page.forEach(r => { if (!this.isCircleSelected(r)) this.selectedcircleUserAndEmailsArray.push(r); });
+    }
+  }
+
+  // -------- Vendor Details Update table: sorting / pagination helpers --------
+
+  vendorSortData(field: string): void {
+    if (this.vendorSortField === field) {
+      this.vendorSortOrder = -this.vendorSortOrder;
+    } else {
+      this.vendorSortField = field;
+      this.vendorSortOrder = 1;
+    }
+    this.vendorPageIndex = 0;
+  }
+
+  vendorGetSortIcon(field: string): string {
+    if (this.vendorSortField !== field) return 'unfold_more';
+    return this.vendorSortOrder === 1 ? 'arrow_upward' : 'arrow_downward';
+  }
+
+  private compareVendorRows(a: any, b: any): number {
+    const valA = a[this.vendorSortField];
+    const valB = b[this.vendorSortField];
+    if (valA == null && valB == null) return 0;
+    if (valA == null) return -1 * this.vendorSortOrder;
+    if (valB == null) return 1 * this.vendorSortOrder;
+    if (valA < valB) return -1 * this.vendorSortOrder;
+    if (valA > valB) return 1 * this.vendorSortOrder;
+    return 0;
+  }
+
+  get displayedVendorEmails(): any[] {
+    const sorted = [...this.filteredvendorEmailsArray].sort((a, b) => this.compareVendorRows(a, b));
+    const start = this.vendorPageIndex * this.vendorPageSize;
+    return sorted.slice(start, start + this.vendorPageSize);
+  }
+
+  onVendorPageChange(event: PageEvent): void {
+    this.vendorPageIndex = event.pageIndex;
+    this.vendorPageSize = event.pageSize;
+  }
+
+}
+
+
+
+
+
+
+
+
+
 
 
 
@@ -910,7 +1136,7 @@ export class LhouserComponent implements OnInit{
                 </tr>
                 </thead>
                 <tbody>
-                @for(sdata of appDrill; track sdata.circleName; let i = $index) {
+                @for(sdata of appDrill; track $index; let i = $index) {
                     <tr>
                         <td>{{i+1}}</td>
                         <td><a [routerLink]="['/fcnGmukManager',sdata.ccode]">{{sdata.ccode}}</a></td>      
@@ -944,7 +1170,7 @@ export class LhouserComponent implements OnInit{
                     </tr>
                 </thead>
                 <tbody>
-                    @for(record of vendorPerformance;track record.vendor; let i = $index) {
+                    @for(record of vendorPerformance;track $index; let i = $index) {
                         <tr>
                             <td>{{i+1}}</td>
                             <td>{{vendorNames[record.vendor]}}</td>
@@ -985,57 +1211,83 @@ export class LhouserComponent implements OnInit{
                     </div>
                 </form>
             </div>
-            <p-table #dt [value]="filteredbranchReportData" [paginator]="true" [rows]="10" [sortField]="'indentID'" [sortOrder]="1" [globalFilterFields]="['createdAt', 'indentID', 'branchName','currencyType','requestedCurrencyValue','vendorBranch','indentStatus','requestedDate','receivedDate','TAT','circle']" stripedRows [tableStyle]="{'border':'2px solid black'}"  [(selection)]="selectedbranchReportDataArray">
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th rowspan="2" [ngStyle]="{'width':'5%'}">SNo</th>
-                        <th pSortableColumn='createdAt' >IndentDate <p-sortIcon field='createdAt'></p-sortIcon></th>
-                        <th pSortableColumn='indentID'>IndentID <p-sortIcon field='indentID'></p-sortIcon></th>
-                        <th pSortableColumn='branchName' >Branch <p-sortIcon field='branchName'></p-sortIcon></th>
-                        <th pSortableColumn='circleName' >Circle <p-sortIcon field='circleName'></p-sortIcon></th>
-                        <th pSortableColumn='currencyType' >Currency <p-sortIcon field='currencyType'></p-sortIcon></th>
-                        <th pSortableColumn='requestedCurrencyValue' >ReqAmount <p-sortIcon field='requestedCurrencyValue'></p-sortIcon></th>
-                        <th pSortableColumn='receivedCurrencyValue' >RecAmount <p-sortIcon field='receivedCurrencyValue'></p-sortIcon></th>
-                        <th pSortableColumn='vendorBranch' >Vendor <p-sortIcon field='vendorBranch'></p-sortIcon></th>
-                        <th pSortableColumn='indentStatus' >Status <p-sortIcon field='indentStatus'></p-sortIcon></th>
-                        <th pSortableColumn='requestedDate' >ReqDate <p-sortIcon field='requestedDate'></p-sortIcon></th>
-                        <th pSortableColumn='receivedDate' >CompDate <p-sortIcon field='receivedDate'></p-sortIcon></th>
-                        <th pSortableColumn='TAT' >TAT <p-sortIcon field='TAT'></p-sortIcon></th>
-                    </tr>
-                    <tr>
-                        <th><input pInputText type='date' (input)="customFilterReportDate($event.target.value, 'createdAt', 'contains')" placeholder='IndentDate'></th>
-                        <th><input pInputText type='text' (input)="customFilterReportDate($event.target.value, 'indentID', 'contains')" placeholder='IndentID'></th>
-                        <th><input pInputText type='text' (input)="customFilterReportDate($event.target.value, 'branchName', 'contains')" placeholder='Branch'></th>
-                        <th><input pInputText type='text' (input)="customFilterReportDate($event.target.value, 'circleName', 'contains')" placeholder='Circle'></th>
-                        <th><input pInputText type='text' (input)="customFilterReportDate($event.target.value, 'currencyType', 'contains')" placeholder='Currency'></th>
-                        <th><input pInputText type='text' (input)="customFilterReportDate($event.target.value, 'requestedCurrencyValue', 'contains')" placeholder='Amount'></th>
-                        <th><input pInputText type='text' (input)="customFilterReportDate($event.target.value, 'receivedCurrencyValue', 'contains')" placeholder='Amount'></th>
-                        <th><input pInputText type='text' (input)="customFilterReportDate($event.target.value, 'vendorBranch', 'contains')" placeholder='Vendor'></th>
-                        <th><input pInputText type='text' (input)="customFilterReportDate($event.target.value, 'indentStatus', 'contains')" placeholder='Status'></th>
-                        <th><input pInputText type='date' (input)="customFilterReportDate($event.target.value, 'requestedDate', 'contains')" placeholder='ReqDate'></th>
-                        <th><input pInputText type='date' (input)="customFilterReportDate($event.target.value, 'receivedDate', 'contains')" placeholder='CompDate'></th>
-                        <th><input pInputText type='text' (input)="customFilterReportDate($event.target.value, 'TAT', 'contains')" placeholder='TAT'></th>
 
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-branchRecord let-i="rowIndex">
-                    <tr>
-                        <td>{{i+1}}</td>
-                        <td>{{branchRecord.createdAt | date:'dd-MM-yyyy'}}</td>
-                        <td>{{branchRecord.indentID}}</td>
-                        <td>{{branchRecord.branchName}} </td>
-                        <td>{{circleNames[branchRecord.circleCode]}}</td>
-                        <td>{{currencyData[branchRecord.currencyType]}} ({{branchRecord.currencyType}})</td>
-                        <td>{{branchRecord.requestedCurrencyValue}}</td>
-                        <td>{{branchRecord.receivedCurrencyValue}}</td>
-                        <td>{{branchRecord.vendorBranch}}</td>
-                        <td>{{appStatus[branchRecord.indentStatus]}}</td>
-                        <td>{{branchRecord.requestedDate | date:'dd-MM-yyyy'}}</td>
-                        <td>{{branchRecord.receivedDate | date:'dd-MM-yyyy'}}</td>
-                        <td>{{branchRecord.tatHours ? branchRecord.tatHours + ' (hrs)':'' }} {{branchRecord.TAT ? '~'+branchRecord.TAT + ' (days)':''}}</td>
-                    </tr>
-                </ng-template>
-            </p-table> 
+            <!-- Daily Indent Report table: rebuilt with Bootstrap table + Angular Material (sort/paginate/select), PrimeNG p-table removed -->
+            <div class="table-responsive table-scroll">
+                <table class="table table-bordered table-striped table-hover" id="table_print_report" style="border:2px solid black;">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" style="width:3%">
+                                <mat-checkbox [checked]="isAllReportSelected()" (change)="toggleAllReport()"></mat-checkbox>
+                            </th>
+                            <th rowspan="2" style="width:5%">SNo</th>
+                            <th style="cursor:pointer" (click)="reportSortData('createdAt')">IndentDate <mat-icon class="sort-icon">{{ reportGetSortIcon('createdAt') }}</mat-icon></th>
+                            <th style="cursor:pointer" (click)="reportSortData('indentID')">IndentID <mat-icon class="sort-icon">{{ reportGetSortIcon('indentID') }}</mat-icon></th>
+                            <th style="cursor:pointer" (click)="reportSortData('branchName')">Branch <mat-icon class="sort-icon">{{ reportGetSortIcon('branchName') }}</mat-icon></th>
+                            <th style="cursor:pointer" (click)="reportSortData('circleName')">Circle <mat-icon class="sort-icon">{{ reportGetSortIcon('circleName') }}</mat-icon></th>
+                            <th style="cursor:pointer" (click)="reportSortData('currencyType')">Currency <mat-icon class="sort-icon">{{ reportGetSortIcon('currencyType') }}</mat-icon></th>
+                            <th style="cursor:pointer" (click)="reportSortData('requestedCurrencyValue')">ReqAmount <mat-icon class="sort-icon">{{ reportGetSortIcon('requestedCurrencyValue') }}</mat-icon></th>
+                            <th style="cursor:pointer" (click)="reportSortData('receivedCurrencyValue')">RecAmount <mat-icon class="sort-icon">{{ reportGetSortIcon('receivedCurrencyValue') }}</mat-icon></th>
+                            <th style="cursor:pointer" (click)="reportSortData('vendorBranch')">Vendor <mat-icon class="sort-icon">{{ reportGetSortIcon('vendorBranch') }}</mat-icon></th>
+                            <th style="cursor:pointer" (click)="reportSortData('indentStatus')">Status <mat-icon class="sort-icon">{{ reportGetSortIcon('indentStatus') }}</mat-icon></th>
+                            <th style="cursor:pointer" (click)="reportSortData('requestedDate')">ReqDate <mat-icon class="sort-icon">{{ reportGetSortIcon('requestedDate') }}</mat-icon></th>
+                            <th style="cursor:pointer" (click)="reportSortData('receivedDate')">CompDate <mat-icon class="sort-icon">{{ reportGetSortIcon('receivedDate') }}</mat-icon></th>
+                            <th style="cursor:pointer" (click)="reportSortData('TAT')">TAT <mat-icon class="sort-icon">{{ reportGetSortIcon('TAT') }}</mat-icon></th>
+                        </tr>
+                        <tr>
+                            <th><input class="form-control form-control-sm" type="date" (input)="customFilterReportDate($any($event.target).value, 'createdAt', 'contains')" placeholder="IndentDate"></th>
+                            <th><input class="form-control form-control-sm" type="text" (input)="customFilterReportDate($any($event.target).value, 'indentID', 'contains')" placeholder="IndentID"></th>
+                            <th><input class="form-control form-control-sm" type="text" (input)="customFilterReportDate($any($event.target).value, 'branchName', 'contains')" placeholder="Branch"></th>
+                            <th><input class="form-control form-control-sm" type="text" (input)="customFilterReportDate($any($event.target).value, 'circleName', 'contains')" placeholder="Circle"></th>
+                            <th><input class="form-control form-control-sm" type="text" (input)="customFilterReportDate($any($event.target).value, 'currencyType', 'contains')" placeholder="Currency"></th>
+                            <th><input class="form-control form-control-sm" type="text" (input)="customFilterReportDate($any($event.target).value, 'requestedCurrencyValue', 'contains')" placeholder="Amount"></th>
+                            <th><input class="form-control form-control-sm" type="text" (input)="customFilterReportDate($any($event.target).value, 'receivedCurrencyValue', 'contains')" placeholder="Amount"></th>
+                            <th><input class="form-control form-control-sm" type="text" (input)="customFilterReportDate($any($event.target).value, 'vendorBranch', 'contains')" placeholder="Vendor"></th>
+                            <th><input class="form-control form-control-sm" type="text" (input)="customFilterReportDate($any($event.target).value, 'indentStatus', 'contains')" placeholder="Status"></th>
+                            <th><input class="form-control form-control-sm" type="date" (input)="customFilterReportDate($any($event.target).value, 'requestedDate', 'contains')" placeholder="ReqDate"></th>
+                            <th><input class="form-control form-control-sm" type="date" (input)="customFilterReportDate($any($event.target).value, 'receivedDate', 'contains')" placeholder="CompDate"></th>
+                            <th><input class="form-control form-control-sm" type="text" (input)="customFilterReportDate($any($event.target).value, 'TAT', 'contains')" placeholder="TAT"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for(branchRecord of displayedBranchReportData; track $index; let i = $index) {
+                            <tr>
+                                <td>
+                                    <mat-checkbox [checked]="isReportSelected(branchRecord)" (change)="toggleReportSelection(branchRecord)"></mat-checkbox>
+                                </td>
+                                <td>{{ reportPageIndex * reportPageSize + i + 1 }}</td>
+                                <td>{{branchRecord.createdAt | date:'dd-MM-yyyy'}}</td>
+                                <td>{{branchRecord.indentID}}</td>
+                                <td>{{branchRecord.branchName}} </td>
+                                <td>{{circleNames[branchRecord.circleCode]}}</td>
+                                <td>{{currencyData[branchRecord.currencyType]}} ({{branchRecord.currencyType}})</td>
+                                <td>{{branchRecord.requestedCurrencyValue}}</td>
+                                <td>{{branchRecord.receivedCurrencyValue}}</td>
+                                <td>{{branchRecord.vendorBranch}}</td>
+                                <td>{{appStatus[branchRecord.indentStatus]}}</td>
+                                <td>{{branchRecord.requestedDate | date:'dd-MM-yyyy'}}</td>
+                                <td>{{branchRecord.receivedDate | date:'dd-MM-yyyy'}}</td>
+                                <td>{{branchRecord.tatHours ? branchRecord.tatHours + ' (hrs)':'' }} {{branchRecord.TAT ? '~'+branchRecord.TAT + ' (days)':''}}</td>
+                            </tr>
+                        }
+                        @empty {
+                            <tr>
+                                <td colspan="14" class="text-center">No records found.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <mat-paginator
+                [length]="filteredbranchReportData.length"
+                [pageIndex]="reportPageIndex"
+                [pageSize]="reportPageSize"
+                [pageSizeOptions]="reportPageSizeOptions"
+                (page)="onReportPageChange($event)"
+                showFirstLastButtons>
+            </mat-paginator>
+
         </div>
     </mat-tab>
 
@@ -1144,86 +1396,136 @@ export class LhouserComponent implements OnInit{
     <mat-tab label="Circle User and Controller Mail Update">
         <div class="tab-content">
             <div class="order-form-container">
-               <p-table #dt [value]="filteredcircleUserAndEmailsArray" [paginator]="true" [rows]="10" [sortField]="'indentID'" [sortOrder]="1" [globalFilterFields]="['branchCode', 'branchName', 'circleName', 'controllerEmail', 'nodalOfficerEmail', 'circleUserPFID']" stripedRows [tableStyle]="{'border':'2px solid black'}" [(selection)]="selectedcircleUserAndEmailsArray">
-                    <ng-template pTemplate="caption">
-                        <div class="p-d-flex" [ngStyle]="{'margin-bottom':'5px'}">
-                            <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success p-mr-2" pTooltip="XLS" tooltipPosition="bottom" [ngStyle]="{'float':'right'}"></button>
-                        </div>
-                    </ng-template>
-                    <ng-template pTemplate="header">
-                        <tr>
-                            <th rowspan="2" [ngStyle]="{'width':'5%'}">SNo</th>
-                            <th [ngStyle]="{'width':'7%'}" pSortableColumn='branchCode'>Bcode <p-sortIcon field='branchCode'></p-sortIcon></th>
-                            <th pSortableColumn='branchName'>Branch <p-sortIcon field='branchName'></p-sortIcon></th>
-                            <th pSortableColumn='circleName'>Circle <p-sortIcon field='circleName'></p-sortIcon></th>
-                            <th [ngStyle]="{'width':'20%'}" pSortableColumn='controllerEmail'>Controller Email <p-sortIcon field='controllerEmail'></p-sortIcon></th>
-                            <th [ngStyle]="{'width':'20%'}" pSortableColumn='nodalOfficerEmail'>Nodal Officer Email <p-sortIcon field='nodalOfficerEmail'></p-sortIcon></th>
-                            <th pSortableColumn='circleUserPFID'>Circle User <p-sortIcon field='circleUserPFID'></p-sortIcon></th>
-                            <th rowspan="2" [ngStyle]="{'width':'12%'}">Operation</th>
-                        </tr>
-                        <tr>
-                            <th><input pInputText type='text' (input)="customFilter($event.target.value, 'branchCode', 'contains')" placeholder='Bcode'></th>
-                            <th><input pInputText type='text' (input)="customFilter($event.target.value, 'branchName', 'contains')" placeholder='Branch'></th>
-                            <th><input pInputText type='text' (input)="customFilter($event.target.value, 'circleName', 'contains')" placeholder='Circle'></th>
-                            <th><input pInputText type='text' (input)="customFilter($event.target.value, 'controllerEmail', 'contains')" placeholder='Controller Email'></th>
-                            <th><input pInputText type='text' (input)="customFilter($event.target.value, 'nodalOfficerEmail', 'contains')" placeholder='Nodal Officer Email'></th>
-                            <th><input pInputText type='text' (input)="customFilter($event.target.value, 'circleUserPFID', 'contains')" placeholder='CircleUser PFID'></th>
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="body" let-sdata let-i="rowIndex">
-                        <tr>
-                            <td>{{i+1}}</td>
-                            <td>{{ sdata.branchCode}}</td>
-                            <td>{{ sdata.branchName}}</td>
-                            <td>{{ sdata.circleName}}</td>
-                            <td><input type="text" [(ngModel)]="sdata.controllerEmail" name="controllermail-{{i}}"></td>
-                            <td><input type="text" [(ngModel)]="sdata.nodalOfficerEmail" name="nodalofficermail-{{i}}"></td>
-                            <td><input type="text" [(ngModel)]="sdata.circleUserPFID" name="circleuserpfid-{{i}}"></td>
-                            <td>
-                                <button (click)="updateEntryOfCircleUserAndEmail(sdata)" class="btn-add-row" type="button" icon="pi pi-undo">Update<i class="pi pi-undo"></i></button>
-                                <button (click)="deleteEntryOfCircleUserAndEmail(sdata)" class="btn-remove-row" icon="pi pi-trash">Delete<i class="pi pi-trash"></i></button>
-                            </td>
-                        </tr>
-                    </ng-template>
-                </p-table>
+
+                <!-- Circle User and Controller Mail table: rebuilt with Bootstrap table + Angular Material, PrimeNG p-table removed -->
+                <div class="d-flex justify-content-end mb-2">
+                    <button mat-icon-button color="primary" matTooltip="Export to Excel" (click)="exportExcel()">
+                        <mat-icon>file_download</mat-icon>
+                    </button>
+                </div>
+
+                <div class="table-responsive table-scroll">
+                    <table class="table table-bordered table-striped table-hover" id="table_print_circle_user" style="border:2px solid black;">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" style="width:3%">
+                                    <mat-checkbox [checked]="isAllCircleSelected()" (change)="toggleAllCircle()"></mat-checkbox>
+                                </th>
+                                <th rowspan="2" style="width:5%">SNo</th>
+                                <th style="width:7%; cursor:pointer" (click)="circleSortData('branchCode')">Bcode <mat-icon class="sort-icon">{{ circleGetSortIcon('branchCode') }}</mat-icon></th>
+                                <th style="cursor:pointer" (click)="circleSortData('branchName')">Branch <mat-icon class="sort-icon">{{ circleGetSortIcon('branchName') }}</mat-icon></th>
+                                <th style="cursor:pointer" (click)="circleSortData('circleName')">Circle <mat-icon class="sort-icon">{{ circleGetSortIcon('circleName') }}</mat-icon></th>
+                                <th style="width:20%; cursor:pointer" (click)="circleSortData('controllerEmail')">Controller Email <mat-icon class="sort-icon">{{ circleGetSortIcon('controllerEmail') }}</mat-icon></th>
+                                <th style="width:20%; cursor:pointer" (click)="circleSortData('nodalOfficerEmail')">Nodal Officer Email <mat-icon class="sort-icon">{{ circleGetSortIcon('nodalOfficerEmail') }}</mat-icon></th>
+                                <th style="cursor:pointer" (click)="circleSortData('circleUserPFID')">Circle User <mat-icon class="sort-icon">{{ circleGetSortIcon('circleUserPFID') }}</mat-icon></th>
+                                <th rowspan="2" style="width:12%">Operation</th>
+                            </tr>
+                            <tr>
+                                <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'branchCode', 'contains')" placeholder="Bcode"></th>
+                                <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'branchName', 'contains')" placeholder="Branch"></th>
+                                <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'circleName', 'contains')" placeholder="Circle"></th>
+                                <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'controllerEmail', 'contains')" placeholder="Controller Email"></th>
+                                <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'nodalOfficerEmail', 'contains')" placeholder="Nodal Officer Email"></th>
+                                <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'circleUserPFID', 'contains')" placeholder="CircleUser PFID"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for(sdata of displayedCircleUserAndEmails; track $index; let i = $index) {
+                                <tr>
+                                    <td>
+                                        <mat-checkbox [checked]="isCircleSelected(sdata)" (change)="toggleCircleSelection(sdata)"></mat-checkbox>
+                                    </td>
+                                    <td>{{ circlePageIndex * circlePageSize + i + 1 }}</td>
+                                    <td>{{ sdata.branchCode}}</td>
+                                    <td>{{ sdata.branchName}}</td>
+                                    <td>{{ sdata.circleName}}</td>
+                                    <td><input class="form-control form-control-sm" type="text" [(ngModel)]="sdata.controllerEmail" name="controllermail-{{i}}"></td>
+                                    <td><input class="form-control form-control-sm" type="text" [(ngModel)]="sdata.nodalOfficerEmail" name="nodalofficermail-{{i}}"></td>
+                                    <td><input class="form-control form-control-sm" type="text" [(ngModel)]="sdata.circleUserPFID" name="circleuserpfid-{{i}}"></td>
+                                    <td>
+                                        <button (click)="updateEntryOfCircleUserAndEmail(sdata)" class="btn-add-row" type="button">Update</button>
+                                        <button (click)="deleteEntryOfCircleUserAndEmail(sdata)" class="btn-remove-row" type="button">Delete</button>
+                                    </td>
+                                </tr>
+                            }
+                            @empty {
+                                <tr>
+                                    <td colspan="9" class="text-center">No records found.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <mat-paginator
+                    [length]="filteredcircleUserAndEmailsArray.length"
+                    [pageIndex]="circlePageIndex"
+                    [pageSize]="circlePageSize"
+                    [pageSizeOptions]="circlePageSizeOptions"
+                    (page)="onCirclePageChange($event)"
+                    showFirstLastButtons>
+                </mat-paginator>
+
             </div> 
         </div>
     </mat-tab>
     <mat-tab label="Vendor Details Update">
-            <p-table #dt [value]="filteredvendorEmailsArray" [paginator]="true" [rows]="10" [sortField]="'branchName'" [sortOrder]="1" [globalFilterFields]="['branchName', 'vendorName', 'vendorEmail']" stripedRows [tableStyle]="{'border':'2px solid black'}">
-                <ng-template pTemplate="caption">
-                    <div class="p-d-flex" [ngStyle]="{'margin-bottom':'5px'}">
-                        <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportVendorDetailsExcel()" class="p-button-success p-mr-2" pTooltip="XLS" tooltipPosition="bottom" [ngStyle]="{'float':'right'}"></button>
-                        <button class="btn-approve" (click)="openModal(vendorTemplate)">Add New Vendor</button>
-                    </div>
-                </ng-template>
-                <ng-template pTemplate="header">
+
+        <!-- Vendor Details Update table: rebuilt with Bootstrap table + Angular Material, PrimeNG p-table removed -->
+        <div class="d-flex justify-content-between align-items-center mb-2" style="margin:8px;">
+            <button class="btn-approve" (click)="openModal(vendorTemplate)">Add New Vendor</button>
+            <button mat-icon-button color="primary" matTooltip="Export to Excel" (click)="exportVendorDetailsExcel()">
+                <mat-icon>file_download</mat-icon>
+            </button>
+        </div>
+
+        <div class="table-responsive table-scroll">
+            <table class="table table-bordered table-striped table-hover" id="table_print_vendor_update" style="border:2px solid black;">
+                <thead>
                     <tr>
-                        <th rowspan="2" [ngStyle]="{'width':'5%'}">SNo</th>
-                        <th pSortableColumn='branchName' [ngStyle]="{'width':'20%'}">Branch <p-sortIcon field='branchName'></p-sortIcon></th>
-                        <th pSortableColumn='vendorName' [ngStyle]="{'width':'10%'}">Vendor <p-sortIcon field='vendorName'></p-sortIcon></th>
-                        <th [ngStyle]="{'width':'55%'}" pSortableColumn='vendorEmail'>Vendor Email <p-sortIcon field='vendorEmail'></p-sortIcon></th>
-                        <th rowspan="2" [ngStyle]="{'width':'12%'}">Operation</th>
+                        <th rowspan="2" style="width:5%">SNo</th>
+                        <th style="width:20%; cursor:pointer" (click)="vendorSortData('branchName')">Branch <mat-icon class="sort-icon">{{ vendorGetSortIcon('branchName') }}</mat-icon></th>
+                        <th style="width:10%; cursor:pointer" (click)="vendorSortData('vendorName')">Vendor <mat-icon class="sort-icon">{{ vendorGetSortIcon('vendorName') }}</mat-icon></th>
+                        <th style="width:55%; cursor:pointer" (click)="vendorSortData('vendorEmail')">Vendor Email <mat-icon class="sort-icon">{{ vendorGetSortIcon('vendorEmail') }}</mat-icon></th>
+                        <th rowspan="2" style="width:12%">Operation</th>
                     </tr>
                     <tr>
-                        <th><input pInputText type='text' (input)="customFilterVendor($event.target.value, 'branchName', 'contains')" placeholder='Branch'></th>
-                        <th><input pInputText type='text' (input)="customFilterVendor($event.target.value, 'vendorName', 'contains')" placeholder='Vendor'></th>
-                        <th><input pInputText type='text' (input)="customFilterVendor($event.target.value, 'vendorEmail', 'contains')" placeholder='Vendor Email'></th>
+                        <th><input class="form-control form-control-sm" type="text" (input)="customFilterVendor($any($event.target).value, 'branchName', 'contains')" placeholder="Branch"></th>
+                        <th><input class="form-control form-control-sm" type="text" (input)="customFilterVendor($any($event.target).value, 'vendorName', 'contains')" placeholder="Vendor"></th>
+                        <th><input class="form-control form-control-sm" type="text" (input)="customFilterVendor($any($event.target).value, 'vendorEmail', 'contains')" placeholder="Vendor Email"></th>
                     </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-sdata let-i="rowIndex">
-                    <tr>
-                        <td>{{i+1}}</td>
-                        <td>{{sdata.branchName}}</td>
-                        <td>{{sdata.vendorName}}</td>
-                        <td><input type="text" [(ngModel)]="sdata.vendorEmail" name="vendorEmailUpdation-{{i}}"></td>
-                        <td>
-                            <button (click)="updateVendorEmail(sdata)" class="btn-add-row" type="button" icon="pi pi-undo">Update<i class="pi pi-undo"></i></button>
-                            <button (click)="deleteVendorEmail(sdata)" class="btn-remove-row" icon="pi pi-trash">Delete<i class="pi pi-trash"></i></button>
-                        </td>
-                    </tr>
-                </ng-template>
-            </p-table>
+                </thead>
+                <tbody>
+                    @for(sdata of displayedVendorEmails; track $index; let i = $index) {
+                        <tr>
+                            <td>{{ vendorPageIndex * vendorPageSize + i + 1 }}</td>
+                            <td>{{sdata.branchName}}</td>
+                            <td>{{sdata.vendorName}}</td>
+                            <td><input class="form-control form-control-sm" type="text" [(ngModel)]="sdata.vendorEmail" name="vendorEmailUpdation-{{i}}"></td>
+                            <td>
+                                <button (click)="updateVendorEmail(sdata)" class="btn-add-row" type="button">Update</button>
+                                <button (click)="deleteVendorEmail(sdata)" class="btn-remove-row" type="button">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                    @empty {
+                        <tr>
+                            <td colspan="5" class="text-center">No records found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <mat-paginator
+            [length]="filteredvendorEmailsArray.length"
+            [pageIndex]="vendorPageIndex"
+            [pageSize]="vendorPageSize"
+            [pageSizeOptions]="vendorPageSizeOptions"
+            (page)="onVendorPageChange($event)"
+            showFirstLastButtons>
+        </mat-paginator>
+
     </mat-tab>
 </mat-tab-group>
 
