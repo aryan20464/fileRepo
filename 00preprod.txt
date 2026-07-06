@@ -1,109 +1,3 @@
-  <!-- <div class="order-form-container">
-    <div class="actions" style="float:right;margin-bottom:5px">
-      <button mat-button color="accent" class="btn-export" (click)="exportToExcel()">Export to Excel</button>
-    </div>
-    <table id="table_print">
-      <thead>
-      <tr>
-        <th colspan="12" style="text-align: center;font-weight: bold;font-size: 18px;">Indent Status of Branch : {{linkedBcode}} - ({{branchName}})</th>
-      </tr>
-      <tr>
-        <th>SNo</th>
-        <th>Indent ID</th>
-        <th>Branch Code</th>
-        <th>Branch Name</th>
-        <th>Vendor Name/ID</th>
-        <th>Foreign Currency</th>
-        <th>Request Type</th>
-        <th>Amount Requested</th>
-        <th>Amount Received</th>
-        <th>Requested On</th>
-        <th>Received On</th>
-        <th>Status</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let sdata of allIndents; index as i" [ngStyle]="{'background-color': getRowColor(sdata.indentID)}">
-        <td>{{i+1}}</td>
-        <td>{{sdata.indentID}}</td>
-        <td>{{sdata.branchCode}}</td>
-        <td>{{sdata.branchName}}</td>
-        <td>{{vendorArray[sdata.vendorRes]}}</td>
-        <td>{{currencyData[sdata.currencyType]}}</td>
-        <td>{{sdata.currencyMode}}</td>
-        <td>{{sdata.requestedCurrencyValue}}</td>
-        <td>{{sdata.receivedCurrencyValue}}</td>
-        <td>{{convertHRF(sdata.requestedDate)}}</td>
-        <td>{{convertHRF(sdata.receivedDate)}}</td>
-        <td>{{appStatus[sdata.indentStatus]}}</td>
-      </tr>
-      </tbody>
-    </table>
-  </div>  -->
-
-  <div class="order-form-container">
-    <p-table #dt [value]="filteredIndents" [paginator]="true" [rows]="10" [sortField]="'indentID'" [sortOrder]="1" [globalFilterFields]="['createdAt', 'branchName', 'vendorRes', 'currencyType', 'currencyMode', 'requestedCurrencyValue', 'receivedCurrencyValue', 'requestedDate', 'receivedDate', 'indentStatus','circleName']" stripedRows [tableStyle]="{'border':'2px solid black'}" [(selection)]="selectedIndents">
-        <ng-template pTemplate="caption">
-            <div class="actions" style="float:right">
-              <button mat-button color="accent" class="btn-export" (click)="exportExcel()">Export to Excel</button>
-            </div>
-            <br/>
-            <br/>
-        </ng-template>
-        <ng-template pTemplate="header">
-            <tr>
-                <th [ngStyle]="{'width':'4%'}">SNo</th>
-                <th pSortableColumn="indentID" [ngStyle]="{'width':'7%'}">Indent ID <p-sortIcon field="indentID"></p-sortIcon></th>
-                <th pSortableColumn="createdAt" [ngStyle]="{'width':'7%'}">Indent Date <p-sortIcon field="createdAt"></p-sortIcon></th>
-                <th pSortableColumn="branchName">Branch Name <p-sortIcon field="branchName"></p-sortIcon></th>
-                <th pSortableColumn='circleName' >Circle <p-sortIcon field='circleName'></p-sortIcon></th>
-                <th pSortableColumn="vendorRes" [ngStyle]="{'width':'10%'}">Vendor Name <p-sortIcon field="vendorRes"></p-sortIcon></th>
-                <th pSortableColumn="currencyType" [ngStyle]="{'width':'12%'}">Foreign Currency <p-sortIcon field="currencyType"></p-sortIcon></th>
-                <th pSortableColumn="currencyMode">Request Type <p-sortIcon field="currencyMode"></p-sortIcon></th>
-                <th pSortableColumn="requestedCurrencyValue">Req Amt<p-sortIcon field="requestedCurrencyValue"></p-sortIcon></th>
-                <th pSortableColumn="receivedCurrencyValue">Rec Amt<p-sortIcon field="receivedCurrencyValue"></p-sortIcon></th>
-                <th pSortableColumn="requestedDate">Requested On <p-sortIcon field="requestedDate"></p-sortIcon></th>
-                <th pSortableColumn="receivedDate">Received On <p-sortIcon field="receivedDate"></p-sortIcon></th>
-                <th pSortableColumn="indentStatus" [ngStyle]="{'width':'12%'}">Status <p-sortIcon field="indentStatus"></p-sortIcon></th>
-            </tr>
-            <tr>
-                <th></th>
-                <th><input pInputText type="text" (input)="customFilter($event.target.value, 'indentID', 'contains')" placeholder="Indent ID"></th>
-                <th><input pInputText type="text" (input)="customFilter($event.target.value, 'createdAt', 'contains')" placeholder="Indent Date"></th>
-                <th><input pInputText type="text" (input)="customFilter($event.target.value, 'branchName', 'contains')" placeholder="Branch Name"></th>
-                <th><input pInputText type='text' (input)="customFilter($event.target.value, 'circleName', 'contains')" placeholder='Circle'></th>
-                <th><input pInputText type="text" (input)="customFilter($event.target.value, 'vendorRes', 'contains')" placeholder="Vendor"></th>
-                <th><input pInputText type="text" (input)="customFilter($event.target.value, 'currencyType', 'contains')" placeholder="Currency"></th>
-                <th><input pInputText type="text" (input)="customFilter($event.target.value, 'currencyMode', 'contains')" placeholder="Req Type"></th>
-                <th><input pInputText type="text" (input)="customFilter($event.target.value, 'requestedCurrencyValue', 'contains')" placeholder="Req Amt"></th>
-                <th><input pInputText type="text" (input)="customFilter($event.target.value, 'receivedCurrencyValue', 'contains')" placeholder="Rec Amt"></th>
-                <th><input pInputText type="text" (input)="customFilter($event.target.value, 'requestedDate', 'contains')" placeholder="Req Dt"></th>
-                <th><input pInputText type="text" (input)="customFilter($event.target.value, 'receivedDate', 'contains')" placeholder="Rec Dt"></th>
-                <th><input pInputText type="text" (input)="customFilter($event.target.value, 'indentStatus', 'contains')" placeholder="Status"></th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-sdata let-i="rowIndex">
-            <tr [ngStyle]="{'background-color': getRowColor(sdata.indentID)}">
-                <td>{{i+1}}</td>
-                <td>{{sdata.indentID}}</td>
-                <td>{{convertHRF(sdata.createdAt)}}</td>
-                <td>{{sdata.branchCode}} - {{sdata.branchName}}</td>
-                <td>{{circleNames[sdata.circleCode]}}</td>
-                <td>{{branchVendorList[sdata.vendorRes]}} - {{sdata.vendorBranch}}</td>
-                <td>{{currencyData[sdata.currencyType]}}</td>
-                <td>{{currencyMode[sdata.currencyMode]}}</td>
-                <td>{{sdata.requestedCurrencyValue}}</td>
-                <td>{{sdata.receivedCurrencyValue}}</td>
-                <td>{{convertHRF(sdata.requestedDate)}}</td>
-                <td>{{convertHRF(sdata.receivedDate)}}</td>
-                <td>{{appStatus[sdata.indentStatus]}}</td>
-            </tr>
-        </ng-template>
-    </p-table>
-  </div> 
-
-
-
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http'; // Import HttpClient for service
 import { ActivatedRoute } from '@angular/router';
@@ -113,15 +7,27 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { environment } from '../../../../environments/environment';
 import { RandomNumberGeneratorService } from '../../../services/fcny-services/random-number-generator.service';
 import { CURRENCYMODE } from '../../../models/fcny-module/currencymode';
-import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
     selector: 'rfm-showindentdetails',
     standalone: true,
     templateUrl: './showindentdetails.component.html',
     styleUrls: ['./showindentdetails.component.css'],
-    imports: [MatTableModule, MatInputModule, CommonModule ]
+    imports: [
+        CommonModule,
+        MatInputModule,
+        MatButtonModule,
+        MatIconModule,
+        MatCheckboxModule,
+        MatTooltipModule,
+        MatPaginatorModule
+    ]
 })
 export class ShowindentdetailsComponent implements OnInit {
 
@@ -143,6 +49,13 @@ export class ShowindentdetailsComponent implements OnInit {
   branchVendorMappingDetailsData :any;
   branchVendorList:any=[];
   circleNames:any=[];
+
+  // -------- All Indents table: sorting / pagination / selection (replaces PrimeNG p-table) --------
+  sortField: string = 'indentID';
+  sortOrder: number = 1; // 1 = asc, -1 = desc
+  pageIndex: number = 0;
+  pageSize: number = 10;
+  pageSizeOptions: number[] = [5, 10, 25, 50];
 
   constructor(private route: ActivatedRoute,
               private http: HttpClient,
@@ -368,7 +281,7 @@ export class ShowindentdetailsComponent implements OnInit {
   }
 
   customFilter(value: string, field: string, mode: string): void {
-    const filteredValue = value.toLowerCase();
+    const filteredValue = (value || '').toLowerCase();
     this.filteredIndents = this.allIndents.filter((sdata:any) => {
       switch (field) {
         case 'vendorRes':
@@ -379,10 +292,14 @@ export class ShowindentdetailsComponent implements OnInit {
           return this.currencyMode[sdata.currencyMode].toLowerCase().includes(filteredValue);
         case 'indentStatus':
           return this.appStatus[sdata.indentStatus].toLowerCase().includes(filteredValue);
+        case 'circleCode':
+          return (this.circleNames[sdata.circleCode] || '').toLowerCase().includes(filteredValue);
         default:
           return sdata[field].toString().toLowerCase().includes(filteredValue);
       }
     });
+    // Reset to first page whenever the filter changes
+    this.pageIndex = 0;
   }
 
   getCircleControllerAndMails()
@@ -401,6 +318,100 @@ export class ShowindentdetailsComponent implements OnInit {
         //console.error('Error fetching records:', error);
       }
     );
+  }
+
+  // -------- Sorting (replaces PrimeNG pSortableColumn / p-sortIcon) --------
+
+  sortData(field: string): void {
+    if (this.sortField === field) {
+      this.sortOrder = -this.sortOrder;
+    } else {
+      this.sortField = field;
+      this.sortOrder = 1;
+    }
+    this.pageIndex = 0;
+  }
+
+  getSortIcon(field: string): string {
+    if (this.sortField !== field) {
+      return 'unfold_more';
+    }
+    return this.sortOrder === 1 ? 'arrow_upward' : 'arrow_downward';
+  }
+
+  private getSortValue(row: any, field: string): any {
+    switch (field) {
+      case 'vendorRes':
+        return this.branchVendorList[row.vendorRes] || '';
+      case 'currencyType':
+        return this.currencyData[row.currencyType] || '';
+      case 'currencyMode':
+        return this.currencyMode[row.currencyMode] || '';
+      case 'indentStatus':
+        return this.appStatus[row.indentStatus] || '';
+      case 'circleCode':
+        return this.circleNames[row.circleCode] || '';
+      default:
+        return row[field];
+    }
+  }
+
+  private compareRows(a: any, b: any): number {
+    const valA = this.getSortValue(a, this.sortField);
+    const valB = this.getSortValue(b, this.sortField);
+    if (valA == null && valB == null) return 0;
+    if (valA == null) return -1 * this.sortOrder;
+    if (valB == null) return 1 * this.sortOrder;
+    if (valA < valB) return -1 * this.sortOrder;
+    if (valA > valB) return 1 * this.sortOrder;
+    return 0;
+  }
+
+  // -------- Pagination (replaces PrimeNG built-in paginator) --------
+
+  get displayedIndents(): any[] {
+    const sorted = [...this.filteredIndents].sort((a, b) => this.compareRows(a, b));
+    const start = this.pageIndex * this.pageSize;
+    return sorted.slice(start, start + this.pageSize);
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+  }
+
+  // -------- Row selection (replaces PrimeNG [(selection)]) --------
+
+  isSelected(row: any): boolean {
+    return this.selectedIndents.includes(row);
+  }
+
+  toggleSelection(row: any): void {
+    const idx = this.selectedIndents.indexOf(row);
+    if (idx > -1) {
+      this.selectedIndents.splice(idx, 1);
+    } else {
+      this.selectedIndents.push(row);
+    }
+  }
+
+  isAllSelected(): boolean {
+    const page = this.displayedIndents;
+    return page.length > 0 && page.every(r => this.isSelected(r));
+  }
+
+  toggleAll(): void {
+    const page = this.displayedIndents;
+    if (this.isAllSelected()) {
+      page.forEach(r => {
+        const idx = this.selectedIndents.indexOf(r);
+        if (idx > -1) this.selectedIndents.splice(idx, 1);
+      });
+    } else {
+      page.forEach(r => {
+        if (!this.isSelected(r)) this.selectedIndents.push(r);
+      });
+    }
   }
 
   exportExcel() {
@@ -457,344 +468,166 @@ export class ShowindentdetailsComponent implements OnInit {
     FileSaver.saveAs(data, fileName + this.datePipe.transform(new Date(),'dd-MM-yyyy hh:mm aa') + '.xlsx');
   }
 
-
-  // saveAsExcelFile(buffer: any, fileName: string): void {
-  //   import("file-saver").then(FileSaver => {
-  //     const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-  //     const EXCEL_EXTENSION = '.xlsx';
-  //     const data: Blob = new Blob([buffer], {
-  //       type: EXCEL_TYPE
-  //     });
-  //     FileSaver.saveAs(data, fileName + this.datePipe.transform(new Date(),'dd-MM-yyyy hh:mm aa') + EXCEL_EXTENSION);
-  //   });
-  // }
-
-
 }
 
 
 
-X [ERROR] NG8001: 'p-table' is not a known element:
-1. If 'p-table' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'p-table' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
 
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.html:45:4:
-      45 │     <p-table #dt [value]="filteredIndents" [paginator]="true" [row...
-         ╵     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  Error occurs in the template of component ShowindentdetailsComponent.
 
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.ts:16:17:
-      16 │     templateUrl: './showindentdetails.component.html',
-         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-X [ERROR] NG8002: Can't bind to 'value' since it isn't a known property of 'p-table'.
-1. If 'p-table' is an Angular component and it has 'value' input, then verify that it is included in the '@Component.imports' of this component.
-2. If 'p-table' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
-3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. [plugin angular-compiler]
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.html:45:17:
-      45 │     <p-table #dt [value]="filteredIndents" [paginator]="true" [row...
-         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  Error occurs in the template of component ShowindentdetailsComponent.
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.ts:16:17:
-      16 │     templateUrl: './showindentdetails.component.html',
-         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-X [ERROR] NG8002: Can't bind to 'paginator' since it isn't a known property of 'p-table'.
-1. If 'p-table' is an Angular component and it has 'paginator' input, then verify that it is included in the '@Component.imports' of this component.
-2. If 'p-table' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
-3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. [plugin angular-compiler]
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.html:45:43:
-      45 │ ...lue]="filteredIndents" [paginator]="true" [rows]="10" [sortFiel...
-         ╵                           ~~~~~~~~~~~~~~~~~~
-
-  Error occurs in the template of component ShowindentdetailsComponent.
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.ts:16:17:
-      16 │     templateUrl: './showindentdetails.component.html',
-         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-X [ERROR] NG8002: Can't bind to 'rows' since it isn't a known property of 'p-table'.
-1. If 'p-table' is an Angular component and it has 'rows' input, then verify that it is included in the '@Component.imports' of this component.
-2. If 'p-table' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
-3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. [plugin angular-compiler]
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.html:45:62:
-      45 │ ...dents" [paginator]="true" [rows]="10" [sortField]="'indentID'" ...
-         ╵                              ~~~~~~~~~~~
-
-  Error occurs in the template of component ShowindentdetailsComponent.
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.ts:16:17:
-      16 │     templateUrl: './showindentdetails.component.html',
-         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-X [ERROR] NG8002: Can't bind to 'sortField' since it isn't a known property of 'p-table'.
-1. If 'p-table' is an Angular component and it has 'sortField' input, then verify that it is included in the '@Component.imports' of this component.
-2. If 'p-table' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
-3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. [plugin angular-compiler]
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.html:45:74:
-      45 │ ...="true" [rows]="10" [sortField]="'indentID'" [sortOrder]="1" [g...
-         ╵                        ~~~~~~~~~~~~~~~~~~~~~~~~
-
-  Error occurs in the template of component ShowindentdetailsComponent.
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.ts:16:17:
-      16 │     templateUrl: './showindentdetails.component.html',
-         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-X [ERROR] NG8002: Can't bind to 'sortOrder' since it isn't a known property of 'p-table'.
-1. If 'p-table' is an Angular component and it has 'sortOrder' input, then verify that it is included in the '@Component.imports' of this component.
-2. If 'p-table' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
-3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. [plugin angular-compiler]
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.html:45:99:
-      45 │ ...sortField]="'indentID'" [sortOrder]="1" [globalFilterFields]="[...
-         ╵                            ~~~~~~~~~~~~~~~
-
-  Error occurs in the template of component ShowindentdetailsComponent.
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.ts:16:17:
-      16 │     templateUrl: './showindentdetails.component.html',
-         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-X [ERROR] NG8002: Can't bind to 'globalFilterFields' since it isn't a known property of 'p-table'.
-1. If 'p-table' is an Angular component and it has 'globalFilterFields' input, then verify that it is included in the '@Component.imports' of this component.
-2. If 'p-table' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
-3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. [plugin angular-compiler]
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.html:45:115:
-      45 │ ...rder]="1" [globalFilterFields]="['createdAt', 'branchName', 've...
-         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  Error occurs in the template of component ShowindentdetailsComponent.
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.ts:16:17:
-      16 │     templateUrl: './showindentdetails.component.html',
-         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-X [ERROR] NG8002: Can't bind to 'tableStyle' since it isn't a known property of 'p-table'.
-1. If 'p-table' is an Angular component and it has 'tableStyle' input, then verify that it is included in the '@Component.imports' of this component.
-2. If 'p-table' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
-3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. [plugin angular-compiler]
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.html:45:336:
-      45 │ ...ripedRows [tableStyle]="{'border':'2px solid black'}" [(selecti...
-         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  Error occurs in the template of component ShowindentdetailsComponent.
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.ts:16:17:
-      16 │     templateUrl: './showindentdetails.component.html',
-         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-X [ERROR] NG8002: Can't bind to 'selection' since it isn't a known property of 'p-table'.
-1. If 'p-table' is an Angular component and it has 'selection' input, then verify that it is included in the '@Component.imports' of this component.
-2. If 'p-table' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
-3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component. [plugin angular-compiler]
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.html:45:380:
-      45 │ ...e]="{'border':'2px solid black'}" [(selection)]="selectedIndents">
-         ╵                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  Error occurs in the template of component ShowindentdetailsComponent.
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.ts:16:17:
-      16 │     templateUrl: './showindentdetails.component.html',
-         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-X [ERROR] NG8001: 'p-sortIcon' is not a known element:
-1. If 'p-sortIcon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'p-sortIcon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.html:56:84:
-      56 │ ...':'7%'}">Indent ID <p-sortIcon field="indentID"></p-sortIcon></th>
-         ╵                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  Error occurs in the template of component ShowindentdetailsComponent.
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.ts:16:17:
-      16 │     templateUrl: './showindentdetails.component.html',
-         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-X [ERROR] NG8001: 'p-sortIcon' is not a known element:
-1. If 'p-sortIcon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'p-sortIcon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.html:57:87:
-      57 │ ...7%'}">Indent Date <p-sortIcon field="createdAt"></p-sortIcon></th>
-         ╵                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  Error occurs in the template of component ShowindentdetailsComponent.
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.ts:16:17:
-      16 │     templateUrl: './showindentdetails.component.html',
-         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-X [ERROR] NG8001: 'p-sortIcon' is not a known element:
-1. If 'p-sortIcon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'p-sortIcon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.html:58:61:
-      58 │ ...ame">Branch Name <p-sortIcon field="branchName"></p-sortIcon></th>
-         ╵                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  Error occurs in the template of component ShowindentdetailsComponent.
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.ts:16:17:
-      16 │     templateUrl: './showindentdetails.component.html',
-         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-X [ERROR] NG8001: 'p-sortIcon' is not a known element:
-1. If 'p-sortIcon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'p-sortIcon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.html:59:57:
-      59 │ ...cleName' >Circle <p-sortIcon field='circleName'></p-sortIcon></th>
-         ╵                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  Error occurs in the template of component ShowindentdetailsComponent.
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.ts:16:17:
-      16 │     templateUrl: './showindentdetails.component.html',
-         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-X [ERROR] NG8001: 'p-sortIcon' is not a known element:
-1. If 'p-sortIcon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'p-sortIcon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.html:60:88:
-      60 │ ...0%'}">Vendor Name <p-sortIcon field="vendorRes"></p-sortIcon></th>
-         ╵                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  Error occurs in the template of component ShowindentdetailsComponent.
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.ts:16:17:
-      16 │     templateUrl: './showindentdetails.component.html',
-         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-X [ERROR] NG8001: 'p-sortIcon' is not a known element:
-1. If 'p-sortIcon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'p-sortIcon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.html:61:96:
-      61 │ ...reign Currency <p-sortIcon field="currencyType"></p-sortIcon></th>
-         ╵                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  Error occurs in the template of component ShowindentdetailsComponent.
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.ts:16:17:
-      16 │     templateUrl: './showindentdetails.component.html',
-         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-X [ERROR] NG8001: 'p-sortIcon' is not a known element:
-1. If 'p-sortIcon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'p-sortIcon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.html:62:64:
-      62 │ ...">Request Type <p-sortIcon field="currencyMode"></p-sortIcon></th>
-         ╵                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  Error occurs in the template of component ShowindentdetailsComponent.
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.ts:16:17:
-      16 │     templateUrl: './showindentdetails.component.html',
-         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-X [ERROR] NG8001: 'p-sortIcon' is not a known element:
-1. If 'p-sortIcon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'p-sortIcon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.html:63:68:
-      63 │ ...e">Req Amt<p-sortIcon field="requestedCurrencyValue"></p-sortIc...
-         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  Error occurs in the template of component ShowindentdetailsComponent.
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.ts:16:17:
-      16 │     templateUrl: './showindentdetails.component.html',
-         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-X [ERROR] NG8001: 'p-sortIcon' is not a known element:
-1. If 'p-sortIcon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'p-sortIcon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.html:64:67:
-      64 │ ...ue">Rec Amt<p-sortIcon field="receivedCurrencyValue"></p-sortIc...
-         ╵               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  Error occurs in the template of component ShowindentdetailsComponent.
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.ts:16:17:
-      16 │     templateUrl: './showindentdetails.component.html',
-         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-X [ERROR] NG8001: 'p-sortIcon' is not a known element:
-1. If 'p-sortIcon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'p-sortIcon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.html:65:65:
-      65 │ ...">Requested On <p-sortIcon field="requestedDate"></p-sortIcon><...
-         ╵                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  Error occurs in the template of component ShowindentdetailsComponent.
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.ts:16:17:
-      16 │     templateUrl: './showindentdetails.component.html',
-         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-X [ERROR] NG8001: 'p-sortIcon' is not a known element:
-1. If 'p-sortIcon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'p-sortIcon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.html:66:63:
-      66 │ ...e">Received On <p-sortIcon field="receivedDate"></p-sortIcon></th>
-         ╵                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  Error occurs in the template of component ShowindentdetailsComponent.
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.ts:16:17:
-      16 │     templateUrl: './showindentdetails.component.html',
-         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-X [ERROR] NG8001: 'p-sortIcon' is not a known element:
-1. If 'p-sortIcon' is an Angular component, then verify that it is included in the '@Component.imports' of this component.
-2. If 'p-sortIcon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message. [plugin angular-compiler]
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.html:67:86:
-      67 │ ...'12%'}">Status <p-sortIcon field="indentStatus"></p-sortIcon></th>
-         ╵                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  Error occurs in the template of component ShowindentdetailsComponent.
-
-    src/app/modules/fcny-module/showindentdetails/showindentdetails.component.ts:16:17:
-      16 │     templateUrl: './showindentdetails.component.html',
-         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-Watch mode enabled. Watching for file changes...
+<!-- <div class="order-form-container">
+    <div class="actions" style="float:right;margin-bottom:5px">
+      <button mat-button color="accent" class="btn-export" (click)="exportToExcel()">Export to Excel</button>
+    </div>
+    <table id="table_print">
+      <thead>
+      <tr>
+        <th colspan="12" style="text-align: center;font-weight: bold;font-size: 18px;">Indent Status of Branch : {{linkedBcode}} - ({{branchName}})</th>
+      </tr>
+      <tr>
+        <th>SNo</th>
+        <th>Indent ID</th>
+        <th>Branch Code</th>
+        <th>Branch Name</th>
+        <th>Vendor Name/ID</th>
+        <th>Foreign Currency</th>
+        <th>Request Type</th>
+        <th>Amount Requested</th>
+        <th>Amount Received</th>
+        <th>Requested On</th>
+        <th>Received On</th>
+        <th>Status</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let sdata of allIndents; index as i" [ngStyle]="{'background-color': getRowColor(sdata.indentID)}">
+        <td>{{i+1}}</td>
+        <td>{{sdata.indentID}}</td>
+        <td>{{sdata.branchCode}}</td>
+        <td>{{sdata.branchName}}</td>
+        <td>{{vendorArray[sdata.vendorRes]}}</td>
+        <td>{{currencyData[sdata.currencyType]}}</td>
+        <td>{{sdata.currencyMode}}</td>
+        <td>{{sdata.requestedCurrencyValue}}</td>
+        <td>{{sdata.receivedCurrencyValue}}</td>
+        <td>{{convertHRF(sdata.requestedDate)}}</td>
+        <td>{{convertHRF(sdata.receivedDate)}}</td>
+        <td>{{appStatus[sdata.indentStatus]}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>  -->
+
+  <!-- All Indents table: rebuilt with Bootstrap table + Angular Material (sort/paginate/select), PrimeNG p-table removed -->
+  <div class="order-form-container">
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h4 style="margin:0;">Indent Status of Branch : {{linkedBcode}} - ({{branchName}})</h4>
+      <button mat-icon-button color="primary" matTooltip="Export to Excel" (click)="exportExcel()">
+        <mat-icon>file_download</mat-icon>
+      </button>
+    </div>
+
+    <div class="table-responsive table-scroll">
+      <table class="table table-bordered table-striped table-hover all-indents-table" id="table_print" style="border:2px solid black;">
+        <thead>
+          <tr>
+            <th style="width:3%">
+              <mat-checkbox [checked]="isAllSelected()" (change)="toggleAll()"></mat-checkbox>
+            </th>
+            <th style="width:4%">SNo</th>
+            <th style="width:7%; cursor:pointer" (click)="sortData('indentID')">
+              Indent ID <mat-icon class="sort-icon">{{ getSortIcon('indentID') }}</mat-icon>
+            </th>
+            <th style="width:7%; cursor:pointer" (click)="sortData('createdAt')">
+              Indent Date <mat-icon class="sort-icon">{{ getSortIcon('createdAt') }}</mat-icon>
+            </th>
+            <th style="cursor:pointer" (click)="sortData('branchName')">
+              Branch Name <mat-icon class="sort-icon">{{ getSortIcon('branchName') }}</mat-icon>
+            </th>
+            <th style="cursor:pointer" (click)="sortData('circleCode')">
+              Circle <mat-icon class="sort-icon">{{ getSortIcon('circleCode') }}</mat-icon>
+            </th>
+            <th style="width:10%; cursor:pointer" (click)="sortData('vendorRes')">
+              Vendor Name <mat-icon class="sort-icon">{{ getSortIcon('vendorRes') }}</mat-icon>
+            </th>
+            <th style="width:12%; cursor:pointer" (click)="sortData('currencyType')">
+              Foreign Currency <mat-icon class="sort-icon">{{ getSortIcon('currencyType') }}</mat-icon>
+            </th>
+            <th style="cursor:pointer" (click)="sortData('currencyMode')">
+              Request Type <mat-icon class="sort-icon">{{ getSortIcon('currencyMode') }}</mat-icon>
+            </th>
+            <th style="cursor:pointer" (click)="sortData('requestedCurrencyValue')">
+              Req Amt <mat-icon class="sort-icon">{{ getSortIcon('requestedCurrencyValue') }}</mat-icon>
+            </th>
+            <th style="cursor:pointer" (click)="sortData('receivedCurrencyValue')">
+              Rec Amt <mat-icon class="sort-icon">{{ getSortIcon('receivedCurrencyValue') }}</mat-icon>
+            </th>
+            <th style="cursor:pointer" (click)="sortData('requestedDate')">
+              Requested On <mat-icon class="sort-icon">{{ getSortIcon('requestedDate') }}</mat-icon>
+            </th>
+            <th style="cursor:pointer" (click)="sortData('receivedDate')">
+              Received On <mat-icon class="sort-icon">{{ getSortIcon('receivedDate') }}</mat-icon>
+            </th>
+            <th style="width:12%; cursor:pointer" (click)="sortData('indentStatus')">
+              Status <mat-icon class="sort-icon">{{ getSortIcon('indentStatus') }}</mat-icon>
+            </th>
+          </tr>
+          <tr>
+            <th></th>
+            <th></th>
+            <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'indentID', 'contains')" placeholder="Indent ID"></th>
+            <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'createdAt', 'contains')" placeholder="Indent Date"></th>
+            <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'branchName', 'contains')" placeholder="Branch Name"></th>
+            <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'circleCode', 'contains')" placeholder="Circle"></th>
+            <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'vendorRes', 'contains')" placeholder="Vendor"></th>
+            <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'currencyType', 'contains')" placeholder="Currency"></th>
+            <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'currencyMode', 'contains')" placeholder="Req Type"></th>
+            <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'requestedCurrencyValue', 'contains')" placeholder="Req Amt"></th>
+            <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'receivedCurrencyValue', 'contains')" placeholder="Rec Amt"></th>
+            <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'requestedDate', 'contains')" placeholder="Req Dt"></th>
+            <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'receivedDate', 'contains')" placeholder="Rec Dt"></th>
+            <th><input class="form-control form-control-sm" type="text" (input)="customFilter($any($event.target).value, 'indentStatus', 'contains')" placeholder="Status"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(sdata of displayedIndents; track sdata.indentID; let i = $index) {
+            <tr [style.--bs-table-bg]="getRowColor(sdata.indentID)">
+              <td>
+                <mat-checkbox [checked]="isSelected(sdata)" (change)="toggleSelection(sdata)"></mat-checkbox>
+              </td>
+              <td>{{ pageIndex * pageSize + i + 1 }}</td>
+              <td>{{sdata.indentID}}</td>
+              <td>{{convertHRF(sdata.createdAt)}}</td>
+              <td>{{sdata.branchCode}} - {{sdata.branchName}}</td>
+              <td>{{circleNames[sdata.circleCode]}}</td>
+              <td>{{branchVendorList[sdata.vendorRes]}} - {{sdata.vendorBranch}}</td>
+              <td>{{currencyData[sdata.currencyType]}}</td>
+              <td>{{currencyMode[sdata.currencyMode]}}</td>
+              <td>{{sdata.requestedCurrencyValue}}</td>
+              <td>{{sdata.receivedCurrencyValue}}</td>
+              <td>{{convertHRF(sdata.requestedDate)}}</td>
+              <td>{{convertHRF(sdata.receivedDate)}}</td>
+              <td>{{appStatus[sdata.indentStatus]}}</td>
+            </tr>
+          }
+          @empty {
+            <tr>
+              <td colspan="14" class="text-center">No indents found.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <mat-paginator
+      [length]="filteredIndents.length"
+      [pageIndex]="pageIndex"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      (page)="onPageChange($event)"
+      showFirstLastButtons>
+    </mat-paginator>
+
+  </div>
