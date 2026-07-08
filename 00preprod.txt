@@ -1,36 +1,8 @@
-==================================== 08-07-2026 16:47:14.562+05:30:  START OF ERROR CHECK REQUEST ========================================================
-com.google.gson.stream.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 5 column 354 path $
-com.google.gson.Gson.assertFullConsumption(Gson.java:967)
-com.google.gson.Gson.fromJson(Gson.java:957)
-com.google.gson.Gson.fromJson(Gson.java:905)
-com.google.gson.Gson.fromJson(Gson.java:876)
-in.co.sbi.fxs.eis.services.EisServiceImpl.checkRequest(EisServiceImpl.java:83)
-in.co.sbi.fxs.eis.controller.FxsEisServiceController.fetchEisData(FxsEisServiceController.java:64)
-sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-java.lang.reflect.Method.invoke(Method.java:498)
-org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205)
-org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:150)
-org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
-org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:895)
-org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:808)
-org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
-org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1067)
-org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:963)
-org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006)
-org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:909)
-javax.servlet.http.HttpServlet.service(HttpServlet.java:681)
-org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883)
-javax.servlet.http.HttpServlet.service(HttpServlet.java:764)
-or
-
-
 curl -X POST -ikv http://localhost:8083/FxsEisService1/fetchEisData \
   -H "Content-Type: application/json" \
   -d '{
     "requestId": "1100000000000007691",
     "requestType": "DOLOGIN",
     "source": "RFX",
-    "request": "{\\\"SOURCE_ID\\\":\\\"ID\\\",\\\"DESTINATION\\\":\\\"IT_TSS\\\",\\\"TXN_TYPE\\\":\\\"INB_FXOUT\\\",\\\"TXN_SUB_TYPE\\\":\\\"DO_LOGIN\\\",\\\"EIS_PAYLOAD\\\":{\\\"BODY\\\":{\\\"requestId\\\":\\\"1100000000000007691\\\",\\\"userName\\\":\\\"IDEA_FXOUT\\\",\\\"userPassword\\\":\\\"nWvbDI8k0K7BRdJ+ErpCDlG3dRfR0DJL6P+L3BdzcFo\\u003d\\\\"}}}"
+    "request": "{\\\"SOURCE_ID\\\":\\\"ID\\\",\\\"DESTINATION\\\":\\\"IT_TSS\\\",\\\"TXN_TYPE\\\":\\\"INB_FXOUT\\\",\\\"TXN_SUB_TYPE\\\":\\\"DO_LOGIN\\\",\\\"EIS_PAYLOAD\\\":{\\\"BODY\\\":{\\\"requestId\\\":\\\"1100000000000007691\\\",\\\"userName\\\":\\\"IDEA_FXOUT\\\",\\\"userPassword\\\":\\\"nWvbDI8k0K7BRdJ+ErpCDlG3dRfR0DJL6P+L3BdzcFo\\u003d\\\"}}}"
   }'
