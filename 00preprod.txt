@@ -1,8 +1,1 @@
-curl -X POST -ikv http://localhost:8083/FxsEisService1/fetchEisData \
-  -H "Content-Type: application/json" \
-  -d '{
-    "requestId": "1100000000000007691",
-    "requestType": "DOLOGIN",
-    "source": "RFX",
-    "request": "{\\\"SOURCE_ID\\\":\\\"ID\\\",\\\"DESTINATION\\\":\\\"IT_TSS\\\",\\\"TXN_TYPE\\\":\\\"INB_FXOUT\\\",\\\"TXN_SUB_TYPE\\\":\\\"DO_LOGIN\\\",\\\"EIS_PAYLOAD\\\":{\\\"BODY\\\":{\\\"requestId\\\":\\\"1100000000000007691\\\",\\\"userName\\\":\\\"sdcs\\\",\\\"userPassword\\\":\\\"sdf\\\"}}}"
-  }'
+java -Djavax.net.ssl.trustStore=/path/to/your/custom.truststore -Djavax.net.ssl.trustStorePassword=your_trust_store_password -jar myservice.war
