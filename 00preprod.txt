@@ -1,8 +1,27 @@
-curl -X POST -ikv http://localhost:8083/FxsEisService1/fetchEisData \
-  -H "Content-Type: application/json" \
-  -d '{
-    "requestId": "1100000000000007691",
-    "requestType": "DOLOGIN",
-    "source": "RFX",
-    "request": "{\\\"SOURCE_ID\\\":\\\"ID\\\",\\\"DESTINATION\\\":\\\"IT_TSS\\\",\\\"TXN_TYPE\\\":\\\"INB_FXOUT\\\",\\\"TXN_SUB_TYPE\\\":\\\"DO_LOGIN\\\",\\\"EIS_PAYLOAD\\\":{\\\"BODY\\\":{\\\"requestId\\\":\\\"1100000000000007691\\\",\\\"userName\\\":\\\"IDEA_FXOUT\\\",\\\"userPassword\\\":\\\"nWvbDI8k0K7BRdJ+ErpCDlG3dRfR0DJL6P+L3BdzcFo\\u003d\\\"}}}"
-  }'
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 84 (Access
+Control: Database) High
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: jakarta.servlet.http.HttpServletRequest.getHeader()
+From: in.co.sbi.rfx.indents.components.ClientIpLoggingFilter.doFilter
+File: src/main/java/in/co/sbi/rfx/indents/components/ClientIpLoggingFilter.java:42
+39 }
+40
+41 // Inside your filter's doFilterInternal method
+42 String header = httpRequest.getHeader("Authorization");
+43
+44 if (header != null && header.startsWith("Bearer ")) {
+45 String token = header.substring(7); // Extract the token string
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsRepository.findByBranchCode()
+Enclosing Method: getIndentsByBranchCode()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:84
+Taint Flags: PRIMARY_KEY, START_CHECKED_STRING, WEAKCRYPTO, WEB, XSS
+81 public List<BranchIndent> getIndentsByBranchCode(@Param("bcode") String bcode)
+82 {
+83 String user = currentUser.getPfId();
+84 return indentRepo.findByBranchCode(bcode,user);
+85 }
