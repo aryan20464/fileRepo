@@ -1,27 +1,28 @@
-Package: in.co.sbi.rfx.indents.service.indents
-src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 84 (Access
-Control: Database) High
-Issue Details
-Kingdom: Security Features
-Scan Engine: SCA (Data Flow)
+src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerService.java,
+line 285 (Access Control: Database) High
 Source Details
-Source: jakarta.servlet.http.HttpServletRequest.getHeader()
-From: in.co.sbi.rfx.indents.components.ClientIpLoggingFilter.doFilter
-File: src/main/java/in/co/sbi/rfx/indents/components/ClientIpLoggingFilter.java:42
-39 }
-40
-41 // Inside your filter's doFilterInternal method
-42 String header = httpRequest.getHeader("Authorization");
-43
-44 if (header != null && header.startsWith("Bearer ")) {
-45 String token = header.substring(7); // Extract the token string
+Source: in.co.sbi.rfx.indents.repository.IndentsRepository.findByIndentIDAtChecker(
+)
+From: in.co.sbi.rfx.indents.service.branchchecker.BranchCheckerService.sendInternal
+MailAtChecker
+File: src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerServic
+e.java:282
+279 if(numberOfVendors==failureCount)
+280 {
+281 vendorFailure=1;
+282 List<BranchIndent> branchIndents = idRepo.findByIndentIDAtChecker(requestedIndentID);
+283 for(BranchIndent bt: branchIndents)
+284 {
+285 BranchIndent tempRecord = editRepo.findByCustomId(bt.getId());
 Sink Details
-Sink: in.co.sbi.rfx.indents.repository.IndentsRepository.findByBranchCode()
-Enclosing Method: getIndentsByBranchCode()
-File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:84
-Taint Flags: PRIMARY_KEY, START_CHECKED_STRING, WEAKCRYPTO, WEB, XSS
-81 public List<BranchIndent> getIndentsByBranchCode(@Param("bcode") String bcode)
-82 {
-83 String user = currentUser.getPfId();
-84 return indentRepo.findByBranchCode(bcode,user);
-85 }
+Sink: in.co.sbi.rfx.indents.repository.IndentsRepository.findByCustomId()
+Enclosing Method: sendInternalMailAtChecker()
+File: src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerService.java:285
+Taint Flags: NUMBER, PRIMARY_KEY
+282 List<BranchIndent> branchIndents = idRepo.findByIndentIDAtChecker(requestedIndentID);
+283 for(BranchIndent bt: branchIndents)
+284 {
+285 BranchIndent tempRecord = editRepo.findByCustomId(bt.getId());
+286 tempRecord.setCheckerIP(null);
+287 tempRecord.setIndentStatus(1);
+288 tempRecord.setCheckerCode(0);
