@@ -1,1 +1,10 @@
-what is wl_comp8668639689785158218.jar present at /weblogic/oracle/middleware/user_projects/domains/IDEA/servers/IRM_SERVER_2/tmp
+public ResponseEntity<StreamingResponseBody> getLargeResponse() {
+    StreamingResponseBody responseBody = outputStream -> {
+        String hugeData = "Your massive 64KB+ data string...";
+        outputStream.write(hugeData.getBytes(StandardCharsets.UTF_8));
+        outputStream.flush();
+    };
+    return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE)
+            .body(responseBody);
+}
