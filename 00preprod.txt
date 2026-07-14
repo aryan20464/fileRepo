@@ -1,81 +1,27 @@
-package in.co.sbi.rfx.indents.components;
+package com.idea.rforexjwtsecuritylib.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import jakarta.servlet.*;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import java.io.IOException;
-import java.util.Map;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-@Component
-public class ClientIpLoggingFilter implements Filter {
+public class JWTAuthorizationFilter { it does 
 
-    @Value("${jwt.secret}")
-    private String secret;
-
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
-
-        String clientIp = httpRequest.getHeader("X-Forwarded-For");
-        if (clientIp == null || clientIp.isEmpty()) {
-            clientIp = httpRequest.getRemoteAddr();
-        } else {
-            clientIp = clientIp.split(",")[0].trim();
-        }
-
-        String header = httpRequest.getHeader("Authorization");
-
-        if (header != null && header.startsWith("Bearer ")) {
-            String token = header.substring(7);
-            try {
-                // SIGNATURE VERIFICATION — this is the missing piece
-                Claims claims = Jwts.parser()
-                        .setSigningKey(secret.getBytes())
-                        .parseClaimsJws(token)
-                        .getBody();
-
-                extractUserInfo(claims);
-            } catch (ExpiredJwtException e) {
-                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
-                return; // stop the chain — do not proceed with unverified identity
-            } catch (JwtException | IllegalArgumentException e) {
-                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
-                return;
-            }
-        }
-
-        try {
-            MDC.put("clientIp", "IP-" + clientIp);
-            chain.doFilter(request, response);
-        } finally {
-            MDC.remove("clientIp");
-            MDC.remove("user_info");
-            UserContextHolder.clear();
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void extractUserInfo(Claims claims) {
-        try {
-            Map<String, Object> user = claims.get("user", Map.class);
-            String pfId = user != null ? String.valueOf(user.getOrDefault("pfId", "unknown")) : "unknown";
-            String branch = user != null ? String.valueOf(user.getOrDefault("branchCode", "unknown")) : "unknown";
-
-            MDC.put("user_info", String.format("PF-%s|BCODE-%s", pfId, branch));
-            UserContextHolder.set(new UserContext(pfId, branch));
-        } catch (Exception e) {
-            MDC.put("user_info", "token-un-parsable");
-            UserContextHolder.set(new UserContext("unknown", "unknown"));
-        }
-    }
-}
+private Claims validateToken(HttpServletRequest request) {
+		String jwtToken = request.getHeader(HEADER).replace(PREFIX, "");
+		return Jwts.parser().setSigningKey(SECRET.getBytes()).parseClaimsJws(jwtToken).getBody();
+		
+	}
