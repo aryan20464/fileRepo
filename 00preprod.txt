@@ -1,10 +1,398 @@
-public ResponseEntity<StreamingResponseBody> getLargeResponse() {
-    StreamingResponseBody responseBody = outputStream -> {
-        String hugeData = "Your massive 64KB+ data string...";
-        outputStream.write(hugeData.getBytes(StandardCharsets.UTF_8));
-        outputStream.flush();
-    };
-    return ResponseEntity.ok()
-            .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE)
-            .body(responseBody);
+Mass Assignment: Insecure Binder Configuration (11 issues)
+Abstract
+The framework binder used for binding the HTTP request parameters to the model class has not been explicitly
+configured to allow, or disallow certain attributes.
+Explanation
+To ease development and increase productivity, most modern frameworks allow an object to be automatically
+instantiated and populated with the HTTP request parameters whose names match an attribute of the class to be
+bound. Automatic instantiation and population of objects speeds up development, but can lead to serious problems if
+implemented without caution. Any attribute in the bound classes, or nested classes, will be automatically bound to the
+HTTP request parameters. Therefore, malicious users will be able to assign a value to any attribute in bound or nested
+classes, even if they are not exposed to the client through web forms or API contracts. Example 1: Using Spring
+MVC with no additional configuration, the following controller method will bind the HTTP request parameters to any
+attribute in the User or Details classes:
+@RequestMapping(method = RequestMethod.POST)
+public String registerUser(@ModelAttribute("user") User user, BindingResult
+result, SessionStatus status) {
+ if (db.save(user).hasErrors()) {
+ return "CustomerForm";
+ } else {
+ status.setComplete();
+ return "CustomerSuccess";
+ }
 }
+Where User class is defined as:
+public class User {
+ private String name;
+ private String lastname;
+ private int age;
+ private Details details;
+ // Public Getters and Setters
+ ...
+}
+and Details class is defined as:
+public class Details {
+ private boolean is_admin;
+ private int id;
+ private Date login_date;
+ // Public Getters and Setters
+ ...
+}
+Recommendation
+When using frameworks that provide automatic model binding capabilities, it is a best practice to control which
+attributes will be bound to the model object so that even if attackers figure out other non-exposed attributes of the
+model or nested classes, they will not be able to bind arbitrary values from HTTP request parameters. Depending on
+the framework used there will be different ways to control the model binding process: Spring MVC: It is possible to
+control which HTTP request parameters will be used in the binding process and which ones will be ignored. In Spring
+MVC applications using @ModelAttribute annotated parameters, the binder can be configured to control which
+Jul 9, 2026, 12:16 PM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+85
+attributes should be bound. In order to do so, a method can be annotated with @InitBinder so that the framework
+will inject a reference to the Spring Model Binder. The Spring Model Binder can be configured to control the attribute
+binding process with the setAllowedFields and setDisallowedFields methods. Spring MVC applications
+extending BaseCommandController can override the initBinder(HttpServletRequest request,
+ServletRequestDataBinder binder) method in order to get a reference to the Spring Model Binder.
+Example 2: The Spring Model Binder (3.x) is configured to disallow the binding of sensitive attributes:
+final String[] DISALLOWED_FIELDS = new String[]{"details.role", "details.age",
+"is_admin"};
+@InitBinder
+public void initBinder(WebDataBinder binder) {
+ binder.setDisallowedFields(DISALLOWED_FIELDS);
+}
+Example 3: The Spring Model Binder (2.x) is configured to disallow the binding of sensitive attributes:
+@Override
+protected void initBinder(HttpServletRequest request, ServletRequestDataBinder
+binder) throws Exception {
+ binder.setDisallowedFields(new String[]{"details.role", "details.age",
+"is_admin"});
+}
+In Spring MVC Applications using @RequestBody annotated parameters, the binding process is handled by
+HttpMessageConverter instances which will use libraries such as Jackson and JAXB to convert the HTTP
+request body into Java Objects. These libraries offer annotations to control which fields should be allowed or
+disallowed. For example, for the Jackson JSON library, the @JsonIgnore annotation can be used to prevent a field
+from being bound to the request. Example 4: A controller method binds an HTTP request to an instance of the
+Employee class using the @RequestBody annotation.
+ @RequestMapping(value="/add/employee", method=RequestMethod.POST,
+consumes="text/html")
+ public void addEmployee(@RequestBody Employee employee){
+ // Do something with the employee object.
+ }
+The application uses the default Jackson HttpMessageConverter to bind JSON HTTP requests to the
+Employee class. In order to prevent the binding of the is_admin sensitive field, use the @JsonIgnore
+annotation:
+public class Employee {
+ @JsonIgnore
+ private boolean is_admin;
+ ...
+ // Public Getters and Setters
+ ...
+}
+Note: Check the following REST frameworks information for more details on how to configure Jackson and JAXB
+annotations. Apache Struts: Struts 1 and 2 will only bind HTTP request parameters to those Actions or
+ActionForms attributes which have an associated public setter accessor. If an attribute should not be bound to the
+request, its setter should be made private. Example 5: Configure a private setter so that Struts framework will not
+automatically bind any HTTP request parameter:
+private String role;
+private void setRole(String role) {
+ this.role = role;
+}
+REST frameworks: Most REST frameworks will automatically bind any HTTP request bodies with content type
+JSON or XML to a model object. Depending on the libraries used for JSON and XML processing, there will be different
+ways of controlling the binding process. The following are some examples for JAXB (XML) and Jackson (JSON):
+Example 6: Models bound from XML documents using Oracle's JAXB library can control the binding process using
+Jul 9, 2026, 12:16 PM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+86
+different annotations such as @XmlAccessorType, @XmlAttribute, @XmlElement and @XmlTransient.
+The binder can be told not to bind any attributes by default, by annotating the models using the
+@XmlAccessorType annotation with the value XmlAccessType.NONE and then selecting which fields should
+be bound using @XmlAttribute and @XmlElement annotations:
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.NONE)
+public class User {
+ private String role;
+ private String name;
+ @XmlAttribute
+ public String getName() {
+ return name;
+ }
+ public void setName(String name) {
+ this.name = name;
+ }
+ public String getRole() {
+ return role;
+ }
+ public void setRole(String role) {
+ this.role = role;
+ }
+Example 7: Models bound from JSON documents using the Jackson library can control the binding process using
+different annotations such as @JsonIgnore, @JsonIgnoreProperties, @JsonIgnoreType and
+@JsonInclude. The binder can be told to ignore certain attributes by annotating them with @JsonIgnore
+annotation:
+public class User {
+ @JsonIgnore
+ private String role;
+ private String name;
+ public String getName() {
+ return name;
+ }
+ public void setName(String name) {
+ this.name = name;
+ }
+ public String getRole() {
+ return role;
+ }
+ public void setRole(String role) {
+ this.role = role;
+ }
+A different approach to protecting against mass assignment vulnerabilities is using a layered architecture where the
+HTTP request parameters are bound to DTO objects. The DTO objects are only used for that purpose, exposing only
+those attributes defined in the web forms or API contracts, and then mapping these DTO objects to Domain Objects
+where the rest of the private attributes can be defined.
+Issue Summary
+Jul 9, 2026, 12:16 PM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+87
+Engine Breakdown
+SCA WebInspect SecurityScope Total
+Mass Assignment: Insecure Binder Configuration 11 0 0 11
+Total 11 0 0 11
+Mass Assignment: Insecure Binder Configuration High
+Package: in.co.sbi.rfx.indents.controllers.indents
+src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java, line
+297 (Mass Assignment: Insecure Binder Configuration) High
+Issue Details
+Kingdom: API Abuse
+Scan Engine: SCA (Structural)
+Sink Details
+Sink: Function: updateVendorDetailsAtBranchLevelGMUK
+Enclosing Method: updateVendorDetailsAtBranchLevelGMUK()
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java:297
+Taint Flags:
+294 }
+295
+296 @RequestMapping(value = "/updateVendorDetailsAtGMUK", method = RequestMethod.POST)
+297 public ResponseEntity<?> updateVendorDetailsAtBranchLevelGMUK(@RequestBody GMUKUpdateRequest indentRequest,
+HttpServletRequest request)
+298 {
+299
+300 return gmukUserService.updateVendorDetailsAtBranchLevelGMUK(indentRequest,request);
+src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java, line
+322 (Mass Assignment: Insecure Binder Configuration) High
+Issue Details
+Kingdom: API Abuse
+Scan Engine: SCA (Structural)
+Sink Details
+Jul 9, 2026, 12:16 PM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+88
+Mass Assignment: Insecure Binder Configuration High
+Package: in.co.sbi.rfx.indents.controllers.indents
+src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java, line
+322 (Mass Assignment: Insecure Binder Configuration) High
+Sink: Function: updateCircleUserAndEmailsEntriesAtGMUKUser
+Enclosing Method: updateCircleUserAndEmailsEntriesAtGMUKUser()
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java:322
+Taint Flags:
+319 }
+320
+321 @RequestMapping(value = "/updateCircleUserAndEmailsEntries", method = RequestMethod.POST)
+322 public ResponseEntity<?> updateCircleUserAndEmailsEntriesAtGMUKUser(@RequestBody GMUKCircleAndMailUpdateRequest
+indentRequest, HttpServletRequest request)
+323 {
+324
+325 return gmukUserService.updateCircleUserAndEmailsEntriesAtGMUKUser(indentRequest,request);
+src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java, line
+289 (Mass Assignment: Insecure Binder Configuration) High
+Issue Details
+Kingdom: API Abuse
+Scan Engine: SCA (Structural)
+Sink Details
+Sink: Function: updateBranchIndentAfterCurrencyReceivedAtMaker
+Enclosing Method: updateBranchIndentAfterCurrencyReceivedAtMaker()
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java:289
+Taint Flags:
+286
+287 //This is used to update the indent after currency is received at maker level. The data is updated in two tables in Database, one table
+stores the actual indent data and other stores a log of operation made by the user serving as audit log.
+288 @RequestMapping(value = "/updateBranchIndentAtMaker", method = RequestMethod.POST)
+289 public ResponseEntity<?> updateBranchIndentAfterCurrencyReceivedAtMaker(@RequestBody IndentsMarkedAsReceivedDTO
+indentRequest, HttpServletRequest request)
+290 {
+291
+292 return branchMakerService.updateBranchIndentAfterCurrencyReceivedAtMaker(indentRequest,request);
+src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java, line
+280 (Mass Assignment: Insecure Binder Configuration) High
+Issue Details
+Kingdom: API Abuse
+Scan Engine: SCA (Structural)
+Sink Details
+Sink: Function: updateBranchIndentAtChecker
+Jul 9, 2026, 12:16 PM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+89
+Mass Assignment: Insecure Binder Configuration High
+Package: in.co.sbi.rfx.indents.controllers.indents
+src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java, line
+280 (Mass Assignment: Insecure Binder Configuration) High
+Enclosing Method: updateBranchIndentAtChecker()
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java:280
+Taint Flags:
+277
+278 //IMP : This is used to approve or reject the indent at checker level. The data is updated in two tables in Database, one table stores the
+actual indent data and other stores a log of operation made by the user serving as audit log.
+279 @RequestMapping(value = "/updateBranchIndentAtChecker", method = RequestMethod.POST)
+280 public ResponseEntity<?> updateBranchIndentAtChecker(@RequestBody checkerUpdateDataDTO indentRequest, HttpServletRequest
+request)
+281 {
+282
+283 return branchCheckerService.updateBranchIndentAtChecker(indentRequest,request);
+src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java, line
+330 (Mass Assignment: Insecure Binder Configuration) High
+Issue Details
+Kingdom: API Abuse
+Scan Engine: SCA (Structural)
+Sink Details
+Sink: Function: deleteCircleUserAtGMUKUser
+Enclosing Method: deleteCircleUserAtGMUKUser()
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java:330
+Taint Flags:
+327 }
+328
+329 @RequestMapping(value = "/deleteCircleUserAndEmailsEntries", method = RequestMethod.POST)
+330 public ResponseEntity<?> deleteCircleUserAtGMUKUser(@RequestBody GMUKCircleDeleteRequest indentRequest,
+HttpServletRequest request)
+331 {
+332
+333 return gmukUserService.deleteCircleUserAtGMUKUser(indentRequest,request);
+src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java, line
+346 (Mass Assignment: Insecure Binder Configuration) High
+Issue Details
+Kingdom: API Abuse
+Scan Engine: SCA (Structural)
+Sink Details
+Sink: Function: deleteVendorMailEntryAtGMUK
+Enclosing Method: deleteVendorMailEntryAtGMUK()
+Jul 9, 2026, 12:16 PM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+90
+Mass Assignment: Insecure Binder Configuration High
+Package: in.co.sbi.rfx.indents.controllers.indents
+src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java, line
+346 (Mass Assignment: Insecure Binder Configuration) High
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java:346
+Taint Flags:
+343 }
+344
+345 @RequestMapping(value = "/deleteVendorMailEntryAtGMUK", method = RequestMethod.POST)
+346 public ResponseEntity<?> deleteVendorMailEntryAtGMUK(@RequestBody GMUKVendorDeleteRequest indentRequest,
+HttpServletRequest request)
+347 {
+348
+349 return gmukUserService.deleteVendorMailEntryAtGMUK(indentRequest,request);
+src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java, line
+370 (Mass Assignment: Insecure Binder Configuration) High
+Issue Details
+Kingdom: API Abuse
+Scan Engine: SCA (Structural)
+Sink Details
+Sink: Function: getBranchReportAtGMUK
+Enclosing Method: getBranchReportAtGMUK()
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java:370
+Taint Flags:
+367 }
+368
+369 @RequestMapping(value = "/showIndentReportAtGMUK", method = RequestMethod.POST)
+370 public List<BranchIndent> getBranchReportAtGMUK(@RequestBody @NotNull GMUKReportDates reportDates, HttpServletRequest
+request)
+371 {
+372 String fromDate = (reportDates.getFromDate());
+373 String toDate = (reportDates.getToDate());
+src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java, line
+362 (Mass Assignment: Insecure Binder Configuration) High
+Issue Details
+Kingdom: API Abuse
+Scan Engine: SCA (Structural)
+Sink Details
+Sink: Function: saveNewVendorAtGMUK
+Enclosing Method: saveNewVendorAtGMUK()
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java:362
+Taint Flags:
+Jul 9, 2026, 12:16 PM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+91
+Mass Assignment: Insecure Binder Configuration High
+Package: in.co.sbi.rfx.indents.controllers.indents
+src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java, line
+362 (Mass Assignment: Insecure Binder Configuration) High
+359 }
+360
+361 @RequestMapping(value = "/saveNewVendor", method = RequestMethod.POST)
+362 public ResponseEntity<?> saveNewVendorAtGMUK(@RequestBody GMUKVendorCreateRequest indentRequest, HttpServletRequest
+request)
+363 {
+364
+365 return gmukUserService.saveNewVendorAtGMUK(indentRequest,request);
+src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java, line
+271 (Mass Assignment: Insecure Binder Configuration) High
+Issue Details
+Kingdom: API Abuse
+Scan Engine: SCA (Structural)
+Sink Details
+Sink: Function: editBranchIndentAtMaker
+Enclosing Method: editBranchIndentAtMaker()
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java:271
+Taint Flags:
+268
+269 //This is used to save the data edited by branch maker against already raised indent. This operation is possible before checker approval.
+The data is stored in two tables in Database, one table stores the actual indent data and other stores a log of operation made by the user
+serving as audit log.
+270 @RequestMapping(value = "/editBranchIndentAtMaker", method = RequestMethod.POST)
+271 public ResponseEntity<?> editBranchIndentAtMaker(@RequestBody IndentsUpdateDTO indentRequest, HttpServletRequest request)
+272 {
+273
+274 return branchMakerService.editBranchIndentAtMaker(indentRequest,request);
+src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java, line
+338 (Mass Assignment: Insecure Binder Configuration) High
+Issue Details
+Kingdom: API Abuse
+Scan Engine: SCA (Structural)
+Sink Details
+Sink: Function: updateVendorMailEntryAtGMUK
+Enclosing Method: updateVendorMailEntryAtGMUK()
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java:338
+Taint Flags:
+335 }
+Jul 9, 2026, 12:16 PM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+92
+Mass Assignment: Insecure Binder Configuration High
+Package: in.co.sbi.rfx.indents.controllers.indents
+src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java, line
+338 (Mass Assignment: Insecure Binder Configuration) High
+336
+337 @RequestMapping(value = "/updateVendorMailEntryAtGMUK", method = RequestMethod.POST)
+338 public ResponseEntity<?> updateVendorMailEntryAtGMUK(@RequestBody GMUKVendorMailUpdateRequest indentRequest,
+HttpServletRequest request)
+339 {
+340
+341 return gmukUserService.updateVendorMailEntryAtGMUK(indentRequest,request);
+src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java, line
+262 (Mass Assignment: Insecure Binder Configuration) High
+Issue Details
+Kingdom: API Abuse
+Scan Engine: SCA (Structural)
+Sink Details
+Sink: Function: saveBranchIndent
+Enclosing Method: saveBranchIndent()
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java:262
+Taint Flags:
+259
+260 //This is used to save the data entered by branch maker while trying to raise an indent. The data is stored in two tables in Database, one
+table stores the actual indent data and other stores a log of operation made by the user serving as audit log.
+261 @RequestMapping(value = "/saveBranchIndent", method = RequestMethod.POST, headers = "Accept=application/json")
+262 public ResponseEntity<?> saveBranchIndent(@RequestBody IndentsRequestDTO indentRequest, HttpServletRequest request)
+263 {
+264
+265 return branchMakerService.saveBranchIndent(indentRequest,request);
