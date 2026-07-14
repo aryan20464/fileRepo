@@ -1,115 +1,238 @@
-Access Control: Database (56 issues)
-Abstract
-Without proper access control, executing a SQL statement that contains a user-controlled primary key can allow an
-attacker to view unauthorized records.
-Explanation
-Database access control errors occur when: 1. Data enters a program from an untrusted source. 2. The data is used to
-specify the value of a primary key in a SQL query. Example 1: The following code uses a parameterized statement,
-which escapes metacharacters and prevents SQL injection vulnerabilities, to construct and execute a SQL query that
-searches for an invoice matching the specified identifier [1]. The identifier is selected from a list of all invoices
-associated with the current authenticated user.
-...
-id = Integer.decode(request.getParameter("invoiceID"));
-String query = "SELECT * FROM invoices WHERE id = ?";
-PreparedStatement stmt = conn.prepareStatement(query);
-stmt.setInt(1, id);
-ResultSet results = stmt.execute();
-...
-The problem is that the developer has failed to consider all of the possible values of id. Although the interface
-generates a list of invoice identifiers that belong to the current user, an attacker might bypass this interface to request
-any desired invoice. Because the code in this example does not check to ensure that the user has permission to access
-the requested invoice, it will display any invoice, even if it does not belong to the current user. Some think that in the
-mobile world, classic web application vulnerabilities, such as database access control errors, do not make sense -- why
-would the user attack themself? However, keep in mind that the essence of mobile platforms is applications that are
-downloaded from various sources and run alongside each other on the same device. The likelihood of running a piece
-of malware next to a banking application is high, which necessitates expanding the attack surface of mobile
-applications to include inter-process communication. Example 2: The following code adapts Example 1 to the
-Android platform.
-...
- String id = this.getIntent().getExtras().getString("invoiceID");
- String query = "SELECT * FROM invoices WHERE id = ?";
- SQLiteDatabase db = this.openOrCreateDatabase("DB", MODE_PRIVATE,
-null);
- Cursor c = db.rawQuery(query, new Object[]{id});
-...
-A number of modern web frameworks provide mechanisms to perform user input validation (including Struts and
-Spring MVC). To highlight the unvalidated sources of input, Fortify Secure Coding Rulepacks dynamically reprioritize the issues Fortify Static Code Analyzer reports by lowering their probability of exploit and providing
-pointers to the supporting evidence whenever the framework validation mechanism is in use. We refer to this feature
-as Context-Sensitive Ranking. To further assist the Fortify user with the auditing process, the Fortify Software
-Security Research group makes available the Data Validation project template that groups the issues into folders
-based on the validation mechanism applied to their source of input.
-Recommendation
-Rather than relying on the presentation layer to restrict values submitted by the user, access control should be handled
-by the application and database layers. Under no circumstances should a user be allowed to retrieve or modify a row
-in the database without the appropriate permissions. Every query that accesses the database should enforce this policy,
-which can often be accomplished by simply including the current authenticated username as part of the query.
-Jul 14, 2026, 11:41 AM
-© Copyright [2008-2026] Micro Focus or one of its affiliates.
-7
-Example 3: The following code implements the same functionality as Example 1 but imposes an additional
-constraint to verify that the invoice belongs to the currently authenticated user.
-...
-userName = ctx.getAuthenticatedUserName();
-id = Integer.decode(request.getParameter("invoiceID"));
-String query =
- "SELECT * FROM invoices WHERE id = ? AND user = ?";
-PreparedStatement stmt = conn.prepareStatement(query);
-stmt.setInt(1, id);
-stmt.setString(2, userName);
-ResultSet results = stmt.execute();
-...
-And here is an Android equivalent:
-...
- PasswordAuthentication pa = authenticator.getPasswordAuthentication();
- String userName = pa.getUserName();
- String id = this.getIntent().getExtras().getString("invoiceID");
- String query = "SELECT * FROM invoices WHERE id = ? AND user = ?";
- SQLiteDatabase db = this.openOrCreateDatabase("DB", MODE_PRIVATE,
-null);
- Cursor c = db.rawQuery(query, new Object[]{id, userName});
-...
-Issue Summary
-Engine Breakdown
-SCA WebInspect SecurityScope Total
-Access Control: Database 56 0 0 56
-Total 56 0 0 56
 Access Control: Database High
 Package: in.co.sbi.rfx.indents.service.branchchecker
 src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerService.java,
-line 295 (Access Control: Database) High
-Issue Details
-Kingdom: Security Features
-Scan Engine: SCA (Data Flow)
-Jul 14, 2026, 11:41 AM
-© Copyright [2008-2026] Micro Focus or one of its affiliates.
-8
-Access Control: Database High
-Package: in.co.sbi.rfx.indents.service.branchchecker
-src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerService.java,
-line 295 (Access Control: Database) High
+line 297 (Access Control: Database) High
 Source Details
 Source: in.co.sbi.rfx.indents.repository.IndentsRepository.findByIndentIDAtChecker(
 )
 From: in.co.sbi.rfx.indents.service.branchchecker.BranchCheckerService.sendInternal
 MailAtChecker
 File: src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerServic
-e.java:292
-289 if(numberOfVendors==failureCount)
-290 {
-291 vendorFailure=1;
-292 List<BranchIndent> branchIndents = idRepo.findByIndentIDAtChecker(requestedIndentID);
-293 for(BranchIndent bt: branchIndents)
-294 {
-295 BranchIndent tempRecord = editRepo.findByCustomId(bt.getId());
+e.java:293
+290 if(numberOfVendors==failureCount)
+291 {
+292 vendorFailure=1;
+293 List<BranchIndent> branchIndents = idRepo.findByIndentIDAtChecker(requestedIndentID);
+294 for(BranchIndent bt: branchIndents)
+295 {
+296 String indentBCode = currentUser.getBranchCode();
 Sink Details
 Sink: in.co.sbi.rfx.indents.repository.IndentsRepository.findByCustomId()
 Enclosing Method: sendInternalMailAtChecker()
-File: src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerService.java:295
+File: src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerService.java:297
 Taint Flags: NUMBER, PRIMARY_KEY
-292 List<BranchIndent> branchIndents = idRepo.findByIndentIDAtChecker(requestedIndentID);
-293 for(BranchIndent bt: branchIndents)
-294 {
-295 BranchIndent tempRecord = editRepo.findByCustomId(bt.getId());
-296 tempRecord.setCheckerIP(null);
-297 tempRecord.setIndentStatus(1);
-298 tempRecord.setCheckerCode(0);
+294 for(BranchIndent bt: branchIndents)
+295 {
+296 String indentBCode = currentUser.getBranchCode();
+297 BranchIndent tempRecord = editRepo.findByCustomId(bt.getId(),indentBCode);
+298 tempRecord.setCheckerIP(null);
+299 tempRecord.setIndentStatus(1);
+300 tempRecord.setCheckerCode(0);
+src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerService.java,
+line 332 (Access Control: Database) High
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: in.co.sbi.rfx.indents.repository.IndentsRepository.findByIndentIDAtChecker(
+)
+From: in.co.sbi.rfx.indents.service.branchchecker.BranchCheckerService.sendInternal
+MailAtChecker
+File: src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerServic
+e.java:328
+Jul 14, 2026, 11:56 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+9
+Access Control: Database High
+Package: in.co.sbi.rfx.indents.service.branchchecker
+src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerService.java,
+line 332 (Access Control: Database) High
+325 if(!mStatus.get("response").equals("success"))
+326 {
+327 vendorFailure=1;
+328 List<BranchIndent> branchIndents = idRepo.findByIndentIDAtChecker(requestedIndentID);
+329 for(BranchIndent bt: branchIndents)
+330 {
+331 String indentBCode = currentUser.getBranchCode();
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsRepository.findByCustomId()
+Enclosing Method: sendInternalMailAtChecker()
+File: src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerService.java:332
+Taint Flags: NUMBER, PRIMARY_KEY
+329 for(BranchIndent bt: branchIndents)
+330 {
+331 String indentBCode = currentUser.getBranchCode();
+332 BranchIndent tempRecord = editRepo.findByCustomId(bt.getId(), indentBCode);
+333 tempRecord.setCheckerIP(null);
+334 tempRecord.setIndentStatus(1);
+335 tempRecord.setCheckerCode(0);
+src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerService.java,
+line 138 (Access Control: Database) High
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: in.co.sbi.rfx.indents.repository.IndentsRepository.findByIndentIDAtChecker(
+)
+From: in.co.sbi.rfx.indents.service.branchchecker.BranchCheckerService.updateBranch
+IndentAtChecker
+File: src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerServic
+e.java:130
+127 String userID = currentUser.getPfId();
+128 String checker_ip = indentService.getClientIp(request);
+129 String loggedInUser = currentUser.getPfId();
+130 List<BranchIndent> branchIndents = idRepo.findByIndentIDAtChecker(indentRequest.getIndentID());
+131 int checkerStatus = indentRequest.getStatus();
+132 String checkerRemarks = indentRequest.getRemarks();
+Jul 14, 2026, 11:56 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+10
+Access Control: Database High
+Package: in.co.sbi.rfx.indents.service.branchchecker
+src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerService.java,
+line 138 (Access Control: Database) High
+133
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsRepository.findByCustomId()
+Enclosing Method: updateBranchIndentAtChecker()
+File: src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerService.java:138
+Taint Flags: NUMBER, PRIMARY_KEY
+135 if(editRepo.existsById(entry.getId()))
+136 {
+137 String indentBCode = currentUser.getBranchCode();
+138 BranchIndent branchIndent = editRepo.findByCustomId(entry.getId(),indentBCode);
+139 if("IN_PROGRESS".equals(branchIndent.getOperationStatus()))
+140 {
+141 return ResponseEntity.ok(new HashMap<>().put("applicationReturnStatusMessage","An operation is already in progress, kindly try
+after sometime !!"));
+
+
+
+
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.branchchecker
+src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerService.java,
+line 138 (Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: jakarta.servlet.http.HttpServletRequest.getHeader()
+From: in.co.sbi.rfx.indents.components.ClientIpLoggingFilter.doFilter
+File: src/main/java/in/co/sbi/rfx/indents/components/ClientIpLoggingFilter.java:42
+39 }
+40
+41 // Inside your filter's doFilterInternal method
+42 String header = httpRequest.getHeader("Authorization");
+43
+44 if (header != null && header.startsWith("Bearer ")) {
+45 String token = header.substring(7); // Extract the token string
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsRepository.findByCustomId()
+Enclosing Method: updateBranchIndentAtChecker()
+File: src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerService.java:138
+Taint Flags: START_CHECKED_STRING, WEAKCRYPTO, WEB, XSS
+135 if(editRepo.existsById(entry.getId()))
+136 {
+137 String indentBCode = currentUser.getBranchCode();
+138 BranchIndent branchIndent = editRepo.findByCustomId(entry.getId(),indentBCode);
+139 if("IN_PROGRESS".equals(branchIndent.getOperationStatus()))
+140 {
+141 return ResponseEntity.ok(new HashMap<>().put("applicationReturnStatusMessage","An operation is already in progress, kindly try
+after sometime !!"));
+src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerService.java,
+line 297 (Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: jakarta.servlet.http.HttpServletRequest.getHeader()
+From: in.co.sbi.rfx.indents.components.ClientIpLoggingFilter.doFilter
+File: src/main/java/in/co/sbi/rfx/indents/components/ClientIpLoggingFilter.java:42
+Jul 14, 2026, 11:56 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+27
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.branchchecker
+src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerService.java,
+line 297 (Access Control: Database) Low
+39 }
+40
+41 // Inside your filter's doFilterInternal method
+42 String header = httpRequest.getHeader("Authorization");
+43
+44 if (header != null && header.startsWith("Bearer ")) {
+45 String token = header.substring(7); // Extract the token string
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsRepository.findByCustomId()
+Enclosing Method: sendInternalMailAtChecker()
+File: src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerService.java:297
+Taint Flags: START_CHECKED_STRING, WEAKCRYPTO, WEB, XSS
+294 for(BranchIndent bt: branchIndents)
+295 {
+296 String indentBCode = currentUser.getBranchCode();
+297 BranchIndent tempRecord = editRepo.findByCustomId(bt.getId(),indentBCode);
+298 tempRecord.setCheckerIP(null);
+299 tempRecord.setIndentStatus(1);
+300 tempRecord.setCheckerCode(0);
+src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerService.java,
+line 332 (Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: jakarta.servlet.http.HttpServletRequest.getHeader()
+From: in.co.sbi.rfx.indents.components.ClientIpLoggingFilter.doFilter
+File: src/main/java/in/co/sbi/rfx/indents/components/ClientIpLoggingFilter.java:42
+39 }
+40
+41 // Inside your filter's doFilterInternal method
+42 String header = httpRequest.getHeader("Authorization");
+43
+44 if (header != null && header.startsWith("Bearer ")) {
+45 String token = header.substring(7); // Extract the token string
+Sink Details
+Jul 14, 2026, 11:56 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+28
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.branchchecker
+src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerService.java,
+line 332 (Access Control: Database) Low
+Sink: in.co.sbi.rfx.indents.repository.IndentsRepository.findByCustomId()
+Enclosing Method: sendInternalMailAtChecker()
+File: src/main/java/in/co/sbi/rfx/indents/service/branchchecker/BranchCheckerService.java:332
+Taint Flags: START_CHECKED_STRING, WEAKCRYPTO, WEB, XSS
+329 for(BranchIndent bt: branchIndents)
+330 {
+331 String indentBCode = currentUser.getBranchCode();
+332 BranchIndent tempRecord = editRepo.findByCustomId(bt.getId(), indentBCode);
+333 tempRecord.setCheckerIP(null);
+334 tempRecord.setIndentStatus(1);
+335 tempRecord.setCheckerCode(0);
+Package: in.co.sbi.rfx.indents.service.branchmaker
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+389 (Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: jakarta.servlet.http.HttpServletRequest.getHeader()
+From: in.co.sbi.rfx.indents.components.ClientIpLoggingFilter.doFilter
+File: src/main/java/in/co/sbi/rfx/indents/components/ClientIpLoggingFilter.java:42
+39 }
+40
+41 // Inside your filter's doFilterInternal method
+42 String header = httpRequest.getHeader("Authorization");
+43
+44 if (header != null && header.startsWith("Bearer ")) {
+45 String token = header.substring(7); // Extract the token string
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsRepository.findByCustomId()
+Enclosing Method: updateBranchIndentAfterCurrencyReceivedAtMaker()
+File: src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java:389
+Taint Flags: START_CHECKED_STRING, WEAKCRYPTO, WEB, XSS
+386 for(BranchIndent branchIndentLocalIterator: finalBranchIndentList)
+387 {
+388 String indentBCode = currentUser.getBranchCode();
+389 BranchIndent branchIndentIndividualEntries = editRepo.findByCustomId(branchIndentLocalIterator.getId(),indentBCode);
