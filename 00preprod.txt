@@ -1,30 +1,41 @@
-HTML5: Overly Permissive CORS Policy Medium
+Web Server Misconfiguration: HTTP Basic Authentication (1 issue)
+Abstract
+Using the HTTP Basic authentication scheme over an insecure channel can enable attackers to steal credentials.
+Explanation
+Credential theft can result from: 1. A weak encoding scheme used by the HTTP Basic authentication to encode user
+credentials. Base64 encoded text can be easily decoded to access the original information. 2. Using HTTP Basic
+authentication over an insecure channel. Attackers can intercept the traffic and access user credentials.
+Recommendation
+Use more secure authentication schemes such as Bearer or Digest. Alternatively, web host services such as AWS,
+Azure, and Google Cloud provide custom authentication methods that are more secure than Basic authentication.
+Issue Summary
+Engine Breakdown
+SCA WebInspect SecurityScope Total
+Web Server Misconfiguration: HTTP Basic Authentication 1 0 0 1
+Total 1 0 0 1
+Web Server Misconfiguration: HTTP Basic Authentication High
 Package: in.co.sbi.rfx.indents
-src/main/java/in/co/sbi/rfx/indents/WebSecurityConfig.java, line 82 (HTML5: Overly
-Permissive CORS Policy) Medium
+src/main/java/in/co/sbi/rfx/indents/WebSecurityConfig.java, line 48 (Web Server
+Misconfiguration: HTTP Basic Authentication) High
 Issue Details
-Kingdom: Encapsulation
-Scan Engine: SCA (Data Flow)
-Source Details
-Source: Read
-From: in.co.sbi.rfx.indents.WebSecurityConfig$1.addCorsMappings
-File: src/main/java/in/co/sbi/rfx/indents/WebSecurityConfig.java:82
-79 @Override
-80 public void addCorsMappings(CorsRegistry registry) {
-81 String rforexUIURL = RforexCache.getKey("UI_URL_RFOREX");
-82 registry.addMapping("/**")
-83 .allowedMethods("GET", "POST", "PUT", "DELETE")
-84 .allowedHeaders("*")
-85 .allowedOrigins("*").exposedHeaders("Content-Disposition");
+Kingdom: Environment
+Scan Engine: SCA (Structural)
 Sink Details
-Sink: org.springframework.web.servlet.config.annotation.CorsRegistration.allowedOrigins()
-Enclosing Method: addCorsMappings()
-File: src/main/java/in/co/sbi/rfx/indents/WebSecurityConfig.java:82
-Taint Flags: ANY_VALUE
-79 @Override
-80 public void addCorsMappings(CorsRegistry registry) {
-81 String rforexUIURL = RforexCache.getKey("UI_URL_RFOREX");
-82 registry.addMapping("/**")
-83 .allowedMethods("GET", "POST", "PUT", "DELETE")
-84 .allowedHeaders("*")
-85 .allowedOrigins("*").exposedHeaders("Content-Disposition");
+Sink: FunctionCall: httpBasic
+Enclosing Method: filterChain()
+File: src/main/java/in/co/sbi/rfx/indents/WebSecurityConfig.java:48
+Taint Flags:
+Jul 14, 2026, 11:11 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+84
+Web Server Misconfiguration: HTTP Basic Authentication High
+Package: in.co.sbi.rfx.indents
+src/main/java/in/co/sbi/rfx/indents/WebSecurityConfig.java, line 48 (Web Server
+Misconfiguration: HTTP Basic Authentication) High
+45 @Bean
+46 public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+47 http
+48 .httpBasic(httpBasic ->
+49 httpBasic.authenticationEntryPoint(new NoPopupBasicAuthenticationEntryPoint())
+50 )
+51 .sessionManagement(session ->
