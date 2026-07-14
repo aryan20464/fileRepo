@@ -1,10 +1,55 @@
-ngOnInit(): void{    
-    this.getCircleDetails();
+async ngOnInit(): Promise<void>{    
     this.getTodaysDate();
     this.appStatus[1] = "Created by Maker";
     this.appStatus[2] = "Approved by checker";
     this.appStatus[3] = "Rejected by checker";
     this.appStatus[4] = "Currency Partially Received";
     this.appStatus[5] = "Currency Received";  
+    await this.getCircleDetails();
+    console.log("Before all Indents"+this.circleCode);
     this.allIndents = this.fetchOrderData();
+  }
+
+  async getCircleDetails(): Promise<void>{
+    const apiUrl = `${environment.rfmIndentService}/getUserDetailsByIDRfm?bcode=`+this.authenticationService.getUser().branchCode; // API endpoint
+    this.http.get<any[]>(apiUrl).subscribe(
+      (data) => {
+        this.circleUserDetails = data; 
+        this.circleCode = (data as any)["ccode"];
+        this.circleName = (data as any)["cname"];
+        console.log(this.circleUserDetails);
+        console.log("circleCode"+this.circleCode)
+        console.log("circleName"+this.circleName)
+      },
+      (error) => {
+        console.error('Error fetching records:', error);
+      }
+    );
+  }
+
+  async fetchOrderData() {
+    type ZappStatus = {
+      bcode: number;
+      branchname: string;
+      total: number;
+      initiated: number;
+      accepted: number;
+      rejected: number;
+      completed: number;
+    };
+    this.getCircleName();
+    const zapps: ZappStatus[] = [];
+    const apiUrl = `${environment.rfmIndentService}/getCircleIndents?ccode=`+this.getCircleCode()+"&pfid="+this.authenticationService.getUser().pfId; 
+    const appData = await this.http.get<any[]>(apiUrl).toPromise();
+    if(appData)
+    {
+      this.appDrill = appData; // Store response data in records variable
+        console.log("fetch order data "+appData);
+    }
+    else{
+      console.error('Error fetching records');
+    }
+    
+    //console.log(this.authService.getCurrentUser())
+    
   }
