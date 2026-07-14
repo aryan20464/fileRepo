@@ -1,132 +1,81 @@
+package in.co.sbi.rfx.indents.components;
 
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
+import java.util.Map;
 
 @Component
 public class ClientIpLoggingFilter implements Filter {
+
+    @Value("${jwt.secret}")
+    private String secret;
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        final Logger sLogger = LoggerFactory.getLogger("asdf");
-
-
-        // Use X-Forwarded-For if behind a load balancer, else getRemoteAddr()
         String clientIp = httpRequest.getHeader("X-Forwarded-For");
         if (clientIp == null || clientIp.isEmpty()) {
             clientIp = httpRequest.getRemoteAddr();
         } else {
-            // X-Forwarded-For can be a comma-separated list; take the first one
             clientIp = clientIp.split(",")[0].trim();
         }
 
-        // Inside your filter's doFilterInternal method
         String header = httpRequest.getHeader("Authorization");
 
         if (header != null && header.startsWith("Bearer ")) {
-            String token = header.substring(7); // Extract the token string
-            String User = decodeJwtPayload(header);
-            extractUserInfo(User);
+            String token = header.substring(7);
+            try {
+                // SIGNATURE VERIFICATION — this is the missing piece
+                Claims claims = Jwts.parser()
+                        .setSigningKey(secret.getBytes())
+                        .parseClaimsJws(token)
+                        .getBody();
+
+                extractUserInfo(claims);
+            } catch (ExpiredJwtException e) {
+                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
+                return; // stop the chain — do not proceed with unverified identity
+            } catch (JwtException | IllegalArgumentException e) {
+                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+                return;
+            }
         }
 
-
         try {
-            MDC.put("clientIp", "IP-"+clientIp);
+            MDC.put("clientIp", "IP-" + clientIp);
             chain.doFilter(request, response);
         } finally {
-            MDC.remove("clientIp"); // Always clear to prevent leaking to other threads
+            MDC.remove("clientIp");
             MDC.remove("user_info");
             UserContextHolder.clear();
         }
     }
 
-    public String decodeJwtPayload(String bearerToken) {
+    @SuppressWarnings("unchecked")
+    private void extractUserInfo(Claims claims) {
         try {
-            // 1. Remove the "Bearer " prefix (7 characters)
-            if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
-                return "Internal-User";
-            }
-            String token = bearerToken.substring(7);
+            Map<String, Object> user = claims.get("user", Map.class);
+            String pfId = user != null ? String.valueOf(user.getOrDefault("pfId", "unknown")) : "unknown";
+            String branch = user != null ? String.valueOf(user.getOrDefault("branchCode", "unknown")) : "unknown";
 
-            // 2. Split by the dot
-            String[] parts = token.split("\\.");
-            if (parts.length < 2) return "invalid-token";
-
-            // 3. Decode the second part (the Payload)
-            byte[] decodedBytes = Base64.getUrlDecoder().decode(parts[1]);
-            return new String(decodedBytes, StandardCharsets.UTF_8);
-
-        } catch (Exception e) {
-            return "error-decoding";
-        }
-    }
-
-    /*private void extractUserInfo(String payloadJson) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(payloadJson);
-
-            // Navigate to the "user" object
-            JsonNode user = root.get("user");
-
-            if (user != null) {
-                String pfId = user.path("pfId").asText("unknown");
-                String branch = user.path("branchCode").asText("unknown");
-                //String name = user.path("userName").asText("unknown");
-
-                // Put them into MDC for your logs
-                MDC.put("user_info", String.format("PF-%s|BCODE-%s", pfId, branch));
-            }
+            MDC.put("user_info", String.format("PF-%s|BCODE-%s", pfId, branch));
+            UserContextHolder.set(new UserContext(pfId, branch));
         } catch (Exception e) {
             MDC.put("user_info", "token-un-parsable");
-        }
-    }*/
-    private void extractUserInfo(String payloadJson) {
-
-        try {
-
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(payloadJson);
-
-            JsonNode user = root.get("user");
-
-            if (user != null) {
-
-                String pfId =
-                        user.path("pfId").asText("unknown");
-
-                String branch =
-                        user.path("branchCode").asText("unknown");
-
-                MDC.put(
-                        "user_info",
-                        String.format("PF-%s|BCODE-%s", pfId, branch)
-                );
-
-                UserContextHolder.set(
-                        new UserContext(pfId, branch)
-                );
-            }
-
-        } catch (Exception e) {
-
-            MDC.put("user_info", "token-un-parsable");
-
-            UserContextHolder.set(
-                    new UserContext("unknown", "unknown")
-            );
+            UserContextHolder.set(new UserContext("unknown", "unknown"));
         }
     }
 }
