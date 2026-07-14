@@ -1,68 +1,30 @@
-import { firstValueFrom } from 'rxjs'; // Ensure this is imported at the top
-
-async ngOnInit(): Promise<void> {    
-  this.getTodaysDate();
-  this.appStatus[1] = "Created by Maker";
-  this.appStatus[2] = "Approved by checker";
-  this.appStatus[3] = "Rejected by checker";
-  this.appStatus[4] = "Currency Partially Received";
-  this.appStatus[5] = "Currency Received";  
-  
-  // This will now correctly pause until the data arrives
-  await this.getCircleDetails();
-  
-  console.log("Before all Indents: " + this.circleCode);
-  
-  // Added await here because fetchOrderData is also an async function making an API call
-  this.allIndents = await this.fetchOrderData();
-}
-
-async getCircleDetails(): Promise<void> {
-  const apiUrl = `${environment.rfmIndentService}/getUserDetailsByIDRfm?bcode=` + this.authenticationService.getUser().branchCode; 
-  
-  try {
-    // Use firstValueFrom to convert the observable into a promise that await can track
-    const data = await firstValueFrom(this.http.get<any>(apiUrl)); 
-    
-    if (data) {
-      this.circleUserDetails = data; 
-      this.circleCode = data["ccode"];
-      this.circleName = data["cname"];
-      console.log(this.circleUserDetails);
-      console.log("circleCode: " + this.circleCode);
-      console.log("circleName: " + this.circleName);
-    }
-  } catch (error) {
-    console.error('Error fetching records:', error);
-  }
-}
-
-async fetchOrderData() {
-  type ZappStatus = {
-    bcode: number;
-    branchname: string;
-    total: number;
-    initiated: number;
-    accepted: number;
-    rejected: number;
-    completed: number;
-  };
-  
-  this.getCircleName();
-  const zapps: ZappStatus[] = [];
-  
-  const apiUrl = `${environment.rfmIndentService}/getCircleIndents?ccode=` + this.getCircleCode() + "&pfid=" + this.authenticationService.getUser().pfId; 
-  
-  try {
-    // Note: toPromise() is deprecated in newer Angular versions. Use firstValueFrom(this.http.get(...)) if possible.
-    const appData = await firstValueFrom(this.http.get<any[]>(apiUrl));
-    
-    if (appData) {
-      this.appDrill = appData; 
-      console.log("fetch order data ", appData);
-      return appData; // Return the data so this.allIndents receives it
-    }
-  } catch (error) {
-    console.error('Error fetching records', error);
-  }
-}
+HTML5: Overly Permissive CORS Policy Medium
+Package: in.co.sbi.rfx.indents
+src/main/java/in/co/sbi/rfx/indents/WebSecurityConfig.java, line 82 (HTML5: Overly
+Permissive CORS Policy) Medium
+Issue Details
+Kingdom: Encapsulation
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: Read
+From: in.co.sbi.rfx.indents.WebSecurityConfig$1.addCorsMappings
+File: src/main/java/in/co/sbi/rfx/indents/WebSecurityConfig.java:82
+79 @Override
+80 public void addCorsMappings(CorsRegistry registry) {
+81 String rforexUIURL = RforexCache.getKey("UI_URL_RFOREX");
+82 registry.addMapping("/**")
+83 .allowedMethods("GET", "POST", "PUT", "DELETE")
+84 .allowedHeaders("*")
+85 .allowedOrigins("*").exposedHeaders("Content-Disposition");
+Sink Details
+Sink: org.springframework.web.servlet.config.annotation.CorsRegistration.allowedOrigins()
+Enclosing Method: addCorsMappings()
+File: src/main/java/in/co/sbi/rfx/indents/WebSecurityConfig.java:82
+Taint Flags: ANY_VALUE
+79 @Override
+80 public void addCorsMappings(CorsRegistry registry) {
+81 String rforexUIURL = RforexCache.getKey("UI_URL_RFOREX");
+82 registry.addMapping("/**")
+83 .allowedMethods("GET", "POST", "PUT", "DELETE")
+84 .allowedHeaders("*")
+85 .allowedOrigins("*").exposedHeaders("Content-Disposition");
