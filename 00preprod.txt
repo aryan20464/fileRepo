@@ -1,48 +1,94 @@
-//	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-		try {
-			if (checkJWTToken(request, response)) {
-				Claims claims = validateToken(request);
-				if (claims.get("authorities") != null) {
-					setUpSpringAuthentication(claims);
-				} else {
-					SecurityContextHolder.clearContext();
-				}
-			} else {
-				SecurityContextHolder.clearContext();
-			}
-			chain.doFilter(request, response);
-		} catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException e) {
-			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
-			return;
-		}
-	}	
+package in.co.sbi.rfx.indents.components;
 
-	private Claims validateToken(HttpServletRequest request) {
-		String jwtToken = request.getHeader(HEADER).replace(PREFIX, "");
-		return Jwts.parser().setSigningKey(SECRET.getBytes()).parseClaimsJws(jwtToken).getBody();
-		
-	}
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-	/**
-	 * Authentication method in Spring flow
-	 * 
-	 * @param claims
-	 */
-	private void setUpSpringAuthentication(Claims claims) {
-		@SuppressWarnings("unchecked")
-		List<String> authorities = (List<String>) claims.get("authorities");
+import java.io.IOException;
+import java.util.Map;
 
-		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(claims.getSubject(), null,
-				authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
-		SecurityContextHolder.getContext().setAuthentication(auth);
+@Component
+public class ClientIpLoggingFilter implements Filter {
 
-	}
+    private static final Logger sLogger = LoggerFactory.getLogger(ClientIpLoggingFilter.class);
 
-	private boolean checkJWTToken(HttpServletRequest request, HttpServletResponse res) {
-		String authenticationHeader = request.getHeader(HEADER);
-		if (authenticationHeader == null || !authenticationHeader.startsWith(PREFIX))
-			return false;
-		return true;
-	}
+    // Point this at the SAME property key / config source that JWTAuthorizationFilter's SECRET uses,
+    // so there is exactly one place the value is configured, even though it's read in two places.
+    @Value("${jwt.secret}")
+    private String secret;
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
+
+        String clientIp = httpRequest.getHeader("X-Forwarded-For");
+        if (clientIp == null || clientIp.isEmpty()) {
+            clientIp = httpRequest.getRemoteAddr();
+        } else {
+            clientIp = clientIp.split(",")[0].trim();
+        }
+
+        String header = httpRequest.getHeader("Authorization");
+
+        if (header != null && header.startsWith("Bearer ")) {
+            String token = header.substring(7);
+
+            try {
+                Claims claims = Jwts.parser()
+                        .setSigningKey(secret.getBytes())
+                        .parseClaimsJws(token)
+                        .getBody();
+
+                extractUserInfo(claims);
+
+            } catch (ExpiredJwtException e) {
+                sLogger.warn("Token expired: {}", e.getMessage());
+                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
+                return;
+            } catch (JwtException | IllegalArgumentException e) {
+                sLogger.warn("Token verification failed: {}", e.getMessage());
+                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+                return;
+            }
+        }
+
+        try {
+            MDC.put("clientIp", "IP-" + clientIp);
+            chain.doFilter(request, response);
+        } finally {
+            MDC.remove("clientIp");
+            MDC.remove("user_info");
+            UserContextHolder.clear();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void extractUserInfo(Claims claims) {
+        try {
+            Map<String, Object> user = claims.get("user", Map.class);
+
+            String pfId = (user != null) ? String.valueOf(user.getOrDefault("pfId", "unknown")) : "unknown";
+            String branch = (user != null) ? String.valueOf(user.getOrDefault("branchCode", "unknown")) : "unknown";
+
+            MDC.put("user_info", String.format("PF-%s|BCODE-%s", pfId, branch));
+            UserContextHolder.set(new UserContext(pfId, branch));
+
+        } catch (Exception e) {
+            MDC.put("user_info", "token-un-parsable");
+            UserContextHolder.set(new UserContext("unknown", "unknown"));
+        }
+    }
+}
