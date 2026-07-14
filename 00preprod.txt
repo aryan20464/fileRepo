@@ -1,26 +1,10 @@
-Web Server Misconfiguration: HTTP Basic Authentication High
-Package: in.co.sbi.rfx.indents
-src/main/java/in/co/sbi/rfx/indents/WebSecurityConfig.java, line 43 (Web Server
-Misconfiguration: HTTP Basic Authentication) High
-Issue Details
-Kingdom: Environment
-Scan Engine: SCA (Structural)
-Sink Details
-Sink: FunctionCall: httpBasic
-Enclosing Method: filterChain()
-File: src/main/java/in/co/sbi/rfx/indents/WebSecurityConfig.java:43
-Taint Flags:
-Jul 14, 2026, 7:33 AM
-© Copyright [2008-2026] Micro Focus or one of its affiliates.
-121
-Web Server Misconfiguration: HTTP Basic Authentication High
-Package: in.co.sbi.rfx.indents
-src/main/java/in/co/sbi/rfx/indents/WebSecurityConfig.java, line 43 (Web Server
-Misconfiguration: HTTP Basic Authentication) High
-40 @Bean
-41 public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-42 http
-43 .httpBasic(httpBasic ->
-44 httpBasic.authenticationEntryPoint(new NoPopupBasicAuthenticationEntryPoint())
-45 )
-46 .sessionManagement(session ->
+ngOnInit(): void{    
+    this.getCircleDetails();
+    this.getTodaysDate();
+    this.appStatus[1] = "Created by Maker";
+    this.appStatus[2] = "Approved by checker";
+    this.appStatus[3] = "Rejected by checker";
+    this.appStatus[4] = "Currency Partially Received";
+    this.appStatus[5] = "Currency Received";  
+    this.allIndents = this.fetchOrderData();
+  }
