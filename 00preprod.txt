@@ -1,129 +1,34 @@
-Cross-Site Scripting: Poor Validation Low
-Package: in.co.sbi.rfx.indents.controllers.indents
-src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java, line
-93 (Cross-Site Scripting: Poor Validation) Low
-Issue Details
-Kingdom: Input Validation and Representation
-Scan Engine: SCA (Data Flow)
-Source Details
-Source: in.co.sbi.rfx.indents.repository.IndentsBranchDetailsRepository.getBranchDe
-tails()
-From: in.co.sbi.rfx.indents.service.indents.IndentServiceImpl.getBranchEmail
-File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:94
-1
-938 public String getBranchEmail( @Pattern(regexp = "^\\d+$", message = "bcode must contain numbers only")
-String bcode, String user) throws NullPointerException
-939 {
-940 try {
-941 String branchEmail = indentsBranchDetailsRepository.getBranchDetails(bcode,user);
-942 return org.owasp.encoder.Encode.forHtml(branchEmail);
-943 }
-944 catch(RfmIndentsModuleException ex)
-Sink Details
-Sink: Return
-Enclosing Method: getBranchEmail()
-File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java:93
-Taint Flags: DATABASE, HTML_ENCODE, POORVALIDATION,
-VALIDATED_HTTP_PARAMETER_POLLUTION, XSS
-Jul 15, 2026, 6:31 AM
-© Copyright [2008-2026] Micro Focus or one of its affiliates.
-61
-Cross-Site Scripting: Poor Validation Low
-Package: in.co.sbi.rfx.indents.controllers.indents
-src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java, line
-93 (Cross-Site Scripting: Poor Validation) Low
-90 public String getBranchEmail(@Pattern(regexp = "^\\d+$", message = "bcode must contain numbers only") @RequestParam("bcode")
-String bcode) throws NullPointerException
-91 {
-92 String user = currentUser.getPfId();
-93 return indentService.getBranchEmail(bcode,user);
-94 }
-95
-96 @GetMapping("/getBranchVendorMappingData")
-URL: null
-src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
-374 (Cross-Site Scripting: Poor Validation) Low
-Issue Details
-Kingdom: Input Validation and Representation
-Scan Engine: SCA (Data Flow)
-Source Details
-Source: updateBranchIndentAfterCurrencyReceivedAtMaker(0)
-From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.updateBran
-chIndentAfterCurrencyReceivedAtMaker
-File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
-ler.java:286
-URL: null
-283
-284 //This is used to update the indent after currency is received at maker level. The data is updated in two tables in
-Database, one table stores the actual indent data and other stores a log of operation made by the user serving as audit
-log.
-285 @RequestMapping(value = "/updateBranchIndentAtMaker", method = RequestMethod.POST)
-286 public ResponseEntity<?> updateBranchIndentAfterCurrencyReceivedAtMaker(@RequestBody
-IndentsMarkedAsReceivedDTO indentRequest, HttpServletRequest request)
-287 {
-288
-289 return branchMakerService.updateBranchIndentAfterCurrencyReceivedAtMaker(indentRequest,request);
-Sink Details
-Sink: org.springframework.http.ResponseEntity.ok()
-Enclosing Method: updateBranchIndentAfterCurrencyReceivedAtMaker()
-File: src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java:374
-Taint Flags: HTML_ENCODE, POORVALIDATION, PRIMARY_KEY,
-VALIDATED_HTTP_PARAMETER_POLLUTION, WEB, XSS
-371 return ResponseEntity.ok(new HashMap<>().put("applicationReturnStatusMessage", "Cannot update the indent :" + safeIndentID + " :
-Currency RECEIVED DATE should be ON or AFTER Currency REQUESTED DATE"));
-Jul 15, 2026, 6:31 AM
-© Copyright [2008-2026] Micro Focus or one of its affiliates.
-62
-Cross-Site Scripting: Poor Validation Low
-URL: null
-src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
-374 (Cross-Site Scripting: Poor Validation) Low
-372 }
-373
-374 return ResponseEntity.ok(new HashMap<>().put("applicationReturnStatusMessage", "Cannot update the indent :" + safeIndentID));
-375
-376
-377 }
-src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
-371 (Cross-Site Scripting: Poor Validation) Low
-Issue Details
-Kingdom: Input Validation and Representation
-Scan Engine: SCA (Data Flow)
-Source Details
-Source: updateBranchIndentAfterCurrencyReceivedAtMaker(0)
-From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.updateBran
-chIndentAfterCurrencyReceivedAtMaker
-File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
-ler.java:286
-URL: null
-283
-284 //This is used to update the indent after currency is received at maker level. The data is updated in two tables in
-Database, one table stores the actual indent data and other stores a log of operation made by the user serving as audit
-log.
-285 @RequestMapping(value = "/updateBranchIndentAtMaker", method = RequestMethod.POST)
-286 public ResponseEntity<?> updateBranchIndentAfterCurrencyReceivedAtMaker(@RequestBody
-IndentsMarkedAsReceivedDTO indentRequest, HttpServletRequest request)
-287 {
-288
-289 return branchMakerService.updateBranchIndentAfterCurrencyReceivedAtMaker(indentRequest,request);
-Sink Details
-Sink: org.springframework.http.ResponseEntity.ok()
-Enclosing Method: updateBranchIndentAfterCurrencyReceivedAtMaker()
-File: src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java:371
-Taint Flags: HTML_ENCODE, POORVALIDATION, PRIMARY_KEY,
-VALIDATED_HTTP_PARAMETER_POLLUTION, WEB, XSS
-368 String safeIndentID = Encode.forHtml(indentRequest.getIndentID());
-369
-370 if(!validReceivedDate){
-371 return ResponseEntity.ok(new HashMap<>().put("applicationReturnStatusMessage", "Cannot update the indent :" + safeIndentID + " :
-Currency RECEIVED DATE should be ON or AFTER Currency REQUESTED DATE"));
-Jul 15, 2026, 6:31 AM
-© Copyright [2008-2026] Micro Focus or one of its affiliates.
-63
-Cross-Site Scripting: Poor Validation Low
-URL: null
-src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
-371 (Cross-Site Scripting: Poor Validation) Low
-372 }
-373
-374 return ResponseEntity.ok(new HashMap<>().put("applicationReturnStatusMessage", "Cannot update the indent :" + safeIndentID));
+@Repository
+public interface IndentsBranchDetailsRepository extends JpaRepository<BranchIndentBranchList, Long>
+{
+    @Query("SELECT bi.emailId FROM BranchIndentBranchList bi where bi.branchCode = :bcode")
+    String getBranchDetails(@Pattern(regexp = "^\\d+$", message = "bcode must contain numbers only") @Param("bcode") String bcode,@Pattern(regexp = "^\\d+$", message = "user must contain numbers only") @Param("user") String user);
+
+
+}
+
+@Valid
+    public String getBranchEmail(@Pattern(regexp = "^\\d+$", message = "bcode must contain numbers only") String bcode, @Pattern(regexp = "^\\d+$", message = "user must contain numbers only") String user) throws NullPointerException
+    {
+        try {
+            if(bcode.matches("^[0-9]+$") && user.matches("^[0-9]+$")){
+            String branchEmail = indentsBranchDetailsRepository.getBranchDetails(bcode,user);
+            return org.owasp.encoder.Encode.forHtml(branchEmail);}
+            else{
+                return org.owasp.encoder.Encode.forHtml("");
+            }
+        }
+
+@GetMapping("/getBranchEmail")
+    @Valid
+    public String getBranchEmail(@Pattern(regexp = "^\\d+$", message = "bcode must contain numbers only") @RequestParam("bcode") String bcode) throws NullPointerException
+    {
+        String user = currentUser.getPfId();
+        String userBCode = currentUser.getBranchCode();
+        if(userBCode.matches("^[0-9]+$") && user.matches("^[0-9]+$")){
+        return indentService.getBranchEmail(userBCode,user);}
+        else{
+            return "";
+        }
+
+    }
