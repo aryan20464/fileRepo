@@ -1,61 +1,37 @@
-package in.co.sbi.rfx.indents.validation;
-
-import jakarta.validation.Constraint;
-import jakarta.validation.Payload;
-import jakarta.validation.constraints.Pattern;
-import java.lang.annotation.*;
-
-@Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@Pattern(regexp = "^\\d+$", message = "must contain numbers only")
-@Constraint(validatedBy = {})
-public @interface NumericCode {
-    String message() default "must contain numbers only";
-    Class<?>[] groups() default {};
-    Class<? extends Payload>[] payload() default {};
-}
-
-
-
-package in.co.sbi.rfx.indents.validation;
-
-import jakarta.validation.Constraint;
-import jakarta.validation.Payload;
-import jakarta.validation.constraints.Pattern;
-import java.lang.annotation.*;
-
-// For fields like indentID that may be alphanumeric (adjust regex to your actual indent ID format)
-@Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@Pattern(regexp = "^[A-Za-z0-9_-]+$", message = "must be a valid identifier")
-@Constraint(validatedBy = {})
-public @interface SafeIdentifier {
-    String message() default "must be a valid identifier";
-    Class<?>[] groups() default {};
-    Class<? extends Payload>[] payload() default {};
-}
-
-
-
-
-package in.co.sbi.rfx.indents.exception;
-
-import jakarta.validation.ConstraintViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import java.util.HashMap;
-import java.util.Map;
-
-@ControllerAdvice
-public class ValidationExceptionHandler {
-
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Map<String, String>> handleConstraintViolation(ConstraintViolationException ex) {
-        Map<String, String> body = new HashMap<>();
-        body.put("applicationReturnStatusMessage", "Invalid request parameters");
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
-    }
-}
+Access Control: Database Low
+URL: null
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+94 (Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: saveBranchIndent(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.saveBranch
+Indent
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:258
+URL: null
+255
+256 //This is used to save the data entered by branch maker while trying to raise an indent. The data is stored in two
+tables in Database, one table stores the actual indent data and other stores a log of operation made by the user
+serving as audit log.
+257 @RequestMapping(value = "/saveBranchIndent", method = RequestMethod.POST, headers =
+"Accept=application/json")
+258 public ResponseEntity<?> saveBranchIndent(@Valid @RequestBody IndentsRequestDTO indentRequest,
+HttpServletRequest request)
+259 {
+260 return branchMakerService.saveBranchIndent(indentRequest,request);
+261 }
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchDetailsRepository.getCircleCode()
+Enclosing Method: saveBranchIndent()
+File: src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java:94
+Taint Flags: WEB, XSS
+91 String userID = currentUser.getPfId();
+92 String branchCode = indentRequest.getBcode();
+93 String nextIndentIDToBeAllotted = getMaxBranchValue(branchCode);
+94 String circleCodeLocal = branchIndentBranchList.getCircleCode(String.valueOf(branchCode));
+95 switch(circleCodeLocal.length())
+96 {
+97 case 1:
