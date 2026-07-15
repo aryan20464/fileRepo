@@ -1,35 +1,64 @@
-Access Control: Database Low
-URL: null
-src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
-109 (Access Control: Database) Low
-Source Details
-Source: saveBranchIndent(0)
-From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.saveBranch
-Indent
-File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
-ler.java:259
-URL: null
-256
-257 //This is used to save the data entered by branch maker while trying to raise an indent. The data is stored in two
-tables in Database, one table stores the actual indent data and other stores a log of operation made by the user
-serving as audit log.
-258 @RequestMapping(value = "/saveBranchIndent", method = RequestMethod.POST, headers =
-"Accept=application/json")
-259 public ResponseEntity<?> saveBranchIndent(@Valid @RequestBody IndentsRequestDTO indentRequest,
-HttpServletRequest request)
-260 {
-261 return branchMakerService.saveBranchIndent(indentRequest,request);
-262 }
-Sink Details
-Sink: in.co.sbi.rfx.indents.repository.IndentsBranchVendorDetailsRepository.findIDByBranchName()
-Enclosing Method: saveBranchIndent()
-File: src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java:109
-Taint Flags: WEB, XSS
-106 }
-107 for (IndentsDTO entry : indentRequest.getEntries()) {
-108 String vendorBranch = entry.getVendor_branch();
-109 BranchIndentVendorDetails branchIndentVendorDetails =
-indentsBranchVendorDetailsRepository.findIDByBranchName(vendorBranch.trim());
-110
-111 BranchIndent tempBranchIndentVariable = BranchIndent.builder()
-112 .branchCode(branchCode)
+package in.co.sbi.rfx.indents.dto;
+
+import in.co.sbi.rfx.indents.validation.EmailIdentifier;
+import in.co.sbi.rfx.indents.validation.NumericCode;
+import in.co.sbi.rfx.indents.validation.SafeIdentifier;
+import jakarta.validation.Valid;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Valid
+public class IndentsDTO {
+    @NumericCode
+    private int currency;
+    @SafeIdentifier
+    private String currency_mode;
+    @SafeIdentifier
+    private String vendor_name;
+    @SafeIdentifier
+    private String exchange;
+    @EmailIdentifier
+    private String vendor_email;
+    @SafeIdentifier
+    private String vendor_branch;
+
+    // Constructors, Getters, and Setters
+    public IndentsDTO() {}
+}
+
+package in.co.sbi.rfx.indents.dto;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import in.co.sbi.rfx.indents.validation.EmailIdentifier;
+import in.co.sbi.rfx.indents.validation.NumericCode;
+import in.co.sbi.rfx.indents.validation.SafeIdentifier;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+@Getter
+@Setter
+public class IndentsRequestDTO {
+    @NumericCode
+    private String bcode;
+    @EmailIdentifier
+    private String branchmail;
+    @SafeIdentifier
+    private String branchname;
+    private boolean declaration_check;
+    @SafeIdentifier
+    private String request_date;
+    @JsonIgnore
+    private int makercode;
+    @SafeIdentifier
+    private String makerName;
+    @NumericCode
+    private int status;
+    @Valid
+    private List<IndentsDTO> entries;
+}
