@@ -1,173 +1,21 @@
-package in.co.sbi.rfx.indents.components;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.idea.rforexjwtcommonlib.services.CommonService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import jakarta.servlet.*;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-@Component
-public class ClientIpLoggingFilter implements Filter {
-
-    private static final Logger sLogger = LoggerFactory.getLogger(ClientIpLoggingFilter.class);
-
-    @Autowired
-    private CommonService commonService;
-
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
-
-        String clientIp = httpRequest.getHeader("X-Forwarded-For");
-        if (clientIp == null || clientIp.isEmpty()) {
-            clientIp = httpRequest.getRemoteAddr();
-        } else {
-            clientIp = clientIp.split(",")[0].trim();
-        }
-
-        String header = httpRequest.getHeader("Authorization");
-        String secretKey;
-
-        if (header != null && header.startsWith("Bearer ")) {
-            String token = header.substring(7);
-
-            try {
-
-                HashMap<String, String> staticData = commonService.getStaticData(new String[]{"JWT"});
-                secretKey = staticData.getOrDefault("SECRET_KEY_JWT", ""); // if static data contains the key returns the value or else returns empty string
-
-                Claims claims = Jwts.parser()
-                        .setSigningKey(secretKey.getBytes())
-                        .parseClaimsJws(token)
-                        .getBody();
-
-                extractUserInfo(claims);
-
-            } catch (ExpiredJwtException e) {
-                sLogger.warn("Token expired");
-                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
-                return;
-            } catch (JwtException | IllegalArgumentException e) {
-                sLogger.warn("Token verification failed");
-                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
-                return;
-            }
-        }
-
-        try {
-            MDC.put("clientIp", "IP-" + clientIp);
-            chain.doFilter(request, response);
-        } finally {
-            MDC.remove("clientIp");
-            MDC.remove("user_info");
-            UserContextHolder.clear();
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void extractUserInfo(Claims claims) {
-        try {
-            Map<String, Object> user = claims.get("user", Map.class);
-
-            String pfId = (user != null) ? String.valueOf(user.getOrDefault("pfId", "unknown")) : "unknown";
-            String branch = (user != null) ? String.valueOf(user.getOrDefault("branchCode", "unknown")) : "unknown";
-
-            MDC.put("user_info", String.format("PF-%s|BCODE-%s", pfId, branch));
-            UserContextHolder.set(new UserContext(pfId, branch));
-
-        } catch (Exception e) {
-            MDC.put("user_info", "token-un-parsable");
-            UserContextHolder.set(new UserContext("unknown", "unknown"));
-        }
-    }
-} 
-
-package in.co.sbi.rfx.indents.components;
-
-import org.springframework.stereotype.Component;
-
-@Component
-public class CurrentUser {
-
-    public String getPfId() {
-
-        UserContext context =
-                UserContextHolder.get();
-
-        return context != null
-                ? context.getPfId()
-                : "unknown";
-    }
-
-    public String getBranchCode() {
-
-        UserContext context =
-                UserContextHolder.get();
-
-        return context != null
-                ? context.getBranchCode()
-                : "unknown";
-    }
-
-    public UserContext getUserContext() {
-        return UserContextHolder.get();
-    }
-}
-package in.co.sbi.rfx.indents.components;
-
-import lombok.Getter;
-
-@Getter
-public class UserContext {
-
-    private final String pfId;
-    private final String branchCode;
-
-    public UserContext(String pfId, String branchCode) {
-        this.pfId = pfId;
-        this.branchCode = branchCode;
-    }
-
-}
-
-
-
-package in.co.sbi.rfx.indents.components;
-
-public final class UserContextHolder {
-
-    private static final ThreadLocal<UserContext> USER_CONTEXT =
-            new ThreadLocal<>();
-
-    private UserContextHolder() {
-    }
-
-    public static void set(UserContext context) {
-        USER_CONTEXT.set(context);
-    }
-
-    public static UserContext get() {
-        return USER_CONTEXT.get();
-    }
-
-    public static void clear() {
-        USER_CONTEXT.remove();
-    }
-}
+Build Misconfiguration: External Maven Dependency
+Repository
+1 0 0 1
+Total 1 0 0 1
+Build Misconfiguration: External Maven Dependency Repository Low
+Package: <none>
+pom.xml, line 4 (Build Misconfiguration: External Maven Dependency Repository) Low
+Issue Details
+Kingdom: Environment
+Scan Engine: SCA (Configuration)
+Sink Details
+Sink: //project/repositories
+File: pom.xml:4
+Taint Flags:
+1 <?xml version="1.0" encoding="UTF-8"?>
+2 <project xmlns="http://maven.apache.org/POM/4.0.0"
+3 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+4 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+5 <modelVersion>4.0.0</modelVersion>
+6
+7 <parent>
