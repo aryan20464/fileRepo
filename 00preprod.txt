@@ -34,3 +34,32 @@ indentsBranchVendorDetailsRepository.findIDByBranchNameFix(vendorBranch,userID);
 110
 111 BranchIndent tempBranchIndentVariable = BranchIndent.builder()
 112 .branchCode(branchCode)
+
+
+@Query("SELECT bi FROM BranchIndentVendorDetails bi where bi.branchName = :branch and bi.userID = :user")
+    BranchIndentVendorDetails findIDByBranchNameFix(@Param("branch") String branch, @Param("user") String user );
+
+@Transactional
+    public ResponseEntity<?> saveBranchIndent(@Valid IndentsRequestDTO indentRequest, HttpServletRequest request)
+    {
+        try{
+            String userID = currentUser.getPfId();
+            //String branchCode = indentRequest.getBcode();
+            String branchCode = currentUser.getBranchCode();
+            String nextIndentIDToBeAllotted = getMaxBranchValue(branchCode);
+            String circleCodeLocal = branchIndentBranchList.getCircleCode(String.valueOf(branchCode));
+            switch(circleCodeLocal.length())
+            {
+                case 1:
+                    circleCodeLocal = "00"+circleCodeLocal;break;
+                case 2:
+                    circleCodeLocal = "0"+circleCodeLocal;break;
+                case 3:
+                    break;
+                default:
+                    circleCodeLocal = "";
+            }
+            for (IndentsDTO entry : indentRequest.getEntries()) {
+                String vendorBranch = entry.getVendor_branch().trim();
+                BranchIndentVendorDetails branchIndentVendorDetails = indentsBranchVendorDetailsRepository.findIDByBranchNameFix(vendorBranch,userID);
+
