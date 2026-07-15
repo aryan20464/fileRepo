@@ -1,34 +1,1896 @@
-@Repository
-public interface IndentsBranchDetailsRepository extends JpaRepository<BranchIndentBranchList, Long>
-{
-    @Query("SELECT bi.emailId FROM BranchIndentBranchList bi where bi.branchCode = :bcode")
-    String getBranchDetails(@Pattern(regexp = "^\\d+$", message = "bcode must contain numbers only") @Param("bcode") String bcode,@Pattern(regexp = "^\\d+$", message = "user must contain numbers only") @Param("user") String user);
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 116
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: deleteIndentByID(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.deleteInde
+ntByID
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:245
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+24
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 116
+(Access Control: Database) Low
+242
+243 //Delete indent using its id.
+244 @DeleteMapping("/deleteIndentByID")
+245 public void deleteIndentByID(@RequestParam("iid") Long iid)
+246 {
+247
+248 indentService.deleteIndentByID(iid);
+Sink Details
+Sink: org.springframework.data.repository.CrudRepository.deleteById()
+Enclosing Method: deleteIndentByID()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:116
+Taint Flags: NUMBER, WEB
+113
+114 public void deleteIndentByID(Long id)
+115 {
+116 indentRepo.deleteById(id);
+117 }
+118
+119 public List<BranchIndent> findPendingForApprovalAtChecker(String bcode)
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 265
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: showCircleIndents(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.showCircle
+Indents
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:159
+156
+157 //Get status indents raised by branches in a specific circle for showing in dashboard
+158 @GetMapping("/getCircleIndents")
+159 public List<BcodeSummary> showCircleIndents(@RequestParam("ccode") String
+ccode,@RequestParam("pfid") String pfid)
+160 {
+161 return indentService.showCircleIndents(ccode,pfid);
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+25
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 265
+(Access Control: Database) Low
+162 }
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsCircleDetailsRepository.getIndividualCircleDetails()
+Enclosing Method: getBranchNamesListOfSpecificCircle()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:265
+Taint Flags: WEB, XSS
+262 {
+263 //System.out.println("ccode"+ccode);
+264 //System.out.println("individualcircledetails "+indentsCircleDetailsRepository.getIndividualCircleDetails(ccode).toString());
+265 String circleID = String.valueOf(indentsCircleDetailsRepository.getIndividualCircleDetails(ccode).getCircleId());
+266 //List<Object[]> branchNamesObject = indentsBranchDetailsRepository.getBranchNamesListBasedOnCircleCode(ccode);
+267 List<Object[]> branchNamesObject = indentsBranchDetailsRepository.getBranchNamesListBasedOnCircleCode(circleID);
+268 return branchNamesObject.stream().collect(Collectors.toMap(row-> ((String)row[0]),row -> (String) row[1]));
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 933
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: fetchMailsSentOnCheckerApprovalToBranchAndVendors(0)
+From: in.co.sbi.rfx.indents.service.indents.IndentServiceImpl.fetchMailsSentOnCheck
+erApprovalToBranchAndVendors
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:92
+9
+926 }
+927 }
+928
+929 public List<BranchIndentMails>
+fetchMailsSentOnCheckerApprovalToBranchAndVendors(@RequestParam("bcode") String bcode)
+930 {
+931 try
+932 {
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchIndentsMailStatusRepository.getBranchEmailList()
+Enclosing Method: fetchMailsSentOnCheckerApprovalToBranchAndVendors()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:933
+Taint Flags: WEB, XSS
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+26
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 933
+(Access Control: Database) Low
+930 {
+931 try
+932 {
+933 return indentsBranchIndentsMailStatusRepositorySearch.getBranchEmailList(bcode);
+934 }
+935 catch(Exception ex)
+936 {
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 274
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: getVendorMappingsOfBranchData(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.getVendorM
+appingsOfBranchData
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:101
+98 }
+99
+100 @GetMapping("/getBranchVendorMappingData")
+101 public Map<String, List<Map<String, String>>>
+getVendorMappingsOfBranchData(@RequestParam("bcode") String bcode)
+102 {
+103
+104 return indentService.getVendorMappingsOfBranchDataAsMap(bcode);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchDetailsRepository.getBranchAddressDetails()
+Enclosing Method: getBranchDetailsBasedOnBranchCode()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:274
+Taint Flags: WEB, XSS
+271
+272 public BranchIndentBranchList getBranchDetailsBasedOnBranchCode(@Param("bcode") String bcode)
+273 {
+274 return indentsBranchDetailsRepository.getBranchAddressDetails(bcode);
+275
+276 }
+277
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+27
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 101
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: showBranchPendingRequests(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.showBranch
+PendingRequests
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:211
+208 }
+209
+210 @GetMapping("/getPendingIndentsAtBranch")
+211 public int showBranchPendingRequests(@RequestParam("bcode") Integer bcode)
+212 {
+213
+214 return indentService.getPendingRequestsAtBranch(bcode);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsRepository.findPendingRequstsAtBranch()
+Enclosing Method: getPendingRequestsAtBranch()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:101
+Taint Flags: NUMBER, WEB
+98
+99 public int getPendingRequestsAtBranch(@Param("bcode") Integer bcode)
+100 {
+101 return indentRepo.findPendingRequstsAtBranch(bcode);
+102 }
+103
+104 public List<BranchIndent> getIndentsByIndentID(@Param("iid") String iid)
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 274
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: getUserDetailsOfSpecificLoggedInUserRFM(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.getUserDet
+ailsOfSpecificLoggedInUserRFM
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+28
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 274
+(Access Control: Database) Low
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:145
+142
+143 //Get necessary details of a specific user. Used to store in an object once during login and use them whenever
+needed, specific to RFM Module.
+144 @GetMapping("/getUserDetailsByIDRfm")
+145 public UserResponseLoginRFM getUserDetailsOfSpecificLoggedInUserRFM(@RequestParam("bcode")
+String bcode) {
+146
+147 return indentService.getUserDetailsOfSpecificLoggedInUserRFM(bcode);
+148
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchDetailsRepository.getBranchAddressDetails()
+Enclosing Method: getBranchDetailsBasedOnBranchCode()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:274
+Taint Flags: WEB, XSS
+271
+272 public BranchIndentBranchList getBranchDetailsBasedOnBranchCode(@Param("bcode") String bcode)
+273 {
+274 return indentsBranchDetailsRepository.getBranchAddressDetails(bcode);
+275
+276 }
+277
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 95 (Access
+Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: showCircleIndentsAtGMUK(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.showCircle
+IndentsAtGMUK
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:166
+163
+164 //Get status indents raised by branches in a specific circle for showing in dashboard
+165 @GetMapping("/getCircleIndentsAtGMUK")
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+29
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 95 (Access
+Control: Database) Low
+166 public List<BcodeSummary> showCircleIndentsAtGMUK(@RequestParam("ccode") String ccode)
+167 {
+168
+169 return indentService.showCircleIndentsAtGMUK(ccode);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsRepository.findByCircleCode()
+Enclosing Method: getIndentsByCircleCode()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:95
+Taint Flags: WEB, XSS
+92 public List<BranchIndent> getIndentsByCircleCode(@Param("ccode") String ccode)
+93 {
+94 String pfid = currentUser.getPfId();
+95 return indentRepo.findByCircleCode(ccode,pfid);
+96 //return branchIndents;
+97 }
+98
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 712
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: showCircleIndentsTemp(1)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.showCircle
+IndentsTemp
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:152
+149 }
+150
+151 @GetMapping("/getCircleIndentsTest")
+152 public void showCircleIndentsTemp(@RequestParam("ccode") String ccode,@RequestParam("pfid") String
+pfid)
+153 {
+154 indentService.showCircleIndentsTemp(ccode,pfid);
+155 }
+Sink Details
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+30
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 712
+(Access Control: Database) Low
+Sink:
+in.co.sbi.rfx.indents.repository.IndentsBranchMailDetailsRepository.findCircleMappingDetailsOfCircleUserUsingCircleCode()
+Enclosing Method: showCircleIndentsTemp()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:712
+Taint Flags: WEB, XSS
+709
+710 public void showCircleIndentsTemp(String ccode,String pfid)
+711 {
+712 List<BranchIndentMailMapping> branchIndentMailMappingList =
+indentsBranchMailDetailsRepository.findCircleMappingDetailsOfCircleUserUsingCircleCode(pfid,ccode);
+713 //System.out.println("findCircleMappingDetailsOfCircleUserUsingCircleCode");
+714
+715
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 95 (Access
+Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: showCircleIndents(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.showCircle
+Indents
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:159
+156
+157 //Get status indents raised by branches in a specific circle for showing in dashboard
+158 @GetMapping("/getCircleIndents")
+159 public List<BcodeSummary> showCircleIndents(@RequestParam("ccode") String
+ccode,@RequestParam("pfid") String pfid)
+160 {
+161 return indentService.showCircleIndents(ccode,pfid);
+162 }
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsRepository.findByCircleCode()
+Enclosing Method: getIndentsByCircleCode()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:95
+Taint Flags: WEB, XSS
+92 public List<BranchIndent> getIndentsByCircleCode(@Param("ccode") String ccode)
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+31
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 95 (Access
+Control: Database) Low
+93 {
+94 String pfid = currentUser.getPfId();
+95 return indentRepo.findByCircleCode(ccode,pfid);
+96 //return branchIndents;
+97 }
+98
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 717
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: showCircleIndentsTemp(1)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.showCircle
+IndentsTemp
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:152
+149 }
+150
+151 @GetMapping("/getCircleIndentsTest")
+152 public void showCircleIndentsTemp(@RequestParam("ccode") String ccode,@RequestParam("pfid") String
+pfid)
+153 {
+154 indentService.showCircleIndentsTemp(ccode,pfid);
+155 }
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchMailDetailsRepository.findCircleMappingDetailsOfCircleUser()
+Enclosing Method: showCircleIndentsTemp()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:717
+Taint Flags: WEB, XSS
+714
+715
+716 //System.out.println("findCircleMappingDetailsOfCircleUser");
+717 List<BranchIndentMailMapping> branchIndentMailMappingList1 =
+indentsBranchMailDetailsRepository.findCircleMappingDetailsOfCircleUser(pfid);
+718
+719 //System.out.println("findCircleMappingDetails");
+720 List<BranchIndentMailMapping> branchIndentMailMappingList2 =
+indentsBranchMailDetailsRepository.findCircleMappingDetails(ccode);
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+32
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 717
+(Access Control: Database) Low
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 712
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: showCircleIndentsTemp(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.showCircle
+IndentsTemp
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:152
+149 }
+150
+151 @GetMapping("/getCircleIndentsTest")
+152 public void showCircleIndentsTemp(@RequestParam("ccode") String ccode,@RequestParam("pfid") String
+pfid)
+153 {
+154 indentService.showCircleIndentsTemp(ccode,pfid);
+155 }
+Sink Details
+Sink:
+in.co.sbi.rfx.indents.repository.IndentsBranchMailDetailsRepository.findCircleMappingDetailsOfCircleUserUsingCircleCode()
+Enclosing Method: showCircleIndentsTemp()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:712
+Taint Flags: WEB, XSS
+709
+710 public void showCircleIndentsTemp(String ccode,String pfid)
+711 {
+712 List<BranchIndentMailMapping> branchIndentMailMappingList =
+indentsBranchMailDetailsRepository.findCircleMappingDetailsOfCircleUserUsingCircleCode(pfid,ccode);
+713 //System.out.println("findCircleMappingDetailsOfCircleUserUsingCircleCode");
+714
+715
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 274
+(Access Control: Database) Low
+Issue Details
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+33
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 274
+(Access Control: Database) Low
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: getBranchNameDetails(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.getBranchN
+ameDetails
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:79
+76
+77 //Get details of a specific branch
+78 @GetMapping("/getBranchNameDetails")
+79 public BranchDetails getBranchNameDetails(@RequestParam("bcode") String bcode) throws
+NullPointerException
+80 {
+81 if(bcode.matches("^[0-9]+$"))
+82 {
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchDetailsRepository.getBranchAddressDetails()
+Enclosing Method: getBranchDetailsBasedOnBranchCode()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:274
+Taint Flags: WEB, XSS
+271
+272 public BranchIndentBranchList getBranchDetailsBasedOnBranchCode(@Param("bcode") String bcode)
+273 {
+274 return indentsBranchDetailsRepository.getBranchAddressDetails(bcode);
+275
+276 }
+277
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 121
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: getPendingEntriesAtChecker(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.getPending
+EntriesAtChecker
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+34
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 121
+(Access Control: Database) Low
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:219
+216 }
+217
+218 @GetMapping("/getPendingEntriesAtChecker")
+219 public List<BranchIndent> getPendingEntriesAtChecker(@RequestParam("bcode") String bcode)
+220 {
+221
+222 return indentService.findPendingForApprovalAtChecker(bcode);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsRepository.findPendingForApprovalAtChecker()
+Enclosing Method: findPendingForApprovalAtChecker()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:121
+Taint Flags: WEB, XSS
+118
+119 public List<BranchIndent> findPendingForApprovalAtChecker(String bcode)
+120 {
+121 return indentRepo.findPendingForApprovalAtChecker(bcode);
+122 }
+123
+124 public Map<String, String> findCurrencyDetails()
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 605
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: showCircleIndents(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.showCircle
+Indents
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:159
+156
+157 //Get status indents raised by branches in a specific circle for showing in dashboard
+158 @GetMapping("/getCircleIndents")
+159 public List<BcodeSummary> showCircleIndents(@RequestParam("ccode") String
+ccode,@RequestParam("pfid") String pfid)
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+35
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 605
+(Access Control: Database) Low
+160 {
+161 return indentService.showCircleIndents(ccode,pfid);
+162 }
+Sink Details
+Sink:
+in.co.sbi.rfx.indents.repository.IndentsBranchMailDetailsRepository.findCircleMappingDetailsOfCircleUserUsingCircleCode()
+Enclosing Method: showCircleIndents()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:605
+Taint Flags: WEB, XSS
+602 }
+603
+604 Map<String, String> actualBranchListOfCircle = getBranchNamesListOfSpecificCircle(ccode);
+605 List<BranchIndentMailMapping> branchIndentMailMappingList =
+indentsBranchMailDetailsRepository.findCircleMappingDetailsOfCircleUserUsingCircleCode(pfid,ccode);
+606
+607 List<String> branchCodesInMapping = branchIndentMailMappingList.stream()
+608 .map(mapping -> mapping.getBranchList().getBranchCode())
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 720
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: showCircleIndentsTemp(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.showCircle
+IndentsTemp
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:152
+149 }
+150
+151 @GetMapping("/getCircleIndentsTest")
+152 public void showCircleIndentsTemp(@RequestParam("ccode") String ccode,@RequestParam("pfid") String
+pfid)
+153 {
+154 indentService.showCircleIndentsTemp(ccode,pfid);
+155 }
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+36
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 720
+(Access Control: Database) Low
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchMailDetailsRepository.findCircleMappingDetails()
+Enclosing Method: showCircleIndentsTemp()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:720
+Taint Flags: WEB, XSS
+717 List<BranchIndentMailMapping> branchIndentMailMappingList1 =
+indentsBranchMailDetailsRepository.findCircleMappingDetailsOfCircleUser(pfid);
+718
+719 //System.out.println("findCircleMappingDetails");
+720 List<BranchIndentMailMapping> branchIndentMailMappingList2 =
+indentsBranchMailDetailsRepository.findCircleMappingDetails(ccode);
+721
+722 }
+723
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 316
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: showCircleIndentsAtGMUK(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.showCircle
+IndentsAtGMUK
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:166
+163
+164 //Get status indents raised by branches in a specific circle for showing in dashboard
+165 @GetMapping("/getCircleIndentsAtGMUK")
+166 public List<BcodeSummary> showCircleIndentsAtGMUK(@RequestParam("ccode") String ccode)
+167 {
+168
+169 return indentService.showCircleIndentsAtGMUK(ccode);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchMailDetailsRepository.getBranchUserMailMappingDetails()
+Enclosing Method: getDistinctMailMappingBranchCodes()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:316
+Taint Flags: WEB, XSS
+313
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+37
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 316
+(Access Control: Database) Low
+314 public List<String> getDistinctMailMappingBranchCodes(@Param("ccode") String ccode)
+315 {
+316 return indentsBranchMailDetailsRepository.getBranchUserMailMappingDetails(ccode);
+317 }
+318
+319 public UserResponseLoginRFM getUserDetailsOfSpecificLoggedInUserRFM(@Param("bcode") String bcode){
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 106
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: getIndentsByIndentID(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.getIndents
+ByIndentID
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:236
+233
+234 //Get Indents details using indent id.
+235 @GetMapping("/getIndentsByIndentID")
+236 public List<BranchIndent> getIndentsByIndentID(@RequestParam("iid") String iid)
+237 {
+238
+239 return indentService.getIndentsByIndentID(iid);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsRepository.findByIndentID()
+Enclosing Method: getIndentsByIndentID()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:106
+Taint Flags: WEB, XSS
+103
+104 public List<BranchIndent> getIndentsByIndentID(@Param("iid") String iid)
+105 {
+106 return indentRepo.findByIndentID(iid);
+107 }
+108
+109 public List<BranchIndent> getIndentsByCurrType(@Param("cur") String cur)
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+38
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 946
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: getBranchEmail(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.getBranchE
+mail
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:93
+90
+91 //Get branch email for when checking for validation during email service.
+92 @GetMapping("/getBranchEmail")
+93 public String getBranchEmail(@Pattern(regexp = "^\\d+$", message = "bcode must contain numbers only")
+@RequestParam("bcode") String bcode) throws NullPointerException
+94 {
+95 String user = currentUser.getPfId();
+96 String userBCode = currentUser.getBranchCode();
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchDetailsRepository.getBranchDetails()
+Enclosing Method: getBranchEmail()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:946
+Taint Flags: WEB, XSS
+943 public String getBranchEmail(@Pattern(regexp = "^\\d+$", message = "bcode must contain numbers only") String bcode,
+@Pattern(regexp = "^\\d+$", message = "user must contain numbers only") String user) throws NullPointerException
+944 {
+945 try {
+946 String branchEmail = indentsBranchDetailsRepository.getBranchDetails(bcode,user);
+947 return org.owasp.encoder.Encode.forHtml(branchEmail);
+948 }
+949 catch(RfmIndentsModuleException ex)
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 265
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: showCircleIndentsAtGMUK(0)
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+39
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 265
+(Access Control: Database) Low
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.showCircle
+IndentsAtGMUK
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:166
+163
+164 //Get status indents raised by branches in a specific circle for showing in dashboard
+165 @GetMapping("/getCircleIndentsAtGMUK")
+166 public List<BcodeSummary> showCircleIndentsAtGMUK(@RequestParam("ccode") String ccode)
+167 {
+168
+169 return indentService.showCircleIndentsAtGMUK(ccode);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsCircleDetailsRepository.getIndividualCircleDetails()
+Enclosing Method: getBranchNamesListOfSpecificCircle()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:265
+Taint Flags: WEB, XSS
+262 {
+263 //System.out.println("ccode"+ccode);
+264 //System.out.println("individualcircledetails "+indentsCircleDetailsRepository.getIndividualCircleDetails(ccode).toString());
+265 String circleID = String.valueOf(indentsCircleDetailsRepository.getIndividualCircleDetails(ccode).getCircleId());
+266 //List<Object[]> branchNamesObject = indentsBranchDetailsRepository.getBranchNamesListBasedOnCircleCode(ccode);
+267 List<Object[]> branchNamesObject = indentsBranchDetailsRepository.getBranchNamesListBasedOnCircleCode(circleID);
+268 return branchNamesObject.stream().collect(Collectors.toMap(row-> ((String)row[0]),row -> (String) row[1]));
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 605
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: showCircleIndents(1)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.showCircle
+Indents
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:159
+156
+157 //Get status indents raised by branches in a specific circle for showing in dashboard
+158 @GetMapping("/getCircleIndents")
+159 public List<BcodeSummary> showCircleIndents(@RequestParam("ccode") String
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+40
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 605
+(Access Control: Database) Low
+ccode,@RequestParam("pfid") String pfid)
+160 {
+161 return indentService.showCircleIndents(ccode,pfid);
+162 }
+Sink Details
+Sink:
+in.co.sbi.rfx.indents.repository.IndentsBranchMailDetailsRepository.findCircleMappingDetailsOfCircleUserUsingCircleCode()
+Enclosing Method: showCircleIndents()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:605
+Taint Flags: WEB, XSS
+602 }
+603
+604 Map<String, String> actualBranchListOfCircle = getBranchNamesListOfSpecificCircle(ccode);
+605 List<BranchIndentMailMapping> branchIndentMailMappingList =
+indentsBranchMailDetailsRepository.findCircleMappingDetailsOfCircleUserUsingCircleCode(pfid,ccode);
+606
+607 List<String> branchCodesInMapping = branchIndentMailMappingList.stream()
+608 .map(mapping -> mapping.getBranchList().getBranchCode())
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 89 (Access
+Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: showBranchIndents(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.showBranch
+Indents
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:70
+67
+68 //Get all the indents raised by a particular branch
+69 @GetMapping("/getBranchIndents")
+70 public List<BranchIndent> showBranchIndents(@RequestParam("bcode") String bcode)
+71 {
+72
+73 return indentService.getIndentsByBranchCode(bcode);
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+41
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 89 (Access
+Control: Database) Low
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsRepository.findByBranchCode()
+Enclosing Method: getIndentsByBranchCode()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:89
+Taint Flags: WEB, XSS
+86 public List<BranchIndent> getIndentsByBranchCode(@Param("bcode") String bcode)
+87 {
+88 String user = currentUser.getPfId();
+89 return indentRepo.findByBranchCode(bcode,user);
+90 }
+91
+92 public List<BranchIndent> getIndentsByCircleCode(@Param("ccode") String ccode)
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 111
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: getIndentsByCurrencyType(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.getIndents
+ByCurrencyType
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:227
+224 }
+225
+226 @GetMapping("/getIndentsByCurType")
+227 public List<BranchIndent> getIndentsByCurrencyType(@RequestParam("cur") String cur)
+228 {
+229
+230 return indentService.getIndentsByCurrType(cur);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsRepository.findByCurrencyType()
+Enclosing Method: getIndentsByCurrType()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:111
+Taint Flags: WEB, XSS
+108
+109 public List<BranchIndent> getIndentsByCurrType(@Param("cur") String cur)
+110 {
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+42
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 111
+(Access Control: Database) Low
+111 return indentRepo.findByCurrencyType(cur);
+112 }
+113
+114 public void deleteIndentByID(Long id)
+URL: null
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+200 (Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: editBranchIndentAtMaker(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.editBranch
+IndentAtMaker
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:272
+URL: null
+269
+270 //This is used to save the data edited by branch maker against already raised indent. This operation is possible
+before checker approval. The data is stored in two tables in Database, one table stores the actual indent data and
+other stores a log of operation made by the user serving as audit log.
+271 @RequestMapping(value = "/editBranchIndentAtMaker", method = RequestMethod.POST)
+272 public ResponseEntity<?> editBranchIndentAtMaker(@RequestBody IndentsUpdateDTO indentRequest,
+HttpServletRequest request)
+273 {
+274
+275 return branchMakerService.editBranchIndentAtMaker(indentRequest,request);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchVendorDetailsRepository.findIDByBranchName()
+Enclosing Method: editBranchIndentAtMaker()
+File: src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java:200
+Taint Flags: WEB, XSS
+197 String indentBCode = currentUser.getBranchCode();
+198 BranchIndent existingBranchIndent = editRepo.findByCustomId(entry.getId(),indentBCode);
+199 String vendorBranch = entry.getVendor_branch();
+200 BranchIndentVendorDetails branchIndentVendorDetails =
+indentsBranchVendorDetailsRepository.findIDByBranchName(vendorBranch.trim());
+201 int vendorMapperID = branchIndentVendorDetails.getVendorBranchID();
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+43
+Access Control: Database Low
+URL: null
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+200 (Access Control: Database) Low
+202 if(indentRequest.getIndentID().equals(existingBranchIndent.getIndentID()))
+203 {
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+238 (Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: editBranchIndentAtMaker(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.editBranch
+IndentAtMaker
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:272
+URL: null
+269
+270 //This is used to save the data edited by branch maker against already raised indent. This operation is possible
+before checker approval. The data is stored in two tables in Database, one table stores the actual indent data and
+other stores a log of operation made by the user serving as audit log.
+271 @RequestMapping(value = "/editBranchIndentAtMaker", method = RequestMethod.POST)
+272 public ResponseEntity<?> editBranchIndentAtMaker(@RequestBody IndentsUpdateDTO indentRequest,
+HttpServletRequest request)
+273 {
+274
+275 return branchMakerService.editBranchIndentAtMaker(indentRequest,request);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchVendorDetailsRepository.findIDByBranchName()
+Enclosing Method: editBranchIndentAtMaker()
+File: src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java:238
+Taint Flags: WEB, XSS
+235 else
+236 {
+237 String vendorBranch = entry.getVendor_branch();
+238 BranchIndentVendorDetails branchIndentVendorDetails =
+indentsBranchVendorDetailsRepository.findIDByBranchName(vendorBranch.trim());
+239 int vendorMapperID = branchIndentVendorDetails.getVendorBranchID();
+240 BranchIndent branchIndentTemp = new BranchIndent();
+241 if("IN_PROGRESS".equals(branchIndentTemp.getOperationStatus()))
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+44
+Access Control: Database Low
+URL: null
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+91 (Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: saveBranchIndent(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.saveBranch
+Indent
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:263
+URL: null
+260
+261 //This is used to save the data entered by branch maker while trying to raise an indent. The data is stored in two
+tables in Database, one table stores the actual indent data and other stores a log of operation made by the user
+serving as audit log.
+262 @RequestMapping(value = "/saveBranchIndent", method = RequestMethod.POST, headers =
+"Accept=application/json")
+263 public ResponseEntity<?> saveBranchIndent(@RequestBody IndentsRequestDTO indentRequest,
+HttpServletRequest request)
+264 {
+265
+266 return branchMakerService.saveBranchIndent(indentRequest,request);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchDetailsRepository.getCircleCode()
+Enclosing Method: saveBranchIndent()
+File: src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java:91
+Taint Flags: WEB, XSS
+88 String userID = currentUser.getPfId();
+89 String branchCode = indentRequest.getBcode();
+90 String nextIndentIDToBeAllotted = getMaxBranchValue(branchCode);
+91 String circleCodeLocal = branchIndentBranchList.getCircleCode(String.valueOf(branchCode));
+92 switch(circleCodeLocal.length())
+93 {
+94 case 1:
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+181 (Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+45
+Access Control: Database Low
+URL: null
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+181 (Access Control: Database) Low
+Source Details
+Source: editBranchIndentAtMaker(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.editBranch
+IndentAtMaker
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:272
+URL: null
+269
+270 //This is used to save the data edited by branch maker against already raised indent. This operation is possible
+before checker approval. The data is stored in two tables in Database, one table stores the actual indent data and
+other stores a log of operation made by the user serving as audit log.
+271 @RequestMapping(value = "/editBranchIndentAtMaker", method = RequestMethod.POST)
+272 public ResponseEntity<?> editBranchIndentAtMaker(@RequestBody IndentsUpdateDTO indentRequest,
+HttpServletRequest request)
+273 {
+274
+275 return branchMakerService.editBranchIndentAtMaker(indentRequest,request);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchDetailsRepository.getCircleCode()
+Enclosing Method: editBranchIndentAtMaker()
+File: src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java:181
+Taint Flags: WEB, XSS
+178 String maker_ip = getClientIp(request);
+179 //List<BranchIndent> br1 = idRepo.findByIndentID(indentRequest.getIndentID());
+180 String branchCode = indentRequest.getBcode();
+181 String circleCodeLocal = branchIndentBranchList.getCircleCode(branchCode);
+182 switch(circleCodeLocal.length())
+183 {
+184 case 1:
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+105 (Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: saveBranchIndent(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.saveBranch
+Indent
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+46
+Access Control: Database Low
+URL: null
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+105 (Access Control: Database) Low
+ler.java:263
+URL: null
+260
+261 //This is used to save the data entered by branch maker while trying to raise an indent. The data is stored in two
+tables in Database, one table stores the actual indent data and other stores a log of operation made by the user
+serving as audit log.
+262 @RequestMapping(value = "/saveBranchIndent", method = RequestMethod.POST, headers =
+"Accept=application/json")
+263 public ResponseEntity<?> saveBranchIndent(@RequestBody IndentsRequestDTO indentRequest,
+HttpServletRequest request)
+264 {
+265
+266 return branchMakerService.saveBranchIndent(indentRequest,request);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchVendorDetailsRepository.findIDByBranchName()
+Enclosing Method: saveBranchIndent()
+File: src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java:105
+Taint Flags: WEB, XSS
+102 }
+103 for (IndentsDTO entry : indentRequest.getEntries()) {
+104 String vendorBranch = entry.getVendor_branch();
+105 BranchIndentVendorDetails branchIndentVendorDetails =
+indentsBranchVendorDetailsRepository.findIDByBranchName(vendorBranch.trim());
+106
+107 BranchIndent tempBranchIndentVariable = BranchIndent.builder()
+108 .branchCode(branchCode)
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+109 (Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: saveBranchIndent(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.saveBranch
+Indent
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:263
+URL: null
+260
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+47
+Access Control: Database Low
+URL: null
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+109 (Access Control: Database) Low
+261 //This is used to save the data entered by branch maker while trying to raise an indent. The data is stored in two
+tables in Database, one table stores the actual indent data and other stores a log of operation made by the user
+serving as audit log.
+262 @RequestMapping(value = "/saveBranchIndent", method = RequestMethod.POST, headers =
+"Accept=application/json")
+263 public ResponseEntity<?> saveBranchIndent(@RequestBody IndentsRequestDTO indentRequest,
+HttpServletRequest request)
+264 {
+265
+266 return branchMakerService.saveBranchIndent(indentRequest,request);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchDetailsRepository.getBranchAddressDetails()
+Enclosing Method: saveBranchIndent()
+File: src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java:109
+Taint Flags: WEB, XSS
+106
+107 BranchIndent tempBranchIndentVariable = BranchIndent.builder()
+108 .branchCode(branchCode)
+109 .branchName(branchIndentBranchList.getBranchAddressDetails(branchCode).getBranchName())
+110 .currencyType(entry.getExchange())
+111 .currencyMode(entry.getCurrency_mode())
+112 .requestedCurrencyValue(entry.getCurrency())
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+123 (Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: saveBranchIndent(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.saveBranch
+Indent
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:263
+URL: null
+260
+261 //This is used to save the data entered by branch maker while trying to raise an indent. The data is stored in two
+tables in Database, one table stores the actual indent data and other stores a log of operation made by the user
+serving as audit log.
+262 @RequestMapping(value = "/saveBranchIndent", method = RequestMethod.POST, headers =
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+48
+Access Control: Database Low
+URL: null
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+123 (Access Control: Database) Low
+"Accept=application/json")
+263 public ResponseEntity<?> saveBranchIndent(@RequestBody IndentsRequestDTO indentRequest,
+HttpServletRequest request)
+264 {
+265
+266 return branchMakerService.saveBranchIndent(indentRequest,request);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchDetailsRepository.getBranchAddressDetails()
+Enclosing Method: saveBranchIndent()
+File: src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java:123
+Taint Flags: WEB, XSS
+120 .makerIP(indentService.getClientIp(request))
+121 .indentID(nextIndentIDToBeAllotted)
+122 .indentStatus(1)
+123 .branchEmail(branchIndentBranchList.getBranchAddressDetails(branchCode).getEmailId())
+124 .circleCode(circleCodeLocal)
+125 .operationStatus("COMPLETED")
+126 .build();
+src/main/java/in/co/sbi/rfx/indents/service/gmukuser/GMUKUserService.java, line 368
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: saveNewVendorAtGMUK(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.saveNewVen
+dorAtGMUK
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:360
+URL: null
+357 }
+358
+359 @RequestMapping(value = "/saveNewVendor", method = RequestMethod.POST)
+360 public ResponseEntity<?> saveNewVendorAtGMUK(@RequestBody GMUKVendorCreateRequest
+indentRequest, HttpServletRequest request)
+361 {
+362
+363 return gmukUserService.saveNewVendorAtGMUK(indentRequest,request);
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+49
+Access Control: Database Low
+URL: null
+src/main/java/in/co/sbi/rfx/indents/service/gmukuser/GMUKUserService.java, line 368
+(Access Control: Database) Low
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchVendorDetailsRepository.findIDByBranchName()
+Enclosing Method: saveNewVendorAtGMUK()
+File: src/main/java/in/co/sbi/rfx/indents/service/gmukuser/GMUKUserService.java:368
+Taint Flags: WEB, XSS
+365 VendorMap::getVendorName
+366 ));
+367
+368 if(indentsBranchVendorDetailsRepository.findIDByBranchName(indentRequest.getVendorBranch())==null)
+369 {
+370 BranchIndentVendorDetails branchIndentVendorDetails = new BranchIndentVendorDetails();
+371 branchIndentVendorDetails.setVendorEmail(indentRequest.getVendorEmail());
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 301
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: getBranchReportAtGMUK(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.getBranchR
+eportAtGMUK
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:368
+URL: null
+365 }
+366
+367 @RequestMapping(value = "/showIndentReportAtGMUK", method = RequestMethod.POST)
+368 public List<BranchIndent> getBranchReportAtGMUK(@RequestBody @NotNull GMUKReportDates
+reportDates, HttpServletRequest request)
+369 {
+370 String fromDate = (reportDates.getFromDate());
+371 String toDate = (reportDates.getToDate());
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsRepository.showBranchIndentsAtGMUK()
+Enclosing Method: getBranchReportsForGMUK()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:301
+Taint Flags: NUMBER, WEB
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+50
+Access Control: Database Low
+URL: null
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 301
+(Access Control: Database) Low
+298 //System.out.println(timestamp1);
+299 //System.out.println(timestamp2);
+300 //System.out.println("executing the repo down");
+301 return indentRepo.showBranchIndentsAtGMUK(timestamp1,timestamp2);
+302 }
+303 catch(ParseException ex)
+304 {
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 933
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: fetchMailsSentOnCheckerApprovalToBranchAndVendors(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.fetchMails
+SentOnCheckerApprovalToBranchAndVendors
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:304
+URL: null
+301
+302 //To fetch mail details send for a specific branch code.
+303 @RequestMapping(value = "/getMailsOfABranch", method = RequestMethod.GET)
+304 public List<BranchIndentMails>
+fetchMailsSentOnCheckerApprovalToBranchAndVendors(@RequestParam("bcode") String bcode)
+305 {
+306
+307 return indentService.fetchMailsSentOnCheckerApprovalToBranchAndVendors(bcode);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchIndentsMailStatusRepository.getBranchEmailList()
+Enclosing Method: fetchMailsSentOnCheckerApprovalToBranchAndVendors()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:933
+Taint Flags: WEB, XSS
+930 {
+931 try
+932 {
+933 return indentsBranchIndentsMailStatusRepositorySearch.getBranchEmailList(bcode);
+934 }
+935 catch(Exception ex)
+Jul 15, 2026, 7:33 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+51
+Access Control: Database Low
+URL: null
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 933
+(Access Control: Database) Low
+936 {
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 285
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: saveBranchIndent(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.saveBranch
+Indent
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:263
+URL: null
+260
+261 //This is used to save the data entered by branch maker while trying to raise an indent. The data is stored in two
+tables in Database, one table stores the actual indent data and other stores a log of operation made by the user
+serving as audit log.
+262 @RequestMapping(value = "/saveBranchIndent", method = RequestMethod.POST, headers =
+"Accept=application/json")
+263 public ResponseEntity<?> saveBranchIndent(@RequestBody IndentsRequestDTO indentRequest,
+HttpServletRequest request)
+264 {
+265
+266 return branchMakerService.saveBranchIndent(indentRequest,request);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsRepository.findMaxIndentNumber()
+Enclosing Method: getMaxIndentValueOfBranch()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:285
+Taint Flags: WEB, XSS
+282
+283 public int getMaxIndentValueOfBranch(@Param("bcode") String bcode)
+284 {
+285 return Optional.ofNullable(indentRepo.findMaxIndentNumber(bcode)).orElse(0);
+286 }
+287
+288 public List<BranchIndent> getBranchReportsForGMUK(@Param("from_date") String from_date, @Param("to_date") String to_date) {
 
 
-}
 
-@Valid
-    public String getBranchEmail(@Pattern(regexp = "^\\d+$", message = "bcode must contain numbers only") String bcode, @Pattern(regexp = "^\\d+$", message = "user must contain numbers only") String user) throws NullPointerException
-    {
-        try {
-            if(bcode.matches("^[0-9]+$") && user.matches("^[0-9]+$")){
-            String branchEmail = indentsBranchDetailsRepository.getBranchDetails(bcode,user);
-            return org.owasp.encoder.Encode.forHtml(branchEmail);}
-            else{
-                return org.owasp.encoder.Encode.forHtml("");
-            }
-        }
 
-@GetMapping("/getBranchEmail")
-    @Valid
-    public String getBranchEmail(@Pattern(regexp = "^\\d+$", message = "bcode must contain numbers only") @RequestParam("bcode") String bcode) throws NullPointerException
-    {
-        String user = currentUser.getPfId();
-        String userBCode = currentUser.getBranchCode();
-        if(userBCode.matches("^[0-9]+$") && user.matches("^[0-9]+$")){
-        return indentService.getBranchEmail(userBCode,user);}
-        else{
-            return "";
-        }
 
-    }
+
+
+
+
+OLD REPORT 
+
+ndByIndentID(iid);
+104 }
+105
+106 public List<BranchIndent> getIndentsByCurrType(@Param("cur") String cur)
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 261
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: showCircleIndentsAtGMUK(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.showCircle
+IndentsAtGMUK
+Jul 15, 2026, 7:04 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+39
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 261
+(Access Control: Database) Low
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:171
+168
+169 //Get status indents raised by branches in a specific circle for showing in dashboard
+170 @GetMapping("/getCircleIndentsAtGMUK")
+171 public List<BcodeSummary> showCircleIndentsAtGMUK(@RequestParam("ccode") String ccode)
+172 {
+173
+174 return indentService.showCircleIndentsAtGMUK(ccode);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsCircleDetailsRepository.getIndividualCircleDetails()
+Enclosing Method: getBranchNamesListOfSpecificCircle()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:261
+Taint Flags: WEB, XSS
+258 public Map<String, String> getBranchNamesListOfSpecificCircle(@Param("ccode") String ccode)
+259 {
+260 System.out.println("ccode"+ccode);
+261 System.out.println("individualcircledetails "+indentsCircleDetailsRepository.getIndividualCircleDetails(ccode).toString());
+262 String circleID = String.valueOf(indentsCircleDetailsRepository.getIndividualCircleDetails(ccode).getCircleId());
+263 //List<Object[]> branchNamesObject = indentsBranchDetailsRepository.getBranchNamesListBasedOnCircleCode(ccode);
+264 List<Object[]> branchNamesObject = indentsBranchDetailsRepository.getBranchNamesListBasedOnCircleCode(circleID);
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 262
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: showCircleIndentsAtGMUK(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.showCircle
+IndentsAtGMUK
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:171
+168
+169 //Get status indents raised by branches in a specific circle for showing in dashboard
+170 @GetMapping("/getCircleIndentsAtGMUK")
+171 public List<BcodeSummary> showCircleIndentsAtGMUK(@RequestParam("ccode") String ccode)
+172 {
+Jul 15, 2026, 7:04 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+40
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 262
+(Access Control: Database) Low
+173
+174 return indentService.showCircleIndentsAtGMUK(ccode);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsCircleDetailsRepository.getIndividualCircleDetails()
+Enclosing Method: getBranchNamesListOfSpecificCircle()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:262
+Taint Flags: WEB, XSS
+259 {
+260 System.out.println("ccode"+ccode);
+261 System.out.println("individualcircledetails "+indentsCircleDetailsRepository.getIndividualCircleDetails(ccode).toString());
+262 String circleID = String.valueOf(indentsCircleDetailsRepository.getIndividualCircleDetails(ccode).getCircleId());
+263 //List<Object[]> branchNamesObject = indentsBranchDetailsRepository.getBranchNamesListBasedOnCircleCode(ccode);
+264 List<Object[]> branchNamesObject = indentsBranchDetailsRepository.getBranchNamesListBasedOnCircleCode(circleID);
+265 return branchNamesObject.stream().collect(Collectors.toMap(row-> ((String)row[0]),row -> (String) row[1]));
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 602
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: showCircleIndents(1)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.showCircle
+Indents
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:164
+161
+162 //Get status indents raised by branches in a specific circle for showing in dashboard
+163 @GetMapping("/getCircleIndents")
+164 public List<BcodeSummary> showCircleIndents(@RequestParam("ccode") String
+ccode,@RequestParam("pfid") String pfid)
+165 {
+166 return indentService.showCircleIndents(ccode,pfid);
+167 }
+Sink Details
+Sink:
+in.co.sbi.rfx.indents.repository.IndentsBranchMailDetailsRepository.findCircleMappingDetailsOfCircleUserUsingCircleCode()
+Jul 15, 2026, 7:04 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+41
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 602
+(Access Control: Database) Low
+Enclosing Method: showCircleIndents()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:602
+Taint Flags: WEB, XSS
+599 }
+600
+601 Map<String, String> actualBranchListOfCircle = getBranchNamesListOfSpecificCircle(ccode);
+602 List<BranchIndentMailMapping> branchIndentMailMappingList =
+indentsBranchMailDetailsRepository.findCircleMappingDetailsOfCircleUserUsingCircleCode(pfid,ccode);
+603
+604 List<String> branchCodesInMapping = branchIndentMailMappingList.stream()
+605 .map(mapping -> mapping.getBranchList().getBranchCode())
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 86 (Access
+Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: showBranchIndents(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.showBranch
+Indents
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:69
+66
+67 //Get all the indents raised by a particular branch
+68 @GetMapping("/getBranchIndents")
+69 public List<BranchIndent> showBranchIndents(@RequestParam("bcode") String bcode)
+70 {
+71
+72 return indentService.getIndentsByBranchCode(bcode);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsRepository.findByBranchCode()
+Enclosing Method: getIndentsByBranchCode()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:86
+Taint Flags: WEB, XSS
+83 public List<BranchIndent> getIndentsByBranchCode(@Param("bcode") String bcode)
+84 {
+85 String user = currentUser.getPfId();
+86 return indentRepo.findByBranchCode(bcode,user);
+Jul 15, 2026, 7:04 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+42
+Access Control: Database Low
+Package: in.co.sbi.rfx.indents.service.indents
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 86 (Access
+Control: Database) Low
+87 }
+88
+89 public List<BranchIndent> getIndentsByCircleCode(@Param("ccode") String ccode)
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 108
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: getIndentsByCurrencyType(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.getIndents
+ByCurrencyType
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:232
+229 }
+230
+231 @GetMapping("/getIndentsByCurType")
+232 public List<BranchIndent> getIndentsByCurrencyType(@RequestParam("cur") String cur)
+233 {
+234
+235 return indentService.getIndentsByCurrType(cur);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsRepository.findByCurrencyType()
+Enclosing Method: getIndentsByCurrType()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:108
+Taint Flags: WEB, XSS
+105
+106 public List<BranchIndent> getIndentsByCurrType(@Param("cur") String cur)
+107 {
+108 return indentRepo.findByCurrencyType(cur);
+109 }
+110
+111 public void deleteIndentByID(Long id)
+Jul 15, 2026, 7:04 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+43
+Access Control: Database Low
+URL: null
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+200 (Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: editBranchIndentAtMaker(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.editBranch
+IndentAtMaker
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:277
+URL: null
+274
+275 //This is used to save the data edited by branch maker against already raised indent. This operation is possible
+before checker approval. The data is stored in two tables in Database, one table stores the actual indent data and
+other stores a log of operation made by the user serving as audit log.
+276 @RequestMapping(value = "/editBranchIndentAtMaker", method = RequestMethod.POST)
+277 public ResponseEntity<?> editBranchIndentAtMaker(@RequestBody IndentsUpdateDTO indentRequest,
+HttpServletRequest request)
+278 {
+279
+280 return branchMakerService.editBranchIndentAtMaker(indentRequest,request);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchVendorDetailsRepository.findIDByBranchName()
+Enclosing Method: editBranchIndentAtMaker()
+File: src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java:200
+Taint Flags: WEB, XSS
+197 String indentBCode = currentUser.getBranchCode();
+198 BranchIndent existingBranchIndent = editRepo.findByCustomId(entry.getId(),indentBCode);
+199 String vendorBranch = entry.getVendor_branch();
+200 BranchIndentVendorDetails branchIndentVendorDetails =
+indentsBranchVendorDetailsRepository.findIDByBranchName(vendorBranch.trim());
+201 int vendorMapperID = branchIndentVendorDetails.getVendorBranchID();
+202 if(indentRequest.getIndentID().equals(existingBranchIndent.getIndentID()))
+203 {
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+238 (Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Jul 15, 2026, 7:04 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+44
+Access Control: Database Low
+URL: null
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+238 (Access Control: Database) Low
+Source Details
+Source: editBranchIndentAtMaker(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.editBranch
+IndentAtMaker
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:277
+URL: null
+274
+275 //This is used to save the data edited by branch maker against already raised indent. This operation is possible
+before checker approval. The data is stored in two tables in Database, one table stores the actual indent data and
+other stores a log of operation made by the user serving as audit log.
+276 @RequestMapping(value = "/editBranchIndentAtMaker", method = RequestMethod.POST)
+277 public ResponseEntity<?> editBranchIndentAtMaker(@RequestBody IndentsUpdateDTO indentRequest,
+HttpServletRequest request)
+278 {
+279
+280 return branchMakerService.editBranchIndentAtMaker(indentRequest,request);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchVendorDetailsRepository.findIDByBranchName()
+Enclosing Method: editBranchIndentAtMaker()
+File: src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java:238
+Taint Flags: WEB, XSS
+235 else
+236 {
+237 String vendorBranch = entry.getVendor_branch();
+238 BranchIndentVendorDetails branchIndentVendorDetails =
+indentsBranchVendorDetailsRepository.findIDByBranchName(vendorBranch.trim());
+239 int vendorMapperID = branchIndentVendorDetails.getVendorBranchID();
+240 BranchIndent branchIndentTemp = new BranchIndent();
+241 if("IN_PROGRESS".equals(branchIndentTemp.getOperationStatus()))
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+91 (Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: saveBranchIndent(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.saveBranch
+Indent
+Jul 15, 2026, 7:04 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+45
+Access Control: Database Low
+URL: null
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+91 (Access Control: Database) Low
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:268
+URL: null
+265
+266 //This is used to save the data entered by branch maker while trying to raise an indent. The data is stored in two
+tables in Database, one table stores the actual indent data and other stores a log of operation made by the user
+serving as audit log.
+267 @RequestMapping(value = "/saveBranchIndent", method = RequestMethod.POST, headers =
+"Accept=application/json")
+268 public ResponseEntity<?> saveBranchIndent(@RequestBody IndentsRequestDTO indentRequest,
+HttpServletRequest request)
+269 {
+270
+271 return branchMakerService.saveBranchIndent(indentRequest,request);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchDetailsRepository.getCircleCode()
+Enclosing Method: saveBranchIndent()
+File: src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java:91
+Taint Flags: WEB, XSS
+88 String userID = currentUser.getPfId();
+89 String branchCode = indentRequest.getBcode();
+90 String nextIndentIDToBeAllotted = getMaxBranchValue(branchCode);
+91 String circleCodeLocal = branchIndentBranchList.getCircleCode(String.valueOf(branchCode));
+92 switch(circleCodeLocal.length())
+93 {
+94 case 1:
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+181 (Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: editBranchIndentAtMaker(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.editBranch
+IndentAtMaker
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:277
+URL: null
+Jul 15, 2026, 7:04 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+46
+Access Control: Database Low
+URL: null
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+181 (Access Control: Database) Low
+274
+275 //This is used to save the data edited by branch maker against already raised indent. This operation is possible
+before checker approval. The data is stored in two tables in Database, one table stores the actual indent data and
+other stores a log of operation made by the user serving as audit log.
+276 @RequestMapping(value = "/editBranchIndentAtMaker", method = RequestMethod.POST)
+277 public ResponseEntity<?> editBranchIndentAtMaker(@RequestBody IndentsUpdateDTO indentRequest,
+HttpServletRequest request)
+278 {
+279
+280 return branchMakerService.editBranchIndentAtMaker(indentRequest,request);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchDetailsRepository.getCircleCode()
+Enclosing Method: editBranchIndentAtMaker()
+File: src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java:181
+Taint Flags: WEB, XSS
+178 String maker_ip = getClientIp(request);
+179 //List<BranchIndent> br1 = idRepo.findByIndentID(indentRequest.getIndentID());
+180 String branchCode = indentRequest.getBcode();
+181 String circleCodeLocal = branchIndentBranchList.getCircleCode(branchCode);
+182 switch(circleCodeLocal.length())
+183 {
+184 case 1:
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+105 (Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: saveBranchIndent(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.saveBranch
+Indent
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:268
+URL: null
+265
+266 //This is used to save the data entered by branch maker while trying to raise an indent. The data is stored in two
+tables in Database, one table stores the actual indent data and other stores a log of operation made by the user
+serving as audit log.
+Jul 15, 2026, 7:04 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+47
+Access Control: Database Low
+URL: null
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+105 (Access Control: Database) Low
+267 @RequestMapping(value = "/saveBranchIndent", method = RequestMethod.POST, headers =
+"Accept=application/json")
+268 public ResponseEntity<?> saveBranchIndent(@RequestBody IndentsRequestDTO indentRequest,
+HttpServletRequest request)
+269 {
+270
+271 return branchMakerService.saveBranchIndent(indentRequest,request);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchVendorDetailsRepository.findIDByBranchName()
+Enclosing Method: saveBranchIndent()
+File: src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java:105
+Taint Flags: WEB, XSS
+102 }
+103 for (IndentsDTO entry : indentRequest.getEntries()) {
+104 String vendorBranch = entry.getVendor_branch();
+105 BranchIndentVendorDetails branchIndentVendorDetails =
+indentsBranchVendorDetailsRepository.findIDByBranchName(vendorBranch.trim());
+106
+107 BranchIndent tempBranchIndentVariable = BranchIndent.builder()
+108 .branchCode(branchCode)
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+109 (Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: saveBranchIndent(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.saveBranch
+Indent
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:268
+URL: null
+265
+266 //This is used to save the data entered by branch maker while trying to raise an indent. The data is stored in two
+tables in Database, one table stores the actual indent data and other stores a log of operation made by the user
+serving as audit log.
+267 @RequestMapping(value = "/saveBranchIndent", method = RequestMethod.POST, headers =
+"Accept=application/json")
+268 public ResponseEntity<?> saveBranchIndent(@RequestBody IndentsRequestDTO indentRequest,
+Jul 15, 2026, 7:04 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+48
+Access Control: Database Low
+URL: null
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+109 (Access Control: Database) Low
+HttpServletRequest request)
+269 {
+270
+271 return branchMakerService.saveBranchIndent(indentRequest,request);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchDetailsRepository.getBranchAddressDetails()
+Enclosing Method: saveBranchIndent()
+File: src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java:109
+Taint Flags: WEB, XSS
+106
+107 BranchIndent tempBranchIndentVariable = BranchIndent.builder()
+108 .branchCode(branchCode)
+109 .branchName(branchIndentBranchList.getBranchAddressDetails(branchCode).getBranchName())
+110 .currencyType(entry.getExchange())
+111 .currencyMode(entry.getCurrency_mode())
+112 .requestedCurrencyValue(entry.getCurrency())
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+123 (Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: saveBranchIndent(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.saveBranch
+Indent
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:268
+URL: null
+265
+266 //This is used to save the data entered by branch maker while trying to raise an indent. The data is stored in two
+tables in Database, one table stores the actual indent data and other stores a log of operation made by the user
+serving as audit log.
+267 @RequestMapping(value = "/saveBranchIndent", method = RequestMethod.POST, headers =
+"Accept=application/json")
+268 public ResponseEntity<?> saveBranchIndent(@RequestBody IndentsRequestDTO indentRequest,
+HttpServletRequest request)
+269 {
+270
+Jul 15, 2026, 7:04 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+49
+Access Control: Database Low
+URL: null
+src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java, line
+123 (Access Control: Database) Low
+271 return branchMakerService.saveBranchIndent(indentRequest,request);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchDetailsRepository.getBranchAddressDetails()
+Enclosing Method: saveBranchIndent()
+File: src/main/java/in/co/sbi/rfx/indents/service/branchmaker/BranchMakerService.java:123
+Taint Flags: WEB, XSS
+120 .makerIP(indentService.getClientIp(request))
+121 .indentID(nextIndentIDToBeAllotted)
+122 .indentStatus(1)
+123 .branchEmail(branchIndentBranchList.getBranchAddressDetails(branchCode).getEmailId())
+124 .circleCode(circleCodeLocal)
+125 .operationStatus("COMPLETED")
+126 .build();
+src/main/java/in/co/sbi/rfx/indents/service/gmukuser/GMUKUserService.java, line 368
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: saveNewVendorAtGMUK(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.saveNewVen
+dorAtGMUK
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:365
+URL: null
+362 }
+363
+364 @RequestMapping(value = "/saveNewVendor", method = RequestMethod.POST)
+365 public ResponseEntity<?> saveNewVendorAtGMUK(@RequestBody GMUKVendorCreateRequest
+indentRequest, HttpServletRequest request)
+366 {
+367
+368 return gmukUserService.saveNewVendorAtGMUK(indentRequest,request);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchVendorDetailsRepository.findIDByBranchName()
+Enclosing Method: saveNewVendorAtGMUK()
+File: src/main/java/in/co/sbi/rfx/indents/service/gmukuser/GMUKUserService.java:368
+Jul 15, 2026, 7:04 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+50
+Access Control: Database Low
+URL: null
+src/main/java/in/co/sbi/rfx/indents/service/gmukuser/GMUKUserService.java, line 368
+(Access Control: Database) Low
+Taint Flags: WEB, XSS
+365 VendorMap::getVendorName
+366 ));
+367
+368 if(indentsBranchVendorDetailsRepository.findIDByBranchName(indentRequest.getVendorBranch())==null)
+369 {
+370 BranchIndentVendorDetails branchIndentVendorDetails = new BranchIndentVendorDetails();
+371 branchIndentVendorDetails.setVendorEmail(indentRequest.getVendorEmail());
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 298
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: getBranchReportAtGMUK(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.getBranchR
+eportAtGMUK
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:373
+URL: null
+370 }
+371
+372 @RequestMapping(value = "/showIndentReportAtGMUK", method = RequestMethod.POST)
+373 public List<BranchIndent> getBranchReportAtGMUK(@RequestBody @NotNull GMUKReportDates
+reportDates, HttpServletRequest request)
+374 {
+375 String fromDate = (reportDates.getFromDate());
+376 String toDate = (reportDates.getToDate());
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsRepository.showBranchIndentsAtGMUK()
+Enclosing Method: getBranchReportsForGMUK()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:298
+Taint Flags: NUMBER, WEB
+295 //System.out.println(timestamp1);
+296 //System.out.println(timestamp2);
+297 System.out.println("executing the repo down");
+298 return indentRepo.showBranchIndentsAtGMUK(timestamp1,timestamp2);
+299 }
+Jul 15, 2026, 7:04 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+51
+Access Control: Database Low
+URL: null
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 298
+(Access Control: Database) Low
+300 catch(ParseException ex)
+301 {
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 930
+(Access Control: Database) Low
+Issue Details
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: fetchMailsSentOnCheckerApprovalToBranchAndVendors(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.fetchMails
+SentOnCheckerApprovalToBranchAndVendors
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:309
+URL: null
+306
+307 //To fetch mail details send for a specific branch code.
+308 @RequestMapping(value = "/getMailsOfABranch", method = RequestMethod.GET)
+309 public List<BranchIndentMails>
+fetchMailsSentOnCheckerApprovalToBranchAndVendors(@RequestParam("bcode") String bcode)
+310 {
+311
+312 return indentService.fetchMailsSentOnCheckerApprovalToBranchAndVendors(bcode);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsBranchIndentsMailStatusRepository.getBranchEmailList()
+Enclosing Method: fetchMailsSentOnCheckerApprovalToBranchAndVendors()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:930
+Taint Flags: WEB, XSS
+927 {
+928 try
+929 {
+930 return indentsBranchIndentsMailStatusRepositorySearch.getBranchEmailList(bcode);
+931 }
+932 catch(Exception ex)
+933 {
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 282
+(Access Control: Database) Low
+Issue Details
+Jul 15, 2026, 7:04 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+52
+Access Control: Database Low
+URL: null
+src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java, line 282
+(Access Control: Database) Low
+Kingdom: Security Features
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: saveBranchIndent(0)
+From: in.co.sbi.rfx.indents.controllers.indents.IndentsServiceController.saveBranch
+Indent
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceControl
+ler.java:268
+URL: null
+265
+266 //This is used to save the data entered by branch maker while trying to raise an indent. The data is stored in two
+tables in Database, one table stores the actual indent data and other stores a log of operation made by the user
+serving as audit log.
+267 @RequestMapping(value = "/saveBranchIndent", method = RequestMethod.POST, headers =
+"Accept=application/json")
+268 public ResponseEntity<?> saveBranchIndent(@RequestBody IndentsRequestDTO indentRequest,
+HttpServletRequest request)
+269 {
+270
+271 return branchMakerService.saveBranchIndent(indentRequest,request);
+Sink Details
+Sink: in.co.sbi.rfx.indents.repository.IndentsRepository.findMaxIndentNumber()
+Enclosing Method: getMaxIndentValueOfBranch()
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:282
+Taint Flags: WEB, XSS
+279
+280 public int getMaxIndentValueOfBranch(@Param("bcode") String bcode)
+281 {
+282 return Optional.ofNullable(indentRepo.findMaxIndentNumber(bcode)).orElse(0);
+283 }
+284
+285 public List<BranchIndent> getBranchReportsForGMUK(@Param("from_date") String from_date, @Param("to_date") String to_date) {
