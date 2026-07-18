@@ -1,1 +1,51 @@
-https://www.google.com/search?q=Entity+%27com.sbi.fxRetail.entity.SwapQuotesAudit%27+has+no+identifier+(every+%27%40Entity%27+class+must+declare+or+inherit+at+least+one+%27%40Id%27+or+%27%40EmbeddedId%27+property)+public+class+SwapQuotesAudit+%7B+%40Id+%40Column(name+%3D+%22ID%22)+private+String+id%3B&oq=Entity+%27com.sbi.fxRetail.entity.SwapQuotesAudit%27+has+no+identifier+(every+%27%40Entity%27+class+must+declare+or+inherit+at+least+one+%27%40Id%27+or+%27%40EmbeddedId%27+property)+public+class+SwapQuotesAudit+%7B+%40Id+%40Column(name+%3D+%22ID%22)+private+String+id%3B&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCTExMDUxajBqOagCALACAA&sourceid=chrome&ie=UTF-8
+ No validator could be found for constraint 'jakarta.validation.constraints.Pattern' validating type 'java.lang.Integer'. Check configuration for 'entries[0].currency'] with root cause
+jakarta.validation.UnexpectedTypeException: HV000030: No validator could be found for constraint 'jakarta.validation.constraints.Pattern' validating type 'java.lang.Integer'. Check configuration for 'entries[0].currency'
+
+
+package in.co.sbi.rfx.indents.dto;
+
+import in.co.sbi.rfx.indents.validation.EmailIdentifier;
+import in.co.sbi.rfx.indents.validation.NumericCode;
+import in.co.sbi.rfx.indents.validation.SafeIdentifier;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Valid
+public class IndentsDTO {
+    @NumericCode
+    private int currency;
+    @SafeIdentifier
+    private String currency_mode;
+    @SafeIdentifier
+    private String vendor_name;
+    @SafeIdentifier
+    private String exchange;
+    @EmailIdentifier
+    private String vendor_email;
+    @Pattern(regexp = "^[A-Za-z0-9_ -]+$", message = "must be a valid identifier")
+    private String vendor_branch;
+
+    // Constructors, Getters, and Setters
+    public IndentsDTO() {}
+}
+
+package in.co.sbi.rfx.indents.validation;
+
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
+import jakarta.validation.constraints.Pattern;
+import java.lang.annotation.*;
+
+@Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Pattern(regexp = "^\\d+$", message = "must contain numbers only")
+@Constraint(validatedBy = {})
+public @interface NumericCode {
+    String message() default "must contain numbers only";
+    Class<?>[] groups() default {};
+    Class<? extends Payload>[] payload() default {};
+}
