@@ -1,2 +1,1 @@
-kubectl cp rforex/rforex-fcra-67b44c9889-j7kks:/fcra/dr-2026-07-11.tar.gz D:\
-error: one of src or dest must be a local file specification
+<input type="number" id="currency-{{i}}" class="form-control fcurrency" name="currency-{{ i }}" [(ngModel)]="row.currency" required (keypress)="disableMinus($event)" placeholder="Enter currency value" oninput="checkCurrencyValue(this.value)"/>
