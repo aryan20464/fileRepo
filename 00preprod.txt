@@ -1,17 +1,9 @@
-<input type="number" id="currency-{{i}}" class="form-control fcurrency" name="currency-{{ i }}" [(ngModel)]="row.currency" required (keypress)="disableMinus($event)" placeholder="Enter currency value" oninput="checkCurrencyValue(this.value)"/>
-
-checkCurrencyValue(currencyAmount: any){
-    alert(currencyAmount)
-    if(this.numericIndex.test(currencyAmount))
-    {
-      if(currencyAmount<1 && currencyAmount>999999)
-      {
-        alert("Amount should be greater than 1 and less than 999999") 
-        return;
-      }
+disableMinus(event: KeyboardEvent) {
+    const allowedKeys = ['0','1','2','3','4','5','6','7','8','9','Backspace','Tab','ArrowLeft','ArrowRight'];
+    if (!allowedKeys.includes(event.key)) {
+      event.preventDefault();
     }
-    else{
-      alert("Cannot enter values other than 0-9")
-      return;
-    }
+    ['copy', 'paste', 'cut', 'drop'].forEach(event => {
+      inputField.addEventListener(event, e => e.preventDefault());
+    });
   }
