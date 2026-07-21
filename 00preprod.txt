@@ -1,9 +1,10 @@
-disableMinus(event: KeyboardEvent) {
-    const allowedKeys = ['0','1','2','3','4','5','6','7','8','9','Backspace','Tab','ArrowLeft','ArrowRight'];
-    if (!allowedKeys.includes(event.key)) {
+// 2. Prevent leading or repeated zeros
+  // Convert current value to string and strip spaces
+  const currentStr = currentAmount !== null && currentAmount !== undefined ? String(currentAmount).trim() : '';
+  
+  if (event.key === '0') {
+    // If the input is completely empty, or is already exactly '0', do not allow another '0'
+    if (currentStr === '' || currentStr === '0') {
       event.preventDefault();
     }
-    ['copy', 'paste', 'cut', 'drop'].forEach(event => {
-      inputField.addEventListener(event, e => e.preventDefault());
-    });
   }
