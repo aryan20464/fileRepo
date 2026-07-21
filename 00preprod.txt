@@ -1,1 +1,2 @@
-what is wl_comp8668639689785158218.jar present at /weblogic/oracle/middleware/user_projects/domains/IDEA/servers/IRM_SERVER_2/tmp
+kubectl cp rforex/rforex-fcra-67b44c9889-j7kks:/fcra/dr-2026-07-11.tar.gz D:\
+error: one of src or dest must be a local file specification
