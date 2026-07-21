@@ -1,47 +1,58 @@
 exportExcel() {
-    import("xlsx").then(xlsx => {
-      // Check if selectedIndents is populated
-      //console.log('Selected Indents:', this.selectedIndents);
+  import("xlsx").then(xlsx => {
+    // Use filteredIndents if no selection is made
+    const dataToExport = this.selectedIndents.length ? this.selectedIndents : this.filteredIndents;
 
-      // Use filteredIndents if no selection is made
-      const dataToExport = this.selectedIndents.length ? this.selectedIndents : this.filteredIndents;
+    // 1. Create an array of your custom header titles
+    // This assumes your cols objects look like: { field: 'currency', header: 'Currency Value' }
+    const customHeaders = this.cols.map(col => col.header || col.field);
 
-      // Filter the data to export
-      const selectedData = dataToExport.map(indent => {
-        let filteredIndent:any = {};
-        this.cols.forEach(col => {              
-          //console.log(col.field);
-          filteredIndent[col.field] = indent[col.field];
-          
+    // Filter and map the data to export
+    const selectedData = dataToExport.map(indent => {
+      let filteredIndent: any = {};
+      
+      this.cols.forEach(col => {              
+        // Use the friendly column header name as the object KEY
+        const headerKey = col.header || col.field;
+        let value = indent[col.field];
 
-          switch (col.field) {
-            case 'vendorRes':
-              filteredIndent[col.field] = this.branchVendorList[indent[col.field]]+" - "+indent["vendorBranch"];break;
-            case 'currencyType':
-              filteredIndent[col.field] = this.currencyData[indent[col.field]]+" ("+indent[col.field]+")";break;
-            case 'currencyMode':
-              filteredIndent[col.field] = this.currencyMode[indent[col.field]];break;
-            case 'indentStatus':
-              filteredIndent[col.field] = this.appStatus[indent[col.field]];break;
-            case 'requestedDate':
-              filteredIndent[col.field] = this.convertHRF(indent[col.field]);break;
-            case 'receivedDate':
-              filteredIndent[col.field] = this.convertHRF(indent[col.field]);break; 
-            case 'circleCode':
-              filteredIndent[col.field] = this.circleNames[indent[col.field]];break; 
-            default:
-              filteredIndent[col.field] = indent[col.field];
-          }
-        });
-        return filteredIndent;
+        switch (col.field) {
+          case 'vendorRes':
+            value = this.branchVendorList[indent[col.field]] + " - " + indent["vendorBranch"];
+            break;
+          case 'currencyType':
+            value = this.currencyData[indent[col.field]] + " (" + indent[col.field] + ")";
+            break;
+          case 'currencyMode':
+            value = this.currencyMode[indent[col.field]];
+            break;
+          case 'indentStatus':
+            value = this.appStatus[indent[col.field]];
+            break;
+          case 'requestedDate':
+          case 'receivedDate':
+            value = this.convertHRF(indent[col.field]);
+            break; 
+          case 'circleCode':
+            value = this.circleNames[indent[col.field]];
+            break; 
+          default:
+            value = indent[col.field];
+        }
+
+        // Assign the processed value to our friendly Header Key
+        filteredIndent[headerKey] = value;
       });
-
-      // Convert the filtered data to a worksheet
-      const worksheet = xlsx.utils.json_to_sheet(selectedData);
-      const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
-      const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
-
-      // Save the Excel file
-      this.saveAsExcelFile(excelBuffer, "Indents of "+this.linkedBcode+"-"+this.branchName+" as on ");
+      return filteredIndent;
     });
-  }
+
+    // 2. Pass the customHeaders array explicitly to the utility function
+    const worksheet = xlsx.utils.json_to_sheet(selectedData, { header: customHeaders });
+    
+    const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+    const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+    // Save the Excel file
+    this.saveAsExcelFile(excelBuffer, "Indents of " + this.linkedBcode + "-" + this.branchName + " as on ");
+  });
+}
