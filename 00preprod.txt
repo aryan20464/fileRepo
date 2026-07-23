@@ -2,12 +2,23 @@
 Description=This starts the FIX360T in /weblogic/deployments/FIX360T.war
 
 [Service]
-# %h dynamically expands to your full home directory path
+WorkingDirectory=/weblogic
+# Rotate the log file with the timestamp before the application starts
+ExecStartPre=/bin/bash -c 'if [ -f /weblogic/fix360t.log ]; then mv /weblogic/fix360t.log /weblogic/fix360t_$(date +"%%Y-%%m-%%d_%%H-%%M-%%S").log; fi'
+
+# Start the application
 ExecStart=/weblogic/jdk-21.0.6/bin/java -jar /weblogic/deployments/FIX360T.war
 Restart=always
 StandardOutput=append:/weblogic/fix360t.log
-StandardError=append/weblogic/fix360t-error.log
+StandardError=append:/weblogic/fix360t-error.log
 
 [Install]
-# This targets your local user session environment
 WantedBy=default.target
+
+
+
+# Start the FIX360T service every day at 09:00 AM
+0 9 * * * /usr/bin/systemctl start fix360t.service
+
+# Stop the FIX360T service every day at 09:00 PM (21:00)
+0 21 * * * /usr/bin/systemctl stop fix360t.service
