@@ -1,24 +1,51 @@
-[Unit]
-Description=This starts the FIX360T in /weblogic/deployments/FIX360T.war
+script:
+   - sourceanalyzer -clean -b $CI_PROJECT_PATH_SLUG
+   - sourceanalyzer -b $CI_PROJECT_PATH_SLUG mvn $MAVEN_CLI_OPTS clean compile -U -DskipTests=true -Dfortify.sca.exclude=target
+   - sourceanalyzer -b $CI_PROJECT_PATH_SLUG -scan -Xmx8G -f ${CI_PROJECT_PATH_SLUG}.fpr
+   - sourceanalyzer -b $CI_PROJECT_PATH_SLUG -scan -filter $CI_PROJECT_DIR/filter.txt -Xmx8G -f ${CI_PROJECT_PATH_SLUG}.fpr
+   - BIRTReportGenerator -template "Developer Workbook" -source ${CI_PROJECT_PATH_SLUG}.fpr -format pdf -output ${CI_PROJECT_PATH_SLUG}_report.pdf
+   # 1. Query the .fpr file
+   - FPRUtility -information -search -query "[fortify priority order]:critical OR [fortify priority order]:high" -project ${CI_PROJECT_PATH_SLUG}.fpr > sca_gate.txt
+   - cat sca_gate.txt
+   # 2. Extract the integer count (suppressing the raw cat output)
+   - ISSUES=$(grep -i "matched search query" sca_gate.txt | awk '{print $1}')
+   # 3. Print color-coded visual summary block and exit
+   - |
+     if [ -n "$ISSUES" ] && [ "$ISSUES" -gt 0 ]; then
+       echo -e "\e[31m=========================================\e[0m"
+       echo -e "\e[31m✖ QUALITY GATE FAILED\e[0m"
+       echo -e "\e[31mTotal High/Critical Vulnerabilities: $ISSUES\e[0m"
+       echo -e "\e[31m=========================================\e[0m"
 
-[Service]
-WorkingDirectory=/weblogic
-# Rotate the log file with the timestamp before the application starts
-ExecStartPre=/bin/bash -c 'if [ -f /weblogic/fix360t.log ]; then mv /weblogic/fix360t.log /weblogic/fix360t_$(date +"%%Y-%%m-%%d_%%H-%%M-%%S").log; fi'
+       curl --insecure --request POST \
+          --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+          --header "Content-Type: application/x-www-form-urlencoded" \
+          --data-urlencode "title=Fortify Quality Gate Failed - ${CI_PROJECT_NAME}" \
+              --data-urlencode "description=Assigned To: ${GITLAB_USER_NAME}
+      Project: ${CI_PROJECT_NAME}
+      Repository: ${CI_PROJECT_PATH}
+      Branch: ${CI_COMMIT_REF_NAME}
+      Pipeline URL: ${CI_PIPELINE_URL}
+      Triggered By: ${GITLAB_USER_NAME}
+      High/Critical Vulnerabilities: ${ISSUES}
+       Please fix the Fortify vulnerabilities and rerun the pipeline." \
+          --data "assignee_ids[]=${GITLAB_USER_ID}" \
+          --data "labels=fortify,security,quality-gate" \
+          --silent \
+          "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/issues" | grep -o '"web_url":"[^"]*issues/[^"]*"' | head -1 | sed 's/"web_url":"//;s/"//'
 
-# Start the application
-ExecStart=/weblogic/jdk-21.0.6/bin/java -jar /weblogic/deployments/FIX360T.war
-Restart=always
-StandardOutput=append:/weblogic/fix360t.log
-StandardError=append:/weblogic/fix360t-error.log
+        echo "GitLab issue created and assigned to ${GITLAB_USER_NAME}"
+       exit 1;
 
-[Install]
-WantedBy=default.target
+     else
+       echo -e "\e[32m=========================================\e[0m"
+       echo -e "\e[32m✔ QUALITY GATE PASSED\e[0m"
+       echo -e "\e[32mTotal High/Critical Vulnerabilities: 0\e[0m"
+       echo -e "\e[32m=========================================\e[0m"
+     fi
+  artifacts:
+    paths:
+     - ${CI_PROJECT_PATH_SLUG}_report.pdf
+    expire_in: 1 day
+    when: always
 
-
-
-# Start the FIX360T service every day at 09:00 AM
-0 9 * * * /usr/bin/systemctl start fix360t.service
-
-# Stop the FIX360T service every day at 09:00 PM (21:00)
-0 21 * * * /usr/bin/systemctl stop fix360t.service
