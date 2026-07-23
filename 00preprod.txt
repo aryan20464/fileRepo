@@ -1,1 +1,13 @@
-how to write a service that starts a specific jar file in linux, i need to rotate a log file before the service starts with TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+[Unit]
+Description=This starts the FIX360T in /weblogic/deployments/FIX360T.war
+
+[Service]
+# %h dynamically expands to your full home directory path
+ExecStart=/weblogic/jdk-21.0.6/bin/java -jar /weblogic/deployments/FIX360T.war
+Restart=always
+StandardOutput=append:/weblogic/fix360t.log
+StandardError=append/weblogic/fix360t-error.log
+
+[Install]
+# This targets your local user session environment
+WantedBy=default.target
