@@ -1,2 +1,97 @@
-kubectl cp rforex/rforex-fcra-67b44c9889-j7kks:/fcra/dr-2026-07-11.tar.gz D:\
-error: one of src or dest must be a local file specification
+// 1. Define your friendly header names mapping
+const keyMap: { [key: string]: string } = {
+  'indentID': 'Indent ID',
+  'branchCode': 'Branch Code',
+  'branchName': 'Branch Name',
+  'circleCode': 'Circle Code',
+  'vendorRes': 'Vendor Responses',
+  'currencyType': 'Currency Type',
+  'currencyMode': 'Currency Mode',
+  'requestedCurrencyValue': 'Requested Currency Value',
+  'receivedCurrencyValue': 'Received Currency Value',
+  'requestedDate': 'Requested Date',
+  'receivedDate': 'Received Date',
+  'indentStatus': 'Indent Status'
+};
+
+// 2. Select data and perform key transformation
+const dataToExport = this.selectedIndents.length ? this.selectedIndents : this.filteredIndents;
+
+const selectedData = dataToExport.map(indent => {
+  let renamedIndent: any = {};
+  
+  Object.keys(indent).forEach(key => {
+    // If a friendly name exists in keyMap, use it; otherwise, keep the original key name
+    const friendlyKey = keyMap[key] || key;
+    
+    // Apply your transformations or fallbacks for values
+    let value = indent[key];
+
+    // Handle null values gracefully (like receivedDate) so Excel doesn't display raw nulls
+    if (value === null || value === undefined) {
+      value = ''; 
+    }
+
+    renamedIndent[friendlyKey] = value;
+  });
+  
+  return renamedIndent;
+});
+
+
+
+
+
+exportExcel() {
+  import("xlsx").then(xlsx => {
+    const dataToExport = this.selectedIndents.length ? this.selectedIndents : this.filteredIndents;
+
+    const keyMap: { [key: string]: string } = {
+      'indentID': 'Indent ID',
+      'branchCode': 'Branch Code',
+      'branchName': 'Branch Name',
+      'circleCode': 'Circle Code',
+      'vendorRes': 'Vendor/Branch',
+      'currencyType': 'Currency Type',
+      'currencyMode': 'Currency Mode',
+      'requestedCurrencyValue': 'Requested Value',
+      'receivedCurrencyValue': 'Received Value',
+      'requestedDate': 'Requested Date',
+      'receivedDate': 'Received Date',
+      'indentStatus': 'Status'
+    };
+
+    const selectedData = dataToExport.map(indent => {
+      let renamedIndent: any = {};
+      
+      Object.keys(indent).forEach(key => {
+        const friendlyKey = keyMap[key] || key;
+        let value = indent[key];
+
+        // Format code if you still need specific conversions from your previous implementation
+        switch (key) {
+          case 'vendorRes':
+            // If data is already parsed as shown in your JSON sample, keep it directly
+            value = indent[key] ? indent[key] : '';
+            break;
+          case 'requestedDate':
+          case 'receivedDate':
+            value = indent[key] ? indent[key] : 'N/A'; // Keeps formatting or sets N/A for null values
+            break;
+          default:
+            value = indent[key] !== null ? indent[key] : '';
+        }
+
+        renamedIndent[friendlyKey] = value;
+      });
+      return renamedIndent;
+    });
+
+    // Generate Excel sheet with new human-readable column headers
+    const worksheet = xlsx.utils.json_to_sheet(selectedData);
+    const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+    const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+    this.saveAsExcelFile(excelBuffer, "Indents of " + this.linkedBcode + "-" + this.branchName + " as on ");
+  });
+}
