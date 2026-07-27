@@ -3,3 +3,7 @@ FPRUtility \
 -search \
 -query "([fortify priority order]:critical OR [fortify priority order]:high) AND NOT [category]:\"Access Control: Database\"" \
 -project ${CI_PROJECT_PATH_SLUG}.fpr
+
+
+Incorrect type. Expected "string | array".yaml-schema: https://gitlab.sbi/assets/webpack/ci.1e4a59db.json(0)
+- FPRUtility -information -search -query "([fortify priority order]:critical OR [fortify priority order]:high) AND NOT [category]:\"Access Control: Database\""  -project ${CI_PROJECT_PATH_SLUG}.fpr > sca_gate.txt
