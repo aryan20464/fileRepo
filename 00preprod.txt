@@ -1,5 +1,47 @@
 RFC standards dns name for this rfm-pre.sbi, tss-idea-irm-web-preprod, tss-idea-irm-app1-preprod, tss-idea-irm-app2-preprod, tss-idea-swift-app1-preprod, tss-idea-irm-web-preprod.corp.ad.sbi, tss-idea-irm-app1-preprod.corp.ad.sbi, tss-idea-irm-app2-preprod.corp.ad.sbi, tss-idea-swift-app1-preprod.corp.ad.sbi,
 
 
-@Query("SELECT bi.branchCode, bi.emailId FROM BranchIndentBranchList bi")
-    Map<String,String> getBranchDetailsAll();
+Engine Breakdown
+SCA WebInspect SecurityScope Total
+Cross-Site Scripting: Poor Validation 1 0 0 1
+Total 1 0 0 1
+Cross-Site Scripting: Poor Validation Low
+Package: in.co.sbi.rfx.indents.controllers.indents
+src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java, line
+94 (Cross-Site Scripting: Poor Validation) Low
+Issue Details
+Kingdom: Input Validation and Representation
+Scan Engine: SCA (Data Flow)
+Source Details
+Source: in.co.sbi.rfx.indents.repository.IndentsBranchDetailsRepository.getBranchDe
+tailsAll()
+From: in.co.sbi.rfx.indents.service.indents.IndentServiceImpl.getBranchEmail
+File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:94
+7
+944 if(branchCode != null && branchCode.matches("^[0-9]+$"))
+945 {
+946 //String branchEmail = indentsBranchDetailsRepository.getBranchDetails(branchCode);
+947 List<Object[]> branchEmailDetails = indentsBranchDetailsRepository.getBranchDetailsAll();
+948 Map<String,String> branchEmails = branchEmailDetails.stream().collect(
+949 Collectors.toMap(row -> (String) row[0],row -> (String) row[1])
+950 );
+Sink Details
+Sink: Return
+Enclosing Method: getBranchEmail()
+File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java:94
+Taint Flags: DATABASE, HTML_ENCODE, POORVALIDATION,
+VALIDATED_HTTP_PARAMETER_POLLUTION, XSS
+91 String userBCode = currentUser.getBranchCode();
+Jul 29, 2026, 9:31 AM
+© Copyright [2008-2026] Micro Focus or one of its affiliates.
+15
+Cross-Site Scripting: Poor Validation Low
+Package: in.co.sbi.rfx.indents.controllers.indents
+src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java, line
+94 (Cross-Site Scripting: Poor Validation) Low
+92 if(userBCode != null && userBCode.matches("^[0-9]+$"))
+93 {
+94 return indentService.getBranchEmail();
+95 }
+96 else{
+97 return "";
