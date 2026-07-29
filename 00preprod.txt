@@ -1,1 +1,5 @@
 RFC standards dns name for this rfm-pre.sbi, tss-idea-irm-web-preprod, tss-idea-irm-app1-preprod, tss-idea-irm-app2-preprod, tss-idea-swift-app1-preprod, tss-idea-irm-web-preprod.corp.ad.sbi, tss-idea-irm-app1-preprod.corp.ad.sbi, tss-idea-irm-app2-preprod.corp.ad.sbi, tss-idea-swift-app1-preprod.corp.ad.sbi,
+
+
+@Query("SELECT bi.branchCode, bi.emailId FROM BranchIndentBranchList bi")
+    Map<String,String> getBranchDetailsAll();
