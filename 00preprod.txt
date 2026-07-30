@@ -1,47 +1,19 @@
-RFC standards dns name for this rfm-pre.sbi, tss-idea-irm-web-preprod, tss-idea-irm-app1-preprod, tss-idea-irm-app2-preprod, tss-idea-swift-app1-preprod, tss-idea-irm-web-preprod.corp.ad.sbi, tss-idea-irm-app1-preprod.corp.ad.sbi, tss-idea-irm-app2-preprod.corp.ad.sbi, tss-idea-swift-app1-preprod.corp.ad.sbi,
+Call to order
+A meeting of IT-TSS Department with DevSecOps Team of PE-III was held at on 30-07-2026 regarding the discussion about false-positives in fortify scanning report in DevSecOps platform for our IDEA Applications.
+Attendees: 
+PE-III Devsecops team - Bibin PB, Guggilapu Suresh, Akshay Atmaram Vatharkar, Sachin Ashok Yadav 
+IT-TSS Department – Siva Koppisetty, Gajvelly Chakravarthy	 		
+Agenda:	
+Information about timelines on inclusion of ISD department in the CI/CD automation of IDEA Applications for verification status of false positives identified in the fortify scanning report during scanning of application source code.
+Prerequisite on application deployment:
+DevSecOps platform handled by PE-III department is our bank’s application build and deployment automation platform that builds the application and deploys it to targeted servers there by eliminating manual tasks which are handled by the developer. The above process happens in stages where first stage is scanning of application code by Fortify SAST tool. Upon nil observations only will the application move forward into build stage further moving to deployment stage. 
+Points of discussion:
+1.	ISD is providing the security exit for all our IDEA applications after verifying the observations raised by them during testing process which are updated via EPM tool.
 
+2.	The application code upon scanning with the fortify tool provided as a part of devsecops platform is giving us observations that are either fixed already during review by ISD or being identified by the tool without complete valid information with respect to the source code. Example: Validation of user takes place in the first step when a user request is received. Upon successful authentication & authorization, we are allowing the user to access to specific functionalities as per the access control mechanism which are not properly identified by the tool and are thrown as user not validated error. These kinds of observations are what we refer to as false-positives. 
 
-Engine Breakdown
-SCA WebInspect SecurityScope Total
-Cross-Site Scripting: Poor Validation 1 0 0 1
-Total 1 0 0 1
-Cross-Site Scripting: Poor Validation Low
-Package: in.co.sbi.rfx.indents.controllers.indents
-src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java, line
-94 (Cross-Site Scripting: Poor Validation) Low
-Issue Details
-Kingdom: Input Validation and Representation
-Scan Engine: SCA (Data Flow)
-Source Details
-Source: in.co.sbi.rfx.indents.repository.IndentsBranchDetailsRepository.getBranchDe
-tailsAll()
-From: in.co.sbi.rfx.indents.service.indents.IndentServiceImpl.getBranchEmail
-File: src/main/java/in/co/sbi/rfx/indents/service/indents/IndentServiceImpl.java:94
-7
-944 if(branchCode != null && branchCode.matches("^[0-9]+$"))
-945 {
-946 //String branchEmail = indentsBranchDetailsRepository.getBranchDetails(branchCode);
-947 List<Object[]> branchEmailDetails = indentsBranchDetailsRepository.getBranchDetailsAll();
-948 Map<String,String> branchEmails = branchEmailDetails.stream().collect(
-949 Collectors.toMap(row -> (String) row[0],row -> (String) row[1])
-950 );
-Sink Details
-Sink: Return
-Enclosing Method: getBranchEmail()
-File: src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java:94
-Taint Flags: DATABASE, HTML_ENCODE, POORVALIDATION,
-VALIDATED_HTTP_PARAMETER_POLLUTION, XSS
-91 String userBCode = currentUser.getBranchCode();
-Jul 29, 2026, 9:31 AM
-© Copyright [2008-2026] Micro Focus or one of its affiliates.
-15
-Cross-Site Scripting: Poor Validation Low
-Package: in.co.sbi.rfx.indents.controllers.indents
-src/main/java/in/co/sbi/rfx/indents/controllers/indents/IndentsServiceController.java, line
-94 (Cross-Site Scripting: Poor Validation) Low
-92 if(userBCode != null && userBCode.matches("^[0-9]+$"))
-93 {
-94 return indentService.getBranchEmail();
-95 }
-96 else{
-97 return "";
+3.	The devsecops team has informed us that there is no mechanism in place at present to verify the observations as false positives in the platform itself and there are talks going on with ISD department to onboard them in the above process to provide a decision on false positives. 
+
+4.	Till the above process is completed we are suggested to inform to the devsecops team over email regarding observations which are identified as false positives in the scanning report by the application team for all environments from UAT to Production. 
+
+5.	We will therefore be following the same procedure as informed to us above till there is a proper procedure in place till further communication. 
