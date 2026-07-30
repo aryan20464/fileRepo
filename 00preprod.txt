@@ -1,19 +1,46 @@
-Call to order
-A meeting of IT-TSS Department with DevSecOps Team of PE-III was held at on 30-07-2026 regarding the discussion about false-positives in fortify scanning report in DevSecOps platform for our IDEA Applications.
-Attendees: 
-PE-III Devsecops team - Bibin PB, Guggilapu Suresh, Akshay Atmaram Vatharkar, Sachin Ashok Yadav 
-IT-TSS Department – Siva Koppisetty, Gajvelly Chakravarthy	 		
-Agenda:	
-Information about timelines on inclusion of ISD department in the CI/CD automation of IDEA Applications for verification status of false positives identified in the fortify scanning report during scanning of application source code.
-Prerequisite on application deployment:
-DevSecOps platform handled by PE-III department is our bank’s application build and deployment automation platform that builds the application and deploys it to targeted servers there by eliminating manual tasks which are handled by the developer. The above process happens in stages where first stage is scanning of application code by Fortify SAST tool. Upon nil observations only will the application move forward into build stage further moving to deployment stage. 
-Points of discussion:
-1.	ISD is providing the security exit for all our IDEA applications after verifying the observations raised by them during testing process which are updated via EPM tool.
+# Minutes of Meeting
 
-2.	The application code upon scanning with the fortify tool provided as a part of devsecops platform is giving us observations that are either fixed already during review by ISD or being identified by the tool without complete valid information with respect to the source code. Example: Validation of user takes place in the first step when a user request is received. Upon successful authentication & authorization, we are allowing the user to access to specific functionalities as per the access control mechanism which are not properly identified by the tool and are thrown as user not validated error. These kinds of observations are what we refer to as false-positives. 
+## Call to Order
 
-3.	The devsecops team has informed us that there is no mechanism in place at present to verify the observations as false positives in the platform itself and there are talks going on with ISD department to onboard them in the above process to provide a decision on false positives. 
+A meeting between the **IT-TSS Department** and the **PE-III DevSecOps Team** was held on **30-07-2026** to discuss the handling of false-positive observations reported by the Fortify SAST scanning process on the DevSecOps platform for IDEA applications.
 
-4.	Till the above process is completed we are suggested to inform to the devsecops team over email regarding observations which are identified as false positives in the scanning report by the application team for all environments from UAT to Production. 
+### Attendees
 
-5.	We will therefore be following the same procedure as informed to us above till there is a proper procedure in place till further communication. 
+**PE-III DevSecOps Team**
+
+* Bibin PB
+* Guggilapu Suresh
+* Akshay Atmaram Vatharkar
+* Sachin Ashok Yadav
+
+**IT-TSS Department**
+
+* Siva Koppisetty
+* Gajvelly Chakravarthy
+
+## Agenda
+
+To discuss the timeline for onboarding the ISD Department into the CI/CD automation process for IDEA applications, enabling them to review and validate false-positive observations identified in Fortify SAST scan reports during application source code scanning.
+
+## Background
+
+The DevSecOps platform, managed by the PE-III Department, is the Bank's automated application build and deployment platform. It automates the application build and deployment process across target environments, thereby reducing manual intervention by developers.
+
+As part of the CI/CD pipeline, the first stage involves static application security testing using the Fortify SAST tool. Applications are permitted to proceed to the build and subsequent deployment stages only after the Fortify scan is cleared without blocking observations.
+
+## Discussion Points
+
+1. The ISD Department currently provides security clearance for IDEA applications after reviewing and validating security observations identified during the application security assessment process. The review outcome is recorded and communicated through the EPM tool.
+
+2. During Fortify SAST scanning on the DevSecOps platform, certain observations are being reported that have either:
+
+   * already been reviewed and accepted by ISD during the security assessment process, or
+   * are identified by the scanning tool due to the absence of complete application context, resulting in false-positive findings.
+
+   For example, user authentication and authorization are validated at the initial stage of request processing. Only authenticated and authorized users are permitted to access application functionalities based on the implemented access control mechanism. However, in some cases, the Fortify tool is unable to accurately interpret this implementation and reports observations such as "User Not Validated," even though the required security controls are in place. Such observations are treated as false positives.
+
+3. The PE-III DevSecOps Team informed that the current DevSecOps platform does not provide a mechanism to validate or mark Fortify observations as false positives. Discussions are currently underway with the ISD Department to onboard them into the CI/CD workflow so that they can review and provide decisions on such observations.
+
+4. Until the above process is implemented, the DevSecOps Team has advised that application teams should communicate all observations identified as false positives to the DevSecOps Team through email. This process will be followed for deployments across all environments, including UAT and Production.
+
+5. It was agreed that the above interim procedure will continue to be followed until a formal process for validating false-positive observations is established and communicated by the concerned departments.
