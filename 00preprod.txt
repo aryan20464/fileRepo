@@ -1,11 +1,12 @@
  openssl s_client -connect 10.177.128.132:5001 -showcerts
 CONNECTED(00000003)
 Can't use SSL_get_servername
-depth=0 ST = MAHARASHTRA, OU = ITTSS, O = SBI, C = IN, CN = *.sbi
-verify error:num=20:unable to get local issuer certificate
+depth=2 O = SBI, C = IN, CN = SBI-RCA
+verify error:num=19:self signed certificate in certificate chain
 verify return:1
-depth=0 ST = MAHARASHTRA, OU = ITTSS, O = SBI, C = IN, CN = *.sbi
-verify error:num=21:unable to verify the first certificate
+depth=2 O = SBI, C = IN, CN = SBI-RCA
+verify return:1
+depth=1 ST = Maharashtra, postalCode = 400614, OU = PE-III, O = SBI, C = IN, CN = SBI-CA
 verify return:1
 depth=0 ST = MAHARASHTRA, OU = ITTSS, O = SBI, C = IN, CN = *.sbi
 verify return:1
@@ -43,6 +44,53 @@ igImqj7QYbKlK9FAWv0yBAh0VhqaBwJ2L4IO1j5LiELGkc8dsPXUXPDK53/WySNb
 M3Ay9wMqcgoA4MADJrdoVaG8cDPKhTTzW7rN0XOI1liLq5YstMWkWNHOQvJkRke8
 ezpv5gai3wP8C/lYNA==
 -----END CERTIFICATE-----
+ 1 s:ST = Maharashtra, postalCode = 400614, OU = PE-III, O = SBI, C = IN, CN = SBI-CA
+   i:O = SBI, C = IN, CN = SBI-RCA
+-----BEGIN CERTIFICATE-----
+MIIEDDCCAvSgAwIBAgIQW/Q/tMyFvsv9YbXJYIGotTANBgkqhkiG9w0BAQsFADAt
+MQwwCgYDVQQKEwNTQkkxCzAJBgNVBAYTAklOMRAwDgYDVQQDEwdTQkktUkNBMB4X
+DTI1MDczMDA4MTI0NloXDTM1MDcyNzA4MTI0NlowZDEUMBIGA1UECBMLTWFoYXJh
+c2h0cmExDzANBgNVBBETBjQwMDYxNDEPMA0GA1UECxMGUEUtSUlJMQwwCgYDVQQK
+EwNTQkkxCzAJBgNVBAYTAklOMQ8wDQYDVQQDEwZTQkktQ0EwggEiMA0GCSqGSIb3
+DQEBAQUAA4IBDwAwggEKAoIBAQCwMnCS/BvMUCwMpUE9BvRYv54d024LQWdhAQnD
+ooVpsknU3SeWkelt8ihvXP+SV2TafhWjRXahZimX4mDxCJ3xErvUnmU5TcUw7Rdu
+QbZBwqRHxuEWv+fARu6BGmXdYSGFXTu18Tls1iYK6xLUXHBSX+DNvrLetaVT4sEv
+w0E8y0uqBXNUI/yHFWhHxPi/tCe8AjpyazSLqX+1YSidnt/WWRPOM7qTXIrPEaEb
+wJiXsZzfbbeBdoZpTKk651PawDHnaH3aMHyrmPuRTX+ltPbeHo3opRaWiJCpf/92
+v86cjoFAi70bFnmtbYfS5rYjXCgPfaoKwHROU0/vR0T7YjUNAgMBAAGjgfAwge0w
+EgYDVR0TAQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8EBAMCAQYwHwYDVR0jBBgwFoAU
+eS2eSUNoUtquJjrWD6yc3CXRdvUwHQYDVR0OBBYEFFHwu+3eY2cb+UHBDIW6B1jn
+T3z/MEgGCCsGAQUFBwEBBDwwOjA4BggrBgEFBQcwAoYsaHR0cDovL2NlcnRzdGF0
+dXMuc2JpL3JlcG9zaXRvcnkvU0JJLVJDQS5jZXIwPQYDVR0fBDYwNDAyoDCgLoYs
+aHR0cDovL2NlcnRzdGF0dXMuc2JpL3JlcG9zaXRvcnkvU0JJLVJDQS5jcmwwDQYJ
+KoZIhvcNAQELBQADggEBAGE+4mAU1jytgmo4k46X9fGhw4OJ5b6NEQXOQ70Pu6rh
+x8ycVMrdbtZuNAtKy1rfgNIK6Hd5pqk0tPZdPEQpbpfoi6thxG1u89otNuk4deMK
++/5Isg/8eHiRS+I2FSL6PtZoKdavKaP5yEnaCz7575bQOqRCkJn8LifGeI11Xrpb
+1xwywWDoCm7d25yQbFlNFkbgBDe8ky6sLd9mKeTYFyrLvz38ssSqk2NpYEB0D8Iv
+k3JIEqnDt9+OjDwTHHXwB6Vs8/naIulkugB0o5+GQGGCFER9tf8bvbkNZ70LdcTX
+zuombmFmlUzxYfp/2EnPe8yxyz4QK69Lz05gJgYGNCY=
+-----END CERTIFICATE-----
+ 2 s:O = SBI, C = IN, CN = SBI-RCA
+   i:O = SBI, C = IN, CN = SBI-RCA
+-----BEGIN CERTIFICATE-----
+MIIDJzCCAg+gAwIBAgIRAIXYKekZjDVCiRngWqTX8ocwDQYJKoZIhvcNAQELBQAw
+LTEMMAoGA1UEChMDU0JJMQswCQYDVQQGEwJJTjEQMA4GA1UEAxMHU0JJLVJDQTAe
+Fw0yNTA3MzAwNzQ2MDBaFw0zNTA3MjgwNzQ2MDBaMC0xDDAKBgNVBAoTA1NCSTEL
+MAkGA1UEBhMCSU4xEDAOBgNVBAMTB1NCSS1SQ0EwggEiMA0GCSqGSIb3DQEBAQUA
+A4IBDwAwggEKAoIBAQCuKkfAlPAzyFgsSHF4bdES8UIBYV9yEmgtnxbXbBb3ht2b
+IVbY+Et2jHETZrYgAPVMNT+O9CQvKPyUO+2Zz+8naPHFfNr2cuj8Hxtk2kcIEkeX
+w1fwt0XE0pqG8lahFgMnYb3E8XzCf0MPsX1Q6ve+vjli+BRKB86VOAfq7cMO4e/l
+cSF81ejxKtEcrgGRVhxQ+ATShGkACtyn9nkBBPL4HbM5nUY4igNcisnXWRTSGvl+
+Bff47UKVW+DwYureNagWQiEaJPamnNFOw4mGlGucPvDfpmZau9y5QmaRYnlJZOB0
+WxvhrKrY0UCofdJR84AVgcVjG9eUMjVi0wJdSMNFAgMBAAGjQjBAMA8GA1UdEwEB
+/wQFMAMBAf8wDgYDVR0PAQH/BAQDAgEGMB0GA1UdDgQWBBR5LZ5JQ2hS2q4mOtYP
+rJzcJdF29TANBgkqhkiG9w0BAQsFAAOCAQEAMEtDpab5j+bZC8+WdDNy6dqvQZfu
+WwJquYuUJ7TeCXzNLV2ACYzFXm7CSiDKb1cw2q3Lz70JGpv2qX/CtslQDfnV+Lsx
+1e/DSv5hJDXuKLXmuVcJthcOjJzalEOqi2KGRgSPzI8u6URkWlF5OxJ10O8oPV8c
+8Ed5RibF7z1G1u8M/Lsx3u1SzBdndrLXFK6lyUg3//R7VGxUMPXZfcGoNCaGtV0o
+Fpl7JZgwg6kS+/iDd87a2fFC0O6f/I6QylyxKlEwcZq7F12sa5WncgjAlAGrMFyu
+JGPEjTzASnU8mQQbCcciVHKKTVVl4YRcXUASBDGi6KW8lgimaUnd535Niw==
+-----END CERTIFICATE-----
 ---
 Server certificate
 subject=ST = MAHARASHTRA, OU = ITTSS, O = SBI, C = IN, CN = *.sbi
@@ -55,8 +103,8 @@ Peer signing digest: SHA256
 Peer signature type: RSA-PSS
 Server Temp Key: X25519, 253 bits
 ---
-SSL handshake has read 1865 bytes and written 369 bytes
-Verification error: unable to verify the first certificate
+SSL handshake has read 3726 bytes and written 369 bytes
+Verification error: self signed certificate in certificate chain
 ---
 New, TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384
 Server public key is 2048 bit
@@ -65,27 +113,27 @@ Compression: NONE
 Expansion: NONE
 No ALPN negotiated
 Early data was not sent
-Verify return code: 21 (unable to verify the first certificate)
+Verify return code: 19 (self signed certificate in certificate chain)
 ---
 ---
 Post-Handshake New Session Ticket arrived:
 SSL-Session:
     Protocol  : TLSv1.3
     Cipher    : TLS_AES_256_GCM_SHA384
-    Session-ID: DD0D25690873BCA8BC589D9FE5336EF0DEF57D40DBB86C2B8223433282B59189
+    Session-ID: B6FA8EE289872B323EEE1F14AD53DB03EED0D8A609D09F016A52BFB2E6315E12
     Session-ID-ctx:
-    Resumption PSK: 4A90A0FBCEB027062A821CBD24919B47D82E23A0491382C25958A39713DC981809B8DF17DFA6FE51342A40945E19F345
+    Resumption PSK: D87C4B0A01871280E4217CB7E4AB01DE5E16631F89550D403636FAE721060DCF202420A526A84ABF9A3E4F61E1B51310
     PSK identity: None
     PSK identity hint: None
     SRP username: None
     TLS session ticket lifetime hint: 300 (seconds)
     TLS session ticket:
-    0000 - 1a b1 59 a7 2f 03 4e de-3c e4 4d a4 7a bf 1e 09   ..Y./.N.<.M.z...
-    0010 - 9f 8f 65 55 39 8b 57 a9-26 32 0f 7a 15 06 06 05   ..eU9.W.&2.z....
+    0000 - 08 54 50 e1 8a f6 9d 6f-fd dc 04 7f 72 41 bc 07   .TP....o....rA..
+    0010 - 99 5c e0 bd 2f c1 41 b7-f7 f5 f8 cd 76 27 f2 ae   .\../.A.....v'..
 
-    Start Time: 1785493601
+    Start Time: 1785493883
     Timeout   : 7200 (sec)
-    Verify return code: 21 (unable to verify the first certificate)
+    Verify return code: 19 (self signed certificate in certificate chain)
     Extended master secret: no
     Max Early Data: 0
 ---
@@ -95,22 +143,21 @@ Post-Handshake New Session Ticket arrived:
 SSL-Session:
     Protocol  : TLSv1.3
     Cipher    : TLS_AES_256_GCM_SHA384
-    Session-ID: 58367A54ABA5CBF3F52FAAB3B0B752027564AC518F1B93E21E8D7C21EBABE9A3
+    Session-ID: D9882F846953287B10C7CFAEACCEE430415B7A1124F5826FD7424DD3501D2E1D
     Session-ID-ctx:
-    Resumption PSK: 00786937973C14278456D4B4233A5C341A0A0AD40E251B8CB98CC135C48C154EFAAD241C17E089DF7963578C54834F76
+    Resumption PSK: D1B73429FD9B9F3A17D774DDE8C1F2F7E7F8961E83C3094FE71FF06A07EF502D96267F966D3FD55F5783C43A6857FBCA
     PSK identity: None
     PSK identity hint: None
     SRP username: None
     TLS session ticket lifetime hint: 300 (seconds)
     TLS session ticket:
-    0000 - d7 2e 3c af 72 4b 99 e6-33 da da d1 ac f6 00 50   ..<.rK..3......P
-    0010 - de 99 57 1c 5d da 92 15-3e 8a e3 97 28 b1 7c 3e   ..W.]...>...(.|>
+    0000 - a5 c7 ad 7e 75 01 81 ad-17 2e 7b c8 4e c5 af 1d   ...~u.....{.N...
+    0010 - ec a6 b3 81 16 20 6a 12-b0 71 11 c2 66 fc c5 c2   ..... j..q..f...
 
-    Start Time: 1785493601
+    Start Time: 1785493883
     Timeout   : 7200 (sec)
-    Verify return code: 21 (unable to verify the first certificate)
+    Verify return code: 19 (self signed certificate in certificate chain)
     Extended master secret: no
     Max Early Data: 0
 ---
 read R BLOCK
-closed
