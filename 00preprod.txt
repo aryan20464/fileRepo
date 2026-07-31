@@ -1,2 +1,116 @@
- 31-07-2026 15:43:11.191+05:30:  START OF ERROR SERVICE CALL: https://10.177.128.132:5001/middlewareSwiftReceiver/eis/kycScoreFromAccountNumber?accountNumber=30002461321&msgId=240733 ========================================================
-I/O error on POST request for "https://10.177.128.132:5001/middlewareSwiftReceiver/eis/kycScoreFromAccountNumber": sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target; nested exception is javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+ openssl s_client -connect 10.177.128.132:5001 -showcerts
+CONNECTED(00000003)
+Can't use SSL_get_servername
+depth=0 ST = MAHARASHTRA, OU = ITTSS, O = SBI, C = IN, CN = *.sbi
+verify error:num=20:unable to get local issuer certificate
+verify return:1
+depth=0 ST = MAHARASHTRA, OU = ITTSS, O = SBI, C = IN, CN = *.sbi
+verify error:num=21:unable to verify the first certificate
+verify return:1
+depth=0 ST = MAHARASHTRA, OU = ITTSS, O = SBI, C = IN, CN = *.sbi
+verify return:1
+---
+Certificate chain
+ 0 s:ST = MAHARASHTRA, OU = ITTSS, O = SBI, C = IN, CN = *.sbi
+   i:ST = Maharashtra, postalCode = 400614, OU = PE-III, O = SBI, C = IN, CN = SBI-CA
+-----BEGIN CERTIFICATE-----
+MIIFGTCCBAGgAwIBAgIQZI+6FOyuCEd6NOmx8cS3RjANBgkqhkiG9w0BAQsFADBk
+MRQwEgYDVQQIEwtNYWhhcmFzaHRyYTEPMA0GA1UEERMGNDAwNjE0MQ8wDQYDVQQL
+EwZQRS1JSUkxDDAKBgNVBAoTA1NCSTELMAkGA1UEBhMCSU4xDzANBgNVBAMTBlNC
+SS1DQTAeFw0yNjA3MzAxMjA4MTZaFw0yODA3MjkxODI5NTlaMFExFDASBgNVBAgT
+C01BSEFSQVNIVFJBMQ4wDAYDVQQLEwVJVFRTUzEMMAoGA1UEChMDU0JJMQswCQYD
+VQQGEwJJTjEOMAwGA1UEAxMFKi5zYmkwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
+ggEKAoIBAQDTE+Iiw72sf/gJZ9r1eTrGhFE/1DppXcd8XHME7G6ze7I9H6BUd5Uw
+CtQ3Tb8lq/FhkeHMxMOQAVeSvWIPc2mz1YSBj4HN7a34DvjugLd/CfrmmbpKzFNm
+iI8RhZzhIayQPUAGO9MjhmTR/9qaEjBPBGxqkvTu+3NxqB24fAJ0ajWVs0rZ9ryV
+DHlEb1KW8MSHR5JbX8rIcFr1PErwujuQ6bzsrsGpWOVH4eNrEBchvfzDyAnPCA3a
+6K1CzOp95Q8ONoPuknAFPIKol1nHz/eBRP+ELZLYBas5S8TigtuVL8hBjOnoCPEM
+M0ubITNZQ3SsEKtukyGBABtQonwFCib1AgMBAAGjggHYMIIB1DAMBgNVHRMBAf8E
+AjAAMA4GA1UdDwEB/wQEAwIE8DAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUH
+AwIwHwYDVR0jBBgwFoAUUfC77d5jZxv5QcEMhboHWOdPfP8wHQYDVR0OBBYEFEWj
+UltNuPUJ8cM0KM2hd0XwTHa9MIHNBgNVHREEgcUwgcKHBAqxgISHBAqxjq2HBAqx
+jq6HBAqxjq+CC3JmbS1wcmUuc2JpgiR0c3MtaWRlYS1pcm0td2ViLXByZXByb2Qu
+Y29ycC5hZC5zYmmCJXRzcy1pZGVhLWlybS1hcHAxLXByZXByb2QuY29ycC5hZC5z
+YmmCJXRzcy1pZGVhLWlybS1hcHAyLXByZXByb2QuY29ycC5hZC5zYmmCJ3Rzcy1p
+ZGVhLXN3aWZ0LWFwcDEtcHJlcHJvZC5jb3JwLmFkLnNiaTBHBggrBgEFBQcBAQQ7
+MDkwNwYIKwYBBQUHMAKGK2h0dHA6Ly9jZXJ0c3RhdHVzLnNiaS9yZXBvc2l0b3J5
+L1NCSS1DQS5jZXIwPAYDVR0fBDUwMzAxoC+gLYYraHR0cDovL2NlcnRzdGF0dXMu
+c2JpL3JlcG9zaXRvcnkvU0JJLUNBLmNybDANBgkqhkiG9w0BAQsFAAOCAQEAHlkO
+ohYgvsxrgW/ihNLESBbblPR/66X51Am4i3aCFDFjKu25n/GUYqRnWmcXUFBPTP+2
+lmNrD4C8esKhiXvte5KfCMzlsomnUEpBvPeKQr5NVu54EJ54bZOytG4+7TpNCI8D
+igImqj7QYbKlK9FAWv0yBAh0VhqaBwJ2L4IO1j5LiELGkc8dsPXUXPDK53/WySNb
+8BrPC/mXJfn3QLL/DuCfG3VMgpe2ZXSCukYnU6jSXw6TIWfjp+cT0mG0UiUfWDOn
+M3Ay9wMqcgoA4MADJrdoVaG8cDPKhTTzW7rN0XOI1liLq5YstMWkWNHOQvJkRke8
+ezpv5gai3wP8C/lYNA==
+-----END CERTIFICATE-----
+---
+Server certificate
+subject=ST = MAHARASHTRA, OU = ITTSS, O = SBI, C = IN, CN = *.sbi
+
+issuer=ST = Maharashtra, postalCode = 400614, OU = PE-III, O = SBI, C = IN, CN = SBI-CA
+
+---
+No client certificate CA names sent
+Peer signing digest: SHA256
+Peer signature type: RSA-PSS
+Server Temp Key: X25519, 253 bits
+---
+SSL handshake has read 1865 bytes and written 369 bytes
+Verification error: unable to verify the first certificate
+---
+New, TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384
+Server public key is 2048 bit
+Secure Renegotiation IS NOT supported
+Compression: NONE
+Expansion: NONE
+No ALPN negotiated
+Early data was not sent
+Verify return code: 21 (unable to verify the first certificate)
+---
+---
+Post-Handshake New Session Ticket arrived:
+SSL-Session:
+    Protocol  : TLSv1.3
+    Cipher    : TLS_AES_256_GCM_SHA384
+    Session-ID: DD0D25690873BCA8BC589D9FE5336EF0DEF57D40DBB86C2B8223433282B59189
+    Session-ID-ctx:
+    Resumption PSK: 4A90A0FBCEB027062A821CBD24919B47D82E23A0491382C25958A39713DC981809B8DF17DFA6FE51342A40945E19F345
+    PSK identity: None
+    PSK identity hint: None
+    SRP username: None
+    TLS session ticket lifetime hint: 300 (seconds)
+    TLS session ticket:
+    0000 - 1a b1 59 a7 2f 03 4e de-3c e4 4d a4 7a bf 1e 09   ..Y./.N.<.M.z...
+    0010 - 9f 8f 65 55 39 8b 57 a9-26 32 0f 7a 15 06 06 05   ..eU9.W.&2.z....
+
+    Start Time: 1785493601
+    Timeout   : 7200 (sec)
+    Verify return code: 21 (unable to verify the first certificate)
+    Extended master secret: no
+    Max Early Data: 0
+---
+read R BLOCK
+---
+Post-Handshake New Session Ticket arrived:
+SSL-Session:
+    Protocol  : TLSv1.3
+    Cipher    : TLS_AES_256_GCM_SHA384
+    Session-ID: 58367A54ABA5CBF3F52FAAB3B0B752027564AC518F1B93E21E8D7C21EBABE9A3
+    Session-ID-ctx:
+    Resumption PSK: 00786937973C14278456D4B4233A5C341A0A0AD40E251B8CB98CC135C48C154EFAAD241C17E089DF7963578C54834F76
+    PSK identity: None
+    PSK identity hint: None
+    SRP username: None
+    TLS session ticket lifetime hint: 300 (seconds)
+    TLS session ticket:
+    0000 - d7 2e 3c af 72 4b 99 e6-33 da da d1 ac f6 00 50   ..<.rK..3......P
+    0010 - de 99 57 1c 5d da 92 15-3e 8a e3 97 28 b1 7c 3e   ..W.]...>...(.|>
+
+    Start Time: 1785493601
+    Timeout   : 7200 (sec)
+    Verify return code: 21 (unable to verify the first certificate)
+    Extended master secret: no
+    Max Early Data: 0
+---
+read R BLOCK
+closed
