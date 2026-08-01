@@ -1,11 +1,31 @@
-[tanzuuser@tss-rforex-jump-preprod ~]$ tanzu plugin source update default --type oci --uri h06vksharbor.corp.ad.sbi/vsphere_plugin/plugin-inventory:latest
-✔  updated discovery source default
-[tanzuuser@tss-rforex-jump-preprod ~]$ tanzu plugin source list
-  NAME     TYPE  SCOPE
-  default  oci   Standalone
-[tanzuuser@tss-rforex-jump-preprod ~]$ tanzu plugin list
-!  unable to list plugin from discovery 'default': error while processing package: failed to get resource files from discovery: error downloading bundle: Checking if image is bundle: Fetching image: Get "https://projects.registry.vmware.com/v2/": dial tcp: lookup projects.registry.vmware.com on 10.176.54.30:53: no such host
-Standalone Plugins
-  NAME  DESCRIPTION  TARGET  DISCOVERY  VERSION  STATUS
-[tanzuuser@tss-rforex-jump-preprod ~]$
+[tanzuuser@ ~]$ tanzu plugin source list -o yaml
+- name: default
+  scope: Standalone
+  type: oci
+[tanzuuser@ ~]$ tanzu version
+version: v0.28.1
+buildDate: 2023-03-07
+sha: 0e6704777-dirty
+[tanzuuser@ ~]$ tanzu config get
+clientOptions:
+    cli:
+        discoverySources:
+            - oci:
+                name: default
+                image: projects.registry.vmware.com/tkg/packages/standalone-plugins:v0.28.1_vmware.1
+        edition: tkg
+        bomRepo: projects.registry.vmware.com/tkg
+        compatibilityFilePath: tkg-compatibility
+    features:
+        cluster:
+            allow-legacy-cluster: "false"
+        global:
+            context-aware-cli-for-plugins: "true"
+            context-target-v2: "true"
+        management-cluster:
+            package-based-cc: "true"
+
+[tanzuuser@ ~]$ tanzu plugin sync -v 9
+✖  unknown shorthand flag: 'v' in -v
+[tanzuuser@ ~]$
 
