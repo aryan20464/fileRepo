@@ -1,21 +1,5 @@
-[tanzuuser@ ~]$ tanzu plugin source list -o yaml
-- name: default
-  scope: Standalone
-  type: oci
-[tanzuuser@ ~]$ tanzu version
-version: v0.28.1
-buildDate: 2023-03-07
-sha: 0e6704777-dirty
-[tanzuuser@ ~]$ tanzu config get
+[tanzuuser@tss-rforex-jump-preprod tanzu]$ cat config.yaml
 clientOptions:
-    cli:
-        discoverySources:
-            - oci:
-                name: default
-                image: projects.registry.vmware.com/tkg/packages/standalone-plugins:v0.28.1_vmware.1
-        edition: tkg
-        bomRepo: projects.registry.vmware.com/tkg
-        compatibilityFilePath: tkg-compatibility
     features:
         cluster:
             allow-legacy-cluster: "false"
@@ -24,8 +8,11 @@ clientOptions:
             context-target-v2: "true"
         management-cluster:
             package-based-cc: "true"
-
-[tanzuuser@ ~]$ tanzu plugin sync -v 9
-✖  unknown shorthand flag: 'v' in -v
-[tanzuuser@ ~]$
-
+    cli:
+        discoverySources:
+            - oci:
+                name: default
+                image: projects.registry.vmware.com/tkg/packages/standalone-plugins:v0.28.1_vmware.1
+        edition: tkg
+        bomRepo: projects.registry.vmware.com/tkg
+        compatibilityFilePath: tkg-compatibility
