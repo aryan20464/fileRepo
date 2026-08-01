@@ -1,7 +1,11 @@
+[tanzuuser@tss-rforex-jump-preprod ~]$ tanzu plugin source update default --type oci --uri h06vksharbor.corp.ad.sbi/vsphere_plugin/plugin-inventory:latest
+✔  updated discovery source default
 [tanzuuser@tss-rforex-jump-preprod ~]$ tanzu plugin source list
   NAME     TYPE  SCOPE
   default  oci   Standalone
-[tanzuuser@tss-rforex-jump-preprod ~]$ tanzu plugin source update default --uri h06vksharbor.corp.ad.sbi/vsphere_plugin/plugin-inventory:latest
-✖  discovery source type cannot be empty
+[tanzuuser@tss-rforex-jump-preprod ~]$ tanzu plugin list
+!  unable to list plugin from discovery 'default': error while processing package: failed to get resource files from discovery: error downloading bundle: Checking if image is bundle: Fetching image: Get "https://projects.registry.vmware.com/v2/": dial tcp: lookup projects.registry.vmware.com on 10.176.54.30:53: no such host
+Standalone Plugins
+  NAME  DESCRIPTION  TARGET  DISCOVERY  VERSION  STATUS
 [tanzuuser@tss-rforex-jump-preprod ~]$
 
