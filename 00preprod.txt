@@ -1,11 +1,7 @@
- openssl s_client -connect h06vksharbor.corp.com:443 -showcerts
+openssl s_client -connect h06vksharbor.corp.com:443 -CAfile ~/.docker/certs.d/h06vksharbor.corp.com/ca.crt
 Connecting to 10.177.106.131
 CONNECTED(00000003)
-depth=0 C=IN, ST=HYD, L=GB, O=SBI, OU=DC&CS, CN=h06vksharbor.corp.com
-verify error:num=20:unable to get local issuer certificate
-verify return:1
-depth=0 C=IN, ST=HYD, L=GB, O=SBI, OU=DC&CS, CN=h06vksharbor.corp.com
-verify error:num=21:unable to verify the first certificate
+depth=1 DC=SBI, DC=AD, CN=SBI-PROD-RCA
 verify return:1
 depth=0 C=IN, ST=HYD, L=GB, O=SBI, OU=DC&CS, CN=h06vksharbor.corp.com
 verify return:1
@@ -15,6 +11,8 @@ Certificate chain
    i:DC=SBI, DC=AD, CN=SBI-PROD-RCA
    a:PKEY: RSA, 4096 (bit); sigalg: sha256WithRSAEncryption
    v:NotBefore: Jun 24 08:21:39 2025 GMT; NotAfter: Jun 24 08:21:39 2027 GMT
+---
+Server certificate
 -----BEGIN CERTIFICATE-----
 MIIGxzCCBa+gAwIBAgITGgAb8z0nUW0KqmqgHgAAABvzPTANBgkqhkiG9w0BAQsF
 ADBAMRMwEQYKCZImiZPyLGQBGRYDU0JJMRIwEAYKCZImiZPyLGQBGRYCQUQxFTAT
@@ -54,8 +52,6 @@ i5iseiaXe8z2V8Y+WXUZ766QQYEuKjCzqQoHgw0Gba4llBQ/YEVxlIxz0Q7JVR8y
 OXMVaybAknwKoKPw6JecWBWCO0ngSb3nOkqklp4CFwlFgRgLGccdSIGv9/Ra7ZhT
 x82KyRbozKhduBU=
 -----END CERTIFICATE-----
----
-Server certificate
 subject=C=IN, ST=HYD, L=GB, O=SBI, OU=DC&CS, CN=h06vksharbor.corp.com
 issuer=DC=SBI, DC=AD, CN=SBI-PROD-RCA
 ---
@@ -65,7 +61,7 @@ Peer signature type: rsa_pss_rsae_sha256
 Peer Temp Key: X25519, 253 bits
 ---
 SSL handshake has read 2485 bytes and written 418 bytes
-Verification error: unable to verify the first certificate
+Verification: OK
 ---
 New, TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384
 Protocol: TLSv1.3
@@ -75,7 +71,7 @@ Compression: NONE
 Expansion: NONE
 No ALPN negotiated
 Early data was not sent
-Verify return code: 21 (unable to verify the first certificate)
+Verify return code: 0 (ok)
 ---
 
 ---
@@ -83,31 +79,31 @@ Post-Handshake New Session Ticket arrived:
 SSL-Session:
     Protocol  : TLSv1.3
     Cipher    : TLS_AES_256_GCM_SHA384
-    Session-ID: B2BCCA94C8EB099E535B5CA968A46C52538BAB7248A6486B555ABD9BBA620775
+    Session-ID: D40F7E056225802054D95CA58D5A3185663396B18F0C124776471BCD80FFAE73
     Session-ID-ctx:
-    Resumption PSK: FA3C357775CB37916F8FBF499FA0EAA549767C17C1C8741067EF6BF3E460CDA79E44487B087B72AF1850679D2DE9E684
+    Resumption PSK: FCB599CFC673AD55EEF3CBF83245698C4EEF3D00248794B4F65E502C66A498C6CFC971087F1CEB4D9B9221CAD229A0DA
     PSK identity: None
     PSK identity hint: None
     SRP username: None
     TLS session ticket lifetime hint: 172800 (seconds)
     TLS session ticket:
     0000 - 1f be 5b b9 4f 05 c1 f0-1e 3d 7c 64 36 56 3c 62   ..[.O....=|d6V<b
-    0010 - 29 3e 2e be 54 f3 08 0e-85 3d ce 16 fa 71 ad d3   )>..T....=...q..
-    0020 - f7 5a 6b b9 6f 2c 3b 8c-69 ba 9a 56 4d 60 be 06   .Zk.o,;.i..VM`..
-    0030 - 41 ce dc 12 f8 5f 7a 75-32 1f 3e b1 86 00 6a 78   A...._zu2.>...jx
-    0040 - 13 ae 64 12 35 83 f1 00-50 54 77 fb db ef 0e 30   ..d.5...PTw....0
-    0050 - a9 60 c3 b5 bb de 34 5e-3d 73 7b 67 bb c9 56 87   .`....4^=s{g..V.
-    0060 - cb b9 df f2 38 f5 3a c3-7d a7 51 de 2c 3f a4 d7   ....8.:.}.Q.,?..
-    0070 - 41 5c ed 1f f0 ec 62 2c-45 04 53 20 ad 04 1b 1b   A\....b,E.S ....
-    0080 - 58 63 c7 06 f7 d9 5a 2d-0b de 0b 13 67 a3 14 f4   Xc....Z-....g...
-    0090 - e2 3e d7 41 e9 5b 3f 54-8c 2f 20 1c b9 d5 70 b8   .>.A.[?T./ ...p.
-    00a0 - d7 c9 ff 71 bb e2 14 f4-42 28 ac 8f 02 43 0c 11   ...q....B(...C..
-    00b0 - b8 c4 d2 e7 5c b0 a3 71-73 47 e3 99 84 1f 89 2f   ....\..qsG...../
-    00c0 - 99 2e 60 73 0e 74 0f 59-50 bf 9f 3a b0 f1 a1 63   ..`s.t.YP..:...c
+    0010 - 74 35 7b 31 6d db 62 f9-2c 51 e2 d6 1f d9 db f6   t5{1m.b.,Q......
+    0020 - c9 a9 c3 36 ad 00 31 e5-ef 74 e6 ed f1 25 4a ec   ...6..1..t...%J.
+    0030 - fb 57 19 de a7 46 f4 c1-3e 11 a4 46 f1 35 cf c5   .W...F..>..F.5..
+    0040 - 7d e1 27 4f bb b5 9a e4-8b 02 d1 0e 65 8e 68 f1   }.'O........e.h.
+    0050 - 9a 07 1b f8 05 c0 81 8e-f0 35 64 67 82 ff 8f c4   .........5dg....
+    0060 - 63 36 e0 4d b3 de dd 73-ab 9f b5 19 24 2e 72 29   c6.M...s....$.r)
+    0070 - 84 11 15 eb 9c 9d 6e 61-49 eb 57 58 c0 d4 34 e5   ......naI.WX..4.
+    0080 - 9c 9e 8f 3c a9 6b 41 80-c8 64 23 47 3a e7 4f fb   ...<.kA..d#G:.O.
+    0090 - a9 b0 90 9f 68 a6 69 33-58 9e 4c f5 91 85 23 6b   ....h.i3X.L...#k
+    00a0 - bb ae 49 cb 17 16 4c 8c-c2 00 ef f2 57 4f 49 0b   ..I...L.....WOI.
+    00b0 - fb 05 00 6b d2 7f 62 b5-ed 0c 8b a1 d2 47 cf ec   ...k..b......G..
+    00c0 - 55 88 ea 88 81 9a a1 c6-f4 22 57 8e b1 a7 e6 be   U........"W.....
 
-    Start Time: 1785734592
+    Start Time: 1785734740
     Timeout   : 7200 (sec)
-    Verify return code: 21 (unable to verify the first certificate)
+    Verify return code: 0 (ok)
     Extended master secret: no
     Max Early Data: 0
 ---
@@ -117,31 +113,31 @@ Post-Handshake New Session Ticket arrived:
 SSL-Session:
     Protocol  : TLSv1.3
     Cipher    : TLS_AES_256_GCM_SHA384
-    Session-ID: B23167546236D8A42D1EC72FE33D34DC4E8AD14A2ACAB9FCA8987427F9BDB4FF
+    Session-ID: EF906E642ADFDB607014A17F38F2597F50652DAC9B44A21AF6B85F43A7147096
     Session-ID-ctx:
-    Resumption PSK: 9508452C55E77E234C0B180509FA5129EF543B58582A43645BBC3829CCE7071F29472B24257959FB83BD0DAC5EAAA5E9
+    Resumption PSK: 2C4B69B9C18F65FEEC14790C871C41D664AD1E07C4574B05E75899F2499DFCAB8652097AA1A1A8E63FCF761DBE0C59D5
     PSK identity: None
     PSK identity hint: None
     SRP username: None
     TLS session ticket lifetime hint: 172800 (seconds)
     TLS session ticket:
     0000 - 1f be 5b b9 4f 05 c1 f0-1e 3d 7c 64 36 56 3c 62   ..[.O....=|d6V<b
-    0010 - df f2 78 82 7a e2 b3 6b-0c e2 bf 99 23 e8 04 7e   ..x.z..k....#..~
-    0020 - 4a d8 df 5d 83 0a cd 72-9c c3 b6 f7 9a c5 fa 59   J..]...r.......Y
-    0030 - 0f 91 f0 3f ec ec 98 45-68 c3 b8 4b 67 da 27 08   ...?...Eh..Kg.'.
-    0040 - 15 35 ef 22 52 f2 a3 11-ad 2f a1 32 f8 d1 85 f0   .5."R..../.2....
-    0050 - 6b 5d 63 d9 15 7d 4c 91-76 37 15 e9 83 8a f6 85   k]c..}L.v7......
-    0060 - 68 bf b8 ee 74 e3 f3 c7-43 5f df 1d 2a fe 71 f5   h...t...C_..*.q.
-    0070 - 06 1d 39 67 e3 48 f6 53-74 ec b2 7b 8a 5c a8 e1   ..9g.H.St..{.\..
-    0080 - d3 f9 d1 e1 85 05 11 dc-a6 96 f1 c1 22 8b 44 e9   ............".D.
-    0090 - bb 5e 59 26 38 10 3a 09-46 e4 1f 30 4a 5f 3e ef   .^Y&8.:.F..0J_>.
-    00a0 - 94 25 79 ea 9e 1e 3a c5-d9 87 dc f5 29 11 0b 4d   .%y...:.....)..M
-    00b0 - 47 78 99 75 06 d7 d2 07-70 04 d4 72 b1 48 e5 45   Gx.u....p..r.H.E
-    00c0 - 41 13 d9 3f 1f 37 5a b2-dd 38 04 ee 62 00 9a 50   A..?.7Z..8..b..P
+    0010 - d2 20 99 38 a1 4b 1e bb-f1 b8 59 8a d7 63 21 b6   . .8.K....Y..c!.
+    0020 - fd e7 1a 16 22 7e 67 b6-0d 29 a1 26 64 2b fc 79   ...."~g..).&d+.y
+    0030 - fb 2e af ba 6b 37 24 c8-91 08 a5 01 8a 38 b1 5b   ....k7$......8.[
+    0040 - 1f 6b 59 af 18 1e a2 33-ef 30 36 58 db 67 78 b9   .kY....3.06X.gx.
+    0050 - 12 e0 af fd a8 10 0d da-58 73 a8 a9 f2 3e d4 53   ........Xs...>.S
+    0060 - 3d fe 66 4b a5 44 7c 82-45 80 e0 29 b2 1b bd 7f   =.fK.D|.E..)....
+    0070 - ec c2 8f ac e9 ee 86 53-50 9b 34 ef bd 96 ee 75   .......SP.4....u
+    0080 - 3a a5 23 e7 34 e6 9f 35-4a 8a bc 0d b9 0b 4b a6   :.#.4..5J.....K.
+    0090 - 53 a2 1f 29 9b d8 23 3c-09 74 02 20 aa 72 b5 10   S..)..#<.t. .r..
+    00a0 - 0a 37 80 fc 7b ae 63 a8-ba 70 8b 1b 8e d6 d7 8f   .7..{.c..p......
+    00b0 - dc 8f b5 a0 6b 45 8a 76-36 08 8e 6b af 77 7e 81   ....kE.v6..k.w~.
+    00c0 - e1 bc 3d da 30 a1 3d 4e-45 3c c0 e4 1c f9 e3 54   ..=.0.=NE<.....T
 
-    Start Time: 1785734592
+    Start Time: 1785734740
     Timeout   : 7200 (sec)
-    Verify return code: 21 (unable to verify the first certificate)
+    Verify return code: 0 (ok)
     Extended master secret: no
     Max Early Data: 0
 ---
@@ -149,7 +145,7 @@ read R BLOCK
 HTTP/1.1 400 Bad Request
 content-length: 11
 content-type: text/plain
-date: Mon, 03 Aug 2026 05:23:12 GMT
+date: Mon, 03 Aug 2026 05:25:40 GMT
 server: envoy
 connection: close
 
