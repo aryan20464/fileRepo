@@ -76,7 +76,7 @@ metadata:
   labels:
     app.kubernetes.io/name: node-exporter
 spec:
-  clusterIP: None
+  type: ClusterIP
   selector:
     app.kubernetes.io/name: node-exporter
   ports:
