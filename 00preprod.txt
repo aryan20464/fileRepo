@@ -1,18 +1,2 @@
-[tanzuuser@tss-rforex-jump-preprod tanzu]$ cat config.yaml
-clientOptions:
-    features:
-        cluster:
-            allow-legacy-cluster: "false"
-        global:
-            context-aware-cli-for-plugins: "true"
-            context-target-v2: "true"
-        management-cluster:
-            package-based-cc: "true"
-    cli:
-        discoverySources:
-            - oci:
-                name: default
-                image: projects.registry.vmware.com/tkg/packages/standalone-plugins:v0.28.1_vmware.1
-        edition: tkg
-        bomRepo: projects.registry.vmware.com/tkg
-        compatibilityFilePath: tkg-compatibility
+ docker pull h06vksharbor.corp.ad.sbi/itss/grafana-alloy@sha256:269de4bba113e0b13b9e2799956e35ca233f686004cd4251e1dafe1b6b01044d
+Error response from daemon: failed to resolve reference "h06vksharbor.corp.ad.sbi/itss/grafana-alloy@sha256:269de4bba113e0b13b9e2799956e35ca233f686004cd4251e1dafe1b6b01044d": failed to authorize: failed to fetch oauth token: Post "https://h06vksharbor.corp.ad.sbi/service/token": tls: failed to verify certificate: x509: certificate signed by unknown authority
