@@ -1,23 +1,76 @@
- curl -ikv http://prometheus:9090/api/v1/label/cluster/values
-*   Trying 10.102.30.162:9090...
+I have no name!@curl-pod:/$ curl -s 'http://prometheus:9090/api/v1/query?query=up' | jq
+{
+  "status": "success",
+  "data": {
+    "resultType": "vector",
+    "result": [
+      {
+        "metric": {
+          "__name__": "up",
+          "instance": "loki.forex.svc.cluster.local:3100",
+          "job": "loki"
+        },
+        "value": [
+          1785754869.622,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "up",
+          "instance": "localhost:9090",
+          "job": "prometheus"
+        },
+        "value": [
+          1785754869.622,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "up",
+          "instance": "grafana.forex.svc.cluster.local:3000",
+          "job": "grafana"
+        },
+        "value": [
+          1785754869.622,
+          "0"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "up",
+          "instance": "kube-state-metrics.forex.svc.cluster.local:8080",
+          "job": "kube-state-metrics"
+        },
+        "value": [
+          1785754869.622,
+          "1"
+        ]
+      }
+    ]
+  }
+}
+I have no name!@curl-pod:/$ ^C
+I have no name!@curl-pod:/$ curl -ikv http://prometheus:9090/api/v1/status/config | grep -A5 external_labels
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying 10.102.30.162:9090...
 * Connected to prometheus (10.102.30.162) port 9090 (#0)
-> GET /api/v1/label/cluster/values HTTP/1.1
+> GET /api/v1/status/config HTTP/1.1
 > Host: prometheus:9090
 > User-Agent: curl/7.81.0
 > Accept: */*
 >
 * Mark bundle as not supporting multiuse
 < HTTP/1.1 200 OK
-HTTP/1.1 200 OK
 < Content-Type: application/json
-Content-Type: application/json
 < Vary: Origin
-Vary: Origin
-< Date: Mon, 03 Aug 2026 10:57:59 GMT
-Date: Mon, 03 Aug 2026 10:57:59 GMT
-< Content-Length: 30
-Content-Length: 30
-
+< Date: Mon, 03 Aug 2026 11:01:52 GMT
+< Transfer-Encoding: chunked
 <
+{ [2894 bytes data]
+100  2882    0  2882    0     0   906k      0 --:--:-- --:--:-- --:--:--  938k
 * Connection #0 to host prometheus left intact
-{"status":"success","data":[]}I have no name!@curl-pod:/
+{"status":"success","data":{"yaml":"global:\n  scrape_interval: 15s\n  scrape_timeout: 10s\n  scrape_protocols:\n  - OpenMetricsText1.0.0\n  - OpenMetricsText0.0.1\n  - PrometheusText1.0.0\n  - PrometheusText0.0.4\n  evaluation_interval: 15s\n  external_labels:\n    cluster: h06vkspreprodrforexcls\nruntime:\n  gogc: 75\nscrape_configs:\n- job_name: prometheus\n  honor_timestamps: true\n  track_timestamps_staleness: false\n  scrape_interval: 15s\n  scrape_timeout: 10s\n  scrape_protocols:\n  - OpenMetricsText1.0.0\n  - OpenMetricsText0.0.1\n  - PrometheusText1.0.0\n  - PrometheusText0.0.4\n  always_scrape_classic_histograms: false\n  convert_classic_histograms_to_nhcb: false\n  metrics_path: /metrics\n  scheme: http\n  enable_compression: true\n  metric_name_validation_scheme: utf8\n  metric_name_escaping_scheme: allow-utf-8\n  follow_redirects: true\n  enable_http2: true\n  static_configs:\n  - targets:\n    - localhost:9090\n- job_name: grafana\n  honor_timestamps: true\n  track_timestamps_staleness: false\n  scrape_interval: 15s\n  scrape_timeout: 10s\n  scrape_protocols:\n  - OpenMetricsText1.0.0\n  - OpenMetricsText0.0.1\n  - PrometheusText1.0.0\n  - PrometheusText0.0.4\n  always_scrape_classic_histograms: false\n  convert_classic_histograms_to_nhcb: false\n  metrics_path: /metrics\n  scheme: http\n  enable_compression: true\n  metric_name_validation_scheme: utf8\n  metric_name_escaping_scheme: allow-utf-8\n  follow_redirects: true\n  enable_http2: true\n  static_configs:\n  - targets:\n    - grafana.forex.svc.cluster.local:3000\n- job_name: loki\n  honor_timestamps: true\n  track_timestamps_staleness: false\n  scrape_interval: 15s\n  scrape_timeout: 10s\n  scrape_protocols:\n  - OpenMetricsText1.0.0\n  - OpenMetricsText0.0.1\n  - PrometheusText1.0.0\n  - PrometheusText0.0.4\n  always_scrape_classic_histograms: false\n  convert_classic_histograms_to_nhcb: false\n  metrics_path: /metrics\n  scheme: http\n  enable_compression: true\n  metric_name_validation_scheme: utf8\n  metric_name_escaping_scheme: allow-utf-8\n  follow_redirects: true\n  enable_http2: true\n  static_configs:\n  - targets:\n    - loki.forex.svc.cluster.local:3100\n- job_name: kube-state-metrics\n  honor_timestamps: true\n  track_timestamps_staleness: false\n  scrape_interval: 15s\n  scrape_timeout: 10s\n  scrape_protocols:\n  - OpenMetricsText1.0.0\n  - OpenMetricsText0.0.1\n  - PrometheusText1.0.0\n  - PrometheusText0.0.4\n  always_scrape_classic_histograms: false\n  convert_classic_histograms_to_nhcb: false\n  metrics_path: /metrics\n  scheme: http\n  enable_compression: true\n  metric_name_validation_scheme: utf8\n  metric_name_escaping_scheme: allow-utf-8\n  follow_redirects: true\n  enable_http2: true\n  static_configs:\n  - targets:\n    - kube-state-metrics.forex.svc.cluster.local:8080\notlp:\n  translation_strategy: UnderscoreEscapingWithSuffixes\n"}}
+I have no name!@curl-pod:/$
