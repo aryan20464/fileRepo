@@ -1,13 +1,98 @@
 docker info
+Client:
+ Version:    29.4.2
+ Context:    default
+ Debug Mode: false
 
-docker context ls
+Server:
+ Containers: 0
+  Running: 0
+  Paused: 0
+  Stopped: 0
+ Images: 0
+ Server Version: 29.4.2
+ Storage Driver: overlayfs
+  driver-type: io.containerd.snapshotter.v1
+ Logging Driver: json-file
+ Cgroup Driver: systemd
+ Cgroup Version: 2
+ Plugins:
+  Volume: local
+  Network: bridge host ipvlan macvlan null overlay
+  Log: awslogs fluentd gcplogs gelf journald json-file local splunk syslog
+ CDI spec directories:
+  /etc/cdi
+  /var/run/cdi
+  /home/tanzuuser/.config/cdi
+  /run/user/1003/cdi
+ Swarm: inactive
+ Runtimes: runc io.containerd.runc.v2
+ Default Runtime: runc
+ Init Binary: docker-init
+ containerd version: 77c84241c7cbdd9b4eca2591793e3d4f4317c590
+ runc version: v1.3.5-0-g488fc13
+ init version: de40ad0
+ Security Options:
+  seccomp
+   Profile: builtin
+  rootless
+  cgroupns
+ Kernel Version: 5.14.0-687.20.1.el9_8.x86_64
+ Operating System: Red Hat Enterprise Linux 9.8 (Plow)
+ OSType: linux
+ Architecture: x86_64
+ CPUs: 4
+ Total Memory: 7.5GiB
+ Name: tss-rforex-jump-preprod
+ ID: c772dda0-a2fe-47f9-95bf-31debf8aa098
+ Docker Root Dir: /devtools/docker/data
+ Debug Mode: false
+ Experimental: false
+ Insecure Registries:
+  h06vksharbor.corp.com:443
+  ::1/128
+  127.0.0.0/8
+ Live Restore Enabled: false
+ Product License: Community Engine
+ Firewall Backend: iptables
 
-find ~/.docker/certs.d -type f -ls
-
-find ~/.config/docker/certs.d -type f -ls
-
-cat ~/.docker/config.json
-
-cat ~/.config/docker/daemon.json
-
-ps -ef | grep dockerd
+WARNING: No cpu cfs quota support
+WARNING: No cpu cfs period support
+WARNING: No cpu shares support
+WARNING: No cpuset support
+WARNING: No io.weight support
+WARNING: No io.weight (per device) support
+WARNING: No io.max (rbps) support
+WARNING: No io.max (wbps) support
+WARNING: No io.max (riops) support
+WARNING: No io.max (wiops) support
+[tanzuuser@tss-rforex-jump-preprod h06vksharbor.corp.com]$ docker context ls
+NAME        DESCRIPTION                               DOCKER ENDPOINT                     ERROR
+default *   Current DOCKER_HOST based configuration   unix:///run/user/1003/docker.sock
+rootless    Rootless mode                             unix:///run/user/1003/docker.sock
+Warning: DOCKER_HOST environment variable overrides the active context. To use a context, either set the global --context flag, or unset DOCKER_HOST environment variable.
+[tanzuuser@tss-rforex-jump-preprod h06vksharbor.corp.com]$ find ~/.docker/certs.d -type f -ls
+   131097      4 -rw-r-----   1 tanzuuser tanzuuser     2450 Jul 17 10:39 /home/tanzuuser/.docker/certs.d/h06vksharbor.corp.com/ca1.crt
+   131098      4 -rw-r-----   1 tanzuuser tanzuuser     3732 Jul 17 10:39 /home/tanzuuser/.docker/certs.d/h06vksharbor.corp.com/ca.crt
+[tanzuuser@tss-rforex-jump-preprod h06vksharbor.corp.com]$ find ~/.config/docker/certs.d -type f -ls
+   131093      4 -rw-r-----   1 tanzuuser tanzuuser     2450 Jul 17 10:37 /home/tanzuuser/.config/docker/certs.d/h06vksharbor.corp.com/ca1.crt
+   131094      4 -rw-r-----   1 tanzuuser tanzuuser     3732 Jul 17 10:37 /home/tanzuuser/.config/docker/certs.d/h06vksharbor.corp.com/ca.crt
+[tanzuuser@tss-rforex-jump-preprod h06vksharbor.corp.com]$ cat ~/.docker/config.json
+{
+        "auths": {
+                "h06vksharbor.corp.com": {
+                        "auth": "MTA2NDY5NTpDaGFrcmlAMjExMg=="
+                }
+        },
+        "currentContext": "rootless"
+}[tanzuuser@tss-rforex-jump-preprod h06vksharbor.corp.com]$ cat ~/.config/docker/daemon.json
+{
+        "data-root": "/devtools/docker/data",
+        "iptables": false,
+        "insecure-registries" : ["h06vksharbor.corp.com:443"]
+}
+[tanzuuser@tss-rforex-jump-preprod h06vksharbor.corp.com]$ ps -ef | grep dockerd
+tanzuus+  418025  418009  0 10:51 ?        00:00:00 rootlesskit --state-dir=/run/user/1003/dockerd-rootless --net=slirp4netns --mtu=65520 --slirp4netns-sandbox=auto --slirp4netns-seccomp=auto --disable-host-loopback --port-driver=builtin --copy-up=/etc --copy-up=/run --propagation=rslave /devtools/docker/bin/dockerd-rootless.sh
+tanzuus+  418039  418025  0 10:51 ?        00:00:00 /proc/self/exe --state-dir=/run/user/1003/dockerd-rootless --net=slirp4netns --mtu=65520 --slirp4netns-sandbox=auto --slirp4netns-seccomp=auto --disable-host-loopback --port-driver=builtin --copy-up=/etc --copy-up=/run --propagation=rslave /devtools/docker/bin/dockerd-rootless.sh
+tanzuus+  418072  418039  0 10:51 ?        00:00:00 dockerd
+tanzuus+  418820  418061  0 10:58 pts/0    00:00:00 grep --color=auto dockerd
