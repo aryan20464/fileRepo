@@ -1,21 +1,78 @@
-kubectl logs kube-state-metrics-75d7748b95-mnm8v -n forex
-I0803 09:57:03.825584       1 wrapper.go:120] "Starting kube-state-metrics"
-W0803 09:57:03.825761       1 client_config.go:659] Neither --kubeconfig nor --master was specified.  Using the inClusterConfig.  This might not work.
-I0803 09:57:03.825856       1 server.go:212] "Used default resources"
-I0803 09:57:03.825873       1 types.go:227] "Using all namespaces"
-I0803 09:57:03.825884       1 types.go:145] "Using node type is nil"
-I0803 09:57:03.825898       1 server.go:245] "Metric allow-denylisting" allowDenyStatus="Excluding the following lists that were on denylist: "
-W0803 09:57:03.825912       1 client_config.go:659] Neither --kubeconfig nor --master was specified.  Using the inClusterConfig.  This might not work.
-I0803 09:57:03.826117       1 utils.go:72] "Tested communication with server"
-I0803 09:57:03.830725       1 utils.go:77] "Run with Kubernetes cluster version" major="1" minor="33" gitVersion="v1.33.6+vmware.1-fips" gitTreeState="clean" gitCommit="b043a29eab048fd45de465fba955a5c7b9ffe66f" platform="linux/amd64"
-I0803 09:57:03.830743       1 utils.go:78] "Communication with server successful"
-I0803 09:57:03.831083       1 server.go:372] "Started metrics server" metricsServerAddress="[::]:8080"
-I0803 09:57:03.831095       1 metrics_handler.go:99] "Autosharding disabled"
-I0803 09:57:03.831205       1 server.go:361] "Started kube-state-metrics self metrics server" telemetryAddress="[::]:8081"
-I0803 09:57:03.831255       1 server.go:78] levelinfomsgListening onaddress[::]:8081
-I0803 09:57:03.831257       1 server.go:78] levelinfomsgListening onaddress[::]:8080
-I0803 09:57:03.831281       1 server.go:78] levelinfomsgTLS is disabled.http2falseaddress[::]:8081
-I0803 09:57:03.831286       1 server.go:78] levelinfomsgTLS is disabled.http2falseaddress[::]:8080
-I0803 09:57:03.832706       1 builder.go:282] "Active resources" activeStoreNames="certificatesigningrequests,configmaps,cronjobs,daemonsets,deployments,endpoints,horizontalpodautoscalers,ingresses,jobs,leases,limitranges,mutatingwebhookconfigurations,namespaces,networkpolicies,nodes,persistentvolumeclaims,persistentvolumes,poddisruptionbudgets,pods,replicasets,replicationcontrollers,resourcequotas,secrets,services,statefulsets,storageclasses,validatingwebhookconfigurations,volumeattachments"
-W0803 09:57:03.835425       1 warnings.go:70] v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
-W0803 09:57:03.839665       1 warnings.go:70] v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: forex
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+      evaluation_interval: 15s
+      external_labels:
+        cluster: h06vkspreprodrforexcls
+    scrape_configs:
+      - job_name: 'prometheus'
+        static_configs:
+          - targets: ['localhost:9090']
+      - job_name: 'grafana'
+        static_configs:
+          - targets: ['grafana.forex.svc.cluster.local:3000']
+      - job_name: 'loki'
+        static_configs:
+          - targets: ['loki.forex.svc.cluster.local:3100']
+      - job_name: 'kube-state-metrics'
+        static_configs:
+          - targets: ['kube-state-metrics.forex.svc.cluster.local:8080']  
+
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: forex
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      securityContext:
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: prometheus
+          image: grafana-promethus:3.6.0
+          ports:
+            - containerPort: 9090
+          volumeMounts:
+            - name: prometheus-storage
+              mountPath: /prometheus
+            - name: prometheus-config
+              mountPath: /etc/prometheus
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            runAsUser: 65534
+            seccompProfile:
+              type: RuntimeDefault
+      volumes:
+        - name: prometheus-storage
+          persistentVolumeClaim:
+            claimName: pvc-prometheus
+        - name: prometheus-config
+          configMap:
+            name: prometheus-config
