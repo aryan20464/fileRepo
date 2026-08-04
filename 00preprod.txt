@@ -1,141 +1,80 @@
 apiVersion: v1
-kind: ServiceAccount
+kind: ConfigMap
 metadata:
-  name: prometheus
+  name: prometheus-config
   namespace: forex
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: prometheus
-rules:
-  - apiGroups: [""]
-    resources:
-      - nodes
-      - nodes/proxy
-      - nodes/metrics
-      - services
-      - endpoints
-      - pods
-    verbs: ["get", "list", "watch"]
-  - apiGroups: ["networking.k8s.io"]
-    resources:
-      - ingresses
-    verbs: ["get", "list", "watch"]
-  - nonResourceURLs: ["/metrics"]
-    verbs: ["get"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: prometheus
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: prometheus
-subjects:
-  - kind: ServiceAccount
-    name: prometheus
-    namespace: forex
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+      evaluation_interval: 15s
+      external_labels:
+        cluster: h06vkspreprodrforexcls
 
+    scrape_configs:
+      - job_name: 'prometheus'
+        static_configs:
+          - targets: ['localhost:9090']
+            labels:
+              cluster: h06vkspreprodrforexcls
 
+      - job_name: 'grafana'
+        static_configs:
+          - targets: ['grafana.forex.svc.cluster.local:3000']
+            labels:
+              cluster: h06vkspreprodrforexcls
 
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: prometheus
-  namespace: forex
-spec:
-  strategy:
-    type: Recreate
-  replicas: 1
-  selector:
-    matchLabels:
-      app: prometheus
-  template:
-    metadata:
-      labels:
-        app: prometheus
-    spec:
-      serviceAccountName: prometheus
-      securityContext:
-        runAsUser: 65534
-        runAsGroup: 65534
-        fsGroup: 65534
-        runAsNonRoot: true
-        seccompProfile:
-          type: RuntimeDefault
-      containers:
-        - name: prometheus
-          image: grafana-promethus:3.6.0
-          ports:
-            - containerPort: 9090
-          volumeMounts:
-            - name: prometheus-storage
-              mountPath: /prometheus
-            - name: prometheus-config
-              mountPath: /etc/prometheus
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            runAsNonRoot: true
-            runAsUser: 65534
-            seccompProfile:
-              type: RuntimeDefault
-      volumes:
-        - name: prometheus-storage
-          persistentVolumeClaim:
-            claimName: pvc-prometheus
-        - name: prometheus-config
-          configMap:
-            name: prometheus-config
+      - job_name: 'loki'
+        static_configs:
+          - targets: ['loki.forex.svc.cluster.local:3100']
+            labels:
+              cluster: h06vkspreprodrforexcls
 
+      - job_name: 'kube-state-metrics'
+        static_configs:
+          - targets: ['kube-state-metrics.forex.svc.cluster.local:8080']
+            labels:
+              cluster: h06vkspreprodrforexcls
 
+      # ---- cAdvisor / kubelet container metrics ----
+      # Needs kubernetes_sd_configs (role: node) because each node has
+      # its own kubelet - there's no single static hostname to scrape.
+      - job_name: 'kubelet-cadvisor'
+        scheme: https
+        kubernetes_sd_configs:
+          - role: node
+        tls_config:
+          insecure_skip_verify: true
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        relabel_configs:
+          # rewrite target address to go through the API server's node proxy
+          - target_label: __address__
+            replacement: kubernetes.default.svc:443
+          - source_labels: [__meta_kubernetes_node_name]
+            regex: (.+)
+            target_label: __metrics_path__
+            replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
+          - source_labels: [__meta_kubernetes_node_name]
+            target_label: node
+          # static cluster label (kubernetes_sd_configs targets don't
+          # support static_configs.labels, so we inject it via relabeling)
+          - target_label: cluster
+            replacement: h06vkspreprodrforexcls
 
-
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: prometheus
-  namespace: forex
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: prometheus
-rules:
-  - apiGroups: [""]
-    resources:
-      - nodes
-      - nodes/proxy
-      - nodes/metrics
-      - services
-      - endpoints
-      - pods
-    verbs: ["get", "list", "watch"]
-  - apiGroups: ["networking.k8s.io"]
-    resources:
-      - ingresses
-    verbs: ["get", "list", "watch"]
-  - nonResourceURLs: ["/metrics"]
-    verbs: ["get"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: prometheus
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: prometheus
-subjects:
-  - kind: ServiceAccount
-    name: prometheus
-    namespace: forex
-
-
-
-
-
+      # ---- node-exporter: host-level CPU/mem/disk metrics ----
+      # DaemonSet uses hostNetwork, so each pod's IP == the node's IP.
+      # Discover via role:pod and target it directly on port 9100.
+      - job_name: 'node-exporter'
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name]
+            regex: node-exporter
+            action: keep
+          - source_labels: [__meta_kubernetes_pod_host_ip]
+            target_label: __address__
+            replacement: '${1}:9100'
+          - source_labels: [__meta_kubernetes_pod_node_name]
+            target_label: node
+          - target_label: cluster
+            replacement: h06vkspreprodrforexcls
