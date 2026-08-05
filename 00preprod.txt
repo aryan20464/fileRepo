@@ -1,1 +1,24 @@
-Map<String, Object> user = claims.get("user", Map.class); String pfId = (user != null) ? String.valueOf(user.getOrDefault("pfId", "unknown")) : "unknown"; String branch = (user != null) ? String.valueOf(user.getOrDefault("branchCode", "unknown")) : "unknown"; MDC.put("user_info", String.format("PF-%s|BCODE-%s", pfId, branch)); UserContextHolder.set(new UserContext(pfId, branch)); what kind of excpetion can i expect from this code
+// 1. Guard against null claims or unparsable tokens
+if (claims == null) {
+    throw new IllegalArgumentException("Invalid token: Claims cannot be null");
+}
+
+// 2. Safely extract the user object and verify its type
+Object userRaw = claims.get("user");
+if (!(userRaw instanceof Map)) {
+    throw new IllegalStateException("Token structure error: 'user' claim is missing or malformed");
+}
+
+Map<?, ?> user = (Map<?, ?>) userRaw;
+
+// 3. Extract variables with strict validation (avoiding "unknown" if it's a security risk)
+String pfId = String.valueOf(user.getOrDefault("pfId", ""));
+String branch = String.valueOf(user.getOrDefault("branchCode", ""));
+
+if (pfId.isEmpty() || branch.isEmpty()) {
+    throw new IllegalArgumentException("Token payload missing required user identifying fields");
+}
+
+// 4. Safely populate contexts
+MDC.put("user_info", String.format("PF-%s|BCODE-%s", pfId, branch));
+UserContextHolder.set(new UserContext(pfId, branch));
