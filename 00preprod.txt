@@ -1,24 +1,7 @@
-// 1. Guard against null claims or unparsable tokens
-if (claims == null) {
-    throw new IllegalArgumentException("Invalid token: Claims cannot be null");
-}
+spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
+jasypt.encryptor.algorithm=PBEWithMD5AndDES
+jasypt.encryptor.iv-generator-classname=org.jasypt.iv.NoIvGenerator
 
-// 2. Safely extract the user object and verify its type
-Object userRaw = claims.get("user");
-if (!(userRaw instanceof Map)) {
-    throw new IllegalStateException("Token structure error: 'user' claim is missing or malformed");
-}
+@EnableEncryptableProperties
 
-Map<?, ?> user = (Map<?, ?>) userRaw;
-
-// 3. Extract variables with strict validation (avoiding "unknown" if it's a security risk)
-String pfId = String.valueOf(user.getOrDefault("pfId", ""));
-String branch = String.valueOf(user.getOrDefault("branchCode", ""));
-
-if (pfId.isEmpty() || branch.isEmpty()) {
-    throw new IllegalArgumentException("Token payload missing required user identifying fields");
-}
-
-// 4. Safely populate contexts
-MDC.put("user_info", String.format("PF-%s|BCODE-%s", pfId, branch));
-UserContextHolder.set(new UserContext(pfId, branch));
+mvn spring-boot:run -P local2  -Dspring-boot.run.arguments="--jasypt.encryptor.password=xef$1234"
