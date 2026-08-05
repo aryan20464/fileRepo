@@ -1,5 +1,19 @@
-mvn jasypt:encrypt-value \
--Djasypt.encryptor.password=xef$1234 \
--Djasypt.plugin.value=MyOraclePassword \
--Djasypt.encryptor.algorithm=PBEWithMD5AndDES \
--Djasypt.encryptor.iv-generator-classname=org.jasypt.iv.NoIvGenerator
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.iv.NoIvGenerator;
+
+public class EncryptPassword {
+
+    public static void main(String[] args) {
+
+        StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
+
+        encryptor.setPassword("xef$1234");
+        encryptor.setAlgorithm("PBEWithMD5AndDES");
+        encryptor.setIvGenerator(new NoIvGenerator());
+
+        String encrypted = encryptor.encrypt("MyOraclePassword");
+
+        System.out.println("ENC(" + encrypted + ")");
+    }
+}
+
