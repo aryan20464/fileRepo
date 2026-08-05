@@ -1,11 +1,47 @@
-spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
-jasypt.encryptor.algorithm=PBEWithMD5AndDES
-jasypt.encryptor.iv-generator-classname=org.jasypt.iv.NoIvGenerator
+2026-08-05 11:42:44 +0530 [] [] INFO  33548 --- [           main] .indents.RForexIndentsServiceApplication : Starting RForexIndentsServiceApplication using Java 21.0.5 with PID 33548 (D:\idea-sts-projects\rforex\rfmindentsmodule\target\classes started by 1064695 in D:\idea-sts-projects\rforex\rfmindentsmodule)
+2026-08-05 11:42:44 +0530 [] [] INFO  33548 --- [           main] .indents.RForexIndentsServiceApplication : The following 1 profile is active: "local2"
+2026-08-05 11:42:44 +0530 [] [] INFO  33548 --- [           main] y.config.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-08-05 11:42:44 +0530 [] [] INFO  33548 --- [           main] y.config.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 87 ms. Found 15 JPA repository interfaces.
+2026-08-05 11:42:44 +0530 [] [] INFO  33548 --- [           main] ptablePropertiesBeanFactoryPostProcessor : Post-processing PropertySource instances
+2026-08-05 11:42:44 +0530 [] [] INFO  33548 --- [           main] gboot.EncryptablePropertySourceConverter : Skipping PropertySource configurationProperties [class org.springframework.boot.context.properties.source.ConfigurationPropertySourcesPropertySource
+2026-08-05 11:42:44 +0530 [] [] INFO  33548 --- [           main] gboot.EncryptablePropertySourceConverter : Converting PropertySource commandLineArgs [org.springframework.core.env.SimpleCommandLinePropertySource] to EncryptableEnumerablePropertySourceWrapper
+2026-08-05 11:42:44 +0530 [] [] INFO  33548 --- [           main] gboot.EncryptablePropertySourceConverter : Skipping PropertySource servletConfigInitParams [class org.springframework.core.env.PropertySource$StubPropertySource
+2026-08-05 11:42:44 +0530 [] [] INFO  33548 --- [           main] gboot.EncryptablePropertySourceConverter : Skipping PropertySource servletContextInitParams [class org.springframework.core.env.PropertySource$StubPropertySource
+2026-08-05 11:42:44 +0530 [] [] INFO  33548 --- [           main] gboot.EncryptablePropertySourceConverter : Converting PropertySource systemProperties [org.springframework.core.env.PropertiesPropertySource] to EncryptableMapPropertySourceWrapper
+2026-08-05 11:42:44 +0530 [] [] INFO  33548 --- [           main] gboot.EncryptablePropertySourceConverter : Converting PropertySource systemEnvironment [org.springframework.boot.env.SystemEnvironmentPropertySourceEnvironmentPostProcessor$OriginAwareSystemEnvironmentPropertySource] to EncryptableSystemEnvironmentPropertySourceWrapper
+2026-08-05 11:42:44 +0530 [] [] INFO  33548 --- [           main] gboot.EncryptablePropertySourceConverter : Converting PropertySource random [org.springframework.boot.env.RandomValuePropertySource] to EncryptablePropertySourceWrapper
+2026-08-05 11:42:44 +0530 [] [] INFO  33548 --- [           main] gboot.EncryptablePropertySourceConverter : Converting PropertySource Config resource 'class path resource [application-local2.properties]' via location 'optional:classpath:/' [org.springframework.boot.env.OriginTrackedMapPropertySource] to EncryptableMapPropertySourceWrapper
+2026-08-05 11:42:44 +0530 [] [] INFO  33548 --- [           main] gboot.EncryptablePropertySourceConverter : Converting PropertySource Config resource 'class path resource [application.properties]' via location 'optional:classpath:/' [org.springframework.boot.env.OriginTrackedMapPropertySource] to EncryptableMapPropertySourceWrapper
+2026-08-05 11:42:44 +0530 [] [] INFO  33548 --- [           main] gboot.EncryptablePropertySourceConverter : Converting PropertySource applicationInfo [org.springframework.boot.ApplicationInfoPropertySource] to EncryptableMapPropertySourceWrapper
+2026-08-05 11:42:44 +0530 [] [] INFO  33548 --- [           main] gboot.EncryptablePropertySourceConverter : Converting PropertySource class path resource [application.properties] [org.springframework.core.env.CompositePropertySource] to EncryptableEnumerablePropertySourceWrapper
+2026-08-05 11:42:45 +0530 [] [] INFO  33548 --- [           main] ingboot.filter.DefaultLazyPropertyFilter : Property Filter custom Bean not found with name 'encryptablePropertyFilter'. Initializing Default Property Filter
+2026-08-05 11:42:45 +0530 [] [] INFO  33548 --- [           main] oot.resolver.DefaultLazyPropertyResolver : Property Resolver custom Bean not found with name 'encryptablePropertyResolver'. Initializing Default Property Resolver
+2026-08-05 11:42:45 +0530 [] [] INFO  33548 --- [           main] oot.detector.DefaultLazyPropertyDetector : Property Detector custom Bean not found with name 'encryptablePropertyDetector'. Initializing Default Property Detector
+2026-08-05 11:42:45 +0530 [] [] INFO  33548 --- [           main] boot.web.embedded.tomcat.TomcatWebServer : Tomcat initialized with port 4202 (http)
+2026-08-05 11:42:45 +0530 [] [] INFO  33548 --- [           main] org.apache.catalina.core.StandardService : Starting service [Tomcat]
+2026-08-05 11:42:45 +0530 [] [] INFO  33548 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/10.1.54]
+2026-08-05 11:42:45 +0530 [] [] INFO  33548 --- [           main] Tomcat].[localhost].[/RfxIndentsService] : Initializing Spring embedded WebApplicationContext
+2026-08-05 11:42:45 +0530 [] [] INFO  33548 --- [           main] ntext.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1111 ms
+2026-08-05 11:42:45 +0530 [] [] INFO  33548 --- [           main] pringboot.encryptor.DefaultLazyEncryptor : String Encryptor custom Bean not found with name 'jasyptStringEncryptor'. Initializing Default String Encryptor
+2026-08-05 11:42:45 +0530 [] [] INFO  33548 --- [           main] oot.configuration.StringEncryptorBuilder : Encryptor config not found for property jasypt.encryptor.key-obtention-iterations, using default value: 1000
+2026-08-05 11:42:45 +0530 [] [] INFO  33548 --- [           main] oot.configuration.StringEncryptorBuilder : Encryptor config not found for property jasypt.encryptor.pool-size, using default value: 1
+2026-08-05 11:42:45 +0530 [] [] INFO  33548 --- [           main] oot.configuration.StringEncryptorBuilder : Encryptor config not found for property jasypt.encryptor.provider-name, using default value: null
+2026-08-05 11:42:45 +0530 [] [] INFO  33548 --- [           main] oot.configuration.StringEncryptorBuilder : Encryptor config not found for property jasypt.encryptor.provider-class-name, using default value: null
+2026-08-05 11:42:45 +0530 [] [] INFO  33548 --- [           main] oot.configuration.StringEncryptorBuilder : Encryptor config not found for property jasypt.encryptor.salt-generator-classname, using default value: org.jasypt.salt.RandomSaltGenerator
+2026-08-05 11:42:45 +0530 [] [] INFO  33548 --- [           main] oot.configuration.StringEncryptorBuilder : Encryptor config not found for property jasypt.encryptor.string-output-type, using default value: base64
+2026-08-05 11:42:45 +0530 [] [] ERROR 33548 --- [           main] k.boot.web.embedded.tomcat.TomcatStarter : Error starting Tomcat context. Exception: org.springframework.beans.factory.UnsatisfiedDependencyException. Message: Error creating bean with name 'clientIpLoggingFilter': Unsatisfied dependency expressed through field 'commonService': Error creating bean with name 'commonService': Unsatisfied dependency expressed through field 'staticDataRepo': Error creating bean with name 'staticDataRepository' defined in com.idea.rforexjwtcommonlib.repository.StaticDataRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Cannot resolve reference to bean 'jpaSharedEM_entityManagerFactory' while setting bean property 'entityManager'
+2026-08-05 11:42:45 +0530 [] [] INFO  33548 --- [           main] org.apache.catalina.core.StandardService : Stopping service [Tomcat]
+2026-08-05 11:42:45 +0530 [] [] WARN  33548 --- [           main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Unable to start web server
+2026-08-05 11:42:45 +0530 [] [] INFO  33548 --- [           main] .logging.ConditionEvaluationReportLogger : 
 
-@EnableEncryptableProperties
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-08-05 11:42:45 +0530 [] [] ERROR 33548 --- [           main] agnostics.LoggingFailureAnalysisReporter : 
 
-mvn spring-boot:run -P local2  -Dspring-boot.run.arguments="--jasypt.encryptor.password=xef$1234"
+***************************
+APPLICATION FAILED TO START
+***************************
 
+Description:
 
 Failed to bind properties under 'spring.datasource.password' to java.lang.String:
 
@@ -14,3 +50,15 @@ Failed to bind properties under 'spring.datasource.password' to java.lang.String
 Action:
 
 Update your application's configuration
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  6.987 s
+[INFO] Finished at: 2026-08-05T11:42:45+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:3.5.14:run (default-cli) on project RForexIndentsService: Process terminated with exit code: 1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
