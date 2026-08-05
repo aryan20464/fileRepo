@@ -5,3 +5,12 @@ jasypt.encryptor.iv-generator-classname=org.jasypt.iv.NoIvGenerator
 @EnableEncryptableProperties
 
 mvn spring-boot:run -P local2  -Dspring-boot.run.arguments="--jasypt.encryptor.password=xef$1234"
+
+
+Failed to bind properties under 'spring.datasource.password' to java.lang.String:
+
+    Reason: org.springframework.boot.context.properties.bind.BindException: Failed to bind properties under 'spring.datasource.password' to java.lang.String
+
+Action:
+
+Update your application's configuration
