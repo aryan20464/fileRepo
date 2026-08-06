@@ -1,11 +1,313 @@
-curl -s 'http://prometheus:9090/api/v1/query?query=node_cpu_seconds_total' | jq '.data.result[0].metric'
-
-curl -s 'http://prometheus:9090/api/v1/targets' | jq '.data.activeTargets[] | select(.labels.job=="node-exporter")'
-
-
-curl -s 'http://prometheus:9090/api/v1/query?query=label_values(up,job)' 
-# or more reliably:
-curl -s 'http://prometheus:9090/api/v1/label/job/values' | jq
-
-
-curl -s --data-urlencode 'query=avg(sum by (instance, cpu) (rate(node_cpu_seconds_total{mode!~"idle|iowait|steal", cluster="h06vkspreprodrforexcls", job="node-exporter"}[5m])))' 'http://prometheus:9090/api/v1/query' | jq
+I have no name!@curl-pod:/$ curl -s 'http://prometheus:9090/api/v1/query?query=node_cpu_seconds_total' | jq '.data.result[0].metric'
+null
+I have no name!@curl-pod:/$ curl -s 'http://prometheus:9090/api/v1/targets' | jq '.data.activeTargets[] | select(.labels.job=="node-exporter")'
+{
+  "discoveredLabels": {
+    "__address__": "10.244.6.194:9100",
+    "__meta_kubernetes_namespace": "forex",
+    "__meta_kubernetes_pod_container_id": "containerd://c2bf6c6c0ffbf5beda121d79d5e3e36fd9304b7339374ee54a5f9dc800dd72af",
+    "__meta_kubernetes_pod_container_image": "h06vksharbor.corp.ad.sbi/itss/node-exporter:v1.8.2",
+    "__meta_kubernetes_pod_container_init": "false",
+    "__meta_kubernetes_pod_container_name": "node-exporter",
+    "__meta_kubernetes_pod_container_port_name": "metrics",
+    "__meta_kubernetes_pod_container_port_number": "9100",
+    "__meta_kubernetes_pod_container_port_protocol": "TCP",
+    "__meta_kubernetes_pod_controller_kind": "DaemonSet",
+    "__meta_kubernetes_pod_controller_name": "node-exporter",
+    "__meta_kubernetes_pod_host_ip": "10.244.6.194",
+    "__meta_kubernetes_pod_ip": "10.244.6.194",
+    "__meta_kubernetes_pod_label_app_kubernetes_io_name": "node-exporter",
+    "__meta_kubernetes_pod_label_controller_revision_hash": "7ff4cd9886",
+    "__meta_kubernetes_pod_label_pod_template_generation": "1",
+    "__meta_kubernetes_pod_labelpresent_app_kubernetes_io_name": "true",
+    "__meta_kubernetes_pod_labelpresent_controller_revision_hash": "true",
+    "__meta_kubernetes_pod_labelpresent_pod_template_generation": "true",
+    "__meta_kubernetes_pod_name": "node-exporter-mgwdh",
+    "__meta_kubernetes_pod_node_name": "h06vkspreprodrforexcls-8dvc8-4gvhq",
+    "__meta_kubernetes_pod_phase": "Running",
+    "__meta_kubernetes_pod_ready": "true",
+    "__meta_kubernetes_pod_uid": "c4340f01-926a-41f4-b57d-7b37691d31d9",
+    "__metrics_path__": "/metrics",
+    "__scheme__": "http",
+    "__scrape_interval__": "15s",
+    "__scrape_timeout__": "10s",
+    "job": "node-exporter"
+  },
+  "labels": {
+    "cluster": "h06vkspreprodrforexcls",
+    "instance": "10.244.6.194:9100",
+    "job": "node-exporter",
+    "node": "h06vkspreprodrforexcls-8dvc8-4gvhq"
+  },
+  "scrapePool": "node-exporter",
+  "scrapeUrl": "http://10.244.6.194:9100/metrics",
+  "globalUrl": "http://10.244.6.194:9100/metrics",
+  "lastError": "Get \"http://10.244.6.194:9100/metrics\": context deadline exceeded",
+  "lastScrape": "2026-08-06T10:15:13.612278737Z",
+  "lastScrapeDuration": 10.00039209,
+  "health": "down",
+  "scrapeInterval": "15s",
+  "scrapeTimeout": "10s"
+}
+{
+  "discoveredLabels": {
+    "__address__": "10.244.6.196:9100",
+    "__meta_kubernetes_namespace": "forex",
+    "__meta_kubernetes_pod_container_id": "containerd://2a4aee7ad6fefdbd32c035f0877c8f88580896c950e893f9866e570123507a0d",
+    "__meta_kubernetes_pod_container_image": "h06vksharbor.corp.ad.sbi/itss/node-exporter:v1.8.2",
+    "__meta_kubernetes_pod_container_init": "false",
+    "__meta_kubernetes_pod_container_name": "node-exporter",
+    "__meta_kubernetes_pod_container_port_name": "metrics",
+    "__meta_kubernetes_pod_container_port_number": "9100",
+    "__meta_kubernetes_pod_container_port_protocol": "TCP",
+    "__meta_kubernetes_pod_controller_kind": "DaemonSet",
+    "__meta_kubernetes_pod_controller_name": "node-exporter",
+    "__meta_kubernetes_pod_host_ip": "10.244.6.196",
+    "__meta_kubernetes_pod_ip": "10.244.6.196",
+    "__meta_kubernetes_pod_label_app_kubernetes_io_name": "node-exporter",
+    "__meta_kubernetes_pod_label_controller_revision_hash": "7ff4cd9886",
+    "__meta_kubernetes_pod_label_pod_template_generation": "1",
+    "__meta_kubernetes_pod_labelpresent_app_kubernetes_io_name": "true",
+    "__meta_kubernetes_pod_labelpresent_controller_revision_hash": "true",
+    "__meta_kubernetes_pod_labelpresent_pod_template_generation": "true",
+    "__meta_kubernetes_pod_name": "node-exporter-hlx4v",
+    "__meta_kubernetes_pod_node_name": "h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-g8f26",
+    "__meta_kubernetes_pod_phase": "Running",
+    "__meta_kubernetes_pod_ready": "true",
+    "__meta_kubernetes_pod_uid": "00e84fdb-7a32-41a2-b168-9d81d5715cfc",
+    "__metrics_path__": "/metrics",
+    "__scheme__": "http",
+    "__scrape_interval__": "15s",
+    "__scrape_timeout__": "10s",
+    "job": "node-exporter"
+  },
+  "labels": {
+    "cluster": "h06vkspreprodrforexcls",
+    "instance": "10.244.6.196:9100",
+    "job": "node-exporter",
+    "node": "h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-g8f26"
+  },
+  "scrapePool": "node-exporter",
+  "scrapeUrl": "http://10.244.6.196:9100/metrics",
+  "globalUrl": "http://10.244.6.196:9100/metrics",
+  "lastError": "Get \"http://10.244.6.196:9100/metrics\": context deadline exceeded",
+  "lastScrape": "2026-08-06T10:15:00.74902176Z",
+  "lastScrapeDuration": 10.001029169,
+  "health": "down",
+  "scrapeInterval": "15s",
+  "scrapeTimeout": "10s"
+}
+{
+  "discoveredLabels": {
+    "__address__": "10.244.6.195:9100",
+    "__meta_kubernetes_namespace": "forex",
+    "__meta_kubernetes_pod_container_id": "containerd://79adc655aabcaeb6dc6487be4df5683da3fa1e93e40f542df59d84559bf6bfba",
+    "__meta_kubernetes_pod_container_image": "h06vksharbor.corp.ad.sbi/itss/node-exporter:v1.8.2",
+    "__meta_kubernetes_pod_container_init": "false",
+    "__meta_kubernetes_pod_container_name": "node-exporter",
+    "__meta_kubernetes_pod_container_port_name": "metrics",
+    "__meta_kubernetes_pod_container_port_number": "9100",
+    "__meta_kubernetes_pod_container_port_protocol": "TCP",
+    "__meta_kubernetes_pod_controller_kind": "DaemonSet",
+    "__meta_kubernetes_pod_controller_name": "node-exporter",
+    "__meta_kubernetes_pod_host_ip": "10.244.6.195",
+    "__meta_kubernetes_pod_ip": "10.244.6.195",
+    "__meta_kubernetes_pod_label_app_kubernetes_io_name": "node-exporter",
+    "__meta_kubernetes_pod_label_controller_revision_hash": "7ff4cd9886",
+    "__meta_kubernetes_pod_label_pod_template_generation": "1",
+    "__meta_kubernetes_pod_labelpresent_app_kubernetes_io_name": "true",
+    "__meta_kubernetes_pod_labelpresent_controller_revision_hash": "true",
+    "__meta_kubernetes_pod_labelpresent_pod_template_generation": "true",
+    "__meta_kubernetes_pod_name": "node-exporter-ptb24",
+    "__meta_kubernetes_pod_node_name": "h06vkspreprodrforexcls-8dvc8-czs9n",
+    "__meta_kubernetes_pod_phase": "Running",
+    "__meta_kubernetes_pod_ready": "true",
+    "__meta_kubernetes_pod_uid": "14684325-0376-451e-ab54-7973ee198b8c",
+    "__metrics_path__": "/metrics",
+    "__scheme__": "http",
+    "__scrape_interval__": "15s",
+    "__scrape_timeout__": "10s",
+    "job": "node-exporter"
+  },
+  "labels": {
+    "cluster": "h06vkspreprodrforexcls",
+    "instance": "10.244.6.195:9100",
+    "job": "node-exporter",
+    "node": "h06vkspreprodrforexcls-8dvc8-czs9n"
+  },
+  "scrapePool": "node-exporter",
+  "scrapeUrl": "http://10.244.6.195:9100/metrics",
+  "globalUrl": "http://10.244.6.195:9100/metrics",
+  "lastError": "Get \"http://10.244.6.195:9100/metrics\": context deadline exceeded",
+  "lastScrape": "2026-08-06T10:15:02.827215256Z",
+  "lastScrapeDuration": 10.000137937,
+  "health": "down",
+  "scrapeInterval": "15s",
+  "scrapeTimeout": "10s"
+}
+{
+  "discoveredLabels": {
+    "__address__": "10.244.6.197:9100",
+    "__meta_kubernetes_namespace": "forex",
+    "__meta_kubernetes_pod_container_id": "containerd://af1a56c601056203b848d13691cafd367cc128bbe43bdedb7cbe9a65c2cfda96",
+    "__meta_kubernetes_pod_container_image": "h06vksharbor.corp.ad.sbi/itss/node-exporter:v1.8.2",
+    "__meta_kubernetes_pod_container_init": "false",
+    "__meta_kubernetes_pod_container_name": "node-exporter",
+    "__meta_kubernetes_pod_container_port_name": "metrics",
+    "__meta_kubernetes_pod_container_port_number": "9100",
+    "__meta_kubernetes_pod_container_port_protocol": "TCP",
+    "__meta_kubernetes_pod_controller_kind": "DaemonSet",
+    "__meta_kubernetes_pod_controller_name": "node-exporter",
+    "__meta_kubernetes_pod_host_ip": "10.244.6.197",
+    "__meta_kubernetes_pod_ip": "10.244.6.197",
+    "__meta_kubernetes_pod_label_app_kubernetes_io_name": "node-exporter",
+    "__meta_kubernetes_pod_label_controller_revision_hash": "7ff4cd9886",
+    "__meta_kubernetes_pod_label_pod_template_generation": "1",
+    "__meta_kubernetes_pod_labelpresent_app_kubernetes_io_name": "true",
+    "__meta_kubernetes_pod_labelpresent_controller_revision_hash": "true",
+    "__meta_kubernetes_pod_labelpresent_pod_template_generation": "true",
+    "__meta_kubernetes_pod_name": "node-exporter-gmg6v",
+    "__meta_kubernetes_pod_node_name": "h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-k2fff",
+    "__meta_kubernetes_pod_phase": "Running",
+    "__meta_kubernetes_pod_ready": "true",
+    "__meta_kubernetes_pod_uid": "287a89a6-6d74-426e-9e87-46b0c443f9b3",
+    "__metrics_path__": "/metrics",
+    "__scheme__": "http",
+    "__scrape_interval__": "15s",
+    "__scrape_timeout__": "10s",
+    "job": "node-exporter"
+  },
+  "labels": {
+    "cluster": "h06vkspreprodrforexcls",
+    "instance": "10.244.6.197:9100",
+    "job": "node-exporter",
+    "node": "h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-k2fff"
+  },
+  "scrapePool": "node-exporter",
+  "scrapeUrl": "http://10.244.6.197:9100/metrics",
+  "globalUrl": "http://10.244.6.197:9100/metrics",
+  "lastError": "Get \"http://10.244.6.197:9100/metrics\": context deadline exceeded",
+  "lastScrape": "2026-08-06T10:14:59.522769604Z",
+  "lastScrapeDuration": 10.000409165,
+  "health": "down",
+  "scrapeInterval": "15s",
+  "scrapeTimeout": "10s"
+}
+{
+  "discoveredLabels": {
+    "__address__": "10.244.6.200:9100",
+    "__meta_kubernetes_namespace": "forex",
+    "__meta_kubernetes_pod_container_id": "containerd://45fdad3f8d9c363d38904e62eb165d592ff12c14b41d851e71fab1a8be60d41d",
+    "__meta_kubernetes_pod_container_image": "h06vksharbor.corp.ad.sbi/itss/node-exporter:v1.8.2",
+    "__meta_kubernetes_pod_container_init": "false",
+    "__meta_kubernetes_pod_container_name": "node-exporter",
+    "__meta_kubernetes_pod_container_port_name": "metrics",
+    "__meta_kubernetes_pod_container_port_number": "9100",
+    "__meta_kubernetes_pod_container_port_protocol": "TCP",
+    "__meta_kubernetes_pod_controller_kind": "DaemonSet",
+    "__meta_kubernetes_pod_controller_name": "node-exporter",
+    "__meta_kubernetes_pod_host_ip": "10.244.6.200",
+    "__meta_kubernetes_pod_ip": "10.244.6.200",
+    "__meta_kubernetes_pod_label_app_kubernetes_io_name": "node-exporter",
+    "__meta_kubernetes_pod_label_controller_revision_hash": "7ff4cd9886",
+    "__meta_kubernetes_pod_label_pod_template_generation": "1",
+    "__meta_kubernetes_pod_labelpresent_app_kubernetes_io_name": "true",
+    "__meta_kubernetes_pod_labelpresent_controller_revision_hash": "true",
+    "__meta_kubernetes_pod_labelpresent_pod_template_generation": "true",
+    "__meta_kubernetes_pod_name": "node-exporter-52vzx",
+    "__meta_kubernetes_pod_node_name": "h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-kldbx",
+    "__meta_kubernetes_pod_phase": "Running",
+    "__meta_kubernetes_pod_ready": "true",
+    "__meta_kubernetes_pod_uid": "e836b3f0-b20e-486d-adaf-ce518e9e7df5",
+    "__metrics_path__": "/metrics",
+    "__scheme__": "http",
+    "__scrape_interval__": "15s",
+    "__scrape_timeout__": "10s",
+    "job": "node-exporter"
+  },
+  "labels": {
+    "cluster": "h06vkspreprodrforexcls",
+    "instance": "10.244.6.200:9100",
+    "job": "node-exporter",
+    "node": "h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-kldbx"
+  },
+  "scrapePool": "node-exporter",
+  "scrapeUrl": "http://10.244.6.200:9100/metrics",
+  "globalUrl": "http://10.244.6.200:9100/metrics",
+  "lastError": "Get \"http://10.244.6.200:9100/metrics\": context deadline exceeded",
+  "lastScrape": "2026-08-06T10:15:04.25493774Z",
+  "lastScrapeDuration": 10.000569453,
+  "health": "down",
+  "scrapeInterval": "15s",
+  "scrapeTimeout": "10s"
+}
+{
+  "discoveredLabels": {
+    "__address__": "10.244.6.203:9100",
+    "__meta_kubernetes_namespace": "forex",
+    "__meta_kubernetes_pod_container_id": "containerd://3353e6a8928bd7c29837d068e2988389f4bc7d4c030e8908bd95a2096b8b3144",
+    "__meta_kubernetes_pod_container_image": "h06vksharbor.corp.ad.sbi/itss/node-exporter:v1.8.2",
+    "__meta_kubernetes_pod_container_init": "false",
+    "__meta_kubernetes_pod_container_name": "node-exporter",
+    "__meta_kubernetes_pod_container_port_name": "metrics",
+    "__meta_kubernetes_pod_container_port_number": "9100",
+    "__meta_kubernetes_pod_container_port_protocol": "TCP",
+    "__meta_kubernetes_pod_controller_kind": "DaemonSet",
+    "__meta_kubernetes_pod_controller_name": "node-exporter",
+    "__meta_kubernetes_pod_host_ip": "10.244.6.203",
+    "__meta_kubernetes_pod_ip": "10.244.6.203",
+    "__meta_kubernetes_pod_label_app_kubernetes_io_name": "node-exporter",
+    "__meta_kubernetes_pod_label_controller_revision_hash": "7ff4cd9886",
+    "__meta_kubernetes_pod_label_pod_template_generation": "1",
+    "__meta_kubernetes_pod_labelpresent_app_kubernetes_io_name": "true",
+    "__meta_kubernetes_pod_labelpresent_controller_revision_hash": "true",
+    "__meta_kubernetes_pod_labelpresent_pod_template_generation": "true",
+    "__meta_kubernetes_pod_name": "node-exporter-bz8rr",
+    "__meta_kubernetes_pod_node_name": "h06vkspreprodrforexcls-8dvc8-qvdvp",
+    "__meta_kubernetes_pod_phase": "Running",
+    "__meta_kubernetes_pod_ready": "true",
+    "__meta_kubernetes_pod_uid": "88b5fdf4-4287-436a-bfea-79536b562c5d",
+    "__metrics_path__": "/metrics",
+    "__scheme__": "http",
+    "__scrape_interval__": "15s",
+    "__scrape_timeout__": "10s",
+    "job": "node-exporter"
+  },
+  "labels": {
+    "cluster": "h06vkspreprodrforexcls",
+    "instance": "10.244.6.203:9100",
+    "job": "node-exporter",
+    "node": "h06vkspreprodrforexcls-8dvc8-qvdvp"
+  },
+  "scrapePool": "node-exporter",
+  "scrapeUrl": "http://10.244.6.203:9100/metrics",
+  "globalUrl": "http://10.244.6.203:9100/metrics",
+  "lastError": "Get \"http://10.244.6.203:9100/metrics\": context deadline exceeded",
+  "lastScrape": "2026-08-06T10:15:00.865784701Z",
+  "lastScrapeDuration": 10.000714541,
+  "health": "down",
+  "scrapeInterval": "15s",
+  "scrapeTimeout": "10s"
+}
+I have no name!@curl-pod:/$ curl -s 'http://prometheus:9090/api/v1/query?query=label_values(up,job)'
+I have no name!@curl-pod:/$ curl -s 'http://prometheus:9090/api/v1/label/job/values' | jq error: unknown function with name \"label_values\""}I have no name!@curl-pod:/$ curl -s 'http://prometheus:9090/api/v1/label/job/values' | jq
+{
+  "status": "success",
+  "data": [
+    "grafana",
+    "kube-state-metrics",
+    "kubelet-cadvisor",
+    "loki",
+    "node-exporter",
+    "prometheus"
+  ]
+}
+I have no name!@curl-pod:/$ curl -s --data-urlencode 'query=avg(sum by (instance, cpu) (rate(node_cpu_seconds_total{mode!~"idle|iowait|steal", cluster="h06vkspreprodrforexcls", job="node-exporter"}[5m])))' 'http://prometheus:9090/api/v1/query' | jq
+{
+  "status": "success",
+  "data": {
+    "resultType": "vector",
+    "result": []
+  }
+}
+I have no name!@curl-pod:/$
