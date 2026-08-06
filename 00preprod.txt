@@ -7,3 +7,34 @@ loki                         ClusterIP   10.99.209.168    <none>        3100/TCP
 node-exporter                ClusterIP   10.110.106.113   <none>        9100/TCP            2d23h
 prometheus                   ClusterIP   10.102.30.162    <none>        9090/TCP            164d
 rforex-app-manager-service   ClusterIP   10.103.195.211   <none>        9190/TCP            199d
+/prometheus $ nc -vz 10.244.6.194 9100
+^Cpunt!
+
+/prometheus $ nc -vz node-exporter 9100
+^Cpunt!
+
+/prometheus $ nc -vz 10.110.106.113 9100
+^Cpunt!
+
+/prometheus $ nc -vz 10.102.30.162 9090
+10.102.30.162 (10.102.30.162:9090) open
+/prometheus $ nc -vz 10.244.6.203 9090
+^Cpunt!
+
+/prometheus $ nc -vz 10.244.6.203 9100
+^Cpunt!
+
+/prometheus $ nc -vz 10.99.44.246 3000
+10.99.44.246 (10.99.44.246:3000) open
+/prometheus $ nc -vz 10.102.7.122 12345
+^Cpunt!
+
+/prometheus $ nc -vz 10.99.209.168 3100
+10.99.209.168 (10.99.209.168:3100) open
+/prometheus $ nc -vz  10.99.205.225 8080
+10.99.205.225 (10.99.205.225:8080) open
+/prometheus $ nc -vz  10.99.205.225 8081
+10.99.205.225 (10.99.205.225:8081) open
+/prometheus $ nc -vz 10.101.183.84 8081
+10.101.183.84 (10.101.183.84:8081) open
+/prometheus $
