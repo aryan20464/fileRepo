@@ -1,40 +1,194 @@
-kubectl get svc -n forex
-NAME                         TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE
-alloy                        ClusterIP   10.102.7.122     <none>        12345/TCP           164d
-grafana                      ClusterIP   10.99.44.246     <none>        3000/TCP            164d
-kube-state-metrics           ClusterIP   10.99.205.225    <none>        8080/TCP,8081/TCP   3d1h
-loki                         ClusterIP   10.99.209.168    <none>        3100/TCP            164d
-node-exporter                ClusterIP   10.110.106.113   <none>        9100/TCP            2d23h
-prometheus                   ClusterIP   10.102.30.162    <none>        9090/TCP            164d
-rforex-app-manager-service   ClusterIP   10.103.195.211   <none>        9190/TCP            199d
-/prometheus $ nc -vz 10.244.6.194 9100
-^Cpunt!
+# 1. Replace the DaemonSet (delete old hostNetwork pods, roll out new ones)
+kubectl apply -f node-exporter-no-hostnetwork.yaml
+kubectl rollout status daemonset/node-exporter -n forex
 
-/prometheus $ nc -vz node-exporter 9100
-^Cpunt!
+# 2. Update Prometheus's scrape config to match (pod_ip instead of host_ip)
+kubectl apply -f prometheus-configmap.yaml
 
-/prometheus $ nc -vz 10.110.106.113 9100
-^Cpunt!
+# 3. Prometheus must restart to pick up the new scrape config
+#    (no --web.enable-lifecycle flag set, confirmed earlier - reload endpoint won't work)
+kubectl rollout restart deployment/prometheus -n forex
 
-/prometheus $ nc -vz 10.102.30.162 9090
-10.102.30.162 (10.102.30.162:9090) open
-/prometheus $ nc -vz 10.244.6.203 9090
-^Cpunt!
 
-/prometheus $ nc -vz 10.244.6.203 9100
-^Cpunt!
+# Confirm new node-exporter pods have normal pod IPs, not host IPs
+kubectl get pods -n forex -l app.kubernetes.io/name=node-exporter -o wide
 
-/prometheus $ nc -vz 10.99.44.246 3000
-10.99.44.246 (10.99.44.246:3000) open
-/prometheus $ nc -vz 10.102.7.122 12345
-^Cpunt!
+# Confirm Prometheus target health
+curl -s 'http://prometheus:9090/api/v1/targets' | jq '.data.activeTargets[] | select(.labels.job=="node-exporter") | {instance: .labels.instance, health: .health, lastError: .lastError}'
 
-/prometheus $ nc -vz 10.99.209.168 3100
-10.99.209.168 (10.99.209.168:3100) open
-/prometheus $ nc -vz  10.99.205.225 8080
-10.99.205.225 (10.99.205.225:8080) open
-/prometheus $ nc -vz  10.99.205.225 8081
-10.99.205.225 (10.99.205.225:8081) open
-/prometheus $ nc -vz 10.101.183.84 8081
-10.101.183.84 (10.101.183.84:8081) open
-/prometheus $
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: node-exporter
+  namespace: forex
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-exporter
+  namespace: forex
+  labels:
+    app.kubernetes.io/name: node-exporter
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: node-exporter
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: node-exporter
+    spec:
+      serviceAccountName: node-exporter
+      # hostNetwork removed - Antrea does not reliably route traffic
+      # from pod-network pods to hostNetwork pods. Pod now gets a
+      # normal overlay IP (10.244.x.x) like any other pod, reachable
+      # via standard pod-to-pod Antrea flows.
+      hostPID: true
+      containers:
+        - name: node-exporter
+          image: h06vksharbor.corp.ad.sbi/itss/node-exporter:v1.8.2
+          args:
+            - '--path.procfs=/host/proc'
+            - '--path.sysfs=/host/sys'
+            - '--path.rootfs=/host/root'
+            - '--collector.filesystem.mount-points-exclude=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/pods/.+)($|/)'
+            - '--collector.filesystem.fs-types-exclude=^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|tmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs)$'
+          ports:
+            - containerPort: 9100
+              name: metrics
+              # hostPort removed - only meaningful with hostNetwork.
+              # Port is now just a normal container port on the pod IP.
+          volumeMounts:
+            - name: proc
+              mountPath: /host/proc
+              readOnly: true
+            - name: sys
+              mountPath: /host/sys
+              readOnly: true
+            - name: root
+              mountPath: /host/root
+              mountPropagation: HostToContainer
+              readOnly: true
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65534
+            capabilities:
+              drop: ["ALL"]
+      tolerations:
+        - operator: Exists
+          effect: NoSchedule
+        - operator: Exists
+          effect: NoExecute
+      volumes:
+        - name: proc
+          hostPath:
+            path: /proc
+        - name: sys
+          hostPath:
+            path: /sys
+        - name: root
+          hostPath:
+            path: /
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-exporter
+  namespace: forex
+  labels:
+    app.kubernetes.io/name: node-exporter
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: node-exporter
+  ports:
+    - name: metrics
+      port: 9100
+      targetPort: 9100
+
+
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: forex
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+      evaluation_interval: 15s
+      external_labels:
+        cluster: h06vkspreprodrforexcls
+
+    scrape_configs:
+      - job_name: 'prometheus'
+        static_configs:
+          - targets: ['localhost:9090']
+            labels:
+              cluster: h06vkspreprodrforexcls
+
+      - job_name: 'grafana'
+        static_configs:
+          - targets: ['grafana.forex.svc.cluster.local:3000']
+            labels:
+              cluster: h06vkspreprodrforexcls
+
+      - job_name: 'loki'
+        static_configs:
+          - targets: ['loki.forex.svc.cluster.local:3100']
+            labels:
+              cluster: h06vkspreprodrforexcls
+
+      - job_name: 'kube-state-metrics'
+        static_configs:
+          - targets: ['kube-state-metrics.forex.svc.cluster.local:8080']
+            labels:
+              cluster: h06vkspreprodrforexcls
+
+      # ---- cAdvisor / kubelet container metrics ----
+      # Needs kubernetes_sd_configs (role: node) because each node has
+      # its own kubelet - there's no single static hostname to scrape.
+      - job_name: 'kubelet-cadvisor'
+        scheme: https
+        kubernetes_sd_configs:
+          - role: node
+        tls_config:
+          insecure_skip_verify: true
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        relabel_configs:
+          # rewrite target address to go through the API server's node proxy
+          - target_label: __address__
+            replacement: kubernetes.default.svc:443
+          - source_labels: [__meta_kubernetes_node_name]
+            regex: (.+)
+            target_label: __metrics_path__
+            replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
+          - source_labels: [__meta_kubernetes_node_name]
+            target_label: node
+          # static cluster label (kubernetes_sd_configs targets don't
+          # support static_configs.labels, so we inject it via relabeling)
+          - target_label: cluster
+            replacement: h06vkspreprodrforexcls
+
+      # ---- node-exporter: host-level CPU/mem/disk metrics ----
+      # DaemonSet no longer uses hostNetwork (Antrea does not route
+      # pod-network -> hostNetwork traffic reliably). Each pod now has
+      # its own normal overlay IP - use __meta_kubernetes_pod_ip, not
+      # __meta_kubernetes_pod_host_ip, and target the container port
+      # directly (9100), not a hostPort mapping.
+      - job_name: 'node-exporter'
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name]
+            regex: node-exporter
+            action: keep
+          - source_labels: [__meta_kubernetes_pod_ip]
+            target_label: __address__
+            replacement: '${1}:9100'
+          - source_labels: [__meta_kubernetes_pod_node_name]
+            target_label: node
+          - target_label: cluster
+            replacement: h06vkspreprodrforexcls
