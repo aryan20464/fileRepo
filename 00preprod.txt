@@ -1,5 +1,11 @@
-cluster cpu & memory utilisation
+curl -s 'http://prometheus:9090/api/v1/query?query=node_cpu_seconds_total' | jq '.data.result[0].metric'
 
-avg(sum by (instance, cpu) (rate(node_cpu_seconds_total{mode!~"idle|iowait|steal", cluster="$cluster", job="$job"}[$__rate_interval])))
+curl -s 'http://prometheus:9090/api/v1/targets' | jq '.data.activeTargets[] | select(.labels.job=="node-exporter")'
 
-sum(node_memory_MemTotal_bytes{cluster="$cluster", job="$job"} - node_memory_MemAvailable_bytes{cluster="$cluster", job="$job"}) / sum(node_memory_MemTotal_bytes{cluster="$cluster", job="$job"})
+
+curl -s 'http://prometheus:9090/api/v1/query?query=label_values(up,job)' 
+# or more reliably:
+curl -s 'http://prometheus:9090/api/v1/label/job/values' | jq
+
+
+curl -s --data-urlencode 'query=avg(sum by (instance, cpu) (rate(node_cpu_seconds_total{mode!~"idle|iowait|steal", cluster="h06vkspreprodrforexcls", job="node-exporter"}[5m])))' 'http://prometheus:9090/api/v1/query' | jq
