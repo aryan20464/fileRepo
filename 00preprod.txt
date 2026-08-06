@@ -1,19 +1,88 @@
-import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
-import org.jasypt.iv.NoIvGenerator;
+#!/bin/bash
+# =====================================================================
+# Prometheus Setup Verification Script
+# Namespace: forex
+# Purpose: Confirm RBAC, ConfigMap, Deployment, and scrape targets are
+#          all correctly applied and working end-to-end.
+# Run each section top to bottom - if one section fails, fix it before
+# moving to the next, since later sections depend on earlier ones.
+# =====================================================================
 
-public class EncryptPassword {
+echo "===================================================================="
+echo "1. RBAC CHECKS - ServiceAccount, ClusterRole, ClusterRoleBinding"
+echo "===================================================================="
 
-    public static void main(String[] args) {
+echo "--- ServiceAccount 'prometheus' exists in namespace forex ---"
+kubectl get serviceaccount prometheus -n forex
 
-        StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
+echo ""
+echo "--- ClusterRole 'prometheus' exists with expected rules ---"
+kubectl get clusterrole prometheus -o yaml
 
-        encryptor.setPassword("xef$1234");
-        encryptor.setAlgorithm("PBEWithMD5AndDES");
-        encryptor.setIvGenerator(new NoIvGenerator());
+echo ""
+echo "--- ClusterRoleBinding exists and binds to the correct SA/namespace ---"
+echo "    (confirm subjects[0].name=prometheus, subjects[0].namespace=forex)"
+kubectl get clusterrolebinding prometheus -o yaml
 
-        String encrypted = encryptor.encrypt("MyOraclePassword");
+echo ""
+echo "--- Functional RBAC check (most reliable - bypasses reading YAML) ---"
+echo "    All three of the following MUST return 'yes'"
+kubectl auth can-i list nodes --as=system:serviceaccount:forex:prometheus
+kubectl auth can-i get nodes/proxy --as=system:serviceaccount:forex:prometheus
+kubectl auth can-i list pods -A --as=system:serviceaccount:forex:prometheus
 
-        System.out.println("ENC(" + encrypted + ")");
-    }
-}
 
+echo ""
+echo "===================================================================="
+echo "2. CONFIGMAP CHECKS - correct scrape jobs present and loaded"
+echo "===================================================================="
+
+echo "--- ConfigMap object has all 6 expected jobs ---"
+echo "    Expected: prometheus, grafana, loki, kube-state-metrics,"
+echo "              kubelet-cadvisor, node-exporter"
+kubectl get configmap prometheus-config -n forex -o yaml | grep job_name
+
+echo ""
+echo "--- Confirm the RUNNING Prometheus process loaded this config ---"
+echo "    (not just that the ConfigMap object exists in etcd)"
+curl -s 'http://prometheus:9090/api/v1/status/config' | grep -o '"job_name":"[^"]*"'
+
+
+echo ""
+echo "===================================================================="
+echo "3. DEPLOYMENT CHECKS - ServiceAccount actually attached to the pod"
+echo "===================================================================="
+
+echo "--- Deployment spec has serviceAccountName set ---"
+kubectl get deployment prometheus -n forex -o jsonpath='{.spec.template.spec.serviceAccountName}{"\n"}'
+
+echo ""
+echo "--- The RUNNING pod actually uses that ServiceAccount ---"
+echo "    (spec can be correct while an old pod is still running the old SA)"
+kubectl get pod -n forex -l app=prometheus -o jsonpath='{.items[0].spec.serviceAccountName}{"\n"}'
+
+echo ""
+echo "--- Pod is Running and check its age/start time ---"
+kubectl get pods -n forex -l app=prometheus -o wide
+
+
+echo ""
+echo "===================================================================="
+echo "4. END-TO-END CHECK - scrape targets discovered and healthy"
+echo "===================================================================="
+
+echo "--- All 6 jobs should appear here, cadvisor/node-exporter one per node ---"
+curl -s 'http://prometheus:9090/api/v1/targets' | jq '.data.activeTargets[] | {job: .labels.job, instance: .labels.instance, health: .health, lastError: .lastError}'
+
+
+echo ""
+echo "===================================================================="
+echo "5. TROUBLESHOOTING - only run these if something above failed"
+echo "===================================================================="
+
+echo "--- Recent Prometheus logs ---"
+kubectl logs deployment/prometheus -n forex --tail=50
+
+echo ""
+echo "--- Filtered for RBAC/discovery errors specifically ---"
+kubectl logs deployment/prometheus -n forex | grep -i "forbidden\|error\|discovery"
