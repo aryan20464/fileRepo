@@ -1,63 +1,71 @@
-kubectl get pods -n forex -o wide
-NAME                                                     READY   STATUS      RESTARTS      AGE     IP             NODE                                                   NOMINATED NODE   READINESS GATES
-alloy-4l8cb                                              1/1     Running     0             20d     10.244.6.200   h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-kldbx   <none>           <none>
-alloy-9xwhz                                              1/1     Running     0             10d     10.244.6.197   h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-k2fff   <none>           <none>
-alloy-hxhfs                                              1/1     Running     0             20d     10.244.6.195   h06vkspreprodrforexcls-8dvc8-czs9n                     <none>           <none>
-alloy-pgtqn                                              1/1     Running     0             20d     10.244.6.196   h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-g8f26   <none>           <none>
-alloy-qsm6k                                              1/1     Running     0             16d     10.244.6.194   h06vkspreprodrforexcls-8dvc8-4gvhq                     <none>           <none>
-alloy-v25lt                                              1/1     Running     0             20d     10.244.6.203   h06vkspreprodrforexcls-8dvc8-qvdvp                     <none>           <none>
-curl-pod                                                 1/1     Running     0             3d      192.168.3.9    h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-k2fff   <none>           <none>
-grafana-57f987b4c7-j8p7r                                 1/1     Running     0             6h56m   192.168.4.14   h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-kldbx   <none>           <none>
-kube-state-metrics-75d7748b95-mnm8v                      1/1     Running     6 (36h ago)   3d1h    192.168.3.6    h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-k2fff   <none>           <none>
-loki-7f5b98f469-7z56f                                    1/1     Running     0             5d1h    192.168.3.5    h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-k2fff   <none>           <none>
-node-debugger-h06vkspreprodrforexcls-8dvc8-4gvhq-srtcs   0/1     Completed   0             33m     10.244.6.194   h06vkspreprodrforexcls-8dvc8-4gvhq                     <none>           <none>
-node-exporter-4tnls                                      1/1     Running     0             2m59s   192.168.1.5    h06vkspreprodrforexcls-8dvc8-qvdvp                     <none>           <none>
-node-exporter-6w6xt                                      1/1     Running     0             2m57s   192.168.3.16   h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-k2fff   <none>           <none>
-node-exporter-cc5lt                                      1/1     Running     0             2m58s   192.168.0.5    h06vkspreprodrforexcls-8dvc8-4gvhq                     <none>           <none>
-node-exporter-f4sqr                                      1/1     Running     0             2m54s   192.168.2.15   h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-g8f26   <none>           <none>
-node-exporter-ljq65                                      1/1     Running     0             2m53s   192.168.4.15   h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-kldbx   <none>           <none>
-node-exporter-s4m5k                                      1/1     Running     0             2m56s   192.168.6.12   h06vkspreprodrforexcls-8dvc8-czs9n                     <none>           <none>
-prometheus-7f474b4879-nddvb                              1/1     Running     0             2m26s   192.168.3.17   h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-k2fff   <none>           <none>
-rforex-app-manager-867fb64669-qs79c                      1/1     Running     5 (20d ago)   20d     192.168.2.2    h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-g8f26   <none>           <none>
-rforex-authentication-84546b9d96-bv9j5                   1/1     Running     6 (20d ago)   20d     192.168.2.4    h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-g8f26   <none>           <none>
-rforex-blotter-84ff5b4c4f-vz478                          1/1     Running     0             10d     192.168.4.9    h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-kldbx   <none>           <none>
-rforex-fcra-7f9746dd8f-cvrxk                             1/1     Running     0             10d     192.168.2.13   h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-g8f26   <none>           <none>
-rforex-fcra-7f9746dd8f-vwfrt                             1/1     Running     0             10d     192.168.2.14   h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-g8f26   <none>           <none>
-rforex-fcra-swift-6d9cccdb44-s8mbj                       1/1     Running     0             20d     192.168.2.5    h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-g8f26   <none>           <none>
-rforex-indents-869cb46c75-8gntf                          1/1     Running     4 (20d ago)   20d     192.168.2.6    h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-g8f26   <none>           <none>
-rforex-outward-f87dd58cf-mk45f                           1/1     Running     0             20d     192.168.2.7    h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-g8f26   <none>           <none>
-rforex-ui-84586ffd9c-sqkzz                               1/1     Running     0             10d     192.168.4.10   h06vkspreprodrforexcls-node-pool-1-86cbc-jsff2-kldbx   <none>           <none>
-
-D:\idea-sts-projects\rforex\rforex-vks\grafana-stack\prometheus>kubectl exec -it curl-pod -n forex -- /bin/bash
-I have no name!@curl-pod:/$ curl -s 'http://prometheus:9090/api/v1/targets' | jq '.data.activeTargets[] | select(.labels.job=="node-exporter") | {instance: .labels.instance, health: .health, lastError: .lastError}'
+[tanzuuser@tss-rforex-jump-preprod ~]$ docker pull h06vksharbor.corp.ad.sbi/itss/kube-state-metrics:v2.13.0
+Error response from daemon: failed to resolve reference "h06vksharbor.corp.ad.sbi/itss/kube-state-metrics:v2.13.0": failed to authorize: failed to fetch oauth token: Post "https://h06vksharbor.corp.ad.sbi/service/token": tls: failed to verify certificate: x509: certificate signed by unknown authority
+[tanzuuser@tss-rforex-jump-preprod ~]$ which docker
+/devtools/docker/bin/docker
+[tanzuuser@tss-rforex-jump-preprod ~]$ cd /devtools/docker/
+[tanzuuser@tss-rforex-jump-preprod docker]$ ll
+total 16
+drwxr-x---.  2 tanzuuser tanzuuser 4096 May  7 13:16 bin
+drwxr-x---.  3 tanzuuser tanzuuser   38 May  7 14:17 certs.d
+drwx--x---. 12 tanzuuser tanzuuser  173 Aug  6 10:04 data
+-rwxr-x---.  1 tanzuuser tanzuuser 8641 May  7 13:21 rootless.sh
+[tanzuuser@tss-rforex-jump-preprod docker]$ cd certs.d/h06vksharbor.corp.ad.sbi/
+[tanzuuser@tss-rforex-jump-preprod h06vksharbor.corp.ad.sbi]$ ll
+total 4
+-rw-r-----. 1 tanzuuser tanzuuser 3732 Jul  8 16:06 ca.crt
+[tanzuuser@tss-rforex-jump-preprod h06vksharbor.corp.ad.sbi]$ cd ~/.config/
+[tanzuuser@tss-rforex-jump-preprod .config]$ ll
+total 12
+drwxr-x---. 3 tanzuuser tanzuuser 4096 Aug  3 11:48 docker
+drwxr-x---. 3 tanzuuser tanzuuser 4096 May  7 13:28 systemd
+drwx------. 2 tanzuuser tanzuuser 4096 Aug  1 09:52 tanzu
+[tanzuuser@tss-rforex-jump-preprod .config]$ cd docker/
+[tanzuuser@tss-rforex-jump-preprod docker]$ ll
+total 8
+drwxr-x---. 3 tanzuuser tanzuuser 4096 Jul 17 10:37 certs.d
+-rwxrwx---. 1 tanzuuser tanzuuser   62 Aug  3 11:48 daemon.json
+[tanzuuser@tss-rforex-jump-preprod docker]$ cd certs.d/
+[tanzuuser@tss-rforex-jump-preprod certs.d]$ ll
+total 4
+drwxr-x---. 2 tanzuuser tanzuuser 4096 Aug  7 10:48 h06vksharbor.corp.ad.sbi
+[tanzuuser@tss-rforex-jump-preprod certs.d]$ cd h06vksharbor.corp.ad.sbi/
+[tanzuuser@tss-rforex-jump-preprod h06vksharbor.corp.ad.sbi]$ ll
+total 4
+-rw-r-----. 1 tanzuuser tanzuuser 3732 Jul 17 10:37 ca.crt
+[tanzuuser@tss-rforex-jump-preprod h06vksharbor.corp.ad.sbi]$ cd ../../
+[tanzuuser@tss-rforex-jump-preprod docker]$ cat daemon.json
 {
-  "instance": "192.168.6.12:9100",
-  "health": "up",
-  "lastError": ""
+        "data-root": "/devtools/docker/data",
+        "iptables": false
 }
+[tanzuuser@tss-rforex-jump-preprod docker]$ cd ~/.docker/c
+-bash: cd: /home/tanzuuser/.docker/c: No such file or directory
+[tanzuuser@tss-rforex-jump-preprod docker]$ ll
+total 8
+drwxr-x---. 3 tanzuuser tanzuuser 4096 Jul 17 10:37 certs.d
+-rwxrwx---. 1 tanzuuser tanzuuser   62 Aug  3 11:48 daemon.json
+[tanzuuser@tss-rforex-jump-preprod docker]$ cd ~/.config/docker/
+[tanzuuser@tss-rforex-jump-preprod docker]$ ll
+total 8
+drwxr-x---. 3 tanzuuser tanzuuser 4096 Jul 17 10:37 certs.d
+-rwxrwx---. 1 tanzuuser tanzuuser   62 Aug  3 11:48 daemon.json
+[tanzuuser@tss-rforex-jump-preprod docker]$ cd ~/.docker/
+[tanzuuser@tss-rforex-jump-preprod .docker]$ ll
+total 12
+drwxr-x---. 3 tanzuuser tanzuuser 4096 Jul 17 10:39 certs.d
+-rw-------. 1 tanzuuser tanzuuser  127 Jul 17 10:38 config.json
+drwxr-x---. 3 tanzuuser tanzuuser 4096 May  7 13:28 contexts
+[tanzuuser@tss-rforex-jump-preprod .docker]$ cd certs.d/h06vksharbor.corp.ad.sbi/
+[tanzuuser@tss-rforex-jump-preprod h06vksharbor.corp.ad.sbi]$ ll
+total 4
+-rw-r-----. 1 tanzuuser tanzuuser 3732 Jul 17 10:39 ca.crt
+[tanzuuser@tss-rforex-jump-preprod h06vksharbor.corp.ad.sbi]$ cd ..
+[tanzuuser@tss-rforex-jump-preprod certs.d]$ cat ../config.json
 {
-  "instance": "192.168.3.16:9100",
-  "health": "up",
-  "lastError": ""
-}
-{
-  "instance": "192.168.0.5:9100",
-  "health": "up",
-  "lastError": ""
-}
-{
-  "instance": "192.168.2.15:9100",
-  "health": "up",
-  "lastError": ""
-}
-{
-  "instance": "192.168.1.5:9100",
-  "health": "up",
-  "lastError": ""
-}
-{
-  "instance": "192.168.4.15:9100",
-  "health": "up",
-  "lastError": ""
-}
-I have no name!@curl-pod:/$ 
+        "auths": {
+                "h06vksharbor.corp.ad.sbi": {
+                        "auth": "MTA2NDY5NTpDaGFrcmlAMjExMg=="
+                }
+        },
+        "currentContext": "rootless"
+}[tanzuuser@tss-rforex-jump-preprod certs.d]$
