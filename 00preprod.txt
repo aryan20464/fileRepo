@@ -1,51 +1,6 @@
-[tanzuuser@tss-rforex-jump-preprod user]$ cat docker.service
-[Unit]
-Description=Docker Application Container Engine (Rootless)
-Documentation=https://docs.docker.com/go/rootless/
-Requires=dbus.socket
+Environment=PATH=/devtools/docker/bin:/sbin:/usr/sbin:/devtools/docker/bin:/home/tanzuuser/devtools/tanzu/bin:/home/tanzuuser/devtools/tanzu/bin:/home/tanzuuser/.local/bin:/home/tanzuuser/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin
+Environment=SSL_CERT_FILE=/devtools/docker/ssl-certs/combined-ca-bundle.pem
 
-[Service]
-Environment=PATH=/devtools/docker/bin:/sbin:/usr/sbin:/devtools/docker/bin:/home/tanzuuser/devtools/tanzu/bin:/home/tanzuuser/devtools/tanzu/bin:/home/tanzuuser/.local/bin:/home/tanzuuser/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:SSL_CERT_FILE=/devtools/docker/ssl-certs/combined-ca-bundle.pem
-ExecStart=/devtools/docker/bin/dockerd-rootless.sh
-ExecReload=/bin/kill -s HUP $MAINPID
-TimeoutSec=0
-RestartSec=2
-Restart=always
-StartLimitBurst=3
-StartLimitInterval=60s
-LimitNOFILE=infinity
-LimitNPROC=infinity
-LimitCORE=infinity
-TasksMax=infinity
-Delegate=yes
-Type=notify
-NotifyAccess=all
-KillMode=mixed
-
-[Install]
-WantedBy=default.target
-[tanzuuser@tss-rforex-jump-preprod user]$ systemctl --user daemon-reload
-[tanzuuser@tss-rforex-jump-preprod user]$ systemctl --user restart docker
-[tanzuuser@tss-rforex-jump-preprod user]$ systemctl --user status docker
-● docker.service - Docker Application Container Engine (Rootless)
-     Loaded: loaded (/home/tanzuuser/.config/systemd/user/docker.service; enabled; preset: disabled)
-     Active: active (running) since Fri 2026-08-07 11:28:04 IST; 5s ago
-       Docs: https://docs.docker.com/go/rootless/
-   Main PID: 821151 (rootlesskit)
-      Tasks: 39
-     Memory: 47.4M (peak: 49.2M)
-        CPU: 541ms
-     CGroup: /user.slice/user-1003.slice/user@1003.service/app.slice/docker.service
-             ├─821151 rootlesskit --state-dir=/run/user/1003/dockerd-rootless --net=slirp4netns --mtu=65520 --slirp4netns-sandbox=auto --slirp4netns-seccomp=auto --disable-host-loopback --port-driver=builtin --copy-up=/etc --copy-up=/ru>
-             ├─821165 /proc/self/exe --state-dir=/run/user/1003/dockerd-rootless --net=slirp4netns --mtu=65520 --slirp4netns-sandbox=auto --slirp4netns-seccomp=auto --disable-host-loopback --port-driver=builtin --copy-up=/etc --copy-up=>
-             ├─821185 slirp4netns --mtu 65520 -r 3 --disable-host-loopback --enable-sandbox --enable-seccomp 821165 tap0
-             ├─821194 dockerd
-             └─821217 containerd --config /run/user/1003/docker/containerd/containerd.toml
-lines 1-14/14 (END)
-^C
-[tanzuuser@tss-rforex-jump-preprod user]$ docker pull h06vksharbor.corp.ad.sbi/itss/kube-state-metrics:v2.13.0
-Error response from daemon: failed to resolve reference "h06vksharbor.corp.ad.sbi/itss/kube-state-metrics:v2.13.0": failed to authorize: failed to fetch oauth token: Post "https://h06vksharbor.corp.ad.sbi/service/token": tls: failed to verify certificate: x509: certificate signed by unknown authority
-[tanzuuser@tss-rforex-jump-preprod user]$
-
-
-
+systemctl --user daemon-reload
+systemctl --user restart docker
+systemctl --user show docker -p Environment
