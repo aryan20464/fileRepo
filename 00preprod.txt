@@ -1,57 +1,32 @@
-[tanzuuser@tss-rforex-jump-preprod user]$ docker pull h06vksharbor.corp.ad.sbi/itss/kube-state-metrics:v2.13.0
-Error response from daemon: failed to resolve reference "h06vksharbor.corp.ad.sbi/itss/kube-state-metrics:v2.13.0": failed to authorize: failed to fetch oauth token: Post "https://h06vksharbor.corp.ad.sbi/service/token": tls: failed to verify certificate: x509: certificate signed by unknown authority
-[tanzuuser@tss-rforex-jump-preprod user]$ vi docker.service
-[tanzuuser@tss-rforex-jump-preprod user]$ systemctl --user daemon-reload
-[tanzuuser@tss-rforex-jump-preprod user]$ systemctl --user restart docker
-[tanzuuser@tss-rforex-jump-preprod user]$ systemctl --user show docker -p Environment
-Environment=PATH=/devtools/docker/bin:/sbin:/usr/sbin:/devtools/docker/bin:/home/tanzuuser/devtools/tanzu/bin:/home/tanzuuser/devtools/tanzu/bin:/home/tanzuuser/.local/bin:/home/tanzuuser/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr>
-lines 1-1/1 (END)
-[tanzuuser@tss-rforex-jump-preprod user]$ cat docker.service
-[Unit]
-Description=Docker Application Container Engine (Rootless)
-Documentation=https://docs.docker.com/go/rootless/
-Requires=dbus.socket
+# .bashrc
 
-[Service]
-Environment=PATH=/devtools/docker/bin:/sbin:/usr/sbin:/devtools/docker/bin:/home/tanzuuser/devtools/tanzu/bin:/home/tanzuuser/devtools/tanzu/bin:/home/tanzuuser/.local/bin:/home/tanzuuser/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-Environment=SSL_CERT_FILE=/devtools/docker/ssl-certs/combined-ca-bundle.pem
-ExecStart=/devtools/docker/bin/dockerd-rootless.sh
-ExecReload=/bin/kill -s HUP $MAINPID
-TimeoutSec=0
-RestartSec=2
-Restart=always
-StartLimitBurst=3
-StartLimitInterval=60s
-LimitNOFILE=infinity
-LimitNPROC=infinity
-LimitCORE=infinity
-TasksMax=infinity
-Delegate=yes
-Type=notify
-NotifyAccess=all
-KillMode=mixed
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
 
-[Install]
-WantedBy=default.target
-[tanzuuser@tss-rforex-jump-preprod user]$ systemctl --user show docker -p Environment
-Environment=PATH=/devtools/docker/bin:/sbin:/usr/sbin:/devtools/docker/bin:/home/tanzuuser/devtools/tanzu/bin:/home/tanzuuser/devtools/tanzu/bin:/home/tanzuuser/.local/bin:/home/tanzuuser/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr>
-lines 1-1/1 (END)
-systemctl --user show docker -p Environment^C
-[tanzuuser@tss-rforex-jump-preprod user]$ docker pull h06vksharbor.corp.ad.sbi/itss/kube-state-metrics:v2.13.0
-v2.13.0: Pulling from itss/kube-state-metrics
-4d86e538a2db: Pull complete
-452e9eed7ecf: Pull complete
-7c12895b777b: Pull complete
-80a8c047508a: Pull complete
-3f4e2c586348: Pull complete
-c8022d07192e: Pull complete
-d5fcc14d5481: Pull complete
-2bdf44d7aa71: Pull complete
-045fc1c20da8: Pull complete
-b40161cd83fc: Pull complete
-5664b15f108b: Pull complete
-2780920e5dbf: Pull complete
-Digest: sha256:01218bf3b7e8ce70c082ee40bc4b53c8ec88e354fa611537264d7e0a1efc13c6
-Status: Downloaded newer image for h06vksharbor.corp.ad.sbi/itss/kube-state-metrics:v2.13.0
-h06vksharbor.corp.ad.sbi/itss/kube-state-metrics:v2.13.0
-[tanzuuser@tss-rforex-jump-preprod user]$
+# User specific environment
+if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]
+then
+    PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+fi
+export PATH
+
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+# User specific aliases and functions
+if [ -d ~/.bashrc.d ]; then
+        for rc in ~/.bashrc.d/*; do
+                if [ -f "$rc" ]; then
+                        . "$rc"
+                fi
+        done
+fi
+
+unset rc
+export PATH=/home/tanzuuser/devtools/tanzu/bin:$PATH
+export PATH=/devtools/docker/bin:$PATH
+export PATH=/devtools/linux-amd64:$PATH
+export PATH=/devtools/jdk-21.0.11/bin:$PATH
+export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
