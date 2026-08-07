@@ -1,89 +1,29 @@
-[tanzuuser@tss-rforex-jump-preprod certs.d]$ docker pull h06vksharbor.corp.ad.sbi/itss/kube-state-metrics:v2.13.0
-Error response from daemon: failed to resolve reference "h06vksharbor.corp.ad.sbi/itss/kube-state-metrics:v2.13.0": failed to authorize: failed to fetch oauth token: Post "https://h06vksharbor.corp.ad.sbi/service/token": tls: failed to verify certificate: x509: certificate signed by unknown authority
-[tanzuuser@tss-rforex-jump-preprod certs.d]$ openssl s_client -connect h06vksharbor.corp.ad.sbi:443 -showcerts </dev/null 2>/dev/null | openssl x509 -noout -fingerprint -sha256
-sha256 Fingerprint=78:0F:C8:A4:74:EA:4A:81:26:C9:01:C8:FD:28:DE:FC:DA:DE:8A:F6:F8:26:77:A6:29:26:3E:2B:B0:44:34:E5
-[tanzuuser@tss-rforex-jump-preprod certs.d]$ openssl x509 -in ~/.docker/certs.d/h06vksharbor.corp.ad.sbi/ca.crt -noout -fingerprint -sha256
-sha256 Fingerprint=78:0F:C8:A4:74:EA:4A:81:26:C9:01:C8:FD:28:DE:FC:DA:DE:8A:F6:F8:26:77:A6:29:26:3E:2B:B0:44:34:E5
-[tanzuuser@tss-rforex-jump-preprod certs.d]$ systemctl --user status docker
-● docker.service - Docker Application Container Engine (Rootless)
-     Loaded: loaded (/home/tanzuuser/.config/systemd/user/docker.service; enabled; preset: disabled)
-     Active: active (running) since Fri 2026-08-07 11:05:52 IST; 1min 3s ago
-       Docs: https://docs.docker.com/go/rootless/
-   Main PID: 819362 (rootlesskit)
-      Tasks: 43
-     Memory: 57.6M (peak: 59.2M)
-        CPU: 607ms
-     CGroup: /user.slice/user-1003.slice/user@1003.service/app.slice/docker.service
-             ├─819362 rootlesskit --state-dir=/run/user/1003/dockerd-rootless --net=slirp4netns --mtu=65520 --slirp4netns-sandbox=auto --slirp4netns-seccomp=auto --disable-host-loopback --port-driver=builtin --copy-up=/etc --copy-up=/ru>
-             ├─819375 /proc/self/exe --state-dir=/run/user/1003/dockerd-rootless --net=slirp4netns --mtu=65520 --slirp4netns-sandbox=auto --slirp4netns-seccomp=auto --disable-host-loopback --port-driver=builtin --copy-up=/etc --copy-up=>
-             ├─819393 slirp4netns --mtu 65520 -r 3 --disable-host-loopback --enable-sandbox --enable-seccomp 819375 tap0
-             ├─819402 dockerd
-             └─819430 containerd --config /run/user/1003/docker/containerd/containerd.toml
-...skipping...
-● docker.service - Docker Application Container Engine (Rootless)
-     Loaded: loaded (/home/tanzuuser/.config/systemd/user/docker.service; enabled; preset: disabled)
-     Active: active (running) since Fri 2026-08-07 11:05:52 IST; 1min 3s ago
-       Docs: https://docs.docker.com/go/rootless/
-   Main PID: 819362 (rootlesskit)
-      Tasks: 43
-     Memory: 57.6M (peak: 59.2M)
-        CPU: 607ms
-     CGroup: /user.slice/user-1003.slice/user@1003.service/app.slice/docker.service
-             ├─819362 rootlesskit --state-dir=/run/user/1003/dockerd-rootless --net=slirp4netns --mtu=65520 --slirp4netns-sandbox=auto --slirp4netns-seccomp=auto --disable-host-loopback --port-driver=builtin --copy-up=/etc --copy-up=/ru>
-             ├─819375 /proc/self/exe --state-dir=/run/user/1003/dockerd-rootless --net=slirp4netns --mtu=65520 --slirp4netns-sandbox=auto --slirp4netns-seccomp=auto --disable-host-loopback --port-driver=builtin --copy-up=/etc --copy-up=>
-             ├─819393 slirp4netns --mtu 65520 -r 3 --disable-host-loopback --enable-sandbox --enable-seccomp 819375 tap0
-             ├─819402 dockerd
-             └─819430 containerd --config /run/user/1003/docker/containerd/containerd.toml
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-lines 1-14/14 (END)
-systemctl --user status docker^C
-[tanzuuser@tss-rforex-jump-preprod certs.d]$ docker --tlscacert=/devtools/docker/certs.d/h06vksharbor.corp.ad.sbi/ca.crt pull h06vksharbor.corp.ad.sbi/itss/kube-state-metrics:v2.13.0
-Error response from daemon: failed to resolve reference "h06vksharbor.corp.ad.sbi/itss/kube-state-metrics:v2.13.0": failed to authorize: failed to fetch oauth token: Post "https://h06vksharbor.corp.ad.sbi/service/token": tls: failed to verify certificate: x509: certificate signed by unknown authority
-[tanzuuser@tss-rforex-jump-preprod certs.d]$
+[tanzuuser@tss-rforex-jump-preprod user]$ cat docker.service
+[Unit]
+Description=Docker Application Container Engine (Rootless)
+Documentation=https://docs.docker.com/go/rootless/
+Requires=dbus.socket
+
+[Service]
+Environment=PATH=/devtools/docker/bin:/sbin:/usr/sbin:/devtools/docker/bin:/home/tanzuuser/devtools/tanzu/bin:/home/tanzuuser/devtools/tanzu/bin:/home/tanzuuser/.local/bin:/home/tanzuuser/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin
+ExecStart=/devtools/docker/bin/dockerd-rootless.sh
+ExecReload=/bin/kill -s HUP $MAINPID
+TimeoutSec=0
+RestartSec=2
+Restart=always
+StartLimitBurst=3
+StartLimitInterval=60s
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+TasksMax=infinity
+Delegate=yes
+Type=notify
+NotifyAccess=all
+KillMode=mixed
+
+[Install]
+WantedBy=default.target
+[tanzuuser@tss-rforex-jump-preprod user]$ systemctl --user show docker -p Environment
+Environment=PATH=/devtools/docker/bin:/sbin:/usr/sbin:/devtools/docker/bin:/home/tanzuuser/devtools/tanzu/bin:/home/tanzuuser/devtools/tanzu/bin:/home/tanzuuser/.local/bin:/home/tanzuuser/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr>
+lines 1-1/1 (END)
