@@ -1,71 +1,18 @@
-[tanzuuser@tss-rforex-jump-preprod ~]$ docker pull h06vksharbor.corp.ad.sbi/itss/kube-state-metrics:v2.13.0
-Error response from daemon: failed to resolve reference "h06vksharbor.corp.ad.sbi/itss/kube-state-metrics:v2.13.0": failed to authorize: failed to fetch oauth token: Post "https://h06vksharbor.corp.ad.sbi/service/token": tls: failed to verify certificate: x509: certificate signed by unknown authority
-[tanzuuser@tss-rforex-jump-preprod ~]$ which docker
-/devtools/docker/bin/docker
-[tanzuuser@tss-rforex-jump-preprod ~]$ cd /devtools/docker/
-[tanzuuser@tss-rforex-jump-preprod docker]$ ll
-total 16
-drwxr-x---.  2 tanzuuser tanzuuser 4096 May  7 13:16 bin
-drwxr-x---.  3 tanzuuser tanzuuser   38 May  7 14:17 certs.d
-drwx--x---. 12 tanzuuser tanzuuser  173 Aug  6 10:04 data
--rwxr-x---.  1 tanzuuser tanzuuser 8641 May  7 13:21 rootless.sh
-[tanzuuser@tss-rforex-jump-preprod docker]$ cd certs.d/h06vksharbor.corp.ad.sbi/
-[tanzuuser@tss-rforex-jump-preprod h06vksharbor.corp.ad.sbi]$ ll
-total 4
--rw-r-----. 1 tanzuuser tanzuuser 3732 Jul  8 16:06 ca.crt
-[tanzuuser@tss-rforex-jump-preprod h06vksharbor.corp.ad.sbi]$ cd ~/.config/
-[tanzuuser@tss-rforex-jump-preprod .config]$ ll
-total 12
-drwxr-x---. 3 tanzuuser tanzuuser 4096 Aug  3 11:48 docker
-drwxr-x---. 3 tanzuuser tanzuuser 4096 May  7 13:28 systemd
-drwx------. 2 tanzuuser tanzuuser 4096 Aug  1 09:52 tanzu
-[tanzuuser@tss-rforex-jump-preprod .config]$ cd docker/
-[tanzuuser@tss-rforex-jump-preprod docker]$ ll
-total 8
-drwxr-x---. 3 tanzuuser tanzuuser 4096 Jul 17 10:37 certs.d
--rwxrwx---. 1 tanzuuser tanzuuser   62 Aug  3 11:48 daemon.json
-[tanzuuser@tss-rforex-jump-preprod docker]$ cd certs.d/
-[tanzuuser@tss-rforex-jump-preprod certs.d]$ ll
-total 4
-drwxr-x---. 2 tanzuuser tanzuuser 4096 Aug  7 10:48 h06vksharbor.corp.ad.sbi
-[tanzuuser@tss-rforex-jump-preprod certs.d]$ cd h06vksharbor.corp.ad.sbi/
-[tanzuuser@tss-rforex-jump-preprod h06vksharbor.corp.ad.sbi]$ ll
-total 4
--rw-r-----. 1 tanzuuser tanzuuser 3732 Jul 17 10:37 ca.crt
-[tanzuuser@tss-rforex-jump-preprod h06vksharbor.corp.ad.sbi]$ cd ../../
-[tanzuuser@tss-rforex-jump-preprod docker]$ cat daemon.json
-{
-        "data-root": "/devtools/docker/data",
-        "iptables": false
-}
-[tanzuuser@tss-rforex-jump-preprod docker]$ cd ~/.docker/c
--bash: cd: /home/tanzuuser/.docker/c: No such file or directory
-[tanzuuser@tss-rforex-jump-preprod docker]$ ll
-total 8
-drwxr-x---. 3 tanzuuser tanzuuser 4096 Jul 17 10:37 certs.d
--rwxrwx---. 1 tanzuuser tanzuuser   62 Aug  3 11:48 daemon.json
-[tanzuuser@tss-rforex-jump-preprod docker]$ cd ~/.config/docker/
-[tanzuuser@tss-rforex-jump-preprod docker]$ ll
-total 8
-drwxr-x---. 3 tanzuuser tanzuuser 4096 Jul 17 10:37 certs.d
--rwxrwx---. 1 tanzuuser tanzuuser   62 Aug  3 11:48 daemon.json
-[tanzuuser@tss-rforex-jump-preprod docker]$ cd ~/.docker/
-[tanzuuser@tss-rforex-jump-preprod .docker]$ ll
-total 12
-drwxr-x---. 3 tanzuuser tanzuuser 4096 Jul 17 10:39 certs.d
--rw-------. 1 tanzuuser tanzuuser  127 Jul 17 10:38 config.json
-drwxr-x---. 3 tanzuuser tanzuuser 4096 May  7 13:28 contexts
-[tanzuuser@tss-rforex-jump-preprod .docker]$ cd certs.d/h06vksharbor.corp.ad.sbi/
-[tanzuuser@tss-rforex-jump-preprod h06vksharbor.corp.ad.sbi]$ ll
-total 4
--rw-r-----. 1 tanzuuser tanzuuser 3732 Jul 17 10:39 ca.crt
-[tanzuuser@tss-rforex-jump-preprod h06vksharbor.corp.ad.sbi]$ cd ..
-[tanzuuser@tss-rforex-jump-preprod certs.d]$ cat ../config.json
-{
-        "auths": {
-                "h06vksharbor.corp.ad.sbi": {
-                        "auth": "MTA2NDY5NTpDaGFrcmlAMjExMg=="
-                }
-        },
-        "currentContext": "rootless"
-}[tanzuuser@tss-rforex-jump-preprod certs.d]$
+
+Verify the cert being served matches your ca.crt
+Run: openssl s_client -connect h06vksharbor.corp.ad.sbi:443 -showcerts </dev/null 2>/dev/null | openssl x509 -noout -fingerprint -sha256 Compare that fingerprint to: openssl x509 -in ~/.docker/certs.d/h06vksharbor.corp.ad.sbi/ca.crt -noout -fingerprint -sha256 If they don't match, you have the wrong CA (very common behind a corporate TLS-inspecting proxy) and no amount of file-placement will fix it — you need the CA that's actually signing the connection you get from this jump host.
+2
+Confirm which config path your rootless dockerd is actually using
+Check how the daemon was started: systemctl --user status docker (or ps -ef | grep dockerd-rootless). Rootless dockerd respects $XDG_CONFIG_HOME (defaults to ~/.config) for its daemon-level config, so ~/.config/docker/certs.d/h06vksharbor.corp.ad.sbi/ca.crt is the canonical spot — not ~/.docker/certs.d (that one is for the docker CLI's own TLS client certs, not registry CA trust) and not /devtools/docker/certs.d unless data-root/config-root was explicitly pointed there in daemon.json.
+3
+Restart the rootless daemon
+Cert files under certs.d are usually read per-connection, but rootless setups on some Docker versions cache the TLS config at startup. Run: systemctl --user restart docker, then retry the pull immediately. This alone fixes it more often than people expect.
+4
+Check directory and file permissions along the full path
+The rootless daemon runs as tanzuuser with no elevated privileges, so every directory in the path (~, ~/.config, ~/.config/docker, certs.d, and the host-named folder) needs at least traverse (x) permission for that user, and the ca.crt itself needs read (r). Run: namei -l ~/.config/docker/certs.d/h06vksharbor.corp.ad.sbi/ca.crt to see the full permission chain at once.
+5
+Check rootless dockerd logs for the real error
+journalctl --user -u docker -n 100 --no-pager (or check ~/.local/share/docker/... logs depending on setup) right after a failed pull. The daemon log often shows exactly which cert path it tried and why validation failed — e.g. 'x509: certificate signed by unknown authority' with the actual issuer CN, which tells you definitively whether it's a stale cert, wrong path, or proxy-interception issue.
+6
+As a last resort, test with an explicit override
+Temporarily test with docker --tlscacert=/devtools/docker/certs.d/h06vksharbor.corp.ad.sbi/ca.crt pull ... isn't a real docker pull flag, so instead sanity-check by adding the CA to the system trust store for a one-off test: sudo cp ca.crt /usr/local/share/ca-certificates/harbor.crt && sudo update-ca-certificates (if you have sudo), then retry. If that works but certs.d doesn't, it confirms the daemon isn't reading certs.d at all and you likely need to check DOCKER_CONFIG env var overrides or a mismatched hostname/port in the certs.d folder name.
