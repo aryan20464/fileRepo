@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nginx Home Server</title>
+    <title>IDEA-UAT</title>
     <style>
         :root {
             --bg-color: #0d1117;
@@ -115,7 +115,7 @@
             color: var(--text-muted);
             font-size: 0.85rem;
             border-top: 1px solid var(--border-color);
-            margin-top: 4rem;
+            margin-top: 1rem;
         }
 
         footer a {
@@ -131,56 +131,14 @@
 <body>
 
     <header>
-        <!-- Nginx Minimalist SVG Logo -->
         <svg class="logo" viewBox="0 0 24 24">
             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
         </svg>
-        <h1>Home Server Portal</h1>
-        <p class="subtitle">Powered by Nginx Web Server</p>
+        <h1>IDEA HOME SERVER</h1>
     </header>
 
-    <main>
-        <div class="grid">
-            <!-- Service Card 1 -->
-            <a href="http://pi.hole" class="card" target="_blank">
-                <div class="card-header">
-                    <svg class="card-icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    <h2>Pi-hole</h2>
-                </div>
-                <p>Network-wide ad blocking and DNS management console.</p>
-            </a>
-
-            <!-- Service Card 2 -->
-            <a href="http://your-server-ip:32400/web" class="card" target="_blank">
-                <div class="card-header">
-                    <svg class="card-icon" viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14z"/></svg>
-                    <h2>Plex Media</h2>
-                </div>
-                <p>Stream your home videos, movies, and music library.</p>
-            </a>
-
-            <!-- Service Card 3 -->
-            <a href="http://your-server-ip:8080" class="card" target="_blank">
-                <div class="card-header">
-                    <svg class="card-icon" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
-                    <h2>Nextcloud</h2>
-                </div>
-                <p>Personal cloud storage, file sharing, and sync suite.</p>
-            </a>
-
-            <!-- Service Card 4 -->
-            <a href="http://your-server-ip:9000" class="card" target="_blank">
-                <div class="card-header">
-                    <svg class="card-icon" viewBox="0 0 24 24"><path d="M22 13h-8v-2h8v2zm0-6h-8v2h8V7zm0 12h-8v2h8v-2zM4.34 17H12v-2H5.79l-1.57-2.5 1.57-2.5H12V8H4.34L1.17 12.5l3.17 4.5z"/></svg>
-                    <h2>Portainer</h2>
-                </div>
-                <p>Manage Docker containers, volumes, and environments.</p>
-            </a>
-        </div>
-    </main>
-
     <footer>
-        <p>Host Status: Online | Managed via <a href="https://nginx.org" target="_blank" rel="noopener">Nginx</a></p>
+        <p>Host Status: Online</p>
     </footer>
 
 </body>
