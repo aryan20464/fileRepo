@@ -1,52 +1,184 @@
-<svg class="logo" xmlns="http://w3.org" viewBox="0 0 450 100" width="100%" height="100%">
-  <defs>
-    <!-- Sharp shadow effect for the graphic elements -->
-    <filter id="sharp-shadow" x="-10%" y="-10%" width="130%" height="130%">
-      <feDropShadow dx="3" dy="3" stdDeviation="0" flood-color="#000000" flood-opacity="1" />
-    </filter>
-  </defs>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDEA-UAT</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --text-color: #c9d1d9;
+            --text-muted: #8b949e;
+            --nginx-green: #009639;
+            --nginx-hover: #00bc47;
+            --border-color: #30363d;
+        }
 
-  <!-- Yellow Background Banner -->
-  <rect x="0" y="0" width="450" height="100" fill="#F2D042" />
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-  <!-- Typography: R-FOREX -->
-  <!-- Using a heavy, high-contrast serif font stack to match the original stencil-like weight -->
-  <text x="35" y="68" 
-        font-family="'Playfair Display', 'Georgia', 'Times New Roman', serif" 
-        font-weight="900" 
-        font-size="46px" 
-        letter-spacing="2px" 
-        fill="#000000">R-FOREX</text>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
 
-  <!-- Graphic Container (Bill and Coins) -->
-  <g transform="translate(335, 10)">
-    
-    <!-- The Banknote / Bill -->
-    <g transform="rotate(-15, 45, 40)">
-      <!-- Outer Bill Border -->
-      <rect x="5" y="15" width="75" height="45" fill="#F2D042" stroke="#000000" stroke-width="2.5" />
-      <!-- Inner Bill Solid Black Block -->
-      <rect x="10" y="20" width="65" height="35" fill="#000000" />
-      <!-- '100' Text inside the bill -->
-      <text x="42" y="47" 
-            font-family="'Arial Black', sans-serif" 
-            font-weight="900" 
-            font-size="22px" 
-            text-anchor="middle" 
-            fill="#F2D042">100</text>
-    </g>
+        header {
+            text-align: center;
+            padding: 4rem 2rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    <!-- Coin '1' (Top Right) -->
-    <circle cx="82" cy="50" r="10" fill="#F2D042" stroke="#000000" stroke-width="2.5" filter="url(#sharp-shadow)" />
-    <text x="82" y="55" font-family="'Arial Black', sans-serif" font-weight="900" font-size="13px" text-anchor="middle" fill="#000000">1</text>
+        /* Updated to fit the wide banner aspect ratio of the new logo */
+        .logo {
+            width: 280px; 
+            height: auto;
+            margin-bottom: 1.5rem;
+        }
 
-    <!-- Coin '5' (Left) -->
-    <circle cx="45" cy="62" r="12" fill="#F2D042" stroke="#000000" stroke-width="2.5" filter="url(#sharp-shadow)" />
-    <text x="45" y="67" font-family="'Arial Black', sans-serif" font-weight="900" font-size="15px" text-anchor="middle" fill="#000000">5</text>
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+        }
 
-    <!-- Coin '10' (Bottom Center) -->
-    <circle cx="68" cy="74" r="13" fill="#F2D042" stroke="#000000" stroke-width="2.5" filter="url(#sharp-shadow)" />
-    <text x="68" y="79" font-family="'Arial Black', sans-serif" font-weight="900" font-size="14px" text-anchor="middle" fill="#000000">10</text>
-    
-  </g>
-</svg>
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            width: 100%;
+            flex-grow: 1;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: var(--nginx-hover);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-icon {
+            width: 24px;
+            height: 24px;
+            fill: var(--nginx-green);
+        }
+
+        .card h2 {
+            font-size: 1.25rem;
+            color: #ffffff;
+        }
+
+        .card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 1rem;
+        }
+
+        footer a {
+            color: var(--nginx-green);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <!-- Inlined Dark-Theme optimized R-FOREX Logo -->
+        <svg class="logo" xmlns="http://w3.org" viewBox="0 0 450 100">
+            <defs>
+                <filter id="sharp-shadow" x="-10%" y="-10%" width="130%" height="130%">
+                    <feDropShadow dx="3" dy="3" stdDeviation="0" flood-color="#000000" flood-opacity="0.5" />
+                </filter>
+            </defs>
+
+            <!-- Typography: R-FOREX (White for dark theme) -->
+            <text x="15" y="68" 
+                  font-family="'Playfair Display', 'Georgia', 'Times New Roman', serif" 
+                  font-weight="900" 
+                  font-size="48px" 
+                  letter-spacing="2px" 
+                  fill="#ffffff">R-FOREX</text>
+
+            <!-- Graphic Container (Bill and Coins) -->
+            <g transform="translate(335, 10)">
+                <!-- The Banknote / Bill -->
+                <g transform="rotate(-15, 45, 40)">
+                    <rect x="5" y="15" width="75" height="45" fill="none" stroke="#ffffff" stroke-width="2.5" />
+                    <rect x="10" y="20" width="65" height="35" fill="#ffffff" />
+                    <text x="42" y="47" font-family="'Arial Black', sans-serif" font-weight="900" font-size="22px" text-anchor="middle" fill="#0d1117">100</text>
+                </g>
+
+                <!-- Coin '1' -->
+                <circle cx="82" cy="50" r="10" fill="#0d1117" stroke="#ffffff" stroke-width="2.5" filter="url(#sharp-shadow)" />
+                <text x="82" y="55" font-family="'Arial Black', sans-serif" font-weight="900" font-size="13px" text-anchor="middle" fill="#ffffff">1</text>
+
+                <!-- Coin '5' -->
+                <circle cx="45" cy="62" r="12" fill="#0d1117" stroke="#ffffff" stroke-width="2.5" filter="url(#sharp-shadow)" />
+                <text x="45" y="67" font-family="'Arial Black', sans-serif" font-weight="900" font-size="15px" text-anchor="middle" fill="#ffffff">5</text>
+
+                <!-- Coin '10' -->
+                <circle cx="68" cy="74" r="13" fill="#0d1117" stroke="#ffffff" stroke-width="2.5" filter="url(#sharp-shadow)" />
+                <text x="68" y="79" font-family="'Arial Black', sans-serif" font-weight="900" font-size="14px" text-anchor="middle" fill="#ffffff">10</text>
+            </g>
+        </svg>
+        
+        <h1>IDEA HOME SERVER</h1>
+    </header>
+
+    <footer>
+        <p>Host Status: Online</p>
+    </footer>
+
+</body>
+</html>
