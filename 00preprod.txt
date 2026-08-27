@@ -1,87 +1,10 @@
-  434  2026-08-10 10:37:21 cd /devtools/
-  435  2026-08-10 10:37:23 ll
-  436  2026-08-10 10:37:29 unzip docker-rootless.zip
-  437  2026-08-10 10:37:31 clear
-  438  2026-08-10 10:37:31 ll
-  439  2026-08-10 10:37:35 cd docker-rootless/
-  440  2026-08-10 10:37:36 ll
-  441  2026-08-10 10:38:30 cd ..
-  442  2026-08-10 10:38:31 clear
-  443  2026-08-10 10:38:32 ll
-  444  2026-08-10 10:38:34 mkdir -p docker/bin
-  445  2026-08-10 10:38:41 chmod 770 -R docker
-  446  2026-08-10 10:38:50 ll
-  447  2026-08-10 10:39:00 mv docker-rootless/* /devtools
-  448  2026-08-10 10:39:01 ll
-  449  2026-08-10 10:39:02 clear
-  450  2026-08-10 10:39:03 ll
-  451  2026-08-10 10:39:14 cd docker-rootless/
-  452  2026-08-10 10:39:15 ll
-  453  2026-08-10 10:39:16 cd ..
-  454  2026-08-10 10:39:17 clear
-  455  2026-08-10 10:39:17 ll
-  456  2026-08-10 10:39:31 rm -rf docker-rootless
-  457  2026-08-10 10:39:33 clear
-  458  2026-08-10 10:39:33 ll
-  459  2026-08-10 10:39:47 cd /devtools/docker/
-  460  2026-08-10 10:39:54 tar -xvzf /devtools/docker-29.4.2.tgz --strip-components=1 -C bin
-  461  2026-08-10 10:40:09 tar -xvzf /devtools/docker-rootless-extras-29.4.2.tgz --strip-components=1 -C bin
-  462  2026-08-10 10:40:16 cd bin/
-  463  2026-08-10 10:40:20 chmod +x *
-  464  2026-08-10 10:40:21 cd ..
-  465  2026-08-10 10:46:38 vi ~/.bashrc
-  export PATH=/devtools/docker/bin:$PATH
-  export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
-  466  2026-08-10 10:46:58 source ~/.bashrc
-  467  2026-08-10 10:47:27 ll
-  468  2026-08-10 10:47:28 cd ..
-  469  2026-08-10 10:47:29 ll
-  470  2026-08-10 10:47:32 cp rootless.sh docker
-  471  2026-08-10 10:47:33 cd docker/
-  472  2026-08-10 10:47:34 clear
-  473  2026-08-10 10:47:34 ll
-  474  2026-08-10 10:47:40 chmod +x rootless.sh
-  475  2026-08-10 10:47:42 ll
-  476  2026-08-10 10:47:50 ./rootless.sh install
-  477  2026-08-10 10:47:58 cd bin/
-  487  2026-08-10 10:50:35 ./dockerd-rootless-setuptool.sh install --skip-iptables
-  492  2026-08-10 10:52:38 cd /home/tanzuuser/.config/docker
-  493  2026-08-10 10:52:43 mkdir -p /home/tanzuuser/.config/docker
-  494  2026-08-10 10:52:49 cd /home/tanzuuser/.config/docker
-  495  2026-08-10 10:52:50 ll
-  496  2026-08-10 10:53:03 vi daemon.json
-  $ cat /home/tanzuuser/.config/docker/daemon.json
-  {
-        "data-root": "/devtools/docker/data",
-        "iptables": false
-  }
-
-  497  2026-08-10 10:53:21 systemctl --user daemon-reload
-  498  2026-08-10 10:53:27 systemctl --user enable --now docker
-  499  2026-08-10 10:53:33 systemctl --user status docker
-  500  2026-08-10 10:54:07 mkdir -p /devtools/docker/certs.d/h05vksharbor.corp.ad.sbi
-  501  2026-08-10 10:54:48 clear
-  502  2026-08-10 10:54:49 ll
-  503  2026-08-10 10:54:58 cd /devtools/docker/
-  504  2026-08-10 10:54:59 ll
-  505  2026-08-10 10:55:00 cd certs.d/
-  506  2026-08-10 10:55:00 clear
-  507  2026-08-10 10:55:01 ll
-  508  2026-08-10 10:55:52 cd h05vksharbor.corp.ad.sbi/
-  509  2026-08-10 10:55:54 ll
-  510  2026-08-10 10:55:59 cp h05vksharbor.corp.ad.sbi.crt ca.crt
-  511  2026-08-10 10:56:00 clear
-  512  2026-08-10 10:56:01 ll
-  513  2026-08-10 10:56:14 mkdir -p /devtools/docker/ssl-certs
-  514  2026-08-10 10:56:21 cd /devtools/docker/ssl-certs/
-  515  2026-08-10 10:56:23 clear
-  516  2026-08-10 10:56:23 ll
-  517  2026-08-10 10:56:41 cat /etc/pki/tls/certs//ca-bundle.crt /devtools/docker/certs.d/h05vksharbor.corp.ad.sbi/ca.crt > /devtools/docker/ssl-certs/combined-ca-bundle.pem
-  518  2026-08-10 10:57:33 cd ~/.config/systemd/user/
-  519  2026-08-10 10:57:35 ll
-  520  2026-08-10 10:57:37 vi docker.service
-  Environment=SSL_CERT_FILE=/devtools/docker/ssl-certs/combined-ca-bundle.pem
-  523  2026-08-10 10:58:25 systemctl --user daemon-reload
-  524  2026-08-10 10:58:34 systemctl --user restart docker
-  525  2026-08-10 10:58:43 systemctl --user status docker
-  526  2026-08-10 10:58:59 docker login h05vksharbor.corp.ad.sbi -u 1064695
+2026/08/21 14:25:02 [error] 52676#52676: *1271 access forbidden by rule, client: 10.30.130.32, server: 10.191.158.41, request: "OPTIONS /FxsRateService/api/getAllHoliday HTTP/1.1", host: "10.191.158.41:4200", referrer: "https://preprodforex.bank.sbi/"
+2026/08/21 14:25:30 [info] 52676#52676: *1291 client timed out (110: Connection timed out) while waiting for request, client: 10.30.130.151, server: 0.0.0.0:4200
+2026/08/21 14:25:47 [info] 52676#52676: *1322 client timed out (110: Connection timed out) while waiting for request, client: 10.30.130.32, server: 0.0.0.0:4200
+2026/08/21 14:25:56 [info] 52676#52676: *1344 client 10.177.104.181 closed keepalive connection
+2026/08/21 14:25:57 [error] 52676#52676: *1346 access forbidden by rule, client: 10.30.130.32, server: 10.191.158.41, request: "OPTIONS /FxsRateService/api/getAllHoliday HTTP/1.1", host: "10.191.158.41:4200", referrer: "https://preprodforex.bank.sbi/"
+2026/08/21 14:26:42 [info] 52676#52676: *1347 client 127.0.0.1 closed keepalive connection
+2026/08/21 14:27:27 [notice] 53742#53742: signal process started
+2026/08/21 14:27:49 [error] 53743#53743: *1374 access forbidden by rule, client: 10.30.130.32, server: 10.191.158.41, request: "OPTIONS /FxsRateService/api/getAllHoliday HTTP/1.1", host: "10.191.158.41:4200", referrer: "https://preprodforex.bank.sbi/"
+2026/08/21 14:27:51 [info] 53743#53743: *1372 client 10.177.104.181 closed keepalive connection
+2
