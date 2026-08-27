@@ -1,10 +1,10 @@
-2026/08/21 14:25:02 [error] 52676#52676: *1271 access forbidden by rule, client: 10.30.130.32, server: 10.191.158.41, request: "OPTIONS /FxsRateService/api/getAllHoliday HTTP/1.1", host: "10.191.158.41:4200", referrer: "https://preprodforex.bank.sbi/"
-2026/08/21 14:25:30 [info] 52676#52676: *1291 client timed out (110: Connection timed out) while waiting for request, client: 10.30.130.151, server: 0.0.0.0:4200
-2026/08/21 14:25:47 [info] 52676#52676: *1322 client timed out (110: Connection timed out) while waiting for request, client: 10.30.130.32, server: 0.0.0.0:4200
-2026/08/21 14:25:56 [info] 52676#52676: *1344 client 10.177.104.181 closed keepalive connection
-2026/08/21 14:25:57 [error] 52676#52676: *1346 access forbidden by rule, client: 10.30.130.32, server: 10.191.158.41, request: "OPTIONS /FxsRateService/api/getAllHoliday HTTP/1.1", host: "10.191.158.41:4200", referrer: "https://preprodforex.bank.sbi/"
-2026/08/21 14:26:42 [info] 52676#52676: *1347 client 127.0.0.1 closed keepalive connection
-2026/08/21 14:27:27 [notice] 53742#53742: signal process started
-2026/08/21 14:27:49 [error] 53743#53743: *1374 access forbidden by rule, client: 10.30.130.32, server: 10.191.158.41, request: "OPTIONS /FxsRateService/api/getAllHoliday HTTP/1.1", host: "10.191.158.41:4200", referrer: "https://preprodforex.bank.sbi/"
-2026/08/21 14:27:51 [info] 53743#53743: *1372 client 10.177.104.181 closed keepalive connection
-2
+ Database driver: Oracle JDBC driver
+        Database dialect: OracleDialect
+        Database version: 19.31
+        Default catalog/schema: undefined/RATEENGINE
+        Autocommit mode: undefined/unknown
+        Isolation level: READ_COMMITTED [default READ_COMMITTED]
+        JDBC fetch size: 10
+        Pool: DataSourceConnectionProvider
+        Minimum pool size: undefined/unknown
+        Maximum pool size: undefined/unknown
