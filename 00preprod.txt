@@ -1,10 +1,51 @@
- Database driver: Oracle JDBC driver
-        Database dialect: OracleDialect
-        Database version: 19.31
-        Default catalog/schema: undefined/RATEENGINE
-        Autocommit mode: undefined/unknown
-        Isolation level: READ_COMMITTED [default READ_COMMITTED]
-        JDBC fetch size: 10
-        Pool: DataSourceConnectionProvider
-        Minimum pool size: undefined/unknown
-        Maximum pool size: undefined/unknown
+main-EDSQCROM.js:5 WebSocket connection to 'wss://10.191.158.41:4200/ws/dataset-events' failed: 
+_connectSocket	@	main-EDSQCROM.js:5
+_subscribe	@	main-EDSQCROM.js:5
+_trySubscribe	@	main-EDSQCROM.js:3
+_trySubscribe	@	main-EDSQCROM.js:3
+(anonymous)	@	main-EDSQCROM.js:3
+hi	@	main-EDSQCROM.js:3
+subscribe	@	main-EDSQCROM.js:3
+l	@	main-EDSQCROM.js:3
+(anonymous)	@	main-EDSQCROM.js:3
+(anonymous)	@	main-EDSQCROM.js:3
+(anonymous)	@	main-EDSQCROM.js:3
+hi	@	main-EDSQCROM.js:3
+subscribe	@	main-EDSQCROM.js:3
+(anonymous)	@	main-EDSQCROM.js:3
+(anonymous)	@	main-EDSQCROM.js:3
+(anonymous)	@	main-EDSQCROM.js:3
+hi	@	main-EDSQCROM.js:3
+subscribe	@	main-EDSQCROM.js:3
+(anonymous)	@	main-EDSQCROM.js:3
+(anonymous)	@	main-EDSQCROM.js:3
+(anonymous)	@	main-EDSQCROM.js:3
+hi	@	main-EDSQCROM.js:3
+subscribe	@	main-EDSQCROM.js:3
+(anonymous)	@	main-EDSQCROM.js:5
+(anonymous)	@	main-EDSQCROM.js:4
+$l	@	main-EDSQCROM.js:1
+run	@	main-EDSQCROM.js:4
+Qm	@	main-EDSQCROM.js:4
+qE	@	main-EDSQCROM.js:4
+Dd	@	main-EDSQCROM.js:4
+Jm	@	main-EDSQCROM.js:4
+Xm	@	main-EDSQCROM.js:4
+qE	@	main-EDSQCROM.js:4
+Dd	@	main-EDSQCROM.js:4
+Jm	@	main-EDSQCROM.js:4
+YE	@	main-EDSQCROM.js:4
+ev	@	main-EDSQCROM.js:4
+qE	@	main-EDSQCROM.js:4
+Dd	@	main-EDSQCROM.js:4
+GE	@	main-EDSQCROM.js:4
+Km	@	main-EDSQCROM.js:4
+synchronizeOnce	@	main-EDSQCROM.js:4
+synchronize	@	main-EDSQCROM.js:4
+tickImpl	@	main-EDSQCROM.js:4
+_tick	@	main-EDSQCROM.js:4
+(anonymous)	@	main-EDSQCROM.js:4
+run	@	main-EDSQCROM.js:4
+tick	@	main-EDSQCROM.js:4
+(anonymous)	@	main-EDSQCROM.js:4
+(anonymous)	@	main-EDSQCROM.js:4
