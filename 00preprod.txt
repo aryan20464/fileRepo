@@ -1,51 +1,126 @@
-main-EDSQCROM.js:5 WebSocket connection to 'wss://10.191.158.41:4200/ws/dataset-events' failed: 
-_connectSocket	@	main-EDSQCROM.js:5
-_subscribe	@	main-EDSQCROM.js:5
-_trySubscribe	@	main-EDSQCROM.js:3
-_trySubscribe	@	main-EDSQCROM.js:3
-(anonymous)	@	main-EDSQCROM.js:3
-hi	@	main-EDSQCROM.js:3
-subscribe	@	main-EDSQCROM.js:3
-l	@	main-EDSQCROM.js:3
-(anonymous)	@	main-EDSQCROM.js:3
-(anonymous)	@	main-EDSQCROM.js:3
-(anonymous)	@	main-EDSQCROM.js:3
-hi	@	main-EDSQCROM.js:3
-subscribe	@	main-EDSQCROM.js:3
-(anonymous)	@	main-EDSQCROM.js:3
-(anonymous)	@	main-EDSQCROM.js:3
-(anonymous)	@	main-EDSQCROM.js:3
-hi	@	main-EDSQCROM.js:3
-subscribe	@	main-EDSQCROM.js:3
-(anonymous)	@	main-EDSQCROM.js:3
-(anonymous)	@	main-EDSQCROM.js:3
-(anonymous)	@	main-EDSQCROM.js:3
-hi	@	main-EDSQCROM.js:3
-subscribe	@	main-EDSQCROM.js:3
-(anonymous)	@	main-EDSQCROM.js:5
-(anonymous)	@	main-EDSQCROM.js:4
-$l	@	main-EDSQCROM.js:1
-run	@	main-EDSQCROM.js:4
-Qm	@	main-EDSQCROM.js:4
-qE	@	main-EDSQCROM.js:4
-Dd	@	main-EDSQCROM.js:4
-Jm	@	main-EDSQCROM.js:4
-Xm	@	main-EDSQCROM.js:4
-qE	@	main-EDSQCROM.js:4
-Dd	@	main-EDSQCROM.js:4
-Jm	@	main-EDSQCROM.js:4
-YE	@	main-EDSQCROM.js:4
-ev	@	main-EDSQCROM.js:4
-qE	@	main-EDSQCROM.js:4
-Dd	@	main-EDSQCROM.js:4
-GE	@	main-EDSQCROM.js:4
-Km	@	main-EDSQCROM.js:4
-synchronizeOnce	@	main-EDSQCROM.js:4
-synchronize	@	main-EDSQCROM.js:4
-tickImpl	@	main-EDSQCROM.js:4
-_tick	@	main-EDSQCROM.js:4
-(anonymous)	@	main-EDSQCROM.js:4
-run	@	main-EDSQCROM.js:4
-tick	@	main-EDSQCROM.js:4
-(anonymous)	@	main-EDSQCROM.js:4
-(anonymous)	@	main-EDSQCROM.js:4
+import { bootstrapApplication } from '@angular/platform-browser';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
+import { AppComponent } from './app/app.component';
+import { authInterceptor } from './app/core/auth/auth.interceptor';
+
+bootstrapApplication(AppComponent, {
+  providers: [provideHttpClient(withInterceptors([authInterceptor])), provideRouter([])]
+}).catch(console.error);
+
+
+
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ConsumerOnboardingComponent } from './features/consumers/consumer-onboarding.component';
+import { AuthService } from './core/auth/auth.service';
+import { SymbolMappingComponent } from './features/symbol-mappings/symbol-mapping.component';
+import { SubscriptionSettingComponent } from './features/subscription-settings/subscription-setting.component';
+import { SpreadMatrixComponent } from './features/spread-matrix/spread-matrix.component';
+import { SwapMatrixComponent } from './features/swap-matrix/swap-matrix.component';
+import { DashboardComponent } from './features/dashboard/dashboard.component';
+import { StreamingPricesComponent } from './features/streaming-prices/streaming-prices.component';
+import { ConsumerFeedStatus } from './features/dashboard/dashboard.models';
+
+@Component({
+  selector: 'app-root',
+  imports: [DashboardComponent, StreamingPricesComponent, ConsumerOnboardingComponent, SymbolMappingComponent, SubscriptionSettingComponent, SpreadMatrixComponent, SwapMatrixComponent, FormsModule],
+  template: `
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand"><span class="brand-mark"><img src="assets/re-logo.jpg" alt="SBI"></span><span class="brand-copy"><strong>RateEngine</strong><small>APM ID: TREA/001/2026</small></span></div>
+        
+        <nav>
+          <button class="nav-link dashboard-link" [class.active]="view() === 'dashboard' || view() === 'prices'" (click)="view.set('dashboard')"><span class="dashboard-nav-icon"></span> Dashboard</button>
+        </nav>
+        <div class="workspace">OPERATIONS WORKSPACE</div>
+        <nav>
+          <button class="nav-link" [class.active]="view() === 'consumers'" (click)="view.set('consumers')"><span>◫</span> Consumer onboarding</button>
+          <button class="nav-link" [class.active]="view() === 'mappings'" (click)="view.set('mappings')"><span>⇄</span> Symbol mapping</button>
+          <button class="nav-link" [class.active]="view() === 'subscriptions'" (click)="view.set('subscriptions')"><span>◷</span> Subscriptions</button>
+          <button class="nav-link" [class.active]="view() === 'spreads'" (click)="view.set('spreads')"><span>≋</span> Spread matrix</button>
+          <button class="nav-link" [class.active]="view() === 'swaps'" (click)="view.set('swaps')"><span>↝</span> Swap points</button>
+        </nav>
+        <div class="sidebar-foot"><div><span class="pulse"></span>Application Connected</div><small class="copyright">Copyright © SBI. All rights reserved.</small></div>
+      </aside>
+      <main>
+        <header class="topbar">
+          <div><span class="eyebrow">SBI FOREX MARKET DATA ADMINISTRATION</span><strong>Control Centre</strong></div>
+          @if (auth.user(); as user) {
+            <div class="user"><span class="avatar">{{ user.userName.charAt(0) || user.userId.charAt(0) }}</span>
+              <div><strong>{{ user.userName || user.userId }}</strong><small>{{ user.role }} · {{ user.entity }}</small></div>
+            </div>
+          } @else {
+            <button class="user warning auth-trigger" type="button" (click)="showAuth.set(true)"><span class="avatar">!</span><div><strong>Connect with JWT</strong><small>Sign in to load consumers</small></div></button>
+          }
+        </header>
+        @if (view() === 'dashboard') { <app-dashboard (openPrices)="showPrices($event)" /> }
+        @else if (view() === 'prices' && selectedConsumer(); as consumer) { <app-streaming-prices [consumerId]="consumer.consumerId" [consumerName]="consumer.consumerName" (back)="view.set('dashboard')" /> }
+        @else if (view() === 'consumers') { <app-consumer-onboarding /> }
+        @else if (view() === 'mappings') { <app-symbol-mapping /> }
+        @else if (view() === 'subscriptions') { <app-subscription-setting /> }
+        @else if (view() === 'spreads') { <app-spread-matrix /> }
+        @else { <app-swap-matrix /> }
+      </main>
+    </div>
+    @if (showAuth()) {
+      <div class="dialog-backdrop" (click)="showAuth.set(false)">
+        <section class="auth-dialog" (click)="$event.stopPropagation()">
+          <div class="dialog-icon">JWT</div>
+          <h2>Connect to RateEngine</h2>
+          <p>Provide the access token. It must contain <code>user_id</code>, <code>user_name</code>, <code>entity</code>, and <code>role</code>.</p>
+          <label><span>Access token</span><textarea [(ngModel)]="tokenDraft" rows="5" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="eyJhbGciOiJIUzI1NiJ9..."></textarea></label>
+          @if (authError()) { <div class="auth-error">{{ authError() }}</div> }
+          <div class="dialog-actions"><button type="button" class="cancel" (click)="showAuth.set(false)">Cancel</button><button type="button" class="connect" (click)="connect()">Connect</button></div>
+        </section>
+      </div>
+    }
+  `,
+  styleUrl: './app.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class AppComponent {
+  readonly showAuth = signal(false);
+  readonly authError = signal('');
+  readonly view = signal<'dashboard' | 'prices' | 'consumers' | 'mappings' | 'subscriptions' | 'spreads' | 'swaps'>('dashboard');
+  readonly selectedConsumer = signal<ConsumerFeedStatus | null>(null);
+  tokenDraft = '';
+  constructor(readonly auth: AuthService) {}
+
+  showPrices(consumer: ConsumerFeedStatus): void {
+    if (consumer.status === 'UNAVAILABLE') return;
+    this.selectedConsumer.set(consumer);
+    this.view.set('prices');
+  }
+
+  connect(): void {
+    const token = this.tokenDraft.trim();
+    if (!token) { this.authError.set('Enter a JWT access token.'); return; }
+    if (token.length > 8192 || token.split('.').length !== 3) {
+      this.authError.set('The JWT access token format or size is invalid.');
+      return;
+    }
+    this.auth.setToken(token);
+    if (!this.auth.user()) {
+      this.auth.clear();
+      this.authError.set('This token is invalid or does not contain the required claims.');
+      return;
+    }
+    this.authError.set('');
+    this.tokenDraft = '';
+    this.showAuth.set(false);
+  }
+}
+
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Control Centre</title>
+    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/jpeg" href="favicon.jpg">
+  </head>
+  <body><app-root></app-root></body>
+</html>
