@@ -3,7 +3,6 @@ package com.sbi.rateengine.realtime;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
@@ -12,18 +11,19 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 import org.springframework.web.socket.server.HandshakeInterceptor;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import com.sbi.rateengine.authentication.JwtTokenProvider;
 
 @Component
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
     private final DatasetEventPublisher publisher;
-    private final JwtDecoder jwtDecoder;
+    private final JwtTokenProvider jwtTokenProvider;
     private final String[] allowedOrigins;
 
-    public WebSocketConfig(DatasetEventPublisher publisher, JwtDecoder jwtDecoder,
+    public WebSocketConfig(DatasetEventPublisher publisher, JwtTokenProvider jwtTokenProvider,
                            @Value("${app.cors.allowed-origin}") String allowedOrigin) {
         this.publisher = publisher;
-        this.jwtDecoder = jwtDecoder;
+        this.jwtTokenProvider = jwtTokenProvider;
         this.allowedOrigins = java.util.Arrays.stream(allowedOrigin.split(","))
                 .map(String::trim)
                 .filter(origin -> !origin.isEmpty())
@@ -33,14 +33,17 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(publisher, "/ws/dataset-events")
-                .addInterceptors(new JwtSubprotocolHandshakeInterceptor(jwtDecoder))
+                .addInterceptors(new JwtSubprotocolHandshakeInterceptor(jwtTokenProvider))
                 .setAllowedOrigins(allowedOrigins);
     }
 
     private static class JwtSubprotocolHandshakeInterceptor implements HandshakeInterceptor {
         private static final String PREFIX = "rateengine.jwt.";
-        private final JwtDecoder decoder;
-        JwtSubprotocolHandshakeInterceptor(JwtDecoder decoder) { this.decoder = decoder; }
+        private final JwtTokenProvider jwtTokenProvider;
+
+        JwtSubprotocolHandshakeInterceptor(JwtTokenProvider jwtTokenProvider) {
+            this.jwtTokenProvider = jwtTokenProvider;
+        }
 
         @Override
         public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
@@ -54,7 +57,10 @@ public class WebSocketConfig implements WebSocketConfigurer {
             try {
                 String token = selectedProtocol == null ? null : selectedProtocol.substring(PREFIX.length());
                 if (token == null || token.isBlank()) throw new IllegalArgumentException("JWT subprotocol is missing");
-                attributes.put("jwt", decoder.decode(token));
+                if (!jwtTokenProvider.validateToken(token)) throw new IllegalArgumentException("Invalid or expired JWT");
+                attributes.put("jwt", jwtTokenProvider.getClaims(java.util.Optional.of(token))
+                        .orElseThrow(() -> new IllegalArgumentException("Unable to parse JWT claims"))
+                        .getBody());
                 response.getHeaders().set("Sec-WebSocket-Protocol", selectedProtocol);
                 return true;
             }
