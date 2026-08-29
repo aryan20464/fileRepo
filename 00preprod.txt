@@ -1,14 +1,15 @@
 package com.sbi.rateengine.security;
 
-import java.util.Arrays;
-
 import com.sbi.rateengine.authentication.NoPopupBasicAuthenticationEntryPoint;
+import com.sbi.rateengine.authentication.RoleService;
+import com.sbi.rateengine.authentication.JwtTokenProvider;
+import com.sbi.rateengine.authentication.JwtTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -18,15 +19,9 @@ import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWrite
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.sbi.rateengine.authentication.RoleService;
-import com.sbi.rateengine.authentication.JwtTokenProvider;
-import com.sbi.rateengine.authentication.JwtTokenFilter;
-
-
 @Configuration
 @EnableWebSecurity
 @Order(SecurityFilterProperties.DEFAULT_FILTER_ORDER)
-@PropertySource("classpath:application.yml")
 public class SecurityConfig {
 
     @Autowired
@@ -44,11 +39,24 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/public/getAllUsers","/public/getUserFromCBS/**","/public/logout/**","/public/logoutEncryptedTellerId/**", "/menu/**","/public/getUserFromFXS/**","/public/getUserFromCBSSSO/**","/public/getUserFromCBSLocal/**","/public/getUserFromCBS/cbs_datatype/**","/public/audit/history/**","/public/encryptData","/public/decryptData","/**").permitAll()
+                        .requestMatchers(
+                                "/public/getAllUsers",
+                                "/public/getUserFromCBS/**",
+                                "/public/logout/**",
+                                "/public/logoutEncryptedTellerId/**",
+                                "/menu/**",
+                                "/public/getUserFromFXS/**",
+                                "/public/getUserFromCBSSSO/**",
+                                "/public/getUserFromCBSLocal/**",
+                                "/public/getUserFromCBS/cbs_datatype/**",
+                                "/public/audit/history/**",
+                                "/public/encryptData",
+                                "/public/decryptData"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .cors().and()
-                .csrf.disable()
+                .cors(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable())
                 .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http
@@ -73,16 +81,14 @@ public class SecurityConfig {
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
-
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowedHeaders("*")
-                        .allowedOrigins("*").exposedHeaders("Content-Disposition");
+                        .allowedOrigins("*")
+                        .exposedHeaders("Content-Disposition");
             }
         };
     }
-
-    //.allowedOrigins(rforexUIURL.split(",")).exposedHeaders("Content-Disposition");
 }
