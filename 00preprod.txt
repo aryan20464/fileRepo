@@ -7,3 +7,55 @@
     </div>
   </div>
 }
+
+add to component class
+logout(): void {
+  this.auth.doLogoutUser();
+}
+
+add to scss file
+.user-menu {
+  position: relative;
+  cursor: default;
+
+  .user-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    min-width: 140px;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    padding: 4px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+    z-index: 20;
+  }
+
+  &:hover .user-dropdown,
+  &:focus-within .user-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .logout-option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.06);
+    }
+  }
+}
