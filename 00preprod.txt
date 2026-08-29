@@ -1,21 +1,9 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { StreamingToggleResponse } from '../dashboard/dashboard.models';
-import { StreamingPriceSnapshot } from './streaming-prices.models';
-import { rateconst } from '../../../environments/environment';
-
-@Injectable({ providedIn: 'root' })
-export class StreamingPricesApiService {
-  constructor(private readonly http: HttpClient) {}
-
-  private readonly baseUrl  = rateconst.baseUrl
-
-  prices(consumerId: number): Observable<StreamingPriceSnapshot> {
-    return this.http.get<StreamingPriceSnapshot>(`${this.baseUrl}/api/dashboard/feeds/${consumerId}/prices`);
-  }
-
-  toggleStreaming(consumerId: number): Observable<StreamingToggleResponse> {
-    return this.http.post<StreamingToggleResponse>(`${this.baseUrl}/api/dashboard/feeds/${consumerId}/toggle`, {});
-  }
+@if (auth.user(); as user) {
+  <div class="user user-menu">
+    <span class="avatar">{{ user.userName?.charAt(0) || user.pfId?.charAt(0) }}</span>
+    <div><strong>{{ user.userName || user.pfId }}</strong><small>{{ auth.roles()[0] }} · {{ user.entity }}</small></div>
+    <div class="user-dropdown">
+      <button type="button" class="logout-option" (click)="logout()">Logout</button>
+    </div>
+  </div>
 }
