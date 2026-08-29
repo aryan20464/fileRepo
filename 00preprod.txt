@@ -1,62 +1,38 @@
-@Bean
-public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http
-            .httpBasic(httpBasic ->
-                    httpBasic.authenticationEntryPoint(new NoPopupBasicAuthenticationEntryPoint())
-            )
-            .sessionManagement(session ->
-                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
-            .authorizeHttpRequests(auth -> auth
-                    .requestMatchers(
-                            "/public/getAllUsers",
-                            "/public/getUserFromCBS/**",
-                            "/public/logout/**",
-                            "/public/logoutEncryptedTellerId/**",
-                            "/menu/**",
-                            "/public/getUserFromFXS/**",
-                            "/public/getUserFromCBSSSO/**",
-                            "/public/getUserFromCBSLocal/**",
-                            "/public/getUserFromCBS/cbs_datatype/**",
-                            "/public/audit/history/**",
-                            "/public/encryptData",
-                            "/public/decryptData"
-                    ).permitAll()
-                    .anyRequest().authenticated()
-            )
-            .cors(Customizer.withDefaults())
-            .csrf(csrf -> csrf.disable())
-            .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
-    http
-            .headers(headers -> headers
-                    .referrerPolicy(referrer -> referrer.policy(ReferrerPolicy.SAME_ORIGIN))
-                    .frameOptions(frame -> frame.sameOrigin())
-                    .httpStrictTransportSecurity(hsts -> hsts
-                            .includeSubDomains(true)
-                            .maxAgeInSeconds(31536000)
-                    )
-                    .contentSecurityPolicy(csp -> csp.policyDirectives("script-src 'self'"))
-            );
-
-    return http.build();
-}
-
-@Bean
-public JwtTokenFilter jwtTokenFilter() {
-    return new JwtTokenFilter(jwtTokenProvider);
-}
-
-@Bean
-public WebMvcConfigurer corsConfigurer() {
-    return new WebMvcConfigurer() {
-        @Override
-        public void addCorsMappings(CorsRegistry registry) {
-            registry.addMapping("/**")
-                    .allowedMethods("GET", "POST", "PUT", "DELETE")
-                    .allowedHeaders("*")
-                    .allowedOrigins("*")
-                    .exposedHeaders("Content-Disposition");
-        }
-    };
-}
+2026-08-29 16:10:48 INFO  31768 --- [           main] c.sbi.rateengine.RateEngineApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-08-29 16:10:48 WARN  31768 --- [           main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanDefinitionStoreException: I/O failure while processing configuration class [com.sbi.rateengine.security.SecurityConfig]
+2026-08-29 16:10:48 ERROR 31768 --- [           main] o.s.boot.SpringApplication               : Application run failed
+org.springframework.beans.factory.BeanDefinitionStoreException: I/O failure while processing configuration class [com.sbi.rateengine.security.SecurityConfig]
+        at org.springframework.context.annotation.ConfigurationClassParser.processConfigurationClass(ConfigurationClassParser.java:290)
+        at org.springframework.context.annotation.ConfigurationClassParser.parse(ConfigurationClassParser.java:220)
+        at org.springframework.context.annotation.ConfigurationClassParser.doProcessConfigurationClass(ConfigurationClassParser.java:357)
+        at org.springframework.context.annotation.ConfigurationClassParser.processConfigurationClass(ConfigurationClassParser.java:285)
+        at org.springframework.context.annotation.ConfigurationClassParser.parse(ConfigurationClassParser.java:206)
+        at org.springframework.context.annotation.ConfigurationClassParser.parse(ConfigurationClassParser.java:174)
+        at org.springframework.context.annotation.ConfigurationClassPostProcessor.processConfigBeanDefinitions(ConfigurationClassPostProcessor.java:452)
+        at org.springframework.context.annotation.ConfigurationClassPostProcessor.postProcessBeanDefinitionRegistry(ConfigurationClassPostProcessor.java:316)
+        at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanDefinitionRegistryPostProcessors(PostProcessorRegistrationDelegate.java:349)
+        at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(PostProcessorRegistrationDelegate.java:118)
+        at org.springframework.context.support.AbstractApplicationContext.invokeBeanFactoryPostProcessors(AbstractApplicationContext.java:795)
+        at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:603)
+        at org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:143)
+        at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:756)
+        at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:445)
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:321)
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1365)
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354)
+        at com.sbi.rateengine.RateEngineApplication.main(RateEngineApplication.java:10)
+Caused by: java.io.FileNotFoundException: class path resource [application.properties] cannot be opened because it does not exist
+        at org.springframework.core.io.ClassPathResource.getInputStream(ClassPathResource.java:212)
+        at org.springframework.core.io.support.EncodedResource.getInputStream(EncodedResource.java:157)
+        at org.springframework.core.io.support.PropertiesLoaderUtils.fillProperties(PropertiesLoaderUtils.java:101)
+        at org.springframework.core.io.support.PropertiesLoaderUtils.fillProperties(PropertiesLoaderUtils.java:75)
+        at org.springframework.core.io.support.PropertiesLoaderUtils.loadProperties(PropertiesLoaderUtils.java:61)
+        at org.springframework.core.io.support.ResourcePropertySource.<init>(ResourcePropertySource.java:67)
+        at org.springframework.core.io.support.DefaultPropertySourceFactory.createPropertySource(DefaultPropertySourceFactory.java:38)
+        at org.springframework.core.io.support.PropertySourceProcessor.processPropertySource(PropertySourceProcessor.java:92)
+        at org.springframework.context.annotation.PropertySourceRegistry.processPropertySource(PropertySourceRegistry.java:75)
+        at org.springframework.context.annotation.ConfigurationClassParser.doProcessConfigurationClass(ConfigurationClassParser.java:319)
+        at org.springframework.context.annotation.ConfigurationClassParser.processConfigurationClass(ConfigurationClassParser.java:285)
+        ... 18 common frames omitted
+[INFO] ------------------------------------------------------------------------
