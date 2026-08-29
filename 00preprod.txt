@@ -1,117 +1,244 @@
-: Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: com.sbi.rateengine.consumer.InvalidRequestException: A valid JWT is required] with root cause
-com.sbi.rateengine.consumer.InvalidRequestException: A valid JWT is required
-        at com.sbi.rateengine.security.CurrentUserService.requiredUser(CurrentUserService.java:19)
-        at com.sbi.rateengine.consumer.ConsumerService.toggleStreaming(ConsumerService.java:121)
-        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
-        at java.base/java.lang.reflect.Method.invoke(Method.java:580)
-        at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
-        at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190)
-        at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158)
-        at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:133)
-        at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:371)
-        at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:130)
-        at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
-        at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:719)
-        at com.sbi.rateengine.consumer.ConsumerService$$SpringCGLIB$$0.toggleStreaming(<generated>)
-        at com.sbi.rateengine.dashboard.DashboardController.toggleStreaming(DashboardController.java:46)
-        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
-        at java.base/java.lang.reflect.Method.invoke(Method.java:580)
-        at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:252)
-        at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:184)
-        at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
-        at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:934)
-        at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:853)
-        at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:86)
-        at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)
-        at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866)
-        at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000)
-        at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:903)
-        at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:649)
-        at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874)
-        at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
-        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:132)
-        at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:59)
-        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
-        at com.sbi.rateengine.authentication.JwtTokenFilter.doFilter(JwtTokenFilter.java:33)
-        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
-        at com.sbi.rateengine.security.MutationRateLimitFilter.doFilterInternal(MutationRateLimitFilter.java:37)
-        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
-        at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108)
-        at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$2(FilterChainProxy.java:235)
-        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:376)
-        at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:101)
-        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
-        at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126)
-        at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120)
-        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
-        at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:132)
-        at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:86)
-        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
-        at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100)
-        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
-        at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:181)
-        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
-        at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
-        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
-        at org.springframework.security.web.authentication.www.BasicAuthenticationFilter.doFilterInternal(BasicAuthenticationFilter.java:198)
-        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
-        at com.sbi.rateengine.authentication.JwtTokenFilter.doFilter(JwtTokenFilter.java:33)
-        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
-        at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:110)
-        at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:96)
-        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
-        at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91)
-        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
-        at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
-        at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
-        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
-        at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
-        at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
-        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
-        at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
-        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
-        at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
-        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
-        at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:237)
-        at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:195)
-        at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
-        at org.springframework.web.filter.ServletRequestPathFilter.doFilter(ServletRequestPathFilter.java:52)
-        at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
-        at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74)
-        at org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebSecurityConfiguration.java:317)
-        at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:355)
-        at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:272)
-        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
-        at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
-        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
-        at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
-        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
-        at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199)
-        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
-        at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
-        at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
-        at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:535)
-        at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
-        at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:86)
-        at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:71)
-        at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:347)
-        at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:406)
-        at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:71)
-        at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:1307)
-        at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:2036)
-        at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:74)
-        at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:949)
-        at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:483)
-        at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:74)
-        at java.base/java.lang.Thread.run(Thread.java:1583)
-Hibernate: select c1_0.c_id,c1_0.allow_stream_yn,c1_0.approved_by,c1_0.approved_date,c1_0.consumer_max_mdr,c1_0.consumer_name,c1_0.created_by,c1_0.created_date,c1_0.status from RATEENGINE.re_consumers c1_0
-Hibernate: select c1_0.c_id,c1_0.allow_stream_yn,c1_0.approved_by,c1_0.approved_date,c1_0.consumer_max_mdr,c1_0.consumer_name,c1_0.created_by,c1_0.created_date,c1_0.status from RATEENGINE.re_consumers c1_0
+Unexpected token '<', "<!doctype "... is not valid JSON
+<section class="prices-page">
+  <header class="prices-heading">
+    <div class="heading-copy">
+      <button type="button" class="back-button" (click)="back.emit()" aria-label="Return to dashboard">←</button>
+      <div><span>STREAMING PRICE MONITOR</span><h1>{{ snapshot()?.consumerName || consumerName }}</h1><p>Latest Cash, Tom and Spot prices for approved and allowed symbols.</p></div>
+    </div>
+    <div class="heading-actions">
+      @if (snapshot(); as data) { <small>Server time<br><strong>{{ data.serverTime | date:'dd MMM yyyy · HH:mm:ss' }}</strong></small> }
+      <button type="button" (click)="refresh()" [disabled]="loading()"><span>↻</span>{{ loading() ? 'Refreshing' : 'Refresh' }}</button>
+    </div>
+  </header>
+
+  <div class="price-summary">
+    <article><span class="summary-icon pairs">FX</span><div><strong>{{ snapshot()?.symbols?.length ?? 0 }}</strong><small>Approved symbols</small></div></article>
+    <article class="live"><span class="summary-icon signal"></span><div><strong>{{ liveCount() }}</strong><small>Live prices</small></div></article>
+    <article class="intermittent"><span class="summary-icon clock">◷</span><div><strong>{{ intermittentCount() }}</strong><small>Intermittent</small></div></article>
+    <article class="stale"><span class="summary-icon alert-mark">!</span><div><strong>{{ staleCount() }}</strong><small>Stale / no data</small></div></article>
+  </div>
+
+  @if (error()) { <div class="prices-error"><strong>Unable to complete request</strong><span>{{ error() }}</span></div> }
+  @if (actionNotice()) { <div class="prices-notice" role="status">{{ actionNotice() }}</div> }
+
+  @if (loading() && !snapshot()) {
+    <div class="prices-empty"><span class="loading-signal"></span><h2>Loading streaming prices</h2><p>Reading the two latest market-data messages for every approved symbol.</p></div>
+  } @else if (snapshot(); as data) {
+    @if (data.symbols.length === 0) {
+      <div class="prices-empty"><span class="empty-pair">FX</span><h2>No approved and allowed symbols</h2><p>Approve a consumer symbol mapping and set Allowed to Yes to display prices here.</p></div>
+    } @else {
+      <div class="price-table-shell">
+        <div class="table-caption">
+          <div><strong>Last Feed Monitor</strong><span>Auto-refreshes every 30 seconds</span></div>
+          <div class="board-states"><span class="feed-state" [class]="'feed-state ' + data.feedStatus.toLowerCase()"><i></i>{{ feedStatusLabel(data.feedStatus) }}</span><button type="button" class="stream-state" [class.enabled]="data.allowStreamYn === 'Y'" [disabled]="togglingStreaming()" [attr.aria-pressed]="data.allowStreamYn === 'Y'" (click)="toggleStreaming()" title="Emergency streaming toggle">{{ togglingStreaming() ? 'Updating streaming…' : ('Streaming ' + (data.allowStreamYn === 'Y' ? 'enabled' : 'disabled')) }}</button></div>
+        </div>
+        <div class="price-table-scroll">
+          <table>
+            <thead>
+              <tr><th rowspan="2" class="symbol-column context-group">Symbol</th><th colspan="2" class="tenor-group cash-group">Cash <small>TD</small></th><th colspan="2" class="tenor-group tom-group">Tom <small>TM</small></th><th colspan="2" class="tenor-group spot-group">Spot <small>SP</small></th><th rowspan="2" class="feed-column context-group">Feed telemetry</th></tr>
+              <tr><th class="cash-sub group-start">Bid</th><th class="cash-sub group-end">Ask</th><th class="tom-sub group-start">Bid</th><th class="tom-sub group-end">Ask</th><th class="spot-sub group-start">Bid</th><th class="spot-sub group-end">Ask</th></tr>
+            </thead>
+            <tbody>
+              @for (price of data.symbols; track price.symbol) {
+                <tr>
+                  <td class="symbol-cell"><strong>{{ price.symbol }}</strong><span class="price-status" [class]="'price-status ' + price.status.toLowerCase()"><i></i>{{ statusLabel(price.status) }}</span></td>
+                  @for (tenorCode of ['TD', 'TM', 'SP']; track tenorCode) {
+                    @if (tenor(price, $any(tenorCode)); as value) {
+                      <td class="rate-cell group-start" [class.cash-cell]="tenorCode === 'TD'" [class.tom-cell]="tenorCode === 'TM'" [class.spot-cell]="tenorCode === 'SP'" [class.price-up]="value.bidDirection === 'UP'" [class.price-down]="value.bidDirection === 'DOWN'"><div class="quote"><span class="quote-number">@if (rateParts(value.bidRate); as rate) { <span class="quote-leading">{{ rate.leading }}</span><strong class="quote-focus">{{ rate.focus }}</strong><span class="quote-trailing">{{ rate.trailing }}</span> } @else { <span class="quote-missing">--</span> }</span>@if (value.bidDirection === 'UP') { <i class="direction-arrow up" title="Higher than previous price"></i> } @else if (value.bidDirection === 'DOWN') { <i class="direction-arrow down" title="Lower than previous price"></i> } @else if (value.bidDirection === 'UNCHANGED') { <i class="direction-flat" title="Unchanged from previous price">•</i> }</div><small>Qty {{ value.bidQuantity ?? '--' }}</small></td>
+                      <td class="rate-cell ask group-end" [class.cash-cell]="tenorCode === 'TD'" [class.tom-cell]="tenorCode === 'TM'" [class.spot-cell]="tenorCode === 'SP'" [class.price-up]="value.askDirection === 'UP'" [class.price-down]="value.askDirection === 'DOWN'"><div class="quote"><span class="quote-number">@if (rateParts(value.askRate); as rate) { <span class="quote-leading">{{ rate.leading }}</span><strong class="quote-focus">{{ rate.focus }}</strong><span class="quote-trailing">{{ rate.trailing }}</span> } @else { <span class="quote-missing">--</span> }</span>@if (value.askDirection === 'UP') { <i class="direction-arrow up" title="Higher than previous price"></i> } @else if (value.askDirection === 'DOWN') { <i class="direction-arrow down" title="Lower than previous price"></i> } @else if (value.askDirection === 'UNCHANGED') { <i class="direction-flat" title="Unchanged from previous price">•</i> }</div><small>Qty {{ value.askQuantity ?? '--' }}</small></td>
+                    }
+                  }
+                  <td class="telemetry-cell"><strong>{{ price.feedTimestamp ? (price.feedTimestamp | date:'HH:mm:ss.SSS') : '--' }}</strong><small>Valid {{ price.validity ? (price.validity | date:'HH:mm:ss.SSS') : '--' }}</small><small>{{ ageLabel(price.ageSeconds) }} · ID {{ price.messageId ?? '--' }}</small></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <footer><span><i class="legend-up">↑</i> Price increased</span><span><i class="legend-down">↓</i> Price decreased</span><span><i class="legend-flat">•</i> Unchanged</span><span>Displaying the last feed data</span></footer>
+      </div>
+    }
+  }
+
+  @if (showEnableConfirmation()) {
+    <div class="confirmation-backdrop" role="presentation" (click)="cancelEnableStreaming()">
+      <section class="confirmation-dialog" role="dialog" aria-modal="true" aria-labelledby="enable-streaming-title" aria-describedby="enable-streaming-message" (click)="$event.stopPropagation()">
+        <span class="confirmation-icon" aria-hidden="true">!</span>
+        <h2 id="enable-streaming-title">Enable streaming?</h2>
+        <p id="enable-streaming-message">Feed delivery for <strong>{{ snapshot()?.consumerName || consumerName }}</strong> will resume immediately.</p>
+        <div class="confirmation-actions">
+          <button type="button" class="cancel-action" (click)="cancelEnableStreaming()">Cancel</button>
+          <button type="button" class="enable-action" (click)="confirmEnableStreaming()">Enable streaming</button>
+        </div>
+      </section>
+    </div>
+  }
+</section>
+import { ChangeDetectionStrategy, Component, DestroyRef, EventEmitter, Input, OnInit, Output, computed, inject, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { EMPTY, catchError, exhaustMap, interval, startWith } from 'rxjs';
+import { StreamingPricesApiService } from './streaming-prices-api.service';
+import { PriceState, PriceTenor, StreamingPriceSnapshot, SymbolStreamingPrice, TenorPrice } from './streaming-prices.models';
+
+@Component({
+  selector: 'app-streaming-prices',
+  imports: [DatePipe],
+  templateUrl: './streaming-prices.component.html',
+  styleUrl: './streaming-prices.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class StreamingPricesComponent implements OnInit {
+  private readonly api = inject(StreamingPricesApiService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  @Input({ required: true }) consumerId!: number;
+  @Input({ required: true }) consumerName = '';
+  @Output() readonly back = new EventEmitter<void>();
+
+  readonly snapshot = signal<StreamingPriceSnapshot | null>(null);
+  readonly loading = signal(false);
+  readonly togglingStreaming = signal(false);
+  readonly showEnableConfirmation = signal(false);
+  readonly error = signal('');
+  readonly actionNotice = signal('');
+  readonly liveCount = computed(() => this.count('LIVE'));
+  readonly intermittentCount = computed(() => this.count('INTERMITTENT'));
+  readonly staleCount = computed(() => this.snapshot()?.symbols.filter(price => price.status === 'STALE' || price.status === 'NO_DATA').length ?? 0);
+
+  ngOnInit(): void {
+    interval(30000).pipe(
+      startWith(0),
+      exhaustMap(() => {
+        this.loading.set(true);
+        return this.api.prices(this.consumerId).pipe(catchError(error => {
+          this.error.set(error.error?.message ?? error.message ?? 'Unable to load streaming prices.');
+          this.loading.set(false);
+          return EMPTY;
+        }));
+      }),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(response => {
+      this.snapshot.set(response);
+      this.error.set('');
+      this.loading.set(false);
+    });
+  }
+
+  refresh(): void {
+    if (this.loading()) return;
+    this.loading.set(true);
+    this.api.prices(this.consumerId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: response => { this.snapshot.set(response); this.error.set(''); this.loading.set(false); },
+      error: error => { this.error.set(error.error?.message ?? error.message ?? 'Unable to load streaming prices.'); this.loading.set(false); }
+    });
+  }
+
+  toggleStreaming(): void {
+    const current = this.snapshot();
+    if (this.togglingStreaming() || !current) return;
+    if (current.allowStreamYn !== 'Y') {
+      this.showEnableConfirmation.set(true);
+      return;
+    }
+    this.performStreamingToggle();
+  }
+
+  confirmEnableStreaming(): void {
+    this.showEnableConfirmation.set(false);
+    if (!this.togglingStreaming() && this.snapshot()?.allowStreamYn !== 'Y') this.performStreamingToggle();
+  }
+
+  cancelEnableStreaming(): void {
+    this.showEnableConfirmation.set(false);
+  }
+
+  private performStreamingToggle(): void {
+    this.togglingStreaming.set(true);
+    this.error.set('');
+    this.actionNotice.set('');
+    this.api.toggleStreaming(this.consumerId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: response => {
+        this.snapshot.update(current => current ? { ...current, allowStreamYn: response.allowStreamYn } : current);
+        this.actionNotice.set(`Streaming has been ${response.allowStreamYn === 'Y' ? 'enabled' : 'disabled'} for ${response.consumerName}.`);
+        this.togglingStreaming.set(false);
+      },
+      error: error => {
+        this.error.set(error.error?.message ?? error.message ?? 'Emergency streaming toggle failed.');
+        this.togglingStreaming.set(false);
+      }
+    });
+  }
+
+  tenor(price: SymbolStreamingPrice, tenor: PriceTenor): TenorPrice | undefined {
+    return price.tenors.find(value => value.tenor === tenor);
+  }
+
+  rateParts(rate: string | null): { leading: string; focus: string; trailing: string } | null {
+    if (rate === null || !/^-?\d+(?:\.\d+)?$/.test(rate)) return null;
+    const negative = rate.startsWith('-');
+    const magnitude = negative ? rate.substring(1) : rate;
+    const [whole, rawFraction = ''] = magnitude.split('.');
+    const padded = rawFraction.padEnd(7, '0');
+    let scaled = BigInt(whole) * 1_000_000n + BigInt(padded.substring(0, 6));
+    if (padded.charAt(6) >= '5') scaled++;
+    const roundedWhole = scaled / 1_000_000n;
+    const decimals = (scaled % 1_000_000n).toString().padStart(6, '0');
+    return {
+      leading: `${negative ? '-' : ''}${roundedWhole}.${decimals.substring(0, 2)}`,
+      focus: decimals.substring(2, 4),
+      trailing: decimals.substring(4, 6)
+    };
+  }
+
+  statusLabel(status: PriceState): string {
+    return ({ LIVE: 'Live', INTERMITTENT: 'Intermittent', STALE: 'Stale', NO_DATA: 'No data' })[status];
+  }
+
+  feedStatusLabel(status: 'LIVE' | 'INTERMITTENT' | 'OFFLINE'): string {
+    return ({ LIVE: 'Live', INTERMITTENT: 'Intermittent', OFFLINE: 'Not Live' })[status];
+  }
+
+  ageLabel(seconds: number | null): string {
+    if (seconds === null) return 'No validity';
+    if (seconds < 1) return 'Current';
+    if (seconds < 60) return `${seconds}s old`;
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m old`;
+    return `${Math.floor(seconds / 3600)}h old`;
+  }
+
+  private count(status: PriceState): number {
+    return this.snapshot()?.symbols.filter(price => price.status === status).length ?? 0;
+  }
+}
+export type PriceState = 'LIVE' | 'INTERMITTENT' | 'STALE' | 'NO_DATA';
+export type PriceDirection = 'UP' | 'DOWN' | 'UNCHANGED' | 'NONE';
+export type PriceTenor = 'TD' | 'TM' | 'SP';
+
+export interface TenorPrice {
+  tenor: PriceTenor;
+  bidQuantity: string | null;
+  bidRate: string | null;
+  bidDirection: PriceDirection;
+  askQuantity: string | null;
+  askRate: string | null;
+  askDirection: PriceDirection;
+}
+
+export interface SymbolStreamingPrice {
+  symbol: string;
+  messageId: string | null;
+  feedTimestamp: string | null;
+  validity: string | null;
+  status: PriceState;
+  ageSeconds: number | null;
+  tenors: TenorPrice[];
+}
+
+export interface StreamingPriceSnapshot {
+  serverTime: string;
+  consumerId: number;
+  consumerName: string;
+  allowStreamYn: 'Y' | 'N';
+  feedStatus: 'LIVE' | 'INTERMITTENT' | 'OFFLINE';
+  symbols: SymbolStreamingPrice[];
+}
