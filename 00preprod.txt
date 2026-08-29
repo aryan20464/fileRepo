@@ -1,199 +1,14 @@
 package com.sbi.rateengine.security;
 
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtValidators;
-import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
-import org.springframework.security.oauth2.core.OAuth2Error;
-import org.springframework.security.oauth2.core.OAuth2TokenValidator;
-import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
-import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
-import org.springframework.security.config.Customizer;
-import org.springframework.http.MediaType;
-
-@Configuration
-public class SecurityConfig {
-
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http, MutationRateLimitFilter mutationRateLimitFilter) throws Exception {
-        return http.csrf(csrf -> csrf.disable())
-                .cors(cors -> {})
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .headers(headers -> headers
-                        .contentTypeOptions(Customizer.withDefaults())
-                        .frameOptions(frame -> frame.deny())
-//                        .contentSecurityPolicy(csp -> csp.policyDirectives(
-//                                "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
-//                                        + "img-src 'self' data:; font-src 'self' data:; connect-src 'self' ws: wss:; "
-//                                        + "object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"))
-                        .referrerPolicy(referrer -> referrer.policy(ReferrerPolicy.NO_REFERRER))
-                        .permissionsPolicyHeader(policy -> policy.policy("camera=(), microphone=(), geolocation=(), payment=(), usb=()"))
-                        .httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true).preload(true).maxAgeInSeconds(31536000)))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/**").permitAll()
-                        .requestMatchers("/error").permitAll()
-                        .anyRequest().authenticated())
-                .oauth2ResourceServer(resource -> resource
-                        .authenticationEntryPoint((request, response, exception) -> {
-                            response.setStatus(401);
-                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-                            response.getWriter().write("{\"message\":\"Authentication is required\"}");
-                        })
-                        .accessDeniedHandler((request, response, exception) -> {
-                            response.setStatus(403);
-                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-                            response.getWriter().write("{\"message\":\"Access is denied\"}");
-                        })
-                        .jwt(jwt -> {}))
-                .addFilterAfter(mutationRateLimitFilter, BearerTokenAuthenticationFilter.class)
-                .build();
-    }
-
-    @Bean
-    JwtDecoder jwtDecoder(@Value("${app.security.jwt-secret}") String secret,
-            @Value("${app.security.jwt-issuer:}") String issuer,
-            @Value("${app.security.jwt-audience:}") String audience) {
-        byte[] secretBytes = secret == null ? new byte[0] : secret.getBytes(StandardCharsets.UTF_8);
-        String normalizedSecret = secret == null ? "" : secret.toLowerCase(java.util.Locale.ROOT);
-        if (secretBytes.length < 32 || normalizedSecret.contains("change-this") || normalizedSecret.contains("replace-with")) {
-            throw new IllegalStateException("JWT_SECRET must be a non-placeholder secret of at least 32 characters");
-        }
-        System.out.println("secret "+secret);
-        SecretKey key = new SecretKeySpec(secretBytes, "HmacSHA256");
-        NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(key).macAlgorithm(MacAlgorithm.HS256).build();
-        OAuth2TokenValidator<Jwt> validator = issuer == null || issuer.isBlank()
-                ? JwtValidators.createDefault()
-                : JwtValidators.createDefaultWithIssuer(issuer.trim());
-        validator = new DelegatingOAuth2TokenValidator<>(validator, this::validateRequiredClaims);
-        if (audience != null && !audience.isBlank()) {
-            String requiredAudience = audience.trim();
-            OAuth2TokenValidator<Jwt> audienceValidator = jwt -> {
-                java.util.List<String> tokenAudiences = jwt.getAudience();
-                return tokenAudiences != null && tokenAudiences.contains(requiredAudience)
-                        ? OAuth2TokenValidatorResult.success()
-                        : OAuth2TokenValidatorResult.failure(
-                                new OAuth2Error("invalid_token", "JWT audience is invalid", null));
-            };
-            validator = new DelegatingOAuth2TokenValidator<>(validator, audienceValidator);
-        }
-        decoder.setJwtValidator(validator);
-        return decoder;
-    }
-
-//    private OAuth2TokenValidatorResult validateRequiredClaims(Jwt jwt) {
-//        try {
-//            if (jwt.getExpiresAt() == null
-//                    || !validClaim(jwt, "user_id", 20)
-//                    || !validClaim(jwt, "user_name", 100)
-//                    || !validClaim(jwt, "entity", 100)
-//                    || !validClaim(jwt, "role", 20)) {
-//                return invalidClaims();
-//            }
-//            String userId = jwt.getClaimAsString("user_id");
-//            String role = jwt.getClaimAsString("role");
-//            if (userId == null || role == null || !userId.matches("[A-Za-z0-9_.-]{1,20}")
-//                    || !("MAKER".equalsIgnoreCase(role) || "CHECKER".equalsIgnoreCase(role))) {
-//                return invalidClaims();
-//            }
-//            return OAuth2TokenValidatorResult.success();
-//        } catch (RuntimeException exception) {
-//            return invalidClaims();
-//        }
-//    }
-
-    private OAuth2TokenValidatorResult validateRequiredClaims(Jwt jwt) {
-        try {
-            if (jwt.getExpiresAt() == null) {
-                return invalidClaims();
-            }
-
-            Map<String, Object> user = jwt.getClaimAsMap("user");
-            if (user == null) {
-                return invalidClaims();
-            }
-
-            String pfId = asTrimmedString(user.get("pfId"));
-            String userName = asTrimmedString(user.get("userName"));
-            String entity = asTrimmedString(user.get("entity"));
-
-            if (!validString(pfId, 20) || !validString(userName, 100) || !validString(entity, 100)) {
-                return invalidClaims();
-            }
-            if (!pfId.matches("[A-Za-z0-9_.-]{1,20}")) {
-                return invalidClaims();
-            }
-
-            List<?> auth = jwt.getClaim("auth");
-            if (auth == null || auth.isEmpty()) {
-                return invalidClaims();
-            }
-            boolean hasRecognizedRole = auth.stream().anyMatch(entry -> {
-                if (!(entry instanceof Map<?, ?> map)) return false;
-                Object authority = map.get("authority");
-                return authority != null
-                        && ("MAKER".equalsIgnoreCase(authority.toString()) || "CHECKER".equalsIgnoreCase(authority.toString()));
-            });
-            if (!hasRecognizedRole) {
-                return invalidClaims();
-            }
-
-            return OAuth2TokenValidatorResult.success();
-        } catch (RuntimeException exception) {
-            return invalidClaims();
-        }
-    }
-
-    private String asTrimmedString(Object value) {
-        return value == null ? null : value.toString().trim();
-    }
-
-    private boolean validString(String value, int maxLength) {
-        return value != null && !value.isBlank() && value.length() <= maxLength
-                && value.chars().noneMatch(Character::isISOControl);
-    }
-
-    private boolean validClaim(Jwt jwt, String name, int maxLength) {
-        String value = jwt.getClaimAsString(name);
-        return value != null && !value.isBlank() && value.length() <= maxLength
-                && value.chars().noneMatch(Character::isISOControl);
-    }
-
-    private OAuth2TokenValidatorResult invalidClaims() {
-        return OAuth2TokenValidatorResult.failure(
-                new OAuth2Error("invalid_token", "JWT required claims are invalid", null));
-    }
-}
-working with above code but not working with package com.sbi.rateengine.security;
-
 import java.util.Arrays;
 
 import com.sbi.rateengine.authentication.NoPopupBasicAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -211,6 +26,7 @@ import com.sbi.rateengine.authentication.JwtTokenFilter;
 @Configuration
 @EnableWebSecurity
 @Order(SecurityFilterProperties.DEFAULT_FILTER_ORDER)
+@PropertySource("classpath:application.yml")
 public class SecurityConfig {
 
     @Autowired
@@ -228,25 +44,11 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/public/getAllUsers",
-                                "/public/getUserFromCBS/**",
-                                "/public/logout/**",
-                                "/public/logoutEncryptedTellerId/**",
-                                "/menu/**",
-                                "/public/getUserFromFXS/**",
-                                "/public/getUserFromCBSSSO/**",
-                                "/public/getUserFromCBSLocal/**",
-                                "/public/getUserFromCBS/cbs_datatype/**",
-                                "/public/audit/history/**",
-                                "/public/encryptData",
-                                "/public/decryptData",
-                                "/**"
-                        ).permitAll()
+                        .requestMatchers("/public/getAllUsers","/public/getUserFromCBS/**","/public/logout/**","/public/logoutEncryptedTellerId/**", "/menu/**","/public/getUserFromFXS/**","/public/getUserFromCBSSSO/**","/public/getUserFromCBSLocal/**","/public/getUserFromCBS/cbs_datatype/**","/public/audit/history/**","/public/encryptData","/public/decryptData","/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.disable())
+                .cors().and()
+                .csrf.disable()
                 .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http
@@ -271,20 +73,16 @@ public class SecurityConfig {
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
+
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowedHeaders("*")
-                        .allowedOrigins("*")
-                        .exposedHeaders("Content-Disposition");
+                        .allowedOrigins("*").exposedHeaders("Content-Disposition");
             }
         };
     }
 
     //.allowedOrigins(rforexUIURL.split(",")).exposedHeaders("Content-Disposition");
 }
-
-
-
-
