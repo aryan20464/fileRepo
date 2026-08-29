@@ -1,41 +1,26 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+Description:
 
-@Component({
-  selector: 'app-login',
-  standalone: true,
-  template: `
-    <div class="login-container">
-      <h2>Connecting to RateEngine...</h2>
+An attempt was made to call a method that does not exist. The attempt was made from the following location:
 
-      @if (dataId()) {
-        <p>Application ID: {{ dataId() }}</p>
-        <p>Authenticating...</p>
-      } @else {
-        <p class="error">
-          No application ID was supplied.
-        </p>
-      }
-    </div>
-  `
-})
-export class LoginComponent implements OnInit {
+    org.hibernate.envers.configuration.Configuration.<init>(Configuration.java:191)
 
-  readonly dataId = signal<string | null>(null);
+The following method did not exist:
 
-  constructor(
-    private readonly route: ActivatedRoute
-  ) {}
+    'org.hibernate.annotations.common.reflection.ReflectionManager org.hibernate.boot.spi.BootstrapContext.getReflectionManager()'
 
-  ngOnInit(): void {
+The calling method's class, org.hibernate.envers.configuration.Configuration, was loaded from the following location:
 
-    this.route.queryParamMap.subscribe(params => {
+    jar:file:/C:/Users/1064695/.m2/repository/org/hibernate/orm/hibernate-envers/6.4.2.Final/hibernate-envers-6.4.2.Final.jar!/org/hibernate/envers/configuration/Configuration.class
 
-      const dataId = params.get('dataid');
+The called method's class, org.hibernate.boot.spi.BootstrapContext, is available from the following locations:
 
-      console.log('Received dataid:', dataId);
+    jar:file:/C:/Users/1064695/.m2/repository/org/hibernate/orm/hibernate-core/7.4.5.Final/hibernate-core-7.4.5.Final.jar!/org/hibernate/boot/spi/BootstrapContext.class
 
-      this.dataId.set(dataId);
-    });
-  }
-}
+The called method's class hierarchy was loaded from the following locations:
+
+    org.hibernate.boot.spi.BootstrapContext: file:/C:/Users/1064695/.m2/repository/org/hibernate/orm/hibernate-core/7.4.5.Final/hibernate-core-7.4.5.Final.jar
+
+
+Action:
+
+Correct the classpath of your application so that it contains compatible versions of the classes org.hibernate.envers.configuration.Configuration and org.hibernate.boot.spi.BootstrapContext
