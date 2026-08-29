@@ -1,326 +1,526 @@
+login component .html
+<div class="login-container">
+      <h2>Redirection in progress123 !!</h2>
+      <a href="#" (click)="closeTab()">Logout</a>
+</div>
 
-import java.time.Instant;
-import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import { Component, ElementRef, Inject, ViewChild, DOCUMENT, signal } from '@angular/core'
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms'
+import { Router, RouterModule } from '@angular/router'
+import { rateconst, fxsconst } from '../../environments/environment'
+import { AuthService } from './auth.service'
+import { LoginUser } from './LoginUser'
+import { CommonService } from './common.service'
+import { HttpClient } from '@angular/common/http'
+@Component({
+	selector: 'app-login',
+	standalone: true,
+	templateUrl: './login-component.html',
+	styleUrls: ['./login-component.css'],
+	imports: [
+		ReactiveFormsModule,
+		RouterModule,
+	],
+})
+export class LoginComponent {
+  dataId = signal<string | null>(null);
+	title = 'RATE-ENGINE'
+	loggedInConfirm: boolean = false
+	allUsers: any = []
+	dataid: string = ''
+	moduleAccess: any[] = []
+	timedOut = false
+	lastPing?: Date = new Date()
+	@ViewChild('logoutmsg') content: any
+	mockUserRequired = rateconst.mockUsersRequired
+	user: LoginUser = {
+		pfId: '',
+		branchCode: '',
+		email: '',
+		entity: '',
+		roles: '',
+		token: '',
+		userName: '',
+	}
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AuthorizationServiceException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.stereotype.Component;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import jakarta.servlet.http.HttpServletRequest;
+	//user:LdapLoginUser;
+	form: FormGroup
+	isReadOnly = true
+	userToken: string = ''
 
-@Component
-public class JwtTokenProvider {
+	loginForm = new FormGroup({
+		pfId: new FormControl(''),
+		name: new FormControl(''),
+		email: new FormControl(''),
+		branchCode: new FormControl(''),
+		roles: new FormControl(''),
+		selectedUser: new FormControl(''),
+	})
 
-    @Autowired
-    RoleService roleService;
+	constructor(
+		public formBuilder: FormBuilder,
+		public authService: AuthService,
+		public commonService: CommonService,
+		@Inject(DOCUMENT) public document: Document,
+		public _elementRef: ElementRef,
+		public router: Router,
+		public http: HttpClient,
+	) {
+		this.form = this.formBuilder.group({
+			users: new FormControl(),
+		})
+	}
 
-    @Autowired
-    LoggerUserService loggerUserService;
+	ngOnInit() {
+		//hide version details
+		this._elementRef.nativeElement.removeAttribute('ng-version')
+		this.checkUser()
+	}
 
-    private static final Logger log = LoggerFactory.getLogger(JwtTokenProvider.class);
-    
-    String TOKEN_EXPIRE_LENGTH_JWT = "6000000";
-    String SECRET_KEY_JWT = "";
+	userChange(token: string): void {}
 
 
-    public String createToken(LoginUser user, List<Roles> roles, Optional<Date> issuedAtOpt) {
-        Claims claims = Jwts.claims();
-        //claims.setSubject(username);
-        claims.put("user", user);
-        claims.put(JwtUtils.TOKENAUTHKEY, roles.stream().map(s -> new SimpleGrantedAuthority(s.getAuthority()))
-                .filter(Objects::nonNull).collect(Collectors.toList()));
-        claims.put(JwtUtils.TOKENLASTMSGKEY, new Date().getTime());
-        Date issuedAt = issuedAtOpt.orElse(new Date());
-        claims.setIssuedAt(issuedAt);
-        long validityInMilliseconds = Long.parseLong(TOKEN_EXPIRE_LENGTH_JWT);
-        Date validity = new Date(issuedAt.getTime() + validityInMilliseconds);
-        claims.setExpiration(validity);
-        loggerUserService.save(new LoggedUser(user.getPfId(),user.getBranchCode(),user.getRoles()));
-        //claims.put("systemUserId", lu.getLoggedUserId());
+	closeTab() {
+		this.authService.doLogoutUser()
+		if (!rateconst.mockUsersRequired) {
+			window.location.href = fxsconst.baseUrl
+		} else {
+			this.loginForm.reset()
+		}
+	}
 
-        return "Bearer "+Jwts.builder().setClaims(claims)
-                .signWith( SignatureAlgorithm.HS256,SECRET_KEY_JWT).compact();
+	getUserFromToken(tokens: string): void {
+		const tokenusernameValue: any = this.authService.decodeJwtToken(tokens)
+		this.user = tokenusernameValue.user
+	}
+
+	async checkUser(): Promise<void> {
+		if (!this.authService.isLoggedIn()) {
+				if (window.location.href.split('?').length == 1) {
+					window.location.href = fxsconst.baseUrl
+				}
+				const paramForDataId = window.location.href?.split('?')[1]
+				const param = paramForDataId?.split('&')
+				this.dataid = param[0]?.split('=')[1]
+        console.log(this.dataid)
+				const paramForUniqueId = param[1]
+				const paramForErrorCode = param[2]
+				this.authService.uniqueId = paramForUniqueId?.split('=')[1]
+				const errorCode = paramForErrorCode?.split('=')[0] // paramForErrorCode?.split('=')[1]
+				this.authService.isTimeOut = false
+			
+        {(await this.authService.login(this.dataid)).subscribe((success) => {
+          if (success) {
+            const token: any = this.authService.getJwtToken()
+            const tokenusernameValue: any = this.authService.decodeJwtToken(token)
+            this.user = tokenusernameValue.user
+            console.log("Logged IN user")
+            console.log("token :"+token)
+            console.log("token_usernamevalue :"+tokenusernameValue)
+            this.router.navigate(["/"]);
+          }
+        })}
+		}
+    else{
+      console.log("Logged In");
+      this.router.navigate(["/"]);
+    }
+	}
+
+	getRoles(roles: any[]): string {
+		let ldata: string = ''
+		if (roles != null && roles.length > 0) {
+			roles.forEach((element) => {
+				ldata += element.roleName + '|'
+			})
+		}
+		return ldata
+	}
+
+	isLoggedIn() {
+		return this.authService.isLoggedIn()
+	}
+}
+
+
+import { Routes } from "@angular/router";
+import { LoginComponent } from "./login-component/login-component";
+import { RateEngineComponent } from "./rateengine.component";
+
+export const routes: Routes = [
+    {
+        path: 'login',
+        component: LoginComponent
+    },
+    {
+        path: '',
+        component: RateEngineComponent
+    },
+    {
+        path: '*',
+        redirectTo: 'login',
+    }
+];
+
+
+
+import { Inject, Injectable, DOCUMENT } from "@angular/core";
+import { BehaviorSubject, Observable, of, throwError } from "rxjs";
+import { catchError, mapTo, tap, timeout } from "rxjs/operators";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Tokens } from "./tokens";
+import { LoginUser } from "./LoginUser";
+import { Role } from "./roles";
+import { jwtDecode } from "jwt-decode";
+import {
+  environment,
+  fxsconst,
+  rateconst,
+} from "../../environments/environment";
+import { Router } from "@angular/router";
+import { CommonService } from "./common.service";
+
+@Injectable({
+  providedIn: "root",
+})
+export class AuthService {
+  baseUrl = rateconst.rforexAuthServiceApiUrl;
+  initVector = rateconst.initVector;
+  private readonly JWT_TOKEN = "JWT_TOKEN";
+  private readonly REFRESH_TOKEN = "REFRESH_TOKEN";
+  private readonly USER_DETAILS = "USER";
+  private readonly sessionKey = "activeSession";
+  isLoggedIn$ = new BehaviorSubject<boolean>(false);
+  userPfId: any;
+  uniqueId: string = "";
+  isTimeOut: boolean = false;
+  private currentUrl = "";
+  token: string = "";
+  headers = new HttpHeaders().set("Content-Type", "application/json");
+
+  constructor(
+    public http: HttpClient,
+    public router: Router,
+    public commonService: CommonService,
+    @Inject(DOCUMENT) private document: Document,
+  ) {
+    window.addEventListener("storage", (event) => {
+      if (event.key === this.sessionKey) {
+        this.userPfId = "";
+      }
+    });
+  }
+
+  user: LoginUser | undefined; 
+  userdetails = {};
+
+
+  getCurrentSession() {
+    const val = localStorage.getItem(this.sessionKey);
+    return val ? JSON.parse(val) : null;
+  }
+
+  loginCBS(pfId: any) {
+    const sessionData = { pfId, timestamp: Date.now() };
+    localStorage.setItem(this.sessionKey, JSON.stringify(sessionData));
+    this.isLoggedIn$.next(true);
+  }
+
+
+  setCurrentUrl(url: string): void {
+    this.currentUrl = url;
+  }
+
+  getCurrentUrl() {
+    return this.currentUrl;
+  }
+
+  getMockUser() {
+    return this.http.get(`${this.baseUrl}/public/getUser`);
+  }
+
+  getAllMockedUsers(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/public/getAllUsers`);
+  }
+
+  getUser() {
+    if (!this.user) {
+      let token: string = this.getJwtToken() ?? '';;
+      const usr: LoginUser = (this.decodeJwtToken(token) as any)?.user;
+      return usr;
     }
 
+    return this.user;
+  }
 
-    public String refrehTokenFromClaim(Claims claims) {
-        claims.setIssuedAt(new Date());
-        long validityInMilliseconds = Long.parseLong(TOKEN_EXPIRE_LENGTH_JWT);
-        claims.setExpiration(new Date(Instant.now().toEpochMilli() + validityInMilliseconds));
-        String newToken = "Bearer "+Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS256,SECRET_KEY_JWT ).compact();
-        return newToken;
+  setUser(usr: LoginUser) {
+    this.user = usr;
+  }
 
+  async login(dataid: string): Promise<Observable<boolean>> {
+    return this.http
+      .get<any>(`${this.baseUrl}/public/getUserFromFXS/${dataid}`)
+      .pipe(
+        tap((userData) => {
+          console.log("User data "+JSON.stringify(userData))
+          this.user = userData.userName;
+          console.log("user "+this.user)
+          this.doLoginUser(
+            userData.userName,
+            userData.token,
+            userData.refreshToken,
+          );
+        }),
+        mapTo(true),
+        catchError((error) => {
+          alert("Unable to fetch User details");
+          return of(false);
+        }),
+      );
+  }
+
+  logout() {
+    return this.http
+      .post<any>(`${this.baseUrl}/logout`, {
+        refreshToken: this.getRefreshToken(),
+      })
+      .pipe(
+        tap(() => this.doLogoutUser()),
+        mapTo(true),
+        catchError((error) => {
+          alert(error.error);
+          return of(false);
+        }),
+      );
+  }
+
+
+  isLoggedIn() {
+    return !!this.getJwtToken();
+  }
+
+  refreshToken() {
+    return this.http
+      .post<any>(`${this.baseUrl}/public/refreshToken`, {
+        refreshToken: this.getRefreshToken(),
+      })
+      .pipe(
+        tap((tokens: Tokens) => {
+          this.storeJwtToken(tokens.jwt);
+        }),
+      );
+  }
+
+  getJwtToken() {
+    return sessionStorage.getItem(this.JWT_TOKEN);
+  }
+
+  decodeJwtToken(token: string) {
+    try {
+      return jwtDecode(token);
+    } catch (Error) {
+      return null;
     }
+  }
 
-    public  LDAPUser getuserFromClaims(Claims claim) {
-        LinkedHashMap map =  (LinkedHashMap)claim.get("user");
-        LDAPUser usr = new LDAPUser(map);
-        return usr;
+  public doLoginUser(username: string, tokens: string, refreshToken: string) {
+    const mytoken: Tokens = new Tokens(tokens, refreshToken);
+    console.log("token in dologinuser "+JSON.stringify(mytoken))
+    console.log("jwt token in dologinuser "+mytoken.jwt)
+    this.storeJwtToken(mytoken.jwt);
+  }
+
+  public doLogoutUser() {
+    console.log("do logout user")
+    this.removeTokens();
+    this.router.navigate(["login"]);
+  }
+
+  private getRefreshToken() {
+    return sessionStorage.getItem(this.REFRESH_TOKEN);
+  }
+
+  public storeJwtToken(jwt: string ) {
+    console.log("jwt in storejwtoken "+jwt)
+    console.log("jwt null "+ jwt !=null)
+    console.log("jwt length "+ jwt.trim.length)
+    if (jwt != null && jwt.trim().length > 0) {
+      console.log("JWT TOken "+this.JWT_TOKEN)
+      console.log("Refresh TOken "+this.REFRESH_TOKEN)
+      sessionStorage.setItem(this.JWT_TOKEN, jwt);
+      sessionStorage.setItem(this.REFRESH_TOKEN, "refresh");
     }
-
-    public String createToken(LDAPUser[] usr, List<Role> roles, Optional<Date> issuedAtOpt) {
-        Claims claims = Jwts.claims();
-        //claims.setSubject(username);
-        claims.put("user", usr);
-        claims.put(JwtUtils.TOKENAUTHKEY, roles.stream().map(s -> new SimpleGrantedAuthority(s.getAuthority()))
-                .filter(Objects::nonNull).collect(Collectors.toList()));
-        claims.put(JwtUtils.TOKENLASTMSGKEY, new Date().getTime());
-        Date issuedAt = issuedAtOpt.orElse(new Date());
-        claims.setIssuedAt(issuedAt);
-        long validityInMilliseconds = Long.parseLong(TOKEN_EXPIRE_LENGTH_JWT);
-        Date validity = new Date(issuedAt.getTime() + validityInMilliseconds);
-        claims.setExpiration(validity);
-
-        return "Bearer "+Jwts.builder().setClaims(claims)
-                .signWith( SignatureAlgorithm.HS256,SECRET_KEY_JWT).compact();
+    else{
+      console.log("jwt is null in storejwttoken")
     }
+  }
 
+  private removeTokens() {
+    console.log("removetokens")
+    sessionStorage.removeItem(this.JWT_TOKEN);
+    sessionStorage.removeItem(this.REFRESH_TOKEN);
+  }
 
-    public String refreshToken(String token) {
-        validateToken(token);
-        Optional<Jws<Claims>> claimsOpt = this.getClaims(Optional.of(token));
-        if(!claimsOpt.isPresent()) {
-            throw new AuthorizationServiceException("Invalid token claims");
+  isAuthorized() {
+    return !!this.getUser();
+  }
+  hasRole(role: string): boolean {
+    if (this.isAuthorized()) {
+      let matched = false;
+      this.getUser().roles.forEach((userrole: string) => {
+        if (userrole === role) {
+          matched = true;
         }
-        Claims claims = claimsOpt.get().getBody();
-        claims.setIssuedAt(new Date());
-        long validityInMilliseconds = Long.parseLong(TOKEN_EXPIRE_LENGTH_JWT);
-        claims.setExpiration(new Date(Instant.now().toEpochMilli() + validityInMilliseconds));
-        String newToken = Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS256,SECRET_KEY_JWT ).compact();
-        return newToken;
+      });
+      return matched;
+    } else {
+      return false;
     }
+  }
 
-    public Optional<Jws<Claims>> getClaims(Optional<String> token) {
-        if (!token.isPresent()) {
-            return Optional.empty();
-        }
-        return Optional.of(Jwts.parser().setSigningKey(SECRET_KEY_JWT).parseClaimsJws(token.get()));
-    }
-
-    public Authentication getAuthentication(String token) {
-        if(this.getAuthorities(token).stream().filter(role -> role.equals("ROLE_ANONYMOUS")).count() > 0) {
-            return new UsernamePasswordAuthenticationToken(this.getUser(token), null);
-        }
-        return new UsernamePasswordAuthenticationToken(this.getUser(token), "", this.getAuthorities(token));
-    }
-
-    /*
-     * public String getUsername(String token) { return
-     * Jwts.parser().setSigningKey(this.secretKey.getBytes()).parseClaimsJws(token).
-     * getBody().getSubject(); }
-     */
-
-    public String getUsername(String token) {
-
-        LinkedHashMap<?, ?> jwtUser =        (LinkedHashMap<?, ?>) Jwts.parser().setSigningKey(SECRET_KEY_JWT).parseClaimsJws(token).getBody().get("user");
-        return (String) jwtUser.get("pfId");
-
-    }
-
-    public LoginUser getUser(String token) {
-
-        LinkedHashMap<?, ?> jwtUser = (LinkedHashMap<?, ?>) Jwts.parser().setSigningKey(SECRET_KEY_JWT).parseClaimsJws(token).getBody().get("user");
-        LoginUser loginUser=new LoginUser();
-        loginUser.setPfId((String)jwtUser.get("pfId"));
-        loginUser.setBranchCode((String)jwtUser.get("branchCode"));
-        loginUser.setUserName((String)jwtUser.get("userName"));
-        loginUser.setRoles((List<Roles>) getAuthorities(token));
-        loginUser.setEntity((String)jwtUser.get("entity"));
-        return loginUser;
-
-    }
-
-
-    @SuppressWarnings("unchecked")
-    public Collection<Roles> getAuthorities(String token) {
-        Collection<Roles> roles = new LinkedList<>();
-        Roles anonymrole=roleService.getRoleByName("ROLE_ANONYMOUS");
-
-        for(Roles role :roleService.getAllRoles()) {
-            roles.add(role);
-        }
-        Collection<Map<String,String>> rolestrs = (Collection<Map<String,String>>) Jwts.parser()
-                .setSigningKey(SECRET_KEY_JWT).parseClaimsJws(token).getBody().get("auth");
-
-        return rolestrs.stream()
-                .map(str -> roles.stream().filter(r -> r.getRoleName().equals(str.getOrDefault(JwtUtils.AUTHORITY, "")))
-                        .findFirst().orElse(anonymrole))
-                .collect(Collectors.toList());
-    }
-
-
-    public String resolveToken(HttpServletRequest req) {
-        String bearerToken = req.getHeader(JwtUtils.AUTHORIZATION);
-
-        if(bearerToken != null ) {
-            // decrypt token before resolving
-
-            //bearerToken = encryption.decryptAESWithKey(bearerToken);
-        }
-
-        Optional<String> tokenOpt = resolveToken(bearerToken);
-        return (!tokenOpt.isPresent() )? null : tokenOpt.get();
-    }
-
-    public Optional<String> resolveToken(String bearerToken) {
-        if (bearerToken != null && bearerToken.startsWith(JwtUtils.BEARER)) {
-            return Optional.of(bearerToken.substring(7, bearerToken.length()));
-        }
-        return Optional.empty();
-    }
-
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parser().setSigningKey(SECRET_KEY_JWT).parseClaimsJws(token);
+  hasRole2(roles: Role[]): boolean {
+    for (let i = 0; i < roles.length; i++) {
+      if (this.isAuthorized()) {
+        for (let j = 0; j < this.getUser().roles.length; j++) {
+          if (this.getUser().roles[j].roleName === roles[i].roleName) {
             return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
-            //throw new AuthenticationException("Expired or invalid JWT token",e);
+          }
         }
+      } else {
+        return false;
+      }
     }
+    return false;
+  }
 
+  checkuser() {
+    localStorage.clear();
+
+    const token = this.getJwtToken() ?? '';
+    const tokenusernameValue: any = this.decodeJwtToken(token);
+    this.user = new LoginUser(tokenusernameValue.user[0]);
+    let userRoles: any = {
+      role: tokenusernameValue.user[0].role,
+    };
+    const roleAttr = tokenusernameValue.user[0].roleAttr;
+    for (const property in roleAttr) {
+      userRoles[`${property}`] = `${roleAttr[property]}`;
+    }
+    let key: string;
+    this.userdetails = userRoles;
+    for (let i in this.userdetails) {
+    }
+    localStorage.setItem("username", tokenusernameValue.user[0].name);
+    localStorage.setItem("emailId", tokenusernameValue.user[0].emailId);
+    return userRoles;
+  }
+  
 }
 
 
 
-import java.sql.Time;
-import java.util.Set;
 
-import org.springframework.security.core.GrantedAuthority;
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ConsumerOnboardingComponent } from './features/consumers/consumer-onboarding.component';
+import { AuthService } from './core/auth/auth.service';
+import { SymbolMappingComponent } from './features/symbol-mappings/symbol-mapping.component';
+import { SubscriptionSettingComponent } from './features/subscription-settings/subscription-setting.component';
+import { SpreadMatrixComponent } from './features/spread-matrix/spread-matrix.component';
+import { SwapMatrixComponent } from './features/swap-matrix/swap-matrix.component';
+import { DashboardComponent } from './features/dashboard/dashboard.component';
+import { StreamingPricesComponent } from './features/streaming-prices/streaming-prices.component';
+import { ConsumerFeedStatus } from './features/dashboard/dashboard.models';
 
+@Component({
+  selector: 'app-rate-engine',
+  imports: [DashboardComponent, StreamingPricesComponent, ConsumerOnboardingComponent, SymbolMappingComponent, SubscriptionSettingComponent, SpreadMatrixComponent, SwapMatrixComponent, FormsModule],
+  template: `
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand"><span class="brand-mark"><img src="assets/re-logo.jpg" alt="SBI"></span><span class="brand-copy"><strong>RateEngine</strong><small>APM ID: TREA/001/2026</small></span></div>
+        
+        <nav>
+          <button class="nav-link dashboard-link" [class.active]="view() === 'dashboard' || view() === 'prices'" (click)="view.set('dashboard')"><span class="dashboard-nav-icon"></span> Dashboard</button>
+        </nav>
+        <div class="workspace">OPERATIONS WORKSPACE</div>
+        <nav>
+          <button class="nav-link" [class.active]="view() === 'consumers'" (click)="view.set('consumers')"><span>◫</span> Consumer onboarding</button>
+          <button class="nav-link" [class.active]="view() === 'mappings'" (click)="view.set('mappings')"><span>⇄</span> Symbol mapping</button>
+          <button class="nav-link" [class.active]="view() === 'subscriptions'" (click)="view.set('subscriptions')"><span>◷</span> Subscriptions</button>
+          <button class="nav-link" [class.active]="view() === 'spreads'" (click)="view.set('spreads')"><span>≋</span> Spread matrix</button>
+          <button class="nav-link" [class.active]="view() === 'swaps'" (click)="view.set('swaps')"><span>↝</span> Swap points</button>
+        </nav>
+        <div class="sidebar-foot"><div><span class="pulse"></span>Application Connected</div><small class="copyright">Copyright © SBI. All rights reserved.</small></div>
+      </aside>
+      <main>
+        <header class="topbar">
+          <div><span class="eyebrow">SBI FOREX MARKET DATA ADMINISTRATION</span><strong>Control Centre</strong></div>
+          @if (auth.user(); as user) {
+            <div class="user"><span class="avatar">{{ user.userName.charAt(0) || user.userId.charAt(0) }}</span>
+              <div><strong>{{ user.userName || user.userId }}</strong><small>{{ user.role }} · {{ user.entity }}</small></div>
+            </div>
+          } @else {
+            <button class="user warning auth-trigger" type="button" (click)="showAuth.set(true)"><span class="avatar">!</span><div><strong>Connect with JWT</strong><small>Sign in to load consumers</small></div></button>
+          }
+        </header>
+        @if (view() === 'dashboard') { <app-dashboard (openPrices)="showPrices($event)" /> }
+        @else if (view() === 'prices' && selectedConsumer(); as consumer) { <app-streaming-prices [consumerId]="consumer.consumerId" [consumerName]="consumer.consumerName" (back)="view.set('dashboard')" /> }
+        @else if (view() === 'consumers') { <app-consumer-onboarding /> }
+        @else if (view() === 'mappings') { <app-symbol-mapping /> }
+        @else if (view() === 'subscriptions') { <app-subscription-setting /> }
+        @else if (view() === 'spreads') { <app-spread-matrix /> }
+        @else { <app-swap-matrix /> }
+      </main>
+    </div>
+    @if (showAuth()) {
+      <div class="dialog-backdrop" (click)="showAuth.set(false)">
+        <section class="auth-dialog" (click)="$event.stopPropagation()">
+          <div class="dialog-icon">JWT</div>
+          <h2>Connect to RateEngine</h2>
+          <p>Provide the access token. It must contain <code>user_id</code>, <code>user_name</code>, <code>entity</code>, and <code>role</code>.</p>
+          <label><span>Access token</span><textarea [(ngModel)]="tokenDraft" rows="5" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="eyJhbGciOiJIUzI1NiJ9..."></textarea></label>
+          @if (authError()) { <div class="auth-error">{{ authError() }}</div> }
+          <div class="dialog-actions"><button type="button" class="cancel" (click)="showAuth.set(false)">Cancel</button><button type="button" class="connect" (click)="connect()">Connect</button></div>
+        </section>
+      </div>
+    }
+  `,
+  styleUrl: './rateengine.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class RateEngineComponent {
+  readonly showAuth = signal(false);
+  readonly authError = signal('');
+  readonly view = signal<'dashboard' | 'prices' | 'consumers' | 'mappings' | 'subscriptions' | 'spreads' | 'swaps'>('dashboard');
+  readonly selectedConsumer = signal<ConsumerFeedStatus | null>(null);
+  tokenDraft = '';
+  constructor(readonly auth: AuthService) {}
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.ColumnResult;
-import jakarta.persistence.ConstructorResult;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.NamedQueries;
-import jakarta.persistence.NamedQuery;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.SqlResultSetMapping;
-import jakarta.persistence.Table;
+  showPrices(consumer: ConsumerFeedStatus): void {
+    if (consumer.status === 'UNAVAILABLE') return;
+    this.selectedConsumer.set(consumer);
+    this.view.set('prices');
+  }
 
-
-@Entity
-@Table(name = "Roles")
-@NamedQueries(value = { @NamedQuery(name="Roles.findRoleByRoleName",query = "SELECT r FROM Roles r where r.roleName=?1")})
-@SqlResultSetMapping(
-        name = "SomeMapping",
-        classes = {
-                @ConstructorResult(targetClass = NameOnly.class,
-                        columns = {
-                                @ColumnResult(name = "ROLE_ID", type = Long.class),
-                                @ColumnResult(name = "ROLE_NAME", type = String.class),
-                        }
-                )
-        }
-)
-
-public class Roles extends Auditable<String> implements GrantedAuthority{
-    @Override
-    public String toString() {
-        return "Roles [roleId=" + roleId + ", roleName=" + roleName + ", description=" + description + ", startTime="
-                + startTime + ", endTime=" + endTime + ", module=" + module + ", urlPermitted=" + urlPermitted + "]";
+  connect(): void {
+    const token = this.tokenDraft.trim();
+    if (!token) { this.authError.set('Enter a JWT access token.'); return; }
+    if (token.length > 8192 || token.split('.').length !== 3) {
+      this.authError.set('The JWT access token format or size is invalid.');
+      return;
     }
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "seq_roles")
-    @SequenceGenerator(  name = "seq_roles"	,allocationSize = 1)
-    private Long roleId;
-    @Column(unique = true)
-    private String roleName;
-    @Column
-    private String description;
-    @Column
-    private Time startTime;
-    @Column
-    private Time endTime;
-
-
-    @ManyToMany(fetch = FetchType.LAZY,cascade = { CascadeType.PERSIST,CascadeType.MERGE})
-    @JoinTable(
-            name = "role_module",
-            joinColumns = @JoinColumn(name = "roleId"),
-            inverseJoinColumns = @JoinColumn(name = "moduleId"))
-    private Set<Module> module ;
-
-    @Column
-    private String urlPermitted;
-
-
-    public Long getRoleId() {
-        return roleId;
+    this.auth.setToken(token);
+    if (!this.auth.user()) {
+      this.auth.clear();
+      this.authError.set('This token is invalid or does not contain the required claims.');
+      return;
     }
-    public void setRoleId(Long roleId) {
-        this.roleId = roleId;
-    }
-    public String getRoleName() {
-        return roleName;
-    }
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
-    public String getDescription() {
-        return description;
-    }
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-
-    public String getUrlPermitted() {
-        return urlPermitted;
-    }
-    public void setUrlPermitted(String urlPermitted) {
-        this.urlPermitted = urlPermitted;
-    }
-    public Set<Module> getModule() {
-        return module;
-    }
-    public void setModule(Set<Module> module) {
-        this.module = module;
-    }
-    @Override
-    public String getAuthority() {
-        // TODO Auto-generated method stub
-        return this.roleName;
-    }
-    public Time getStartTime() {
-        return startTime;
-    }
-    public void setStartTime(Time startTime) {
-        this.startTime = startTime;
-    }
-    public Time getEndTime() {
-        return endTime;
-    }
-    public void setEndTime(Time endTime) {
-        this.endTime = endTime;
-    }
-
-
-
+    this.authError.set('');
+    this.tokenDraft = '';
+    this.showAuth.set(false);
+  }
 }
+
+
+
