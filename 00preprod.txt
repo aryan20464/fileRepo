@@ -1,26 +1,224 @@
-Description:
+Hibernate: create table RATEENGINE.logged_user (logged_user_id raw(16) not null, assigned_role varchar2(100 char), branch varchar2(8 char), login_at timestamp(9), logout_at timestamp(9), pf_id varchar2(15 char), primary key (logged_user_id))
+Hibernate: create table RATEENGINE.module (module_id number(19,0) not null, created_by varchar2(20 char), created_date timestamp(9), last_modified_by varchar2(20 char), last_modified_date timestamp(9), module_description varchar2(255 char), module_name varchar2(255 char), url varchar2(255 char), primary key (module_id))
+Hibernate: create table RATEENGINE.module_aud (module_id number(19,0) not null, created_by varchar2(20 char), created_date timestamp(9), last_modified_by varchar2(20 char), last_modified_date timestamp(9), module_description varchar2(255 char), module_name varchar2(255 char), url varchar2(255 char), rev timestamp(9) with time zone not null, revtype number(3,0) not null, primary key (rev, module_id))
+2026-08-29 10:09:18 WARN  3268 --- [           main] o.h.t.s.i.ExceptionHandlerLoggedImpl     : GenerationTarget encountered exception accepting command : Error executing DDL "create table RATEENGINE.module_aud (module_id number(19,0) not null, created_by varchar2(20 char), created_date timestamp(9), last_modified_by varchar2(20 char), last_modified_date timestamp(9), module_description varchar2(255 char), module_name varchar2(255 char), url varchar2(255 char), rev timestamp(9) with time zone not null, revtype number(3,0) not null, primary key (rev, module_id))" via JDBC [ORA-02329: column of datatype TIME/TIMESTAMP WITH TIME ZONE cannot be unique or a primary key
 
-An attempt was made to call a method that does not exist. The attempt was made from the following location:
+https://docs.oracle.com/error-help/db/ora-02329/]
+org.hibernate.tool.schema.spi.CommandAcceptanceException: Error executing DDL "create table RATEENGINE.module_aud (module_id number(19,0) not null, created_by varchar2(20 char), created_date timestamp(9), last_modified_by varchar2(20 char), last_modified_date timestamp(9), module_description varchar2(255 char), module_name varchar2(255 char), url varchar2(255 char), rev timestamp(9) with time zone not null, revtype number(3,0) not null, primary key (rev, module_id))" via JDBC [ORA-02329: column of datatype TIME/TIMESTAMP WITH TIME ZONE cannot be unique or a primary key
 
-    org.hibernate.envers.configuration.Configuration.<init>(Configuration.java:191)
+https://docs.oracle.com/error-help/db/ora-02329/]
+        at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.accept(GenerationTargetToDatabase.java:91)
+        at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.applySqlString(AbstractSchemaMigrator.java:566)
+        at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.applySqlStrings(AbstractSchemaMigrator.java:506)
+        at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.createTable(AbstractSchemaMigrator.java:305)
+        at org.hibernate.tool.schema.internal.GroupedSchemaMigratorImpl.performTablesMigration(GroupedSchemaMigratorImpl.java:80)
+        at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.performMigration(AbstractSchemaMigrator.java:220)
+        at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.doMigration(AbstractSchemaMigrator.java:96)
+        at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.performDatabaseAction(SchemaManagementToolCoordinator.java:269)
+        at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.lambda$process$1(SchemaManagementToolCoordinator.java:101)
+        at java.base/java.util.HashMap.forEach(HashMap.java:1429)
+        at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.process(SchemaManagementToolCoordinator.java:100)
+        at org.hibernate.boot.internal.SessionFactoryObserverForSchemaExport.sessionFactoryCreated(SessionFactoryObserverForSchemaExport.java:35)
+        at org.hibernate.internal.SessionFactoryObserverChain.sessionFactoryCreated(SessionFactoryObserverChain.java:33)
+        at org.hibernate.internal.SessionFactoryImpl.<init>(SessionFactoryImpl.java:327)
+        at org.hibernate.internal.SessionFactoryRegistry.instantiateSessionFactory(SessionFactoryRegistry.java:64)
+        at org.hibernate.boot.internal.SessionFactoryBuilderImpl.build(SessionFactoryBuilderImpl.java:458)
+        at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1452)
+        at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:93)
+        at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:443)
+        at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:436)
+        at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:411)
+        at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:419)
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1862)
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1811)
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:603)
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:525)
+        at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:333)
+        at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371)
+        at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:331)
+        at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:201)
+        at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:977)
+        at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:621)
+        at org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:143)
+        at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:756)
+        at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:445)
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:321)
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1365)
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354)
+        at com.sbi.rateengine.RateEngineApplication.main(RateEngineApplication.java:10)
+Caused by: java.sql.SQLException: ORA-02329: column of datatype TIME/TIMESTAMP WITH TIME ZONE cannot be unique or a primary key
 
-The following method did not exist:
+https://docs.oracle.com/error-help/db/ora-02329/
+        at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:719)
+        at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:619)
+        at oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:1382)
+        at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:972)
+        at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:788)
+        at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:241)
+        at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:531)
+        at oracle.jdbc.driver.T4CStatement.doOall8(T4CStatement.java:198)
+        at oracle.jdbc.driver.T4CStatement.executeForRows(T4CStatement.java:1411)
+        at oracle.jdbc.driver.OracleStatement.executeSQLStatement(OracleStatement.java:2022)
+        at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1635)
+        at oracle.jdbc.driver.OracleStatement.executeInternal(OracleStatement.java:2700)
+        at oracle.jdbc.driver.OracleStatement.execute(OracleStatement.java:2649)
+        at oracle.jdbc.driver.OracleStatementWrapper.execute(OracleStatementWrapper.java:350)
+        at com.zaxxer.hikari.pool.ProxyStatement.execute(ProxyStatement.java:95)
+        at com.zaxxer.hikari.pool.HikariProxyStatement.execute(HikariProxyStatement.java)
+        at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.accept(GenerationTargetToDatabase.java:86)
+        ... 38 common frames omitted
+Caused by: Error : 2329, Position : 362, SQL = create table RATEENGINE.module_aud (module_id number(19,0) not null, created_by varchar2(20 char), created_date timestamp(9), last_modified_by varchar2(20 char), last_modified_date timestamp(9), module_description varchar2(255 char), module_name varchar2(255 char), url varchar2(255 char), rev timestamp(9) with time zone not null, revtype number(3,0) not null, primary key (rev, module_id)), Original SQL = create table RATEENGINE.module_aud (module_id number(19,0) not null, created_by varchar2(20 char), created_date timestamp(9), last_modified_by varchar2(20 char), last_modified_date timestamp(9), module_description varchar2(255 char), module_name varchar2(255 char), url varchar2(255 char), rev timestamp(9) with time zone not null, revtype number(3,0) not null, primary key (rev, module_id)), Error Message = ORA-02329: column of datatype TIME/TIMESTAMP WITH TIME ZONE cannot be unique or a primary key
 
-    'org.hibernate.annotations.common.reflection.ReflectionManager org.hibernate.boot.spi.BootstrapContext.getReflectionManager()'
+        at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:727)
+        ... 54 common frames omitted
+Hibernate: create table RATEENGINE.module_roles (module_module_id number(19,0) not null, roles_role_id number(19,0) not null)
+Hibernate: alter table RATEENGINE.re_fixccilfeed_mock_messages modify id number(38,2)
+2026-08-29 10:09:18 WARN  3268 --- [           main] o.h.t.s.i.ExceptionHandlerLoggedImpl     : GenerationTarget encountered exception accepting command : Error executing DDL "alter table RATEENGINE.re_fixccilfeed_mock_messages modify id number(38,2)" via JDBC [ORA-01440: column to be modified must be empty to decrease precision or scale
 
-The calling method's class, org.hibernate.envers.configuration.Configuration, was loaded from the following location:
+https://docs.oracle.com/error-help/db/ora-01440/]
+org.hibernate.tool.schema.spi.CommandAcceptanceException: Error executing DDL "alter table RATEENGINE.re_fixccilfeed_mock_messages modify id number(38,2)" via JDBC [ORA-01440: column to be modified must be empty to decrease precision or scale
 
-    jar:file:/C:/Users/1064695/.m2/repository/org/hibernate/orm/hibernate-envers/6.4.2.Final/hibernate-envers-6.4.2.Final.jar!/org/hibernate/envers/configuration/Configuration.class
+https://docs.oracle.com/error-help/db/ora-01440/]
+        at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.accept(GenerationTargetToDatabase.java:91)
+        at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.applySqlString(AbstractSchemaMigrator.java:566)
+        at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.applySqlStrings(AbstractSchemaMigrator.java:506)
+        at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.migrateTable(AbstractSchemaMigrator.java:324)
+        at org.hibernate.tool.schema.internal.GroupedSchemaMigratorImpl.performTablesMigration(GroupedSchemaMigratorImpl.java:84)
+        at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.performMigration(AbstractSchemaMigrator.java:220)
+        at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.doMigration(AbstractSchemaMigrator.java:96)
+        at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.performDatabaseAction(SchemaManagementToolCoordinator.java:269)
+        at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.lambda$process$1(SchemaManagementToolCoordinator.java:101)
+        at java.base/java.util.HashMap.forEach(HashMap.java:1429)
+        at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.process(SchemaManagementToolCoordinator.java:100)
+        at org.hibernate.boot.internal.SessionFactoryObserverForSchemaExport.sessionFactoryCreated(SessionFactoryObserverForSchemaExport.java:35)
+        at org.hibernate.internal.SessionFactoryObserverChain.sessionFactoryCreated(SessionFactoryObserverChain.java:33)
+        at org.hibernate.internal.SessionFactoryImpl.<init>(SessionFactoryImpl.java:327)
+        at org.hibernate.internal.SessionFactoryRegistry.instantiateSessionFactory(SessionFactoryRegistry.java:64)
+        at org.hibernate.boot.internal.SessionFactoryBuilderImpl.build(SessionFactoryBuilderImpl.java:458)
+        at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1452)
+        at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:93)
+        at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:443)
+        at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:436)
+        at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:411)
+        at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:419)
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1862)
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1811)
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:603)
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:525)
+        at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:333)
+        at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371)
+        at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:331)
+        at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:201)
+        at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:977)
+        at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:621)
+        at org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:143)
+        at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:756)
+        at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:445)
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:321)
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1365)
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354)
+        at com.sbi.rateengine.RateEngineApplication.main(RateEngineApplication.java:10)
+Caused by: java.sql.SQLException: ORA-01440: column to be modified must be empty to decrease precision or scale
 
-The called method's class, org.hibernate.boot.spi.BootstrapContext, is available from the following locations:
+https://docs.oracle.com/error-help/db/ora-01440/
+        at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:719)
+        at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:619)
+        at oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:1382)
+        at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:972)
+        at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:788)
+        at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:241)
+        at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:531)
+        at oracle.jdbc.driver.T4CStatement.doOall8(T4CStatement.java:198)
+        at oracle.jdbc.driver.T4CStatement.executeForRows(T4CStatement.java:1411)
+        at oracle.jdbc.driver.OracleStatement.executeSQLStatement(OracleStatement.java:2022)
+        at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1635)
+        at oracle.jdbc.driver.OracleStatement.executeInternal(OracleStatement.java:2700)
+        at oracle.jdbc.driver.OracleStatement.execute(OracleStatement.java:2649)
+        at oracle.jdbc.driver.OracleStatementWrapper.execute(OracleStatementWrapper.java:350)
+        at com.zaxxer.hikari.pool.ProxyStatement.execute(ProxyStatement.java:95)
+        at com.zaxxer.hikari.pool.HikariProxyStatement.execute(HikariProxyStatement.java)
+        at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.accept(GenerationTargetToDatabase.java:86)
+        ... 38 common frames omitted
+Caused by: Error : 1440, Position : 59, SQL = alter table RATEENGINE.re_fixccilfeed_mock_messages modify id number(38,2), Original SQL = alter table RATEENGINE.re_fixccilfeed_mock_messages modify id number(38,2), Error Message = ORA-01440: column to be modified must be empty to decrease precision or scale
 
-    jar:file:/C:/Users/1064695/.m2/repository/org/hibernate/orm/hibernate-core/7.4.5.Final/hibernate-core-7.4.5.Final.jar!/org/hibernate/boot/spi/BootstrapContext.class
+        at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:727)
+        ... 54 common frames omitted
+Hibernate: create table RATEENGINE.role_module (role_id number(19,0) not null, module_id number(19,0) not null, primary key (role_id, module_id))
+Hibernate: create table RATEENGINE.roles (role_id number(19,0) not null, created_by varchar2(20 char), created_date timestamp(9), last_modified_by varchar2(20 char), last_modified_date timestamp(9), description varchar2(255 char), end_time timestamp(0), role_name varchar2(255 char), start_time timestamp(0), url_permitted varchar2(255 char), primary key (role_id))
+Hibernate: create table RATEENGINE.roles_aud (role_id number(19,0) not null, created_by varchar2(20 char), created_date timestamp(9), last_modified_by varchar2(20 char), last_modified_date timestamp(9), description varchar2(255 char), end_time timestamp(0), role_name varchar2(255 char), start_time timestamp(0), url_permitted varchar2(255 char), rev timestamp(9) with time zone not null, revtype number(3,0) not null, primary key (rev, role_id))
+2026-08-29 10:09:19 WARN  3268 --- [           main] o.h.t.s.i.ExceptionHandlerLoggedImpl     : GenerationTarget encountered exception accepting command : Error executing DDL "create table RATEENGINE.roles_aud (role_id number(19,0) not null, created_by varchar2(20 char), created_date timestamp(9), last_modified_by varchar2(20 char), last_modified_date timestamp(9), description varchar2(255 char), end_time timestamp(0), role_name varchar2(255 char), start_time timestamp(0), url_permitted varchar2(255 char), rev timestamp(9) with time zone not null, revtype number(3,0) not null, primary key (rev, role_id))" via JDBC [ORA-02329: column of datatype TIME/TIMESTAMP WITH TIME ZONE cannot be unique or a primary key
 
-The called method's class hierarchy was loaded from the following locations:
+https://docs.oracle.com/error-help/db/ora-02329/]
+org.hibernate.tool.schema.spi.CommandAcceptanceException: Error executing DDL "create table RATEENGINE.roles_aud (role_id number(19,0) not null, created_by varchar2(20 char), created_date timestamp(9), last_modified_by varchar2(20 char), last_modified_date timestamp(9), description varchar2(255 char), end_time timestamp(0), role_name varchar2(255 char), start_time timestamp(0), url_permitted varchar2(255 char), rev timestamp(9) with time zone not null, revtype number(3,0) not null, primary key (rev, role_id))" via JDBC [ORA-02329: column of datatype TIME/TIMESTAMP WITH TIME ZONE cannot be unique or a primary key
 
-    org.hibernate.boot.spi.BootstrapContext: file:/C:/Users/1064695/.m2/repository/org/hibernate/orm/hibernate-core/7.4.5.Final/hibernate-core-7.4.5.Final.jar
+https://docs.oracle.com/error-help/db/ora-02329/]
+        at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.accept(GenerationTargetToDatabase.java:91)
+        at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.applySqlString(AbstractSchemaMigrator.java:566)
+        at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.applySqlStrings(AbstractSchemaMigrator.java:506)
+        at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.createTable(AbstractSchemaMigrator.java:305)
+        at org.hibernate.tool.schema.internal.GroupedSchemaMigratorImpl.performTablesMigration(GroupedSchemaMigratorImpl.java:80)
+        at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.performMigration(AbstractSchemaMigrator.java:220)
+        at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.doMigration(AbstractSchemaMigrator.java:96)
+        at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.performDatabaseAction(SchemaManagementToolCoordinator.java:269)
+        at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.lambda$process$1(SchemaManagementToolCoordinator.java:101)
+        at java.base/java.util.HashMap.forEach(HashMap.java:1429)
+        at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.process(SchemaManagementToolCoordinator.java:100)
+        at org.hibernate.boot.internal.SessionFactoryObserverForSchemaExport.sessionFactoryCreated(SessionFactoryObserverForSchemaExport.java:35)
+        at org.hibernate.internal.SessionFactoryObserverChain.sessionFactoryCreated(SessionFactoryObserverChain.java:33)
+        at org.hibernate.internal.SessionFactoryImpl.<init>(SessionFactoryImpl.java:327)
+        at org.hibernate.internal.SessionFactoryRegistry.instantiateSessionFactory(SessionFactoryRegistry.java:64)
+        at org.hibernate.boot.internal.SessionFactoryBuilderImpl.build(SessionFactoryBuilderImpl.java:458)
+        at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1452)
+        at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:93)
+        at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:443)
+        at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:436)
+        at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:411)
+        at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:419)
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1862)
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1811)
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:603)
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:525)
+        at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:333)
+        at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371)
+        at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:331)
+        at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:201)
+        at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:977)
+        at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:621)
+        at org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:143)
+        at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:756)
+        at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:445)
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:321)
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1365)
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354)
+        at com.sbi.rateengine.RateEngineApplication.main(RateEngineApplication.java:10)
+Caused by: java.sql.SQLException: ORA-02329: column of datatype TIME/TIMESTAMP WITH TIME ZONE cannot be unique or a primary key
 
+https://docs.oracle.com/error-help/db/ora-02329/
+        at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:719)
+        at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:619)
+        at oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:1382)
+        at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:972)
+        at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:788)
+        at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:241)
+        at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:531)
+        at oracle.jdbc.driver.T4CStatement.doOall8(T4CStatement.java:198)
+        at oracle.jdbc.driver.T4CStatement.executeForRows(T4CStatement.java:1411)
+        at oracle.jdbc.driver.OracleStatement.executeSQLStatement(OracleStatement.java:2022)
+        at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1635)
+        at oracle.jdbc.driver.OracleStatement.executeInternal(OracleStatement.java:2700)
+        at oracle.jdbc.driver.OracleStatement.execute(OracleStatement.java:2649)
+        at oracle.jdbc.driver.OracleStatementWrapper.execute(OracleStatementWrapper.java:350)
+        at com.zaxxer.hikari.pool.ProxyStatement.execute(ProxyStatement.java:95)
+        at com.zaxxer.hikari.pool.HikariProxyStatement.execute(HikariProxyStatement.java)
+        at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.accept(GenerationTargetToDatabase.java:86)
+        ... 38 common frames omitted
+Caused by: Error : 2329, Position : 408, SQL = create table RATEENGINE.roles_aud (role_id number(19,0) not null, created_by varchar2(20 char), created_date timestamp(9), last_modified_by varchar2(20 char), last_modified_date timestamp(9), description varchar2(255 char), end_time timestamp(0), role_name varchar2(255 char), start_time timestamp(0), url_permitted varchar2(255 char), rev timestamp(9) with time zone not null, revtype number(3,0) not null, primary key (rev, role_id)), Original SQL = create table RATEENGINE.roles_aud (role_id number(19,0) not null, created_by varchar2(20 char), created_date timestamp(9), last_modified_by varchar2(20 char), last_modified_date timestamp(9), description varchar2(255 char), end_time timestamp(0), role_name varchar2(255 char), start_time timestamp(0), url_permitted varchar2(255 char), rev timestamp(9) with time zone not null, revtype number(3,0) not null, primary key (rev, role_id)), Error Message = ORA-02329: column of datatype TIME/TIMESTAMP WITH TIME ZONE cannot be unique or a primary key
 
-Action:
-
-Correct the classpath of your application so that it contains compatible versions of the classes org.hibernate.envers.configuration.Configuration and org.hibernate.boot.spi.BootstrapContext
+        at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:727)
+        ... 54 common frames omitted
+Hibernate: alter table RATEENGINE.roles drop constraint UK716hgxp60ym1lifrdgp67xt5k
+Hibernate: alter table RATEENGINE.roles add constraint UK716hgxp60ym1lifrdgp67xt5k unique (role_name)
+Hibernate: alter table RATEENGINE.module_roles add constraint FKlaro9s0dtjjgceoswuuasc1o foreign key (roles_role_id) references RATEENGINE.roles
+Hibernate: alter table RATEENGINE.module_roles add constraint FK82yv4mvcopy1itn9ic99shv00 foreign key (module_module_id) references RATEENGINE.module
+Hibernate: alter table RATEENGINE.role_module add constraint FK55tuao7anmsgdoone7hkacvb9 foreign key (module_id) references RATEENGINE.module
+Hibernate: alter table RATEENGINE.role_module add constraint FKqxd1q7ge8gu31ufxtv9o47pkn foreign key (role_id) references RATEENGINE.roles
