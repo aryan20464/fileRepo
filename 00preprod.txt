@@ -1,30 +1,256 @@
-readonly token = signal<string | null>(this.getJwtToken());
-readonly user = computed(() => {
-  const t = this.token();
-  if (!t) return null;
-  const decoded: any = this.decodeJwtToken(t);
-  return decoded?.user ?? null; // matches backend's claims.put("user", user)
-});
-readonly roles = computed(() => {
-  const t = this.token();
-  if (!t) return [];
-  const decoded: any = this.decodeJwtToken(t);
-  return (decoded?.auth ?? []).map((a: any) => a?.authority).filter(Boolean);
-});
-readonly isMaker = computed(() => this.roles().includes('MAKER'));
-readonly isChecker = computed(() => this.roles().includes('CHECKER'));
+import { Inject, Injectable, DOCUMENT, signal, computed } from "@angular/core";
+import { BehaviorSubject, Observable, of } from "rxjs";
+import { catchError, mapTo, tap } from "rxjs/operators";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Tokens } from "./tokens";
+import { LoginUser } from "./LoginUser";
+import { Role } from "./roles";
+import { jwtDecode } from "jwt-decode";
+import { rateconst } from "../../environments/environment";
+import { Router } from "@angular/router";
+import { CommonService } from "./common.service";
 
+@Injectable({
+  providedIn: "root",
+})
+export class AuthService {
+  baseUrl = rateconst.rforexAuthServiceApiUrl;
+  initVector = rateconst.initVector;
+  private readonly JWT_TOKEN = "JWT_TOKEN";
+  private readonly REFRESH_TOKEN = "REFRESH_TOKEN";
+  private readonly USER_DETAILS = "USER";
+  private readonly sessionKey = "activeSession";
+  isLoggedIn$ = new BehaviorSubject<boolean>(false);
+  userPfId: any;
+  uniqueId: string = "";
+  isTimeOut: boolean = false;
+  private currentUrl = "";
+  headers = new HttpHeaders().set("Content-Type", "application/json");
 
-public storeJwtToken(jwt: string) {
-  if (jwt != null && jwt.trim().length > 0) {
-    sessionStorage.setItem(this.JWT_TOKEN, jwt);
-    sessionStorage.setItem(this.REFRESH_TOKEN, "refresh");
-    this.token.set(jwt);           // ← added
+  // --- reactive layer ---
+  readonly token = signal<string | null>(sessionStorage.getItem(this.JWT_TOKEN));
+
+  readonly user = computed(() => {
+    const t = this.token();
+    if (!t) return null;
+    const decoded: any = this.decodeJwtToken(t);
+    return decoded?.user ?? null;
+  });
+
+  readonly roles = computed(() => {
+    const t = this.token();
+    if (!t) return [];
+    const decoded: any = this.decodeJwtToken(t);
+    return (decoded?.auth ?? [])
+      .map((a: any) => a?.authority)
+      .filter(Boolean);
+  });
+
+  readonly isMaker = computed(() => this.roles().includes('MAKER'));
+  readonly isChecker = computed(() => this.roles().includes('CHECKER'));
+
+  constructor(
+    public http: HttpClient,
+    public router: Router,
+    public commonService: CommonService,
+    @Inject(DOCUMENT) private document: Document,
+  ) {
+    window.addEventListener("storage", (event) => {
+      if (event.key === this.sessionKey) {
+        this.userPfId = "";
+      }
+    });
   }
-}
 
-private removeTokens() {
-  sessionStorage.removeItem(this.JWT_TOKEN);
-  sessionStorage.removeItem(this.REFRESH_TOKEN);
-  this.token.set(null);            // ← added
+  user_legacy: LoginUser | undefined;
+  userdetails = {};
+
+  getCurrentSession() {
+    const val = localStorage.getItem(this.sessionKey);
+    return val ? JSON.parse(val) : null;
+  }
+
+  loginCBS(pfId: any) {
+    const sessionData = { pfId, timestamp: Date.now() };
+    localStorage.setItem(this.sessionKey, JSON.stringify(sessionData));
+    this.isLoggedIn$.next(true);
+  }
+
+  setCurrentUrl(url: string): void {
+    this.currentUrl = url;
+  }
+
+  getCurrentUrl() {
+    return this.currentUrl;
+  }
+
+  getMockUser() {
+    return this.http.get(`${this.baseUrl}/public/getUser`);
+  }
+
+  getAllMockedUsers(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/public/getAllUsers`);
+  }
+
+  getUser() {
+    if (!this.user_legacy) {
+      let token: string = this.getJwtToken() ?? '';
+      const usr: LoginUser = (this.decodeJwtToken(token) as any)?.user;
+      return usr;
+    }
+    return this.user_legacy;
+  }
+
+  setUser(usr: LoginUser) {
+    this.user_legacy = usr;
+  }
+
+  async login(dataid: string): Promise<Observable<boolean>> {
+    return this.http
+      .get<any>(`${this.baseUrl}/public/getUserFromFXS/${dataid}`)
+      .pipe(
+        tap((userData) => {
+          this.user_legacy = userData.userName;
+          this.doLoginUser(
+            userData.userName,
+            userData.token,
+            userData.refreshToken,
+          );
+        }),
+        mapTo(true),
+        catchError((error) => {
+          alert("Unable to fetch User details");
+          return of(false);
+        }),
+      );
+  }
+
+  logout() {
+    return this.http
+      .post<any>(`${this.baseUrl}/logout`, {
+        refreshToken: this.getRefreshToken(),
+      })
+      .pipe(
+        tap(() => this.doLogoutUser()),
+        mapTo(true),
+        catchError((error) => {
+          alert(error.error);
+          return of(false);
+        }),
+      );
+  }
+
+  isLoggedIn() {
+    return !!this.getJwtToken();
+  }
+
+  refreshToken() {
+    return this.http
+      .post<any>(`${this.baseUrl}/public/refreshToken`, {
+        refreshToken: this.getRefreshToken(),
+      })
+      .pipe(
+        tap((tokens: Tokens) => {
+          this.storeJwtToken(tokens.jwt);
+        }),
+      );
+  }
+
+  getJwtToken() {
+    return sessionStorage.getItem(this.JWT_TOKEN);
+  }
+
+  decodeJwtToken(token: string) {
+    try {
+      return jwtDecode(token);
+    } catch (Error) {
+      return null;
+    }
+  }
+
+  public doLoginUser(username: string, tokens: string, refreshToken: string) {
+    // strip a "Bearer " prefix if the backend included one — the interceptor adds its own.
+    const rawJwt = tokens?.startsWith("Bearer ") ? tokens.slice(7) : tokens;
+    const mytoken: Tokens = new Tokens(rawJwt, refreshToken);
+    this.storeJwtToken(mytoken.jwt);
+  }
+
+  public doLogoutUser() {
+    this.removeTokens();
+    this.router.navigate(["login"]);
+  }
+
+  /** Clears the token without navigating — for use inside dialogs/inline error handling. */
+  public clearTokenOnly() {
+    this.removeTokens();
+  }
+
+  private getRefreshToken() {
+    return sessionStorage.getItem(this.REFRESH_TOKEN);
+  }
+
+  public storeJwtToken(jwt: string) {
+    if (jwt != null && jwt.trim().length > 0) {
+      sessionStorage.setItem(this.JWT_TOKEN, jwt);
+      sessionStorage.setItem(this.REFRESH_TOKEN, "refresh");
+      this.token.set(jwt);
+    }
+  }
+
+  private removeTokens() {
+    sessionStorage.removeItem(this.JWT_TOKEN);
+    sessionStorage.removeItem(this.REFRESH_TOKEN);
+    this.token.set(null);
+  }
+
+  isAuthorized() {
+    return !!this.getUser();
+  }
+
+  hasRole(role: string): boolean {
+    if (this.isAuthorized()) {
+      let matched = false;
+      this.getUser().roles.forEach((userrole: string) => {
+        if (userrole === role) {
+          matched = true;
+        }
+      });
+      return matched;
+    } else {
+      return false;
+    }
+  }
+
+  hasRole2(roles: Role[]): boolean {
+    for (let i = 0; i < roles.length; i++) {
+      if (this.isAuthorized()) {
+        for (let j = 0; j < this.getUser().roles.length; j++) {
+          if (this.getUser().roles[j].roleName === roles[i].roleName) {
+            return true;
+          }
+        }
+      } else {
+        return false;
+      }
+    }
+    return false;
+  }
+
+  checkuser() {
+    localStorage.clear();
+    const token = this.getJwtToken() ?? '';
+    const tokenusernameValue: any = this.decodeJwtToken(token);
+    this.user_legacy = new LoginUser(tokenusernameValue.user[0]);
+    let userRoles: any = {
+      role: tokenusernameValue.user[0].role,
+    };
+    const roleAttr = tokenusernameValue.user[0].roleAttr;
+    for (const property in roleAttr) {
+      userRoles[`${property}`] = `${roleAttr[property]}`;
+    }
+    this.userdetails = userRoles;
+    localStorage.setItem("username", tokenusernameValue.user[0].name);
+    localStorage.setItem("emailId", tokenusernameValue.user[0].emailId);
+    return userRoles;
+  }
 }
