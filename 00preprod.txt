@@ -1,101 +1,31 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ConsumerOnboardingComponent } from './features/consumers/consumer-onboarding.component';
-import { AuthService } from '../login/auth.service'; // adjust to actual relative path
-import { SymbolMappingComponent } from './features/symbol-mappings/symbol-mapping.component';
-import { SubscriptionSettingComponent } from './features/subscription-settings/subscription-setting.component';
-import { SpreadMatrixComponent } from './features/spread-matrix/spread-matrix.component';
-import { SwapMatrixComponent } from './features/swap-matrix/swap-matrix.component';
-import { DashboardComponent } from './features/dashboard/dashboard.component';
-import { StreamingPricesComponent } from './features/streaming-prices/streaming-prices.component';
-import { ConsumerFeedStatus } from './features/dashboard/dashboard.models';
-
-@Component({
-  selector: 'app-rate-engine',
-  imports: [DashboardComponent, StreamingPricesComponent, ConsumerOnboardingComponent, SymbolMappingComponent, SubscriptionSettingComponent, SpreadMatrixComponent, SwapMatrixComponent, FormsModule],
-  template: `
-    <div class="app-shell">
-      <aside class="sidebar">
-        <div class="brand"><span class="brand-mark"><img src="assets/re-logo.jpg" alt="SBI"></span><span class="brand-copy"><strong>RateEngine</strong><small>APM ID: TREA/001/2026</small></span></div>
-
-        <nav>
-          <button class="nav-link dashboard-link" [class.active]="view() === 'dashboard' || view() === 'prices'" (click)="view.set('dashboard')"><span class="dashboard-nav-icon"></span> Dashboard</button>
-        </nav>
-        <div class="workspace">OPERATIONS WORKSPACE</div>
-        <nav>
-          <button class="nav-link" [class.active]="view() === 'consumers'" (click)="view.set('consumers')"><span>◫</span> Consumer onboarding</button>
-          <button class="nav-link" [class.active]="view() === 'mappings'" (click)="view.set('mappings')"><span>⇄</span> Symbol mapping</button>
-          <button class="nav-link" [class.active]="view() === 'subscriptions'" (click)="view.set('subscriptions')"><span>◷</span> Subscriptions</button>
-          <button class="nav-link" [class.active]="view() === 'spreads'" (click)="view.set('spreads')"><span>≋</span> Spread matrix</button>
-          <button class="nav-link" [class.active]="view() === 'swaps'" (click)="view.set('swaps')"><span>↝</span> Swap points</button>
-        </nav>
-        <div class="sidebar-foot"><div><span class="pulse"></span>Application Connected</div><small class="copyright">Copyright © SBI. All rights reserved.</small></div>
-      </aside>
-      <main>
-        <header class="topbar">
-          <div><span class="eyebrow">SBI FOREX MARKET DATA ADMINISTRATION</span><strong>Control Centre</strong></div>
-          @if (auth.user(); as user) {
-            <div class="user"><span class="avatar">{{ user.userName?.charAt(0) || user.pfId?.charAt(0) }}</span>
-              <div><strong>{{ user.userName || user.pfId }}</strong><small>{{ auth.roles()[0] }} · {{ user.entity }}</small></div>
-            </div>
-          } @else {
-            <button class="user warning auth-trigger" type="button" (click)="showAuth.set(true)"><span class="avatar">!</span><div><strong>Connect with JWT</strong><small>Sign in to load consumers</small></div></button>
-          }
-        </header>
-        @if (view() === 'dashboard') { <app-dashboard (openPrices)="showPrices($event)" /> }
-        @else if (view() === 'prices' && selectedConsumer(); as consumer) { <app-streaming-prices [consumerId]="consumer.consumerId" [consumerName]="consumer.consumerName" (back)="view.set('dashboard')" /> }
-        @else if (view() === 'consumers') { <app-consumer-onboarding /> }
-        @else if (view() === 'mappings') { <app-symbol-mapping /> }
-        @else if (view() === 'subscriptions') { <app-subscription-setting /> }
-        @else if (view() === 'spreads') { <app-spread-matrix /> }
-        @else { <app-swap-matrix /> }
-      </main>
-    </div>
-    @if (showAuth()) {
-      <div class="dialog-backdrop" (click)="showAuth.set(false)">
-        <section class="auth-dialog" (click)="$event.stopPropagation()">
-          <div class="dialog-icon">JWT</div>
-          <h2>Connect to RateEngine</h2>
-          <p>Provide the access token. It must contain <code>user</code> (with <code>pfId</code>, <code>userName</code>, <code>entity</code>) and <code>auth</code> claims.</p>
-          <label><span>Access token</span><textarea [(ngModel)]="tokenDraft" rows="5" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="eyJhbGciOiJIUzI1NiJ9..."></textarea></label>
-          @if (authError()) { <div class="auth-error">{{ authError() }}</div> }
-          <div class="dialog-actions"><button type="button" class="cancel" (click)="showAuth.set(false)">Cancel</button><button type="button" class="connect" (click)="connect()">Connect</button></div>
-        </section>
-      </div>
+{
+  "user": {
+    "userName": "Name",
+    "password": null,
+    "token": null,
+    "pfId": "123456",
+    "email": "TEST@SBI.co.in",
+    "branchCode": "0123",
+    "roles": [
+      {
+        "roleId": 1,
+        "roleName": "MAKER",
+        "description": "Maker",
+        "startTime": "03:48:45",
+        "endTime": "23:48:45",
+        "urlPermitted": "/*,",
+        "authority": "MAKER"
+      }
+    ],
+    "entity": "IT",
+    "userInfo": "LoginUser [userName=Name, pfId=123456, branchCode=0123, role=MAKER]"
+  },
+  "auth": [
+    {
+      "authority": "MAKER"
     }
-  `,
-  styleUrl: './rateengine.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
-})
-export class RateEngineComponent {
-  readonly showAuth = signal(false);
-  readonly authError = signal('');
-  readonly view = signal<'dashboard' | 'prices' | 'consumers' | 'mappings' | 'subscriptions' | 'spreads' | 'swaps'>('dashboard');
-  readonly selectedConsumer = signal<ConsumerFeedStatus | null>(null);
-  tokenDraft = '';
-  constructor(readonly auth: AuthService) {}
-
-  showPrices(consumer: ConsumerFeedStatus): void {
-    if (consumer.status === 'UNAVAILABLE') return;
-    this.selectedConsumer.set(consumer);
-    this.view.set('prices');
-  }
-
-  connect(): void {
-    const token = this.tokenDraft.trim();
-    if (!token) { this.authError.set('Enter a JWT access token.'); return; }
-    if (token.length > 8192 || token.split('.').length !== 3) {
-      this.authError.set('The JWT access token format or size is invalid.');
-      return;
-    }
-    this.auth.storeJwtToken(token);
-    if (!this.auth.user()) {
-      this.auth.clearTokenOnly();
-      this.authError.set('This token is invalid or does not contain the required claims.');
-      return;
-    }
-    this.authError.set('');
-    this.tokenDraft = '';
-    this.showAuth.set(false);
-  }
+  ],
+  "lastmsg": 1787996573374,
+  "iat": 1787996573,
+  "exp": 1788002573
 }
