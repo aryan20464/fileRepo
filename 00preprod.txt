@@ -1,195 +1,88 @@
-import java.util.List;
+import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Audited;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
-@Entity
-@Table(name="Module")
-public class Module  extends Auditable<String> {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "seq_module")
-    @SequenceGenerator(  name = "seq_module",allocationSize = 1	)
-    private Long moduleId;
-    @Column
-    private String moduleName;
-    @Column
-    private String moduleDescription;
-    @Column
-    private String url;
+/*RevTYpe 0-Add , 1-Edit, 2-Delete*/
+@Audited
+@MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
+public class Auditable<U>
+{
+    @CreatedBy
+    @Column(name = "created_by",length = 20)
+    private U createdBy;
 
-    @ManyToMany(targetEntity = Roles.class,cascade=CascadeType.ALL)
-    @JsonIgnore
-    private List<Roles> roles;
+    @CreatedDate
+    @Temporal(value=TemporalType.TIMESTAMP)
+    @Column(name = "created_date")
+    @DateTimeFormat(pattern = "dd-MM-YYYY HH:mm:ss")
+    private Date createdDate;
 
+    @LastModifiedBy
+    @Column(name = "last_modified_by" ,length = 20)
+    private U lastModifiedBy;
 
-    public Long getModuleId() {
-        return moduleId;
-    }
-    public void setModuleId(Long moduleId) {
-        this.moduleId = moduleId;
-    }
-    public String getModuleName() {
-        return moduleName;
-    }
-    public void setModuleName(String moduleName) {
-        this.moduleName = moduleName;
-    }
-    public String getModuleDescription() {
-        return moduleDescription;
-    }
-    public void setModuleDescription(String moduleDescription) {
-        this.moduleDescription = moduleDescription;
-    }
-    public String getUrl() {
-        return url;
-    }
-    public void setUrl(String url) {
-        this.url = url;
-    }
-    public List<Roles> getRoles() {
-        return roles;
-    }
-    public void setRoles(List<Roles> roles) {
-        this.roles = roles;
+    @LastModifiedDate
+    @Temporal(value=TemporalType.TIMESTAMP)
+    @Column(name = "last_modified_date")
+    @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+    private Date lastModifiedDate;
+
+    public U getCreatedBy() {
+        return createdBy;
     }
 
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+
+
+    public U getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+
+
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+
+
+    /*
+     * public U getCreatedBy() { return createdBy; }
+     *
+     * public void setCreatedBy(U createdBy) { this.createdBy = createdBy; }
+     *
+     * public Date getCreatedDate() { return createdDate; }
+     *
+     * public void setCreatedDate(Date createdDate) { this.createdDate =
+     * createdDate; }
+     *
+     * public U getLastModifiedBy() { return lastModifiedBy; }
+     *
+     * public void setLastModifiedBy(U lastModifiedBy) { this.lastModifiedBy =
+     * lastModifiedBy; }
+     *
+     * public Date getLastModifiedDate() { return lastModifiedDate; }
+     *
+     * public void setLastModifiedDate(Date lastModifiedDate) {
+     * this.lastModifiedDate = lastModifiedDate; }
+     */
 
 
 }
-
-
-
-import java.sql.Time;
-import java.util.Set;
-
-import org.springframework.security.core.GrantedAuthority;
-
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.ColumnResult;
-import jakarta.persistence.ConstructorResult;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.NamedQueries;
-import jakarta.persistence.NamedQuery;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.SqlResultSetMapping;
-import jakarta.persistence.Table;
-
-
-@Entity
-@Table(name = "Roles")
-@NamedQueries(value = { @NamedQuery(name="Roles.findRoleByRoleName",query = "SELECT r FROM Roles r where r.roleName=?1")})
-@SqlResultSetMapping(
-        name = "SomeMapping",
-        classes = {
-                @ConstructorResult(targetClass = NameOnly.class,
-                        columns = {
-                                @ColumnResult(name = "ROLE_ID", type = Long.class),
-                                @ColumnResult(name = "ROLE_NAME", type = String.class),
-                        }
-                )
-        }
-)
-
-public class Roles extends Auditable<String> implements GrantedAuthority{
-    @Override
-    public String toString() {
-        return "Roles [roleId=" + roleId + ", roleName=" + roleName + ", description=" + description + ", startTime="
-                + startTime + ", endTime=" + endTime + ", module=" + module + ", urlPermitted=" + urlPermitted + "]";
-    }
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "seq_roles")
-    @SequenceGenerator(  name = "seq_roles"	,allocationSize = 1)
-    private Long roleId;
-    @Column(unique = true)
-    private String roleName;
-    @Column
-    private String description;
-    @Column
-    private Time startTime;
-    @Column
-    private Time endTime;
-
-
-    @ManyToMany(fetch = FetchType.LAZY,cascade = { CascadeType.PERSIST,CascadeType.MERGE})
-    @JoinTable(
-            name = "role_module",
-            joinColumns = @JoinColumn(name = "roleId"),
-            inverseJoinColumns = @JoinColumn(name = "moduleId"))
-    private Set<Module> module ;
-
-    @Column
-    private String urlPermitted;
-
-
-    public Long getRoleId() {
-        return roleId;
-    }
-    public void setRoleId(Long roleId) {
-        this.roleId = roleId;
-    }
-    public String getRoleName() {
-        return roleName;
-    }
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
-    public String getDescription() {
-        return description;
-    }
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-
-    public String getUrlPermitted() {
-        return urlPermitted;
-    }
-    public void setUrlPermitted(String urlPermitted) {
-        this.urlPermitted = urlPermitted;
-    }
-    public Set<Module> getModule() {
-        return module;
-    }
-    public void setModule(Set<Module> module) {
-        this.module = module;
-    }
-    @Override
-    public String getAuthority() {
-        // TODO Auto-generated method stub
-        return this.roleName;
-    }
-    public Time getStartTime() {
-        return startTime;
-    }
-    public void setStartTime(Time startTime) {
-        this.startTime = startTime;
-    }
-    public Time getEndTime() {
-        return endTime;
-    }
-    public void setEndTime(Time endTime) {
-        this.endTime = endTime;
-    }
-
-
-
-}
-
