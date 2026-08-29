@@ -1,73 +1,359 @@
-package com.sbi.rateengine.realtime;
+package com.sbi.rateengine.security;
 
-import java.util.Map;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
-import org.springframework.web.socket.WebSocketHandler;
-import org.springframework.web.socket.config.annotation.EnableWebSocket;
-import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
-import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
-import org.springframework.web.socket.server.HandshakeInterceptor;
-import org.springframework.http.server.ServerHttpRequest;
-import org.springframework.http.server.ServerHttpResponse;
-import com.sbi.rateengine.authentication.JwtTokenProvider;
-
-@Component
-@EnableWebSocket
-public class WebSocketConfig implements WebSocketConfigurer {
-    private final DatasetEventPublisher publisher;
-    private final JwtTokenProvider jwtTokenProvider;
-    private final String[] allowedOrigins;
-
-    public WebSocketConfig(DatasetEventPublisher publisher, JwtTokenProvider jwtTokenProvider,
-                           @Value("${app.cors.allowed-origin}") String allowedOrigin) {
-        this.publisher = publisher;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.allowedOrigins = java.util.Arrays.stream(allowedOrigin.split(","))
-                .map(String::trim)
-                .filter(origin -> !origin.isEmpty())
-                .toArray(String[]::new);
+public record CurrentUser(String userId, String userName, String entity, String role) {
+    public boolean isChecker() {
+        return "CHECKER".equalsIgnoreCase(role);
     }
 
-    @Override
-    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(publisher, "/ws/dataset-events")
-                .addInterceptors(new JwtSubprotocolHandshakeInterceptor(jwtTokenProvider))
-                .setAllowedOrigins(allowedOrigins);
-    }
-
-    private static class JwtSubprotocolHandshakeInterceptor implements HandshakeInterceptor {
-        private static final String PREFIX = "rateengine.jwt.";
-        private final JwtTokenProvider jwtTokenProvider;
-
-        JwtSubprotocolHandshakeInterceptor(JwtTokenProvider jwtTokenProvider) {
-            this.jwtTokenProvider = jwtTokenProvider;
-        }
-
-        @Override
-        public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
-                                       WebSocketHandler handler, Map<String, Object> attributes) {
-            String protocols = request.getHeaders().getFirst("Sec-WebSocket-Protocol");
-            String selectedProtocol = protocols == null ? null : java.util.Arrays.stream(protocols.split(","))
-                    .map(String::trim)
-                    .filter(protocol -> protocol.startsWith(PREFIX))
-                    .findFirst()
-                    .orElse(null);
-            try {
-                String token = selectedProtocol == null ? null : selectedProtocol.substring(PREFIX.length());
-                if (token == null || token.isBlank()) throw new IllegalArgumentException("JWT subprotocol is missing");
-                if (!jwtTokenProvider.validateToken(token)) throw new IllegalArgumentException("Invalid or expired JWT");
-                attributes.put("jwt", jwtTokenProvider.getClaims(java.util.Optional.of(token))
-                        .orElseThrow(() -> new IllegalArgumentException("Unable to parse JWT claims"))
-                        .getBody());
-                response.getHeaders().set("Sec-WebSocket-Protocol", selectedProtocol);
-                return true;
-            }
-            catch (RuntimeException exception) { response.setStatusCode(HttpStatus.UNAUTHORIZED); return false; }
-        }
-
-        @Override public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response,
-                                             WebSocketHandler handler, Exception exception) { }
+    public boolean isMaker() {
+        return "MAKER".equalsIgnoreCase(role);
     }
 }
+
+
+package com.sbi.rateengine.security;
+
+import com.sbi.rateengine.consumer.InvalidRequestException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.stereotype.Service;
+import org.springframework.security.access.AccessDeniedException;
+
+@Service
+public class CurrentUserService {
+    private static final java.util.regex.Pattern USER_ID = java.util.regex.Pattern.compile("[A-Za-z0-9_.-]{1,20}");
+
+    public CurrentUser requiredUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication == null ? null : authentication.getPrincipal();
+        if (!(principal instanceof Jwt jwt)) {
+            throw new InvalidRequestException("A valid JWT is required");
+        }
+        String userId = requiredClaim(jwt, "user_id", 20);
+        String userName = requiredClaim(jwt, "user_name", 100);
+        String entity = requiredClaim(jwt, "entity", 100);
+        String role = requiredClaim(jwt, "role", 20).toUpperCase(java.util.Locale.ROOT);
+        if (!USER_ID.matcher(userId).matches()) {
+            throw new InvalidRequestException("JWT claim 'user_id' contains unsupported characters");
+        }
+        if (!"MAKER".equals(role) && !"CHECKER".equals(role)) {
+            throw new AccessDeniedException("JWT role is not authorized");
+        }
+        return new CurrentUser(userId, userName, entity, role);
+    }
+
+    public CurrentUser requiredChecker() {
+        CurrentUser user = requiredUser();
+        if (!user.isChecker()) {
+            throw new AccessDeniedException("A user with the CHECKER role is required");
+        }
+        return user;
+    }
+
+    public CurrentUser requiredMaker() {
+        CurrentUser user = requiredUser();
+        if (!user.isMaker()) {
+            throw new AccessDeniedException("A user with the MAKER role is required");
+        }
+        return user;
+    }
+
+    private String requiredClaim(Jwt jwt, String name, int maxLength) {
+        String value = jwt.getClaimAsString(name);
+        if (value == null || value.isBlank()) {
+            throw new InvalidRequestException("JWT claim '" + name + "' is required");
+        }
+        value = value.trim();
+        if (value.length() > maxLength || value.chars().anyMatch(Character::isISOControl)) {
+            throw new InvalidRequestException("JWT claim '" + name + "' is invalid");
+        }
+        return value;
+    }
+}
+
+package com.sbi.rateengine.security;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.time.Instant;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+@Component
+public class MutationRateLimitFilter extends OncePerRequestFilter {
+    private static final int MAX_MUTATIONS_PER_MINUTE = 120;
+    private static final long WINDOW_SECONDS = 60;
+    private static final long MAX_CONTENT_LENGTH = 1_048_576;
+    private final ConcurrentHashMap<String, Window> windows = new ConcurrentHashMap<>();
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws ServletException, IOException {
+        if (request.getContentLengthLong() > MAX_CONTENT_LENGTH) {
+            reject(response, 413, "{\"message\":\"Request payload is too large\"}");
+            return;
+        }
+        if (isMutation(request) && !allow(request)) {
+            response.setHeader("Retry-After", "60");
+            reject(response, 429, "{\"message\":\"Too many mutation requests; retry later\"}");
+            return;
+        }
+        chain.doFilter(request, response);
+    }
+
+    private boolean allow(HttpServletRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String principal = authentication == null ? "anonymous" : authentication.getName();
+        String key = principal + '|' + request.getRemoteAddr();
+        long now = Instant.now().getEpochSecond();
+        Window window = windows.compute(key, (ignored, current) -> {
+            if (current == null || now - current.startedAt >= WINDOW_SECONDS) return new Window(now);
+            current.count.incrementAndGet();
+            return current;
+        });
+        if (windows.size() > 10_000) windows.entrySet().removeIf(entry -> now - entry.getValue().startedAt >= WINDOW_SECONDS);
+        return window.count.get() <= MAX_MUTATIONS_PER_MINUTE;
+    }
+
+    private boolean isMutation(HttpServletRequest request) {
+        String method = request.getMethod();
+        return request.getRequestURI().startsWith("/api/")
+                && ("POST".equals(method) || "PUT".equals(method) || "PATCH".equals(method) || "DELETE".equals(method));
+    }
+
+    private void reject(HttpServletResponse response, int status, String jsonBody) throws IOException {
+        response.setStatus(status);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.getOutputStream().write(jsonBody.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private static final class Window {
+        private final long startedAt;
+        private final AtomicInteger count = new AtomicInteger(1);
+        private Window(long startedAt) { this.startedAt = startedAt; }
+    }
+}
+
+
+package com.sbi.rateengine.security;
+
+import com.sbi.rateengine.authentication.NoPopupBasicAuthenticationEntryPoint;
+import com.sbi.rateengine.authentication.RoleService;
+import com.sbi.rateengine.authentication.JwtTokenProvider;
+import com.sbi.rateengine.authentication.JwtTokenFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+@Order(SecurityFilterProperties.DEFAULT_FILTER_ORDER)
+public class SecurityConfig {
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+    @Autowired
+    RoleService roleService;
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .httpBasic(httpBasic ->
+                        httpBasic.authenticationEntryPoint(new NoPopupBasicAuthenticationEntryPoint())
+                )
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/public/getAllUsers",
+                                "/public/getUserFromCBS/**",
+                                "/public/logout/**",
+                                "/public/logoutEncryptedTellerId/**",
+                                "/menu/**",
+                                "/public/getUserFromFXS/**",
+                                "/public/getUserFromCBSSSO/**",
+                                "/public/getUserFromCBSLocal/**",
+                                "/public/getUserFromCBS/cbs_datatype/**",
+                                "/public/audit/history/**",
+                                "/public/encryptData",
+                                "/public/decryptData",
+                                "/**"
+                        ).permitAll()
+                        .anyRequest().authenticated()
+                )
+                .cors(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable())
+                .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        http
+                .headers(headers -> headers
+                        .referrerPolicy(referrer -> referrer.policy(ReferrerPolicy.SAME_ORIGIN))
+                        .frameOptions(frame -> frame.sameOrigin())
+                        .httpStrictTransportSecurity(hsts -> hsts
+                                .includeSubDomains(true)
+                                .maxAgeInSeconds(31536000)
+                        )
+                        .contentSecurityPolicy(csp -> csp.policyDirectives("script-src 'self'"))
+                );
+
+        return http.build();
+    }
+
+    @Bean
+    public JwtTokenFilter jwtTokenFilter() {
+        return new JwtTokenFilter(jwtTokenProvider);
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowedHeaders("*")
+                        .allowedOrigins("*")
+                        .exposedHeaders("Content-Disposition");
+            }
+        };
+    }
+}: A valid JWT is required] with root cause
+com.sbi.rateengine.consumer.InvalidRequestException: A valid JWT is required
+        at com.sbi.rateengine.security.CurrentUserService.requiredUser(CurrentUserService.java:18)
+        at com.sbi.rateengine.consumer.ConsumerService.toggleStreaming(ConsumerService.java:121)
+        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+        at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
+        at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190)
+        at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158)
+        at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:133)
+        at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:371)
+        at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:130)
+        at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+        at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:719)
+        at com.sbi.rateengine.consumer.ConsumerService$$SpringCGLIB$$0.toggleStreaming(<generated>)
+        at com.sbi.rateengine.dashboard.DashboardController.toggleStreaming(DashboardController.java:46)
+        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+        at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:252)
+        at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:184)
+        at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
+        at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:934)
+        at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:853)
+        at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:86)
+        at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)
+        at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866)
+        at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000)
+        at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:903)
+        at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:649)
+        at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874)
+        at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:132)
+        at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:59)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
+        at com.sbi.rateengine.authentication.JwtTokenFilter.doFilter(JwtTokenFilter.java:33)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
+        at com.sbi.rateengine.security.MutationRateLimitFilter.doFilterInternal(MutationRateLimitFilter.java:37)
+        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
+        at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108)
+        at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$2(FilterChainProxy.java:235)
+        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:376)
+        at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:101)
+        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+        at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126)
+        at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120)
+        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+        at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:132)
+        at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:86)
+        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+        at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100)
+        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+        at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:181)
+        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+        at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+        at org.springframework.security.web.authentication.www.BasicAuthenticationFilter.doFilterInternal(BasicAuthenticationFilter.java:198)
+        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+        at com.sbi.rateengine.authentication.JwtTokenFilter.doFilter(JwtTokenFilter.java:33)
+        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+        at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:110)
+        at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:96)
+        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+        at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91)
+        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+        at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
+        at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
+        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+        at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
+        at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
+        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+        at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
+        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+        at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
+        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+        at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:237)
+        at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:195)
+        at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+        at org.springframework.web.filter.ServletRequestPathFilter.doFilter(ServletRequestPathFilter.java:52)
+        at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+        at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74)
+        at org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebSecurityConfiguration.java:317)
+        at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:355)
+        at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:272)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
+        at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
+        at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
+        at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199)
+        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
+        at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+        at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
+        at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:535)
+        at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+        at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:86)
+        at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:71)
+        at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:347)
+        at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:406)
+        at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:71)
+        at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:1307)
+        at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:2036)
+        at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:74)
+        at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:949)
+        at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:483)
+        at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:74)
+        at java.base/java.lang.Thread.run(Thread.java:1583)
+Feed status unavailable
+Http failure response for http://localhost:8085/api/dashboard/feeds/3/toggle: 500
+
