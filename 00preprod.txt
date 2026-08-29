@@ -1,50 +1,62 @@
 @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .httpBasic(httpBasic ->
-                        httpBasic.authenticationEntryPoint(new NoPopupBasicAuthenticationEntryPoint())
-                )
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/**").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .cors(corsConfigurer)
-                .and()
-                .csrf.disable()
-                .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http
+            .httpBasic(httpBasic ->
+                    httpBasic.authenticationEntryPoint(new NoPopupBasicAuthenticationEntryPoint())
+            )
+            .sessionManagement(session ->
+                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers(
+                            "/public/getAllUsers",
+                            "/public/getUserFromCBS/**",
+                            "/public/logout/**",
+                            "/public/logoutEncryptedTellerId/**",
+                            "/menu/**",
+                            "/public/getUserFromFXS/**",
+                            "/public/getUserFromCBSSSO/**",
+                            "/public/getUserFromCBSLocal/**",
+                            "/public/getUserFromCBS/cbs_datatype/**",
+                            "/public/audit/history/**",
+                            "/public/encryptData",
+                            "/public/decryptData"
+                    ).permitAll()
+                    .anyRequest().authenticated()
+            )
+            .cors(Customizer.withDefaults())
+            .csrf(csrf -> csrf.disable())
+            .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
-        http
-                .headers(headers -> headers
-                        .referrerPolicy(referrer -> referrer.policy(ReferrerPolicy.SAME_ORIGIN))
-                        .frameOptions(frame -> frame.sameOrigin())
-                        .httpStrictTransportSecurity(hsts -> hsts
-                                .includeSubDomains(true)
-                                .maxAgeInSeconds(31536000)
-                        )
-                        .contentSecurityPolicy(csp -> csp.policyDirectives("script-src 'self'"))
-                );
+    http
+            .headers(headers -> headers
+                    .referrerPolicy(referrer -> referrer.policy(ReferrerPolicy.SAME_ORIGIN))
+                    .frameOptions(frame -> frame.sameOrigin())
+                    .httpStrictTransportSecurity(hsts -> hsts
+                            .includeSubDomains(true)
+                            .maxAgeInSeconds(31536000)
+                    )
+                    .contentSecurityPolicy(csp -> csp.policyDirectives("script-src 'self'"))
+            );
 
-        return http.build();
-    }
+    return http.build();
+}
 
-    @Bean
-    public JwtTokenFilter jwtTokenFilter() {
-        return new JwtTokenFilter(jwtTokenProvider);
-    }
+@Bean
+public JwtTokenFilter jwtTokenFilter() {
+    return new JwtTokenFilter(jwtTokenProvider);
+}
 
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE")
-                        .allowedHeaders("*")
-                        .allowedOrigins("*").exposedHeaders("Content-Disposition");
-            }
-        };
-    }
+@Bean
+public WebMvcConfigurer corsConfigurer() {
+    return new WebMvcConfigurer() {
+        @Override
+        public void addCorsMappings(CorsRegistry registry) {
+            registry.addMapping("/**")
+                    .allowedMethods("GET", "POST", "PUT", "DELETE")
+                    .allowedHeaders("*")
+                    .allowedOrigins("*")
+                    .exposedHeaders("Content-Disposition");
+        }
+    };
+}
