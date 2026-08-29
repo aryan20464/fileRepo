@@ -1,93 +1,30 @@
-import { HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { AuthService } from './auth.service';
+readonly token = signal<string | null>(this.getJwtToken());
+readonly user = computed(() => {
+  const t = this.token();
+  if (!t) return null;
+  const decoded: any = this.decodeJwtToken(t);
+  return decoded?.user ?? null; // matches backend's claims.put("user", user)
+});
+readonly roles = computed(() => {
+  const t = this.token();
+  if (!t) return [];
+  const decoded: any = this.decodeJwtToken(t);
+  return (decoded?.auth ?? []).map((a: any) => a?.authority).filter(Boolean);
+});
+readonly isMaker = computed(() => this.roles().includes('MAKER'));
+readonly isChecker = computed(() => this.roles().includes('CHECKER'));
 
-export const authInterceptor: HttpInterceptorFn = (request, next) => {
-  const token = inject(AuthService).token();
-  return next(token ? request.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : request);
-};
 
-export interface JwtUser {
-  userId: string;
-  userName: string;
-  entity: string;
-  role: 'MAKER' | 'CHECKER' | string;
-}
-
-
-import { Injectable, computed, signal } from '@angular/core';
-import { JwtUser } from './auth.models';
-
-@Injectable({ providedIn: 'root' })
-export class AuthService {
-  private readonly tokenKey = 'rateengine.jwt';
-  readonly token = signal<string | null>(sessionStorage.getItem(this.tokenKey));
-  readonly user = computed(() => this.decodeUser(this.token()));
-  readonly isChecker = computed(() => this.user()?.role?.toUpperCase() === 'CHECKER');
-  readonly isMaker = computed(() => this.user()?.role?.toUpperCase() === 'MAKER');
-
-  setToken(token: string): void {
-    localStorage.removeItem(this.tokenKey);
-    sessionStorage.setItem(this.tokenKey, token);
-    this.token.set(token);
-  }
-
-  clear(): void {
-    localStorage.removeItem(this.tokenKey);
-    sessionStorage.removeItem(this.tokenKey);
-    this.token.set(null);
-  }
-
-  private decodeUser(token: string | null): JwtUser | null {
-    if (!token) return null;
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
-      if (!payload.user_id || !payload.user_name || !payload.entity || !payload.role) return null;
-      if (payload.exp && payload.exp * 1000 <= Date.now()) return null;
-      return { userId: payload.user_id, userName: payload.user_name, entity: payload.entity, role: payload.role };
-    } catch { return null; }
+public storeJwtToken(jwt: string) {
+  if (jwt != null && jwt.trim().length > 0) {
+    sessionStorage.setItem(this.JWT_TOKEN, jwt);
+    sessionStorage.setItem(this.REFRESH_TOKEN, "refresh");
+    this.token.set(jwt);           // ← added
   }
 }
 
-
-import { Injectable } from '@angular/core';
-import { Observable, defer, repeat, retry, share, throwError } from 'rxjs';
-import { webSocket } from 'rxjs/webSocket';
-import { AuthService } from '../auth/auth.service';
-
-export interface DatasetEvent { resource: string; action: string; id?: number; }
-
-@Injectable({ providedIn: 'root' })
-export class RealtimeService {
-  constructor(private readonly auth: AuthService) {}
-
-  private readonly events$ = defer(() => {
-    const token = this.auth.token();
-    if (!token) return throwError(() => new Error('A JWT is required for real-time updates.'));
-    const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-    return webSocket<DatasetEvent>({
-      url: `${protocol}://${location.host}/ws/dataset-events`,
-      protocol: `rateengine.jwt.${token}`
-    });
-  }).pipe(
-    retry({ delay: 3000 }),
-    repeat({ delay: 3000 }),
-    share()
-  );
-
-  connect(): Observable<DatasetEvent> {
-    return this.events$;
-  }
+private removeTokens() {
+  sessionStorage.removeItem(this.JWT_TOKEN);
+  sessionStorage.removeItem(this.REFRESH_TOKEN);
+  this.token.set(null);            // ← added
 }
-
-
-import { bootstrapApplication } from '@angular/platform-browser';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { provideRouter } from '@angular/router';
-import { AppComponent } from './app/app.component';
-import { authInterceptor } from './app/core/auth/auth.interceptor';
-import { routes } from './app/app.routes';
-
-bootstrapApplication(AppComponent, {
-  providers: [provideHttpClient(withInterceptors([authInterceptor])), provideRouter(routes)]
-}).catch(console.error);
