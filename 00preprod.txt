@@ -1,256 +1,101 @@
-import { Inject, Injectable, DOCUMENT, signal, computed } from "@angular/core";
-import { BehaviorSubject, Observable, of } from "rxjs";
-import { catchError, mapTo, tap } from "rxjs/operators";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Tokens } from "./tokens";
-import { LoginUser } from "./LoginUser";
-import { Role } from "./roles";
-import { jwtDecode } from "jwt-decode";
-import { rateconst } from "../../environments/environment";
-import { Router } from "@angular/router";
-import { CommonService } from "./common.service";
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ConsumerOnboardingComponent } from './features/consumers/consumer-onboarding.component';
+import { AuthService } from '../login/auth.service'; // adjust to actual relative path
+import { SymbolMappingComponent } from './features/symbol-mappings/symbol-mapping.component';
+import { SubscriptionSettingComponent } from './features/subscription-settings/subscription-setting.component';
+import { SpreadMatrixComponent } from './features/spread-matrix/spread-matrix.component';
+import { SwapMatrixComponent } from './features/swap-matrix/swap-matrix.component';
+import { DashboardComponent } from './features/dashboard/dashboard.component';
+import { StreamingPricesComponent } from './features/streaming-prices/streaming-prices.component';
+import { ConsumerFeedStatus } from './features/dashboard/dashboard.models';
 
-@Injectable({
-  providedIn: "root",
-})
-export class AuthService {
-  baseUrl = rateconst.rforexAuthServiceApiUrl;
-  initVector = rateconst.initVector;
-  private readonly JWT_TOKEN = "JWT_TOKEN";
-  private readonly REFRESH_TOKEN = "REFRESH_TOKEN";
-  private readonly USER_DETAILS = "USER";
-  private readonly sessionKey = "activeSession";
-  isLoggedIn$ = new BehaviorSubject<boolean>(false);
-  userPfId: any;
-  uniqueId: string = "";
-  isTimeOut: boolean = false;
-  private currentUrl = "";
-  headers = new HttpHeaders().set("Content-Type", "application/json");
+@Component({
+  selector: 'app-rate-engine',
+  imports: [DashboardComponent, StreamingPricesComponent, ConsumerOnboardingComponent, SymbolMappingComponent, SubscriptionSettingComponent, SpreadMatrixComponent, SwapMatrixComponent, FormsModule],
+  template: `
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand"><span class="brand-mark"><img src="assets/re-logo.jpg" alt="SBI"></span><span class="brand-copy"><strong>RateEngine</strong><small>APM ID: TREA/001/2026</small></span></div>
 
-  // --- reactive layer ---
-  readonly token = signal<string | null>(sessionStorage.getItem(this.JWT_TOKEN));
-
-  readonly user = computed(() => {
-    const t = this.token();
-    if (!t) return null;
-    const decoded: any = this.decodeJwtToken(t);
-    return decoded?.user ?? null;
-  });
-
-  readonly roles = computed(() => {
-    const t = this.token();
-    if (!t) return [];
-    const decoded: any = this.decodeJwtToken(t);
-    return (decoded?.auth ?? [])
-      .map((a: any) => a?.authority)
-      .filter(Boolean);
-  });
-
-  readonly isMaker = computed(() => this.roles().includes('MAKER'));
-  readonly isChecker = computed(() => this.roles().includes('CHECKER'));
-
-  constructor(
-    public http: HttpClient,
-    public router: Router,
-    public commonService: CommonService,
-    @Inject(DOCUMENT) private document: Document,
-  ) {
-    window.addEventListener("storage", (event) => {
-      if (event.key === this.sessionKey) {
-        this.userPfId = "";
-      }
-    });
-  }
-
-  user_legacy: LoginUser | undefined;
-  userdetails = {};
-
-  getCurrentSession() {
-    const val = localStorage.getItem(this.sessionKey);
-    return val ? JSON.parse(val) : null;
-  }
-
-  loginCBS(pfId: any) {
-    const sessionData = { pfId, timestamp: Date.now() };
-    localStorage.setItem(this.sessionKey, JSON.stringify(sessionData));
-    this.isLoggedIn$.next(true);
-  }
-
-  setCurrentUrl(url: string): void {
-    this.currentUrl = url;
-  }
-
-  getCurrentUrl() {
-    return this.currentUrl;
-  }
-
-  getMockUser() {
-    return this.http.get(`${this.baseUrl}/public/getUser`);
-  }
-
-  getAllMockedUsers(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/public/getAllUsers`);
-  }
-
-  getUser() {
-    if (!this.user_legacy) {
-      let token: string = this.getJwtToken() ?? '';
-      const usr: LoginUser = (this.decodeJwtToken(token) as any)?.user;
-      return usr;
-    }
-    return this.user_legacy;
-  }
-
-  setUser(usr: LoginUser) {
-    this.user_legacy = usr;
-  }
-
-  async login(dataid: string): Promise<Observable<boolean>> {
-    return this.http
-      .get<any>(`${this.baseUrl}/public/getUserFromFXS/${dataid}`)
-      .pipe(
-        tap((userData) => {
-          this.user_legacy = userData.userName;
-          this.doLoginUser(
-            userData.userName,
-            userData.token,
-            userData.refreshToken,
-          );
-        }),
-        mapTo(true),
-        catchError((error) => {
-          alert("Unable to fetch User details");
-          return of(false);
-        }),
-      );
-  }
-
-  logout() {
-    return this.http
-      .post<any>(`${this.baseUrl}/logout`, {
-        refreshToken: this.getRefreshToken(),
-      })
-      .pipe(
-        tap(() => this.doLogoutUser()),
-        mapTo(true),
-        catchError((error) => {
-          alert(error.error);
-          return of(false);
-        }),
-      );
-  }
-
-  isLoggedIn() {
-    return !!this.getJwtToken();
-  }
-
-  refreshToken() {
-    return this.http
-      .post<any>(`${this.baseUrl}/public/refreshToken`, {
-        refreshToken: this.getRefreshToken(),
-      })
-      .pipe(
-        tap((tokens: Tokens) => {
-          this.storeJwtToken(tokens.jwt);
-        }),
-      );
-  }
-
-  getJwtToken() {
-    return sessionStorage.getItem(this.JWT_TOKEN);
-  }
-
-  decodeJwtToken(token: string) {
-    try {
-      return jwtDecode(token);
-    } catch (Error) {
-      return null;
-    }
-  }
-
-  public doLoginUser(username: string, tokens: string, refreshToken: string) {
-    // strip a "Bearer " prefix if the backend included one — the interceptor adds its own.
-    const rawJwt = tokens?.startsWith("Bearer ") ? tokens.slice(7) : tokens;
-    const mytoken: Tokens = new Tokens(rawJwt, refreshToken);
-    this.storeJwtToken(mytoken.jwt);
-  }
-
-  public doLogoutUser() {
-    this.removeTokens();
-    this.router.navigate(["login"]);
-  }
-
-  /** Clears the token without navigating — for use inside dialogs/inline error handling. */
-  public clearTokenOnly() {
-    this.removeTokens();
-  }
-
-  private getRefreshToken() {
-    return sessionStorage.getItem(this.REFRESH_TOKEN);
-  }
-
-  public storeJwtToken(jwt: string) {
-    if (jwt != null && jwt.trim().length > 0) {
-      sessionStorage.setItem(this.JWT_TOKEN, jwt);
-      sessionStorage.setItem(this.REFRESH_TOKEN, "refresh");
-      this.token.set(jwt);
-    }
-  }
-
-  private removeTokens() {
-    sessionStorage.removeItem(this.JWT_TOKEN);
-    sessionStorage.removeItem(this.REFRESH_TOKEN);
-    this.token.set(null);
-  }
-
-  isAuthorized() {
-    return !!this.getUser();
-  }
-
-  hasRole(role: string): boolean {
-    if (this.isAuthorized()) {
-      let matched = false;
-      this.getUser().roles.forEach((userrole: string) => {
-        if (userrole === role) {
-          matched = true;
-        }
-      });
-      return matched;
-    } else {
-      return false;
-    }
-  }
-
-  hasRole2(roles: Role[]): boolean {
-    for (let i = 0; i < roles.length; i++) {
-      if (this.isAuthorized()) {
-        for (let j = 0; j < this.getUser().roles.length; j++) {
-          if (this.getUser().roles[j].roleName === roles[i].roleName) {
-            return true;
+        <nav>
+          <button class="nav-link dashboard-link" [class.active]="view() === 'dashboard' || view() === 'prices'" (click)="view.set('dashboard')"><span class="dashboard-nav-icon"></span> Dashboard</button>
+        </nav>
+        <div class="workspace">OPERATIONS WORKSPACE</div>
+        <nav>
+          <button class="nav-link" [class.active]="view() === 'consumers'" (click)="view.set('consumers')"><span>◫</span> Consumer onboarding</button>
+          <button class="nav-link" [class.active]="view() === 'mappings'" (click)="view.set('mappings')"><span>⇄</span> Symbol mapping</button>
+          <button class="nav-link" [class.active]="view() === 'subscriptions'" (click)="view.set('subscriptions')"><span>◷</span> Subscriptions</button>
+          <button class="nav-link" [class.active]="view() === 'spreads'" (click)="view.set('spreads')"><span>≋</span> Spread matrix</button>
+          <button class="nav-link" [class.active]="view() === 'swaps'" (click)="view.set('swaps')"><span>↝</span> Swap points</button>
+        </nav>
+        <div class="sidebar-foot"><div><span class="pulse"></span>Application Connected</div><small class="copyright">Copyright © SBI. All rights reserved.</small></div>
+      </aside>
+      <main>
+        <header class="topbar">
+          <div><span class="eyebrow">SBI FOREX MARKET DATA ADMINISTRATION</span><strong>Control Centre</strong></div>
+          @if (auth.user(); as user) {
+            <div class="user"><span class="avatar">{{ user.userName?.charAt(0) || user.pfId?.charAt(0) }}</span>
+              <div><strong>{{ user.userName || user.pfId }}</strong><small>{{ auth.roles()[0] }} · {{ user.entity }}</small></div>
+            </div>
+          } @else {
+            <button class="user warning auth-trigger" type="button" (click)="showAuth.set(true)"><span class="avatar">!</span><div><strong>Connect with JWT</strong><small>Sign in to load consumers</small></div></button>
           }
-        }
-      } else {
-        return false;
-      }
+        </header>
+        @if (view() === 'dashboard') { <app-dashboard (openPrices)="showPrices($event)" /> }
+        @else if (view() === 'prices' && selectedConsumer(); as consumer) { <app-streaming-prices [consumerId]="consumer.consumerId" [consumerName]="consumer.consumerName" (back)="view.set('dashboard')" /> }
+        @else if (view() === 'consumers') { <app-consumer-onboarding /> }
+        @else if (view() === 'mappings') { <app-symbol-mapping /> }
+        @else if (view() === 'subscriptions') { <app-subscription-setting /> }
+        @else if (view() === 'spreads') { <app-spread-matrix /> }
+        @else { <app-swap-matrix /> }
+      </main>
+    </div>
+    @if (showAuth()) {
+      <div class="dialog-backdrop" (click)="showAuth.set(false)">
+        <section class="auth-dialog" (click)="$event.stopPropagation()">
+          <div class="dialog-icon">JWT</div>
+          <h2>Connect to RateEngine</h2>
+          <p>Provide the access token. It must contain <code>user</code> (with <code>pfId</code>, <code>userName</code>, <code>entity</code>) and <code>auth</code> claims.</p>
+          <label><span>Access token</span><textarea [(ngModel)]="tokenDraft" rows="5" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="eyJhbGciOiJIUzI1NiJ9..."></textarea></label>
+          @if (authError()) { <div class="auth-error">{{ authError() }}</div> }
+          <div class="dialog-actions"><button type="button" class="cancel" (click)="showAuth.set(false)">Cancel</button><button type="button" class="connect" (click)="connect()">Connect</button></div>
+        </section>
+      </div>
     }
-    return false;
+  `,
+  styleUrl: './rateengine.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class RateEngineComponent {
+  readonly showAuth = signal(false);
+  readonly authError = signal('');
+  readonly view = signal<'dashboard' | 'prices' | 'consumers' | 'mappings' | 'subscriptions' | 'spreads' | 'swaps'>('dashboard');
+  readonly selectedConsumer = signal<ConsumerFeedStatus | null>(null);
+  tokenDraft = '';
+  constructor(readonly auth: AuthService) {}
+
+  showPrices(consumer: ConsumerFeedStatus): void {
+    if (consumer.status === 'UNAVAILABLE') return;
+    this.selectedConsumer.set(consumer);
+    this.view.set('prices');
   }
 
-  checkuser() {
-    localStorage.clear();
-    const token = this.getJwtToken() ?? '';
-    const tokenusernameValue: any = this.decodeJwtToken(token);
-    this.user_legacy = new LoginUser(tokenusernameValue.user[0]);
-    let userRoles: any = {
-      role: tokenusernameValue.user[0].role,
-    };
-    const roleAttr = tokenusernameValue.user[0].roleAttr;
-    for (const property in roleAttr) {
-      userRoles[`${property}`] = `${roleAttr[property]}`;
+  connect(): void {
+    const token = this.tokenDraft.trim();
+    if (!token) { this.authError.set('Enter a JWT access token.'); return; }
+    if (token.length > 8192 || token.split('.').length !== 3) {
+      this.authError.set('The JWT access token format or size is invalid.');
+      return;
     }
-    this.userdetails = userRoles;
-    localStorage.setItem("username", tokenusernameValue.user[0].name);
-    localStorage.setItem("emailId", tokenusernameValue.user[0].emailId);
-    return userRoles;
+    this.auth.storeJwtToken(token);
+    if (!this.auth.user()) {
+      this.auth.clearTokenOnly();
+      this.authError.set('This token is invalid or does not contain the required claims.');
+      return;
+    }
+    this.authError.set('');
+    this.tokenDraft = '';
+    this.showAuth.set(false);
   }
 }
