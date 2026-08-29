@@ -1,54 +1,67 @@
- Stopping service [Tomcat]
-2026-08-29 17:09:35 WARN  25772 --- [           main] o.a.c.loader.WebappClassLoaderBase       : The web application [ROOT] appears to have started a thread named [oracle.jdbc.driver.BlockSource.ThreadedCachingBlockSource.BlockReleaser] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
- java.base/jdk.internal.misc.Unsafe.park(Native Method)
- java.base/java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:269)
- java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(AbstractQueuedSynchronizer.java:1763)
- oracle.jdbc.internal.Monitor$WaitableMonitor.monitorWait(Monitor.java:326)
- oracle.jdbc.internal.Monitor$WaitableMonitor.monitorWait(Monitor.java:308)
- oracle.jdbc.driver.BlockSource$ThreadedCachingBlockSource$BlockReleaser.run(BlockSource.java:348)
-2026-08-29 17:09:35 WARN  25772 --- [           main] o.a.c.loader.WebappClassLoaderBase       : The web application [ROOT] appears to have started a thread named [InterruptTimer] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
- java.base/java.lang.Object.wait0(Native Method)
- java.base/java.lang.Object.wait(Object.java:366)
- java.base/java.util.TimerThread.mainLoop(Timer.java:563)
- java.base/java.util.TimerThread.run(Timer.java:516)
-2026-08-29 17:09:35 WARN  25772 --- [           main] o.a.c.loader.WebappClassLoaderBase       : The web application [ROOT] appears to have started a thread named [OJDBC-WORKER-THREAD-1] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
- java.base/jdk.internal.misc.Unsafe.park(Native Method)
- java.base/java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:410)
- java.base/java.util.concurrent.LinkedTransferQueue$DualNode.await(LinkedTransferQueue.java:452)
- java.base/java.util.concurrent.SynchronousQueue$Transferer.xferLifo(SynchronousQueue.java:194)
- java.base/java.util.concurrent.SynchronousQueue.xfer(SynchronousQueue.java:235)
- java.base/java.util.concurrent.SynchronousQueue.poll(SynchronousQueue.java:338)
- java.base/java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1069)
- java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130)
- java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
- java.base/java.lang.Thread.run(Thread.java:1583)
-2026-08-29 17:09:36 INFO  25772 --- [           main] .s.b.a.l.ConditionEvaluationReportLogger : 
+package com.sbi.rateengine.realtime;
 
-Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-2026-08-29 17:09:36 ERROR 25772 --- [           main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.web.socket.server.HandshakeInterceptor;
+import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.http.server.ServerHttpResponse;
 
-***************************
-APPLICATION FAILED TO START
-***************************
+@Component
+@EnableWebSocket
+public class WebSocketConfig implements WebSocketConfigurer {
+    private final DatasetEventPublisher publisher;
+    private final JwtDecoder jwtDecoder;
+    private final String[] allowedOrigins;
 
-Description:
+    public WebSocketConfig(DatasetEventPublisher publisher, JwtDecoder jwtDecoder,
+                           @Value("${app.cors.allowed-origin}") String allowedOrigin) {
+        this.publisher = publisher;
+        this.jwtDecoder = jwtDecoder;
+        this.allowedOrigins = java.util.Arrays.stream(allowedOrigin.split(","))
+                .map(String::trim)
+                .filter(origin -> !origin.isEmpty())
+                .toArray(String[]::new);
+    }
 
-Parameter 1 of constructor in com.sbi.rateengine.realtime.WebSocketConfig required a bean of type 'org.springframework.security.oauth2.jwt.JwtDecoder' that could not be found.
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(publisher, "/ws/dataset-events")
+                .addInterceptors(new JwtSubprotocolHandshakeInterceptor(jwtDecoder))
+                .setAllowedOrigins(allowedOrigins);
+    }
 
+    private static class JwtSubprotocolHandshakeInterceptor implements HandshakeInterceptor {
+        private static final String PREFIX = "rateengine.jwt.";
+        private final JwtDecoder decoder;
+        JwtSubprotocolHandshakeInterceptor(JwtDecoder decoder) { this.decoder = decoder; }
 
-Action:
+        @Override
+        public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
+                                       WebSocketHandler handler, Map<String, Object> attributes) {
+            String protocols = request.getHeaders().getFirst("Sec-WebSocket-Protocol");
+            String selectedProtocol = protocols == null ? null : java.util.Arrays.stream(protocols.split(","))
+                    .map(String::trim)
+                    .filter(protocol -> protocol.startsWith(PREFIX))
+                    .findFirst()
+                    .orElse(null);
+            try {
+                String token = selectedProtocol == null ? null : selectedProtocol.substring(PREFIX.length());
+                if (token == null || token.isBlank()) throw new IllegalArgumentException("JWT subprotocol is missing");
+                attributes.put("jwt", decoder.decode(token));
+                response.getHeaders().set("Sec-WebSocket-Protocol", selectedProtocol);
+                return true;
+            }
+            catch (RuntimeException exception) { response.setStatusCode(HttpStatus.UNAUTHORIZED); return false; }
+        }
 
-Consider defining a bean of type 'org.springframework.security.oauth2.jwt.JwtDecoder' in your configuration.
-
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD FAILURE
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time:  15.507 s
-[INFO] Finished at: 2026-08-29T17:09:36+05:30
-[INFO] ------------------------------------------------------------------------
-[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:4.1.1:run (default-cli) on project rateengine-api: Process terminated with exit code: 1 -> [Help 1]
-[ERROR] 
-[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
-[ERROR] Re-run Maven using the -X switch to enable full debug logging.
-[ERROR] 
-[ERROR] For more information about the errors and possible solutions, please read the following articles:
+        @Override public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response,
+                                             WebSocketHandler handler, Exception exception) { }
+    }
+}
