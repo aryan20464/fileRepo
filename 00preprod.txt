@@ -1,184 +1,290 @@
-: Error starting Tomcat context. Exception: org.springframework.beans.factory.UnsatisfiedDependencyException. Message: Error creating bean with name 'securityConfig': Unsatisfied dependency expressed through field 'jwtTokenProvider': Error creating bean with name 'jwtTokenProvider': Unsatisfied dependency expressed through field 'roleService': Error creating bean with name 'roleService': Unsatisfied dependency expressed through field 'roleRepository': Error creating bean with name 'rolesRepository' defined in com.sbi.rateengine.authentication.RolesRepository defined in @EnableJpaRepositories declared on DataJpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Cannot resolve reference to bean 'jpa.RolesRepository.fragments#0' while setting bean property 'repositoryFragments'
-2026-08-29 16:11:51 INFO  44984 --- [           main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
-2026-08-29 16:11:51 WARN  44984 --- [           main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Unable to start web server
-2026-08-29 16:11:51 INFO  44984 --- [           main] .s.b.a.l.ConditionEvaluationReportLogger : 
+package com.sbi.rateengine.security;
 
-Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-2026-08-29 16:11:51 ERROR 44984 --- [           main] o.s.boot.SpringApplication               : Application run failed
-org.springframework.context.ApplicationContextException: Unable to start web server
-        at org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:167)
-        at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:615)
-        at org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:143)
-        at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:756)
-        at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:445)
-        at org.springframework.boot.SpringApplication.run(SpringApplication.java:321)
-        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1365)
-        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354)
-        at com.sbi.rateengine.RateEngineApplication.main(RateEngineApplication.java:10)
-Caused by: org.springframework.boot.web.server.WebServerException: Unable to start embedded Tomcat
-        at org.springframework.boot.tomcat.TomcatWebServer.initialize(TomcatWebServer.java:150)
-        at org.springframework.boot.tomcat.TomcatWebServer.<init>(TomcatWebServer.java:110)
-        at org.springframework.boot.tomcat.servlet.TomcatServletWebServerFactory.getTomcatWebServer(TomcatServletWebServerFactory.java:429)
-        at org.springframework.boot.tomcat.servlet.TomcatServletWebServerFactory.getWebServer(TomcatServletWebServerFactory.java:167)
-        at org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext.createWebServer(ServletWebServerApplicationContext.java:190)
-        at org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:164)
-        ... 8 common frames omitted
-Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'securityConfig': Unsatisfied dependency expressed through field 'jwtTokenProvider': Error creating bean with name 'jwtTokenProvider': Unsatisfied dependency expressed through field 'roleService': Error creating bean with name 'roleService': Unsatisfied dependency expressed through field 'roleRepository': Error creating bean with name 'rolesRepository' defined in com.sbi.rateengine.authentication.RolesRepository defined in @EnableJpaRepositories declared on DataJpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Cannot resolve reference to bean 'jpa.RolesRepository.fragments#0' while setting bean property 'repositoryFragments'
-        at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:767)
-        at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:748)
-        at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:146)
-        at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:493)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1444)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:602)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:525)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:333)
-        at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:331)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:196)
-        at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:413)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1360)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1192)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:565)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:525)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:333)
-        at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:331)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:201)
-        at org.springframework.boot.web.servlet.ServletContextInitializerBeans.getOrderedBeansOfType(ServletContextInitializerBeans.java:231)
-        at org.springframework.boot.web.servlet.ServletContextInitializerBeans.addAsRegistrationBean(ServletContextInitializerBeans.java:185)
-        at org.springframework.boot.web.servlet.ServletContextInitializerBeans.addAsRegistrationBean(ServletContextInitializerBeans.java:180)
-        at org.springframework.boot.web.servlet.ServletContextInitializerBeans.addAdaptableBeans(ServletContextInitializerBeans.java:165)
-        at org.springframework.boot.web.servlet.ServletContextInitializerBeans.<init>(ServletContextInitializerBeans.java:97)
-        at org.springframework.boot.web.context.servlet.WebApplicationContextInitializer.initialize(WebApplicationContextInitializer.java:53)
-        at org.springframework.boot.tomcat.servlet.DeferredServletContainerInitializers.onStartup(DeferredServletContainerInitializers.java:55)
-        at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:4573)
-        at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:170)
-        at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1204)
-        at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1200)
-        at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
-        at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:92)
-        at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145)
-        at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:732)
-        at org.apache.catalina.core.StandardHost.startInternal(StandardHost.java:794)
-        at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:170)
-        at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1204)
-        at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1200)
-        at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
-        at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:92)
-        at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145)
-        at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:732)
-        at org.apache.catalina.core.StandardEngine.startInternal(StandardEngine.java:201)
-        at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:170)
-        at org.apache.catalina.core.StandardService.startInternal(StandardService.java:433)
-        at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:170)
-        at org.apache.catalina.core.StandardServer.startInternal(StandardServer.java:871)
-        at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:170)
-        at org.apache.catalina.startup.Tomcat.start(Tomcat.java:452)
-        at org.springframework.boot.tomcat.TomcatWebServer.initialize(TomcatWebServer.java:131)
-        ... 13 common frames omitted
-Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'jwtTokenProvider': Unsatisfied dependency expressed through field 'roleService': Error creating bean with name 'roleService': Unsatisfied dependency expressed through field 'roleRepository': Error creating bean with name 'rolesRepository' defined in com.sbi.rateengine.authentication.RolesRepository defined in @EnableJpaRepositories declared on DataJpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Cannot resolve reference to bean 'jpa.RolesRepository.fragments#0' while setting bean property 'repositoryFragments'
-        at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:767)
-        at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:748)
-        at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:146)
-        at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:493)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1444)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:602)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:525)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:333)
-        at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:331)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:201)
-        at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveBean(DefaultListableBeanFactory.java:1232)
-        at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1711)
-        at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1658)
-        at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:764)
-        ... 63 common frames omitted
-Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'roleService': Unsatisfied dependency expressed through field 'roleRepository': Error creating bean with name 'rolesRepository' defined in com.sbi.rateengine.authentication.RolesRepository defined in @EnableJpaRepositories declared on DataJpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Cannot resolve reference to bean 'jpa.RolesRepository.fragments#0' while setting bean property 'repositoryFragments'
-        at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:767)
-        at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:748)
-        at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:146)
-        at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:493)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1444)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:602)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:525)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:333)
-        at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:331)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:201)
-        at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveBean(DefaultListableBeanFactory.java:1232)
-        at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1711)
-        at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1658)
-        at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:764)
-        ... 77 common frames omitted
-Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'rolesRepository' defined in com.sbi.rateengine.authentication.RolesRepository defined in @EnableJpaRepositories declared on DataJpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Cannot resolve reference to bean 'jpa.RolesRepository.fragments#0' while setting bean property 'repositoryFragments'
-        at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:377)
-        at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:135)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1710)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1459)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:602)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:525)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:333)
-        at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:331)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:201)
-        at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:229)
-        at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1769)
-        at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1658)
-        at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:764)
-        ... 91 common frames omitted
-Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'jpa.RolesRepository.fragments#0': Error creating bean with name 'customRoleRepositoryImplFragment': Cannot resolve reference to bean 'customRoleRepositoryImpl' while setting constructor argument
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1815)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:603)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:525)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:333)
-        at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:331)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:196)
-        at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:365)
-        ... 104 common frames omitted
-Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'customRoleRepositoryImplFragment': Cannot resolve reference to bean 'customRoleRepositoryImpl' while setting constructor argument
-        at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:377)
-        at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:135)
-        at org.springframework.beans.factory.support.ConstructorResolver.resolveConstructorArguments(ConstructorResolver.java:691)
-        at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:513)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1360)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1192)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:565)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:525)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:333)
-        at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:331)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:201)
-        at org.springframework.data.repository.core.support.RepositoryFragmentsFactoryBean.lambda$afterPropertiesSet$0(RepositoryFragmentsFactoryBean.java:72)
-        at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
-        at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
-        at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
-        at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
-        at java.base/java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:921)
-        at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
-        at java.base/java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:682)
-        at org.springframework.data.repository.core.support.RepositoryFragmentsFactoryBean.afterPropertiesSet(RepositoryFragmentsFactoryBean.java:73)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1862)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1811)
-        ... 111 common frames omitted
-Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'customRoleRepositoryImpl': Unsatisfied dependency expressed through field 'em': No qualifying bean of type 'jakarta.persistence.EntityManager' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true)}
-        at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:767)
-        at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:748)
-        at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:146)
-        at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:493)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1444)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:602)
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:525)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:333)
-        at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:331)
-        at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:196)
-        at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:365)
-        ... 133 common frames omitted
-Caused by: org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'jakarta.persistence.EntityManager' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true)}
-        at org.springframework.beans.factory.support.DefaultListableBeanFactory.raiseNoMatchingBeanFound(DefaultListableBeanFactory.java:2304)
-        at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1732)
-        at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1658)
-        at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:764)
-        ... 144 common frames omitted
-[INFO] ------------------------------------
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtValidators;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2Error;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
+import org.springframework.security.config.Customizer;
+import org.springframework.http.MediaType;
+
+@Configuration
+public class SecurityConfig {
+
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http, MutationRateLimitFilter mutationRateLimitFilter) throws Exception {
+        return http.csrf(csrf -> csrf.disable())
+                .cors(cors -> {})
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .headers(headers -> headers
+                        .contentTypeOptions(Customizer.withDefaults())
+                        .frameOptions(frame -> frame.deny())
+//                        .contentSecurityPolicy(csp -> csp.policyDirectives(
+//                                "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
+//                                        + "img-src 'self' data:; font-src 'self' data:; connect-src 'self' ws: wss:; "
+//                                        + "object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"))
+                        .referrerPolicy(referrer -> referrer.policy(ReferrerPolicy.NO_REFERRER))
+                        .permissionsPolicyHeader(policy -> policy.policy("camera=(), microphone=(), geolocation=(), payment=(), usb=()"))
+                        .httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true).preload(true).maxAgeInSeconds(31536000)))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/**").permitAll()
+                        .requestMatchers("/error").permitAll()
+                        .anyRequest().authenticated())
+                .oauth2ResourceServer(resource -> resource
+                        .authenticationEntryPoint((request, response, exception) -> {
+                            response.setStatus(401);
+                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+                            response.getWriter().write("{\"message\":\"Authentication is required\"}");
+                        })
+                        .accessDeniedHandler((request, response, exception) -> {
+                            response.setStatus(403);
+                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+                            response.getWriter().write("{\"message\":\"Access is denied\"}");
+                        })
+                        .jwt(jwt -> {}))
+                .addFilterAfter(mutationRateLimitFilter, BearerTokenAuthenticationFilter.class)
+                .build();
+    }
+
+    @Bean
+    JwtDecoder jwtDecoder(@Value("${app.security.jwt-secret}") String secret,
+            @Value("${app.security.jwt-issuer:}") String issuer,
+            @Value("${app.security.jwt-audience:}") String audience) {
+        byte[] secretBytes = secret == null ? new byte[0] : secret.getBytes(StandardCharsets.UTF_8);
+        String normalizedSecret = secret == null ? "" : secret.toLowerCase(java.util.Locale.ROOT);
+        if (secretBytes.length < 32 || normalizedSecret.contains("change-this") || normalizedSecret.contains("replace-with")) {
+            throw new IllegalStateException("JWT_SECRET must be a non-placeholder secret of at least 32 characters");
+        }
+        System.out.println("secret "+secret);
+        SecretKey key = new SecretKeySpec(secretBytes, "HmacSHA256");
+        NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(key).macAlgorithm(MacAlgorithm.HS256).build();
+        OAuth2TokenValidator<Jwt> validator = issuer == null || issuer.isBlank()
+                ? JwtValidators.createDefault()
+                : JwtValidators.createDefaultWithIssuer(issuer.trim());
+        validator = new DelegatingOAuth2TokenValidator<>(validator, this::validateRequiredClaims);
+        if (audience != null && !audience.isBlank()) {
+            String requiredAudience = audience.trim();
+            OAuth2TokenValidator<Jwt> audienceValidator = jwt -> {
+                java.util.List<String> tokenAudiences = jwt.getAudience();
+                return tokenAudiences != null && tokenAudiences.contains(requiredAudience)
+                        ? OAuth2TokenValidatorResult.success()
+                        : OAuth2TokenValidatorResult.failure(
+                                new OAuth2Error("invalid_token", "JWT audience is invalid", null));
+            };
+            validator = new DelegatingOAuth2TokenValidator<>(validator, audienceValidator);
+        }
+        decoder.setJwtValidator(validator);
+        return decoder;
+    }
+
+//    private OAuth2TokenValidatorResult validateRequiredClaims(Jwt jwt) {
+//        try {
+//            if (jwt.getExpiresAt() == null
+//                    || !validClaim(jwt, "user_id", 20)
+//                    || !validClaim(jwt, "user_name", 100)
+//                    || !validClaim(jwt, "entity", 100)
+//                    || !validClaim(jwt, "role", 20)) {
+//                return invalidClaims();
+//            }
+//            String userId = jwt.getClaimAsString("user_id");
+//            String role = jwt.getClaimAsString("role");
+//            if (userId == null || role == null || !userId.matches("[A-Za-z0-9_.-]{1,20}")
+//                    || !("MAKER".equalsIgnoreCase(role) || "CHECKER".equalsIgnoreCase(role))) {
+//                return invalidClaims();
+//            }
+//            return OAuth2TokenValidatorResult.success();
+//        } catch (RuntimeException exception) {
+//            return invalidClaims();
+//        }
+//    }
+
+    private OAuth2TokenValidatorResult validateRequiredClaims(Jwt jwt) {
+        try {
+            if (jwt.getExpiresAt() == null) {
+                return invalidClaims();
+            }
+
+            Map<String, Object> user = jwt.getClaimAsMap("user");
+            if (user == null) {
+                return invalidClaims();
+            }
+
+            String pfId = asTrimmedString(user.get("pfId"));
+            String userName = asTrimmedString(user.get("userName"));
+            String entity = asTrimmedString(user.get("entity"));
+
+            if (!validString(pfId, 20) || !validString(userName, 100) || !validString(entity, 100)) {
+                return invalidClaims();
+            }
+            if (!pfId.matches("[A-Za-z0-9_.-]{1,20}")) {
+                return invalidClaims();
+            }
+
+            List<?> auth = jwt.getClaim("auth");
+            if (auth == null || auth.isEmpty()) {
+                return invalidClaims();
+            }
+            boolean hasRecognizedRole = auth.stream().anyMatch(entry -> {
+                if (!(entry instanceof Map<?, ?> map)) return false;
+                Object authority = map.get("authority");
+                return authority != null
+                        && ("MAKER".equalsIgnoreCase(authority.toString()) || "CHECKER".equalsIgnoreCase(authority.toString()));
+            });
+            if (!hasRecognizedRole) {
+                return invalidClaims();
+            }
+
+            return OAuth2TokenValidatorResult.success();
+        } catch (RuntimeException exception) {
+            return invalidClaims();
+        }
+    }
+
+    private String asTrimmedString(Object value) {
+        return value == null ? null : value.toString().trim();
+    }
+
+    private boolean validString(String value, int maxLength) {
+        return value != null && !value.isBlank() && value.length() <= maxLength
+                && value.chars().noneMatch(Character::isISOControl);
+    }
+
+    private boolean validClaim(Jwt jwt, String name, int maxLength) {
+        String value = jwt.getClaimAsString(name);
+        return value != null && !value.isBlank() && value.length() <= maxLength
+                && value.chars().noneMatch(Character::isISOControl);
+    }
+
+    private OAuth2TokenValidatorResult invalidClaims() {
+        return OAuth2TokenValidatorResult.failure(
+                new OAuth2Error("invalid_token", "JWT required claims are invalid", null));
+    }
+}
+working with above code but not working with package com.sbi.rateengine.security;
+
+import java.util.Arrays;
+
+import com.sbi.rateengine.authentication.NoPopupBasicAuthenticationEntryPoint;
+import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.annotation.Order;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import com.sbi.rateengine.authentication.RoleService;
+import com.sbi.rateengine.authentication.JwtTokenProvider;
+import com.sbi.rateengine.authentication.JwtTokenFilter;
+
+
+@Configuration
+@EnableWebSecurity
+@Order(SecurityFilterProperties.DEFAULT_FILTER_ORDER)
+public class SecurityConfig {
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+    @Autowired
+    RoleService roleService;
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .httpBasic(httpBasic ->
+                        httpBasic.authenticationEntryPoint(new NoPopupBasicAuthenticationEntryPoint())
+                )
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/public/getAllUsers",
+                                "/public/getUserFromCBS/**",
+                                "/public/logout/**",
+                                "/public/logoutEncryptedTellerId/**",
+                                "/menu/**",
+                                "/public/getUserFromFXS/**",
+                                "/public/getUserFromCBSSSO/**",
+                                "/public/getUserFromCBSLocal/**",
+                                "/public/getUserFromCBS/cbs_datatype/**",
+                                "/public/audit/history/**",
+                                "/public/encryptData",
+                                "/public/decryptData",
+                                "/**"
+                        ).permitAll()
+                        .anyRequest().authenticated()
+                )
+                .cors(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable())
+                .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        http
+                .headers(headers -> headers
+                        .referrerPolicy(referrer -> referrer.policy(ReferrerPolicy.SAME_ORIGIN))
+                        .frameOptions(frame -> frame.sameOrigin())
+                        .httpStrictTransportSecurity(hsts -> hsts
+                                .includeSubDomains(true)
+                                .maxAgeInSeconds(31536000)
+                        )
+                        .contentSecurityPolicy(csp -> csp.policyDirectives("script-src 'self'"))
+                );
+
+        return http.build();
+    }
+
+    @Bean
+    public JwtTokenFilter jwtTokenFilter() {
+        return new JwtTokenFilter(jwtTokenProvider);
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowedHeaders("*")
+                        .allowedOrigins("*")
+                        .exposedHeaders("Content-Disposition");
+            }
+        };
+    }
+
+    //.allowedOrigins(rforexUIURL.split(",")).exposedHeaders("Content-Disposition");
+}
+
+
+
+
