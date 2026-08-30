@@ -1,37 +1,38 @@
-https://10.191.158.41:4200/middlewareRateEngine/api/dashboard/feeds 
+import { Injectable } from '@angular/core';
+import { Observable, defer, repeat, retry, share, throwError } from 'rxjs';
+import { webSocket } from 'rxjs/webSocket';
+import { AuthService } from '../../login/auth.service'; // adjust to actual relative path
+import { rateconst } from '../../../environments/environment'; // adjust to actual relative path
 
-and backend is running the above server with context path http://localhost:8085/rate-engine
+export interface DatasetEvent { resource: string; action: string; id?: number; }
 
+@Injectable({ providedIn: 'root' })
+export class RealtimeService {
+  constructor(private readonly auth: AuthService) {}
 
-location /rateengine-ui/ {
-             #alias /var/www/html/cmm/dist/;
-             alias /node/nginx/html/rateengine-ui/browser/;
-             try_files $uri$args $uri$args/ /rateengine-ui/index.html;
+  private wsBaseUrl(): string {
+    // Resolves whether rforexAuthServiceApiUrl is relative ('/middlewareRateEngine')
+    // or absolute ('https://host/middlewareRateEngine'), against the current page origin.
+    const resolved = new URL(rateconst.rforexAuthServiceApiUrl, location.href);
+    const wsProtocol = resolved.protocol === 'https:' ? 'wss' : 'ws';
+    return `${wsProtocol}://${resolved.host}${resolved.pathname.replace(/\/$/, '')}`;
+  }
 
-            proxy_http_version 1.1;
+  private readonly events$ = defer(() => {
+    const token = this.auth.token();
+    if (!token) return throwError(() => new Error('A JWT is required for real-time updates.'));
 
-            # for websocket - chakri - 27082026
-             proxy_set_header Upgrade $http_upgrade;
-             proxy_set_header Connection "upgrade";
+    return webSocket<DatasetEvent>({
+      url: `${this.wsBaseUrl()}/ws/dataset-events`,
+      protocol: `rateengine.jwt.${token}`
+    });
+  }).pipe(
+    retry({ delay: 3000 }),
+    repeat({ delay: 3000 }),
+    share()
+  );
 
-           # # Standard proxy headers
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-             proxy_set_header X-Forwarded-Proto $scheme;
-        }
-
-location /middlewareRateEngine {
-                         proxy_pass http://10.191.158.41:8085/rate-engine;
-                         proxy_http_version 1.1;
-
-                         # for websocket - chakri - 27082026
-                         proxy_set_header Upgrade $http_upgrade;
-                         proxy_set_header Connection "upgrade";
-
-                        # Standard proxy headers
-                         proxy_set_header Host $host;
-                         proxy_set_header X-Real-IP $remote_addr;
-                         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                         proxy_set_header X-Forwarded-Proto $scheme;
-                }
+  connect(): Observable<DatasetEvent> {
+    return this.events$;
+  }
+}
