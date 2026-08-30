@@ -1,23 +1,37 @@
-accept-encoding
-gzip, deflate, br, zstd
-accept-language
-en-US,en;q=0.9
-cache-control
-no-cache
-connection
-Upgrade
-host
-10.191.158.41:4200
-origin
-https://10.191.158.41:4200
-pragma
-no-cache
-sec-websocket-extensions
-permessage-deflate; client_max_window_bits
-sec-websocket-key
-adcrpqff0ZQ3VY0mWiDujw==
-sec-websocket-protocol
-rateengine.jwt.eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7InVzZXJOYW1lIjoiU2hyaS4gRGVlcGVzaCBHaGF0YWsiLCJwYXNzd29yZCI6bnVsbCwidG9rZW4iOm51bGwsInBmSWQiOiI3MjU4MDU0IiwiZW1haWwiOiJURVNUQFNCSS5jby5pbiIsImJyYW5jaENvZGUiOiIwNDQzMCIsInJvbGVzIjpbeyJyb2xlSWQiOjEsInJvbGVOYW1lIjoiTUFLRVIiLCJkZXNjcmlwdGlvbiI6Ik1ha2VyIiwic3RhcnRUaW1lIjoiMDM6NDg6NDUiLCJlbmRUaW1lIjoiMjM6NDg6NDUiLCJ1cmxQZXJtaXR0ZWQiOiIvKiwiLCJhdXRob3Jpd
+https://10.191.158.41:4200/middlewareRateEngine/api/dashboard/feeds 
+
+and backend is running the above server with context path http://localhost:8085/rate-engine
 
 
-WebSocketSubject.js:94 WebSocket connection to 'wss://10.191.158.41:4200/ws/dataset-events' failed:
+location /rateengine-ui/ {
+             #alias /var/www/html/cmm/dist/;
+             alias /node/nginx/html/rateengine-ui/browser/;
+             try_files $uri$args $uri$args/ /rateengine-ui/index.html;
+
+            proxy_http_version 1.1;
+
+            # for websocket - chakri - 27082026
+             proxy_set_header Upgrade $http_upgrade;
+             proxy_set_header Connection "upgrade";
+
+           # # Standard proxy headers
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+             proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+location /middlewareRateEngine {
+                         proxy_pass http://10.191.158.41:8085/rate-engine;
+                         proxy_http_version 1.1;
+
+                         # for websocket - chakri - 27082026
+                         proxy_set_header Upgrade $http_upgrade;
+                         proxy_set_header Connection "upgrade";
+
+                        # Standard proxy headers
+                         proxy_set_header Host $host;
+                         proxy_set_header X-Real-IP $remote_addr;
+                         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                         proxy_set_header X-Forwarded-Proto $scheme;
+                }
