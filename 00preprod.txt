@@ -1,61 +1,20 @@
-@if (auth.user(); as user) {
-  <div class="user user-menu">
-    <span class="avatar">{{ user.userName?.charAt(0) || user.pfId?.charAt(0) }}</span>
-    <div><strong>{{ user.userName || user.pfId }}</strong><small>{{ auth.roles()[0] }} · {{ user.entity }}</small></div>
-    <div class="user-dropdown">
-      <button type="button" class="logout-option" (click)="logout()">Logout</button>
-    </div>
-  </div>
-}
-
-add to component class
-logout(): void {
-  this.auth.doLogoutUser();
-}
-
-add to scss file
-.user-menu {
-  position: relative;
-  cursor: default;
-
-  .user-dropdown {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    margin-top: 8px;
-    min-width: 140px;
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    padding: 4px;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-4px);
-    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
-    z-index: 20;
-  }
-
-  &:hover .user-dropdown,
-  &:focus-within .user-dropdown {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-  }
-
-  .logout-option {
-    display: block;
-    width: 100%;
-    text-align: left;
-    padding: 8px 12px;
-    border: none;
-    background: transparent;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    cursor: pointer;
-
-    &:hover {
-      background: rgba(0, 0, 0, 0.06);
-    }
-  }
-}
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+en-US,en;q=0.9
+cache-control
+no-cache
+connection
+Upgrade
+host
+10.191.158.41:4200
+origin
+https://10.191.158.41:4200
+pragma
+no-cache
+sec-websocket-extensions
+permessage-deflate; client_max_window_bits
+sec-websocket-key
+adcrpqff0ZQ3VY0mWiDujw==
+sec-websocket-protocol
+rateengine.jwt.eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7InVzZXJOYW1lIjoiU2hyaS4gRGVlcGVzaCBHaGF0YWsiLCJwYXNzd29yZCI6bnVsbCwidG9rZW4iOm51bGwsInBmSWQiOiI3MjU4MDU0IiwiZW1haWwiOiJURVNUQFNCSS5jby5pbiIsImJyYW5jaENvZGUiOiIwNDQzMCIsInJvbGVzIjpbeyJyb2xlSWQiOjEsInJvbGVOYW1lIjoiTUFLRVIiLCJkZXNjcmlwdGlvbiI6Ik1ha2VyIiwic3RhcnRUaW1lIjoiMDM6NDg6NDUiLCJlbmRUaW1lIjoiMjM6NDg6NDUiLCJ1cmxQZXJtaXR0ZWQiOiIvKiwiLCJhdXRob3Jpd
