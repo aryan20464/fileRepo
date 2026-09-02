@@ -1,19 +1,30 @@
 #!/bin/bash
-###############################################################################
+#############################################################################################################
+# author: chakri
+# date  : 20260902
 # nginx wrapper: swap -> reload/start -> confirm -> revert
 #
-# Fix (v2): sed delimiter changed from '/' to '#' to avoid collision with
-# the '/' inside "500r/s". Added an EXIT trap so that ANY failure after the
-# swap begins (sed error, nginx -t failure, unexpected crash) still reverts
-# the config file back to display values -- the file can no longer be left
-# stuck mid-swap.
-###############################################################################
+# Purpose:
+#   Runtime values (keepalive_timeout=120, rate=500r/s) are loaded into the
+#   live nginx process on start/reload, but the on-disk nginx.conf always
+#   settles back to the display values (keepalive_timeout=15, rate=5r/s)
+#   once the reload/start completes.
+#
+#   Read-only / introspection invocations (-t, -T, -V, -h, -v, -s stop|quit,
+#   etc.) never touch the config file at all — they pass straight through
+#   to the real binary against whatever is currently on disk.
+#
+# Layout:
+#   Real binary : /data/nginx/sbin/nginx.real (This is the actual binary copied from /nginx/server/sbin
+#   This file   : /data/nginx/sbin/nginx   (replaces the original binary)
+#   Config      : /nginx/server/conf/nginx.conf   <-- NGINX CONFIG PATH
+#############################################################################################################
 set -uo pipefail  # NOTE: -e intentionally omitted; errors handled explicitly below
 
 REAL_BIN="/data/nginx/sbin/nginx.real"
 CONF="/nginx/server/conf/nginx.conf"
-LOCK="/tmp/.nginx_wrapper.lock"
-LOG="/var/log/nginx/wrapper.log"
+LOCK="/data/nginx/.nginx_wrapper.lock"
+LOG="/data/nginx/wrapper.log"
 
 KA_DISPLAY="15";   RATE_DISPLAY="5r/s"
 KA_RUNTIME="120";  RATE_RUNTIME="500r/s"
