@@ -23,3 +23,6 @@ drwxr-x---. 2 nodeuser nodeuser 4096 Sep  2 14:27 sbin
 2026-09-02 14:29:09 [nginx-wrapper] State-changing op ('-s reload'): swapping to runtime values (keepalive_timeout=120, rate=500r/s)
 [nodeuser@tss-idea-irm-web-preprod nginx]$
 
+
+limit_req_zone $binary_remote_addr zone=ratelimit:10m rate=100r/s; # This creates a rate limit with size of 10 megabytes (can handle 16k Unique IPs)
+ keepalive_timeout  120;
