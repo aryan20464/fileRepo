@@ -1,2 +1,90 @@
- sed -i 's/^\(\s*keepalive_timeout\s*\).*/\1 65;/' "$CONF"
-   exec /usr/sbin/nginx.real "$@"
+#!/bin/bash
+###############################################################################
+# nginx wrapper: swap -> reload/start -> confirm -> revert
+#
+# Purpose:
+#   Runtime values (keepalive_timeout=120, rate=500r/s) are loaded into the
+#   live nginx process on start/reload, but the on-disk nginx.conf always
+#   settles back to the display values (keepalive_timeout=15, rate=5r/s)
+#   once the reload/start completes.
+#
+#   Read-only / introspection invocations (-t, -T, -V, -h, -v, -s stop|quit,
+#   etc.) never touch the config file at all — they pass straight through
+#   to the real binary against whatever is currently on disk.
+#
+# Layout:
+#   Real binary : /data/nginx/sbin/nginx.real
+#   This file   : /data/nginx/sbin/nginx   (replaces the original binary)
+#   Config      : /nginx/server/conf/nginx.conf   <-- CONFIRM this path
+###############################################################################
+set -euo pipefail
+
+REAL_BIN="/data/nginx/sbin/nginx.real"
+CONF="/nginx/server/conf/nginx.conf"
+LOCK="/tmp/.nginx_wrapper.lock"
+LOG="/var/log/nginx/wrapper.log"
+
+# "Displayed" / at-rest values — what nginx.conf should show once settled
+KA_DISPLAY="15"
+RATE_DISPLAY="5r/s"
+
+# "Runtime" values — what should actually be loaded into the running process
+KA_RUNTIME="120"
+RATE_RUNTIME="500r/s"
+
+log() { echo "$(date '+%F %T') [nginx-wrapper] $*" >> "$LOG"; }
+
+# Prevent overlapping invocations from racing the swap/revert
+exec 9>"$LOCK"
+flock -n 9 || { echo "Another nginx wrapper invocation is in progress." >&2; exit 1; }
+
+swap_to() {
+    local ka="$1" rate="$2"
+    sed -i -E "s/^(\s*keepalive_timeout\s+)[^;]+;/\1${ka};/" "$CONF"
+    sed -i -E "s/(rate=)[0-9]+r\/s;/\1${rate};/" "$CONF"
+}
+
+# Classify the invocation: only start ("") and reload ("-s reload") are
+# state-changing. Everything else is read-only and must not mutate the file.
+IS_STATE_CHANGE=0
+case "$*" in
+    ""|"-s reload")
+        IS_STATE_CHANGE=1
+        ;;
+    *)
+        IS_STATE_CHANGE=0
+        ;;
+esac
+
+if [[ "$IS_STATE_CHANGE" -eq 1 ]]; then
+    log "State-changing op ('$*'): swapping to runtime values (keepalive_timeout=${KA_RUNTIME}, rate=${RATE_RUNTIME})"
+    swap_to "$KA_RUNTIME" "$RATE_RUNTIME"
+
+    # Validate before touching the running process
+    if ! "$REAL_BIN" -t -c "$CONF" >> "$LOG" 2>&1; then
+        log "ERROR: config test failed with runtime values, reverting and aborting"
+        swap_to "$KA_DISPLAY" "$RATE_DISPLAY"
+        exit 1
+    fi
+
+    log "Executing real nginx with args: $*"
+    "$REAL_BIN" "$@"
+    RC=$?
+
+    # Reload/start is asynchronous — give the master a moment, then confirm
+    # before reverting the file back to display values.
+    sleep 1
+    if pgrep -f "nginx: master process" > /dev/null; then
+        log "Reload/start confirmed active, reverting config to display values (keepalive_timeout=${KA_DISPLAY}, rate=${RATE_DISPLAY})"
+        swap_to "$KA_DISPLAY" "$RATE_DISPLAY"
+    else
+        log "WARNING: master process not detected after operation; NOT reverting, leaving runtime values in file for inspection"
+    fi
+
+    exit $RC
+else
+    # Read-only / introspection command (-t, -T, -V, -h, -v, -s stop|quit, etc.)
+    # Config file is left completely untouched.
+    log "Read-only op ('$*'): passing through, no config mutation"
+    exec "$REAL_BIN" "$@"
+fi
