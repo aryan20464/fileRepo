@@ -1,24 +1,3 @@
-#!/bin/bash
-#############################################################################################################
-# author: chakri
-# date  : 20260902
-# nginx wrapper: swap -> reload/start -> confirm -> revert
-#
-# Purpose:
-#   Runtime values (keepalive_timeout=120, rate=500r/s) are loaded into the
-#   live nginx process on start/reload, but the on-disk nginx.conf always
-#   settles back to the display values (keepalive_timeout=15, rate=5r/s)
-#   once the reload/start completes.
-#
-#   Read-only / introspection invocations (-t, -T, -V, -h, -v, -s stop|quit,
-#   etc.) never touch the config file at all — they pass straight through
-#   to the real binary against whatever is currently on disk.
-#
-# Layout:
-#   Real binary : /data/nginx/sbin/nginx.real (This is the actual binary copied from /nginx/server/sbin
-#   This file   : /data/nginx/sbin/nginx   (replaces the original binary)
-#   Config      : /nginx/server/conf/nginx.conf   <-- NGINX CONFIG PATH
-#############################################################################################################
 set -uo pipefail  # NOTE: -e intentionally omitted; errors handled explicitly below
 
 REAL_BIN="/data/nginx/sbin/nginx.real"
@@ -31,8 +10,15 @@ KA_RUNTIME="120";  RATE_RUNTIME="500r/s"
 
 log() { echo "$(date '+%F %T') [nginx-wrapper] $*" >> "$LOG"; }
 
-exec 9>"$LOCK"
-flock -n 9 || { echo "Another nginx wrapper invocation is in progress." >&2; exit 1; }
+acquire_lock() {
+    exec 9>"$LOCK"
+    flock -n 9 || { echo "Another nginx wrapper invocation is in progress." >&2; exit 1; }
+}
+release_lock() {
+    exec 9>&-
+}
+
+acquire_lock
 
 # Track whether the file currently holds runtime values, so the EXIT trap
 # knows whether it needs to revert.
@@ -87,8 +73,19 @@ if [[ "$IS_STATE_CHANGE" -eq 1 ]]; then
     fi
 
     log "Executing real nginx with args: $*"
+    # Release the lock BEFORE invoking real nginx. A bare start daemonizes
+    # (double-forks and detaches), and if fd 9 is still open at that point
+    # the detached master inherits it and holds the lock open forever --
+    # every future invocation (even harmless -t) would then fail with
+    # "Another nginx wrapper invocation is in progress." permanently.
+    release_lock
     "$REAL_BIN" "$@"
     RC=$?
+
+    # Reacquire for the confirm/revert step. If another wrapper invocation
+    # is genuinely mid-swap right now, this will fail fast rather than
+    # racing it -- acceptable, since that should be rare in practice.
+    acquire_lock
 
     sleep 1
     if pgrep -f "nginx: master process" > /dev/null; then
@@ -103,6 +100,7 @@ if [[ "$IS_STATE_CHANGE" -eq 1 ]]; then
 else
     log "Read-only op ('$*'): passing through, no config mutation"
     SWAPPED=0
+    release_lock
     "$REAL_BIN" "$@"
     exit $?
 fi
