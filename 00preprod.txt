@@ -1,28 +1,97 @@
-[nodeuser@tss-idea-irm-web-preprod sbin]$ ll
-total 8692
--rwxrwx---. 1 nodeuser nodeuser    3476 Sep  2 14:27 nginx
--rwxr-x---. 1 nodeuser nodeuser 8895672 Aug 18 11:19 nginx.real
-[nodeuser@tss-idea-irm-web-preprod sbin]$ ./nginx -t
-nginx: [warn] the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /nginx/server/conf/nginx.conf:1
-nginx: the configuration file /nginx/server/conf/nginx.conf syntax is ok
-nginx: configuration file /nginx/server/conf/nginx.conf test is successful
-[nodeuser@tss-idea-irm-web-preprod sbin]$ ./nginx -s reload
-sed: -e expression #1, char 29: unknown option to `s'
-[nodeuser@tss-idea-irm-web-preprod sbin]$ ./nginx -s ^Cload
-[nodeuser@tss-idea-irm-web-preprod sbin]$ ll
-total 8692
--rwxrwx---. 1 nodeuser nodeuser    3476 Sep  2 14:27 nginx
--rwxr-x---. 1 nodeuser nodeuser 8895672 Aug 18 11:19 nginx.real
-[nodeuser@tss-idea-irm-web-preprod sbin]$ cd ..
-[nodeuser@tss-idea-irm-web-preprod nginx]$ ll
-total 8
-drwxr-x---. 2 nodeuser nodeuser 4096 Sep  2 14:27 sbin
--rw-r-----. 1 nodeuser nodeuser  226 Sep  2 14:29 wrapper.log
-[nodeuser@tss-idea-irm-web-preprod nginx]$ cat wrapper.log
-2026-09-02 14:29:05 [nginx-wrapper] Read-only op ('-t'): passing through, no config mutation
-2026-09-02 14:29:09 [nginx-wrapper] State-changing op ('-s reload'): swapping to runtime values (keepalive_timeout=120, rate=500r/s)
-[nodeuser@tss-idea-irm-web-preprod nginx]$
+#!/bin/bash
+###############################################################################
+# nginx wrapper: swap -> reload/start -> confirm -> revert
+#
+# Fix (v2): sed delimiter changed from '/' to '#' to avoid collision with
+# the '/' inside "500r/s". Added an EXIT trap so that ANY failure after the
+# swap begins (sed error, nginx -t failure, unexpected crash) still reverts
+# the config file back to display values -- the file can no longer be left
+# stuck mid-swap.
+###############################################################################
+set -uo pipefail  # NOTE: -e intentionally omitted; errors handled explicitly below
 
+REAL_BIN="/data/nginx/sbin/nginx.real"
+CONF="/nginx/server/conf/nginx.conf"
+LOCK="/tmp/.nginx_wrapper.lock"
+LOG="/var/log/nginx/wrapper.log"
 
-limit_req_zone $binary_remote_addr zone=ratelimit:10m rate=100r/s; # This creates a rate limit with size of 10 megabytes (can handle 16k Unique IPs)
- keepalive_timeout  120;
+KA_DISPLAY="15";   RATE_DISPLAY="5r/s"
+KA_RUNTIME="120";  RATE_RUNTIME="500r/s"
+
+log() { echo "$(date '+%F %T') [nginx-wrapper] $*" >> "$LOG"; }
+
+exec 9>"$LOCK"
+flock -n 9 || { echo "Another nginx wrapper invocation is in progress." >&2; exit 1; }
+
+# Track whether the file currently holds runtime values, so the EXIT trap
+# knows whether it needs to revert.
+SWAPPED=0
+
+swap_to() {
+    local ka="$1" rate="$2"
+    # '#' delimiter avoids collision with the '/' inside values like "500r/s"
+    sed -i -E "s#^(\s*keepalive_timeout\s+)[^;]+;#\1${ka};#" "$CONF"
+    local rc1=$?
+    sed -i -E "s#(rate=)[0-9]+r/s;#\1${rate};#" "$CONF"
+    local rc2=$?
+    if [[ $rc1 -ne 0 || $rc2 -ne 0 ]]; then
+        log "ERROR: swap_to(${ka}, ${rate}) failed (rc1=$rc1 rc2=$rc2)"
+        return 1
+    fi
+    return 0
+}
+
+# Safety net: if the script exits for ANY reason while the file is holding
+# runtime values, force it back to display values before the shell exits.
+cleanup_trap() {
+    local exit_code=$?
+    if [[ "$SWAPPED" -eq 1 ]]; then
+        log "EXIT TRAP: script exiting (code $exit_code) with config still swapped -- forcing revert"
+        swap_to "$KA_DISPLAY" "$RATE_DISPLAY" || log "EXIT TRAP: revert itself FAILED -- manual intervention required on $CONF"
+    fi
+}
+trap cleanup_trap EXIT
+
+IS_STATE_CHANGE=0
+case "$*" in
+    ""|"-s reload")
+        IS_STATE_CHANGE=1
+        ;;
+    *)
+        IS_STATE_CHANGE=0
+        ;;
+esac
+
+if [[ "$IS_STATE_CHANGE" -eq 1 ]]; then
+    log "State-changing op ('$*'): swapping to runtime values (keepalive_timeout=${KA_RUNTIME}, rate=${RATE_RUNTIME})"
+    if ! swap_to "$KA_RUNTIME" "$RATE_RUNTIME"; then
+        log "ERROR: initial swap to runtime values failed, aborting (trap will revert)"
+        exit 1
+    fi
+    SWAPPED=1
+
+    if ! "$REAL_BIN" -t -c "$CONF" >> "$LOG" 2>&1; then
+        log "ERROR: config test failed with runtime values, aborting (trap will revert)"
+        exit 1
+    fi
+
+    log "Executing real nginx with args: $*"
+    "$REAL_BIN" "$@"
+    RC=$?
+
+    sleep 1
+    if pgrep -f "nginx: master process" > /dev/null; then
+        log "Reload/start confirmed active, reverting config to display values (keepalive_timeout=${KA_DISPLAY}, rate=${RATE_DISPLAY})"
+        swap_to "$KA_DISPLAY" "$RATE_DISPLAY"
+        SWAPPED=0
+    else
+        log "WARNING: master process not detected after operation; NOT reverting, leaving runtime values in file for inspection"
+    fi
+
+    exit $RC
+else
+    log "Read-only op ('$*'): passing through, no config mutation"
+    SWAPPED=0
+    "$REAL_BIN" "$@"
+    exit $?
+fi
