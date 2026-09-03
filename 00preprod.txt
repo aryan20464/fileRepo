@@ -1,106 +1,117 @@
-set -uo pipefail  # NOTE: -e intentionally omitted; errors handled explicitly below
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loki
+  namespace: forex
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: loki
+  template:
+    metadata:
+      labels:
+        app: loki
+    spec:
+      securityContext:
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: loki
+          image: grafana-loki:3.7.0
+          ports:
+            - containerPort: 3100
+          args: ["-config.file=/etc/loki/loki-config.yaml"]
+          volumeMounts:
+            - name: loki-config
+              mountPath: /etc/loki
+            - name: loki-storage
+              mountPath: /loki
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            runAsUser: 10001
+            seccompProfile:
+              type: RuntimeDefault
+      volumes:
+        - name: loki-storage
+          persistentVolumeClaim:
+            claimName: pvc-loki
+        - name: loki-config
+          configMap:
+            name: loki-config
 
-REAL_BIN="/data/nginx/sbin/nginx.real"
-CONF="/nginx/server/conf/nginx.conf"
-LOCK="/data/nginx/.nginx_wrapper.lock"
-LOG="/data/nginx/wrapper.log"
 
-KA_DISPLAY="15";   RATE_DISPLAY="5r/s"
-KA_RUNTIME="120";  RATE_RUNTIME="500r/s"
+failed parsing config: /etc/loki/loki-config.yaml does not exist, set config.file for custom config path
 
-log() { echo "$(date '+%F %T') [nginx-wrapper] $*" >> "$LOG"; }
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: loki-config
+  namespace: forex
+  labels:
+    app: loki
+data:
+  loki.yaml: |
+    auth_enabled: false
 
-acquire_lock() {
-    exec 9>"$LOCK"
-    flock -n 9 || { echo "Another nginx wrapper invocation is in progress." >&2; exit 1; }
-}
-release_lock() {
-    exec 9>&-
-}
+    server:
+      http_listen_port: 3100
+      grpc_listen_port: 9095
 
-acquire_lock
+    common:
+      path_prefix: /loki
+      replication_factor: 1
+      ring:
+        kvstore:
+          store: inmemory
 
-# Track whether the file currently holds runtime values, so the EXIT trap
-# knows whether it needs to revert.
-SWAPPED=0
+    ingester:
+      wal:
+        enabled: true
+        dir: /loki/wal
+      max_chunk_age: 1h
+      chunk_idle_period: 3m
+      lifecycler:
+        ring:
+          kvstore:
+            store: inmemory
 
-swap_to() {
-    local ka="$1" rate="$2"
-    # '#' delimiter avoids collision with the '/' inside values like "500r/s"
-    sed -i -E "s#^(\s*keepalive_timeout\s+)[^;]+;#\1${ka};#" "$CONF"
-    local rc1=$?
-    sed -i -E "s#(rate=)[0-9]+r/s;#\1${rate};#" "$CONF"
-    local rc2=$?
-    if [[ $rc1 -ne 0 || $rc2 -ne 0 ]]; then
-        log "ERROR: swap_to(${ka}, ${rate}) failed (rc1=$rc1 rc2=$rc2)"
-        return 1
-    fi
-    return 0
-}
+    schema_config:
+      configs:
+        - from: 2024-01-01
+          store: boltdb-shipper
+          object_store: filesystem
+          schema: v12
+          index:
+            prefix: index_
+            period: 24h
 
-# Safety net: if the script exits for ANY reason while the file is holding
-# runtime values, force it back to display values before the shell exits.
-cleanup_trap() {
-    local exit_code=$?
-    if [[ "$SWAPPED" -eq 1 ]]; then
-        log "EXIT TRAP: script exiting (code $exit_code) with config still swapped -- forcing revert"
-        swap_to "$KA_DISPLAY" "$RATE_DISPLAY" || log "EXIT TRAP: revert itself FAILED -- manual intervention required on $CONF"
-    fi
-}
-trap cleanup_trap EXIT
+    storage_config:
+      boltdb_shipper:
+        active_index_directory: /loki/index
+        cache_location: /loki/cache
+      filesystem:
+        directory: /loki/chunks
 
-IS_STATE_CHANGE=0
-case "$*" in
-    ""|"-s reload")
-        IS_STATE_CHANGE=1
-        ;;
-    *)
-        IS_STATE_CHANGE=0
-        ;;
-esac
+    limits_config:
+      allow_structured_metadata: false
+      reject_old_samples: true
+      reject_old_samples_max_age: 168h
 
-if [[ "$IS_STATE_CHANGE" -eq 1 ]]; then
-    log "State-changing op ('$*'): swapping to runtime values (keepalive_timeout=${KA_RUNTIME}, rate=${RATE_RUNTIME})"
-    if ! swap_to "$KA_RUNTIME" "$RATE_RUNTIME"; then
-        log "ERROR: initial swap to runtime values failed, aborting (trap will revert)"
-        exit 1
-    fi
-    SWAPPED=1
+    table_manager:
+      retention_deletes_enabled: true
+      retention_period: 7d
 
-    if ! "$REAL_BIN" -t -c "$CONF" >> "$LOG" 2>&1; then
-        log "ERROR: config test failed with runtime values, aborting (trap will revert)"
-        exit 1
-    fi
-
-    log "Executing real nginx with args: $*"
-    # Release the lock BEFORE invoking real nginx. A bare start daemonizes
-    # (double-forks and detaches), and if fd 9 is still open at that point
-    # the detached master inherits it and holds the lock open forever --
-    # every future invocation (even harmless -t) would then fail with
-    # "Another nginx wrapper invocation is in progress." permanently.
-    release_lock
-    "$REAL_BIN" "$@"
-    RC=$?
-
-    # Reacquire for the confirm/revert step. If another wrapper invocation
-    # is genuinely mid-swap right now, this will fail fast rather than
-    # racing it -- acceptable, since that should be rare in practice.
-    acquire_lock
-
-    sleep 1
-    if pgrep -f "nginx: master process" > /dev/null; then
-        log "Reload/start confirmed active, reverting config to display values (keepalive_timeout=${KA_DISPLAY}, rate=${RATE_DISPLAY})"
-        swap_to "$KA_DISPLAY" "$RATE_DISPLAY"
-        SWAPPED=0
-    else
-        log "WARNING: master process not detected after operation; NOT reverting, leaving runtime values in file for inspection"
-    fi
-
-    exit $RC
-else
-    log "Read-only op ('$*'): passing through, no config mutation"
-    SWAPPED=0
-    release_lock
-    "$REAL_BIN" "$@"
-    exit $?
-fi
+    compactor:
+      working_directory: /loki/compactor
+---
