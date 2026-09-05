@@ -1,1 +1,39 @@
-https://gitlab.internal/rforexhub/customer.git    https://gitlab.organsiation/it-tss/rforex/backend/Customer.git , usernames,passwords
+#!/usr/bin/env bash
+set -euo pipefail
+
+INTERNAL_GITLAB="https://gitlab.internal"
+INTERNAL_TOKEN="glpat-xxxxxxxxxxxxxxxxxxxx"   # your internal PAT, scope: api
+INPUT_FILE="mirrors.csv"
+
+while IFS=, read -r internal_url org_url org_user org_pass; do
+  # skip blank lines / comments
+  [[ -z "$internal_url" || "$internal_url" == \#* ]] && continue
+
+  # trim whitespace from each field
+  internal_url=$(echo "$internal_url" | xargs)
+  org_url=$(echo "$org_url" | xargs)
+  org_user=$(echo "$org_user" | xargs)
+  org_pass=$(echo "$org_pass" | xargs)
+
+  relative_path=$(echo "$internal_url" | sed "s|${INTERNAL_GITLAB}/||" | sed 's|\.git$||')
+  encoded_path=$(echo -n "$relative_path" | jq -sRr @uri)
+
+  echo "==> Configuring mirror for $relative_path -> $org_url"
+
+  RESP=$(curl -s --request POST --header "PRIVATE-TOKEN: $INTERNAL_TOKEN" \
+       --form "url=$org_url" \
+       --form "enabled=true" \
+       --form "auth_method=password" \
+       --form "username=$org_user" \
+       --form "password=$org_pass" \
+       "${INTERNAL_GITLAB}/api/v4/projects/${encoded_path}/remote_mirrors")
+
+  mirror_id=$(echo "$RESP" | jq -r '.id // empty')
+  if [[ -n "$mirror_id" ]]; then
+    echo "   OK — mirror id: $mirror_id"
+  else
+    echo "   RESPONSE: $RESP"
+  fi
+
+  echo "-----------------------------------"
+done < "$INPUT_FILE"
