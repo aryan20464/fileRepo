@@ -1,1 +1,1 @@
-ror: git push: exit status 1, stderr: "remote: GitLab: File name SBI.ITTSS.API/Certificates/tap_privatekey.pem was prohibited by the pattern \"\\\\.(pem|key)$\".\nTo https://gitlab.sbi/it-tss/itrp/backend/itrp-app.git\n ! [remote rejected] main -> main (pre-receive hook declined)\nerror: failed to push some refs to 'https://gitlab.sbi/it-tss/itrp/backend/itrp-app.git'\n"
+parse error: Invalid numeric literal at line 1, column 7 curl --header "PRIVATE-TOKEN: glptoken" -ikv "https://gitlab.one" | jq -r '.[].http_url_to_repo' > one.txt
