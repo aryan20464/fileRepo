@@ -1,1 +1,40 @@
-parse error: Invalid numeric literal at line 1, column 7 curl --header "PRIVATE-TOKEN: glptoken" -ikv "https://gitlab.one" | jq -r '.[].http_url_to_repo' > one.txt
+#!/usr/bin/env bash
+set -euo pipefail
+
+INTERNAL_GITLAB="https://gitlab.one"
+INTERNAL_TOKEN="glpat-xxxxxxxxxxxxxxxxxxxx"   # your internal PAT, scope: api
+INPUT_FILE="mirrors.csv"
+
+while IFS=, read -r internal_url org_url internal_user internal_pass org_user org_pass; do
+  # skip blank lines / comments
+  [[ -z "$internal_url" || "$internal_url" == \#* ]] && continue
+
+  # trim whitespace on each field
+  internal_url=$(echo "$internal_url" | xargs)
+  org_url=$(echo "$org_url" | xargs)
+  org_user=$(echo "$org_user" | xargs)
+  org_pass=$(echo "$org_pass" | xargs)
+
+  relative_path=$(echo "$internal_url" | sed "s|${INTERNAL_GITLAB}/||" | sed 's|\.git$||')
+  encoded_path=$(echo -n "$relative_path" | jq -sRr @uri)
+
+  echo "==> Configuring mirror for $relative_path -> $org_url"
+
+  RESP=$(curl -s --request POST --header "PRIVATE-TOKEN: $INTERNAL_TOKEN" \
+       --form "url=$org_url" \
+       --form "enabled=true" \
+       --form "auth_method=password" \
+       --form "username=$org_user" \
+       --form "password=$org_pass" \
+       "${INTERNAL_GITLAB}/api/v4/projects/${encoded_path}/remote_mirrors")
+
+  # check for success (a successful create returns an "id" field)
+  mirror_id=$(echo "$RESP" | jq -r '.id // empty')
+  if [[ -n "$mirror_id" ]]; then
+    echo "   OK — mirror id: $mirror_id"
+  else
+    echo "   RESPONSE: $RESP"
+  fi
+
+  echo "-----------------------------------"
+done < "$INPUT_FILE"
