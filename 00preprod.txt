@@ -1,40 +1,41 @@
-#!/usr/bin/env bash
-set -euo pipefail
+* Connection state changed (MAX_CONCURRENT_STREAMS == 128)!
+* TLSv1.3 (OUT), TLS app data, [no content] (0):
+* TLSv1.3 (OUT), TLS app data, [no content] (0):
+* TLSv1.3 (IN), TLS app data, [no content] (0):
+* TLSv1.3 (OUT), TLS app data, [no content] (0):
+* TLSv1.3 (IN), TLS app data, [no content] (0):
+< HTTP/2 404
+HTTP/2 404
+< server: nginx
+server: nginx
+< date: Sat, 05 Sep 2026 12:18:05 GMT
+date: Sat, 05 Sep 2026 12:18:05 GMT
+< content-type: application/json
+content-type: application/json
+< content-length: 35
+content-length: 35
+< cache-control: no-cache
+cache-control: no-cache
+< vary: Origin
+vary: Origin
+< x-content-type-options: nosniff
+x-content-type-options: nosniff
+< x-frame-options: SAMEORIGIN
+x-frame-options: SAMEORIGIN
+< x-gitlab-meta: {"correlation_id":"01M1RR2B0C1M8XG6QRVG3WCPPA","version":"1"}
+x-gitlab-meta: {"correlation_id":"01M1RR2B0C1M8XG6QRVG3WCPPA","version":"1"}
+< x-request-id: 01M1RR2B0C1M8XG6QRVG3WCPPA
+x-request-id: 01M1RR2B0C1M8XG6QRVG3WCPPA
+< x-runtime: 0.025648
+x-runtime: 0.025648
+< x-xss-protection: 1; mode=block
+x-xss-protection: 1; mode=block
+< permissions-policy: camera=(), microphone=(), geolocation=()
+permissions-policy: camera=(), microphone=(), geolocation=()
+< strict-transport-security: max-age=31536000; includeSubDomains
+strict-transport-security: max-age=31536000; includeSubDomains
+< x-frame-options: deny
+x-frame-options: deny
 
-INTERNAL_GITLAB="https://gitlab.internal"
-INTERNAL_TOKEN="glpat-xxxxxxxxxxxxxxxxxxxx"   # internal PAT, scope: api
-
-ORG_USER="orguser1"                            # organisational GitLab username
-ORG_PASS="orgpass_or_token"                    # organisational GitLab password/PAT
-
-INPUT_FILE="mirrors.csv"
-
-while IFS=, read -r internal_url org_url; do
-  # skip blank lines / comments
-  [[ -z "$internal_url" || "$internal_url" == \#* ]] && continue
-
-  internal_url=$(echo "$internal_url" | xargs)
-  org_url=$(echo "$org_url" | xargs)
-
-  relative_path=$(echo "$internal_url" | sed "s|${INTERNAL_GITLAB}/||" | sed 's|\.git$||')
-  encoded_path=$(echo -n "$relative_path" | jq -sRr @uri)
-
-  echo "==> Configuring mirror for $relative_path -> $org_url"
-
-  RESP=$(curl -s --request POST --header "PRIVATE-TOKEN: $INTERNAL_TOKEN" \
-       --form "url=$org_url" \
-       --form "enabled=true" \
-       --form "auth_method=password" \
-       --form "username=$ORG_USER" \
-       --form "password=$ORG_PASS" \
-       "${INTERNAL_GITLAB}/api/v4/projects/${encoded_path}/remote_mirrors")
-
-  mirror_id=$(echo "$RESP" | jq -r '.id // empty')
-  if [[ -n "$mirror_id" ]]; then
-    echo "   OK — mirror id: $mirror_id"
-  else
-    echo "   RESPONSE: $RESP"
-  fi
-
-  echo "-----------------------------------"
-done < "$INPUT_FILE"
+* HTTP error before end of send, stop sending
+<
