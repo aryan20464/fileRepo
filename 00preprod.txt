@@ -1,11 +1,9 @@
-[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# gitlab-psql -d gitlabhq_production -c "SHOW unix_socket_directories"
-  unix_socket_directories
-----------------------------
- /var/opt/gitlab/postgresql
-(1 row)
+[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# /opt/gitlab/embedded/bin/pg_dump -Fc -h /var/opt/gitlab/postgresql -p 5432 -d gitlabhq_production -f /data/backup/gitlab-pre-upgrade-16.8.1/gitlabhq_production-16.8.1.dump
+pg_dump: error: connection to server on socket "/var/opt/gitlab/postgresql/.s.PGSQL.5432" failed: FATAL:  role "root" does not exist
+[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# /opt/gitlab/embedded/bin/pg_dump -Fc -h /var/opt/gitlab/postgresql -p 5432 -U gitlab-psql -d gitlabhq_production -f /data/backup/gitlab-pre-upgrade-16.8.1/gitlabhq_production-16.8.1.dump
+pg_dump: error: connection to server on socket "/var/opt/gitlab/postgresql/.s.PGSQL.5432" failed: FATAL:  Peer authentication failed for user "gitlab-psql"
+[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# sudo -u gitlab-psql /opt/gitlab/embedded/bin/pg_dump -Fc -h /var/opt/gitlab/postgresql -p 5432 -U gitlab-psql -d gitlabhq_production -f /data/backup/gitlab-pre-upgrade-16.8.1/gitlabhq_production-16.8.1.dump
+could not change directory to "/data/backup/gitlab-pre-upgrade-16.8.1": Permission denied
+pg_dump: error: could not open output file "/data/backup/gitlab-pre-upgrade-16.8.1/gitlabhq_production-16.8.1.dump": Permission denied
+[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]#
 
-[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# gitlab-psql -d gitlabhq_production -c "SHOW port"
- port
-------
- 5432
-(1 row)
