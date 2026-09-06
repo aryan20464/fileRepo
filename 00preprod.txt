@@ -1,65 +1,1515 @@
-#!/usr/bin/env bash
-set -euo pipefail
+[root@tss-ideasvnuat ~]# gitlab-rake gitlab:env:info
 
-ORG_GITLAB="https://gitlab.sbi"
-ORG_TOKEN="org-pat-with-api-scope"    # needs Maintainer/Owner on each org project
+System information
+System:
+Current User:   git
+Using RVM:      no
+Ruby Version:   3.1.4p223
+Gem Version:    3.4.22
+Bundler Version:2.5.4
+Rake Version:   13.0.6
+Redis Version:  7.0.15
+Sidekiq Version:7.1.6
+Go Version:     unknown
 
-INPUT_FILE="mirrors.csv"              # reuses internal_url,org_url columns
-LOG_FILE="protected_branch_fix_$(date +%Y%m%d_%H%M%S).log"
+GitLab information
+Version:        16.8.1
+Revision:       a658d811568
+Directory:      /opt/gitlab/embedded/service/gitlab-rails
+DB Adapter:     PostgreSQL
+DB Version:     14.9
+URL:            https://ideagit.sbi.co.in:10000
+HTTP Clone URL: https://ideagit.sbi.co.in:10000/some-group/some-project.git
+SSH Clone URL:  git@ideagit.sbi.co.in:some-group/some-project.git
+Using LDAP:     no
+Using Omniauth: yes
+Omniauth Providers:
 
-urlencode() {
-  python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "$1"
+GitLab Shell
+Version:        14.33.0
+Repository storages:
+- default:      unix:/var/opt/gitlab/gitaly/gitaly.socket
+GitLab Shell path:              /opt/gitlab/embedded/service/gitlab-shell
+
+Gitaly
+- default Address:      unix:/var/opt/gitlab/gitaly/gitaly.socket
+- default Version:      16.8.1
+- default Git Version:  2.42.0
+
+[root@tss-ideasvnuat ~]# gitlab-rake gitlab:check SANITIZE=true
+Checking GitLab subtasks ...
+
+Checking GitLab Shell ...
+
+GitLab Shell: ... GitLab Shell version >= 14.33.0 ? ... OK (14.33.0)
+Running /opt/gitlab/embedded/service/gitlab-shell/bin/check
+Internal API available: OK
+Redis available via internal API: OK
+gitlab-shell self-check successful
+
+Checking GitLab Shell ... Finished
+
+Checking Gitaly ...
+
+Gitaly: ... default ... OK
+
+Checking Gitaly ... Finished
+
+Checking Sidekiq ...
+
+Sidekiq: ... Running? ... yes
+Number of Sidekiq processes (cluster/worker) ... 1/1
+
+Checking Sidekiq ... Finished
+
+Checking Incoming Email ...
+
+Incoming Email: ... Reply by email is disabled in config/gitlab.yml
+
+Checking Incoming Email ... Finished
+
+Checking LDAP ...
+
+LDAP: ... LDAP is disabled in config/gitlab.yml
+
+Checking LDAP ... Finished
+
+Checking GitLab App ...
+
+Database config exists? ... yes
+Tables are truncated? ... skipped
+All migrations up? ... yes
+Database contains orphaned GroupMembers? ... no
+GitLab config exists? ... yes
+GitLab config up to date? ... yes
+Cable config exists? ... yes
+Resque config exists? ... yes
+Log directory writable? ... yes
+Tmp directory writable? ... yes
+Uploads directory exists? ... yes
+Uploads directory has correct permissions? ... yes
+Uploads directory tmp has correct permissions? ... yes
+Systemd unit files or init script exist? ... skipped (omnibus-gitlab has neither init script nor systemd units)
+Systemd unit files or init script up-to-date? ... skipped (omnibus-gitlab has neither init script nor systemd units)
+Projects have namespace: ...
+5/1 ... yes
+5/2 ... yes
+9/3 ... yes
+9/4 ... yes
+9/5 ... yes
+9/6 ... yes
+9/7 ... yes
+9/8 ... yes
+9/9 ... yes
+9/10 ... yes
+9/11 ... yes
+9/12 ... yes
+10/14 ... yes
+10/15 ... yes
+10/16 ... yes
+10/17 ... yes
+43/18 ... yes
+43/19 ... yes
+43/20 ... yes
+43/21 ... yes
+43/22 ... yes
+9/24 ... yes
+43/25 ... yes
+43/26 ... yes
+43/27 ... yes
+43/28 ... yes
+43/29 ... yes
+43/30 ... yes
+43/31 ... yes
+43/32 ... yes
+43/33 ... yes
+43/34 ... yes
+43/35 ... yes
+43/36 ... yes
+43/37 ... yes
+43/38 ... yes
+43/39 ... yes
+43/40 ... yes
+9/41 ... yes
+43/42 ... yes
+43/43 ... yes
+9/44 ... yes
+9/45 ... yes
+10/46 ... yes
+9/47 ... yes
+9/48 ... yes
+9/49 ... yes
+27/50 ... yes
+8/51 ... yes
+27/52 ... yes
+8/53 ... yes
+27/54 ... yes
+27/56 ... yes
+27/57 ... yes
+26/58 ... yes
+43/59 ... yes
+43/60 ... yes
+8/61 ... yes
+27/62 ... yes
+27/63 ... yes
+96/64 ... yes
+29/65 ... yes
+9/66 ... yes
+8/67 ... yes
+97/68 ... yes
+97/69 ... yes
+97/70 ... yes
+97/71 ... yes
+97/72 ... yes
+97/73 ... yes
+97/74 ... yes
+97/75 ... yes
+27/78 ... yes
+9/79 ... yes
+43/80 ... yes
+123/82 ... yes
+123/83 ... yes
+123/84 ... yes
+43/85 ... yes
+27/88 ... yes
+9/89 ... yes
+10/90 ... yes
+10/92 ... yes
+10/93 ... yes
+123/94 ... yes
+9/95 ... yes
+43/96 ... yes
+43/97 ... yes
+43/98 ... yes
+43/99 ... yes
+27/101 ... yes
+27/102 ... yes
+27/103 ... yes
+27/104 ... yes
+9/105 ... yes
+134/106 ... yes
+134/110 ... yes
+43/112 ... yes
+10/113 ... yes
+43/114 ... yes
+9/115 ... yes
+9/116 ... yes
+10/117 ... yes
+123/118 ... yes
+27/119 ... yes
+10/120 ... yes
+27/121 ... yes
+26/124 ... yes
+9/125 ... yes
+150/127 ... yes
+181/130 ... yes
+8/132 ... yes
+97/133 ... yes
+165/134 ... yes
+189/135 ... yes
+189/136 ... yes
+43/137 ... yes
+27/138 ... yes
+26/139 ... yes
+27/140 ... yes
+9/142 ... yes
+9/143 ... yes
+196/144 ... yes
+219/145 ... yes
+27/146 ... yes
+196/151 ... yes
+175/152 ... yes
+196/153 ... yes
+196/154 ... yes
+196/156 ... yes
+43/157 ... yes
+196/158 ... yes
+196/159 ... yes
+196/160 ... yes
+9/161 ... yes
+10/162 ... yes
+26/163 ... yes
+26/164 ... yes
+43/165 ... yes
+43/166 ... yes
+27/168 ... yes
+10/170 ... yes
+123/171 ... yes
+43/172 ... yes
+196/173 ... yes
+196/174 ... yes
+43/175 ... yes
+27/176 ... yes
+205/177 ... yes
+196/178 ... yes
+43/179 ... yes
+111/180 ... yes
+111/181 ... yes
+111/182 ... yes
+111/183 ... yes
+111/184 ... yes
+196/185 ... yes
+9/186 ... yes
+271/187 ... yes
+9/188 ... yes
+196/190 ... yes
+289/192 ... yes
+282/193 ... yes
+282/194 ... yes
+282/195 ... yes
+282/196 ... yes
+282/197 ... yes
+282/198 ... yes
+43/199 ... yes
+43/200 ... yes
+9/201 ... yes
+295/202 ... yes
+111/203 ... yes
+111/204 ... yes
+196/205 ... yes
+289/206 ... yes
+196/207 ... yes
+196/208 ... yes
+196/209 ... yes
+43/210 ... yes
+43/211 ... yes
+289/212 ... yes
+27/213 ... yes
+314/215 ... yes
+264/216 ... yes
+196/217 ... yes
+27/218 ... yes
+314/219 ... yes
+111/220 ... yes
+196/221 ... yes
+9/222 ... yes
+43/223 ... yes
+196/224 ... yes
+27/225 ... yes
+27/226 ... yes
+27/227 ... yes
+27/228 ... yes
+9/229 ... yes
+314/230 ... yes
+314/231 ... yes
+196/232 ... yes
+9/233 ... yes
+219/234 ... yes
+219/235 ... yes
+219/236 ... yes
+43/237 ... yes
+196/238 ... yes
+43/239 ... yes
+9/240 ... yes
+196/244 ... yes
+343/246 ... yes
+343/247 ... yes
+343/248 ... yes
+343/249 ... yes
+343/250 ... yes
+343/251 ... yes
+343/252 ... yes
+343/253 ... yes
+196/254 ... yes
+9/256 ... yes
+196/257 ... yes
+343/258 ... yes
+9/260 ... yes
+9/261 ... yes
+365/262 ... yes
+343/263 ... yes
+43/264 ... yes
+9/265 ... yes
+9/266 ... yes
+43/267 ... yes
+196/268 ... yes
+196/270 ... yes
+10/271 ... yes
+274/272 ... yes
+27/275 ... yes
+27/276 ... yes
+274/277 ... yes
+27/278 ... yes
+43/279 ... yes
+27/280 ... yes
+196/281 ... yes
+111/283 ... yes
+27/284 ... yes
+196/285 ... yes
+43/286 ... yes
+393/290 ... yes
+393/291 ... yes
+196/292 ... yes
+27/293 ... yes
+43/294 ... yes
+26/295 ... yes
+26/296 ... yes
+27/297 ... yes
+Redis version >= 6.0.0? ... yes
+Ruby version >= 3.0.6 ? ... yes (3.1.4)
+Git user has default SSH configuration? ... yes
+Active users: ... 66
+Is authorized keys file accessible? ... yes
+GitLab configured to store new projects in hashed storage? ... yes
+All projects are in hashed storage? ... yes
+
+Checking GitLab App ... Finished
+
+
+Checking GitLab subtasks ... Finished
+
+
+[root@tss-ideasvnuat ~]# gitlab-ctl upgrade-check
+[root@tss-ideasvnuat ~]# gitlab-rake gitlab:doctor:secrets
+I, [2026-09-06T12:37:15.375198 #2835190]  INFO -- : Checking encrypted values in the database
+I, [2026-09-06T12:37:34.075691 #2835190]  INFO -- : - Gitlab::BackgroundMigration::BackfillIntegrationsEnableSslVerification::Integration failures: 0
+I, [2026-09-06T12:37:34.102049 #2835190]  INFO -- : - WebHook failures: 0
+I, [2026-09-06T12:37:34.111439 #2835190]  INFO -- : - Packages::Debian::ProjectDistributionKey failures: 0
+I, [2026-09-06T12:37:34.120251 #2835190]  INFO -- : - Packages::Debian::GroupDistributionKey failures: 0
+I, [2026-09-06T12:37:34.129490 #2835190]  INFO -- : - Clusters::Providers::Gcp failures: 0
+I, [2026-09-06T12:37:34.138943 #2835190]  INFO -- : - Clusters::Providers::Aws failures: 0
+I, [2026-09-06T12:37:34.144237 #2835190]  INFO -- : - Clusters::Integrations::Prometheus failures: 0
+I, [2026-09-06T12:37:34.147180 #2835190]  INFO -- : - ServiceDesk::CustomEmailVerification failures: 0
+I, [2026-09-06T12:37:34.152147 #2835190]  INFO -- : - ServiceDesk::CustomEmailCredential failures: 0
+I, [2026-09-06T12:37:34.160285 #2835190]  INFO -- : - Integrations::ZentaoTrackerData failures: 0
+I, [2026-09-06T12:37:34.167386 #2835190]  INFO -- : - Integrations::JiraTrackerData failures: 0
+I, [2026-09-06T12:37:34.176380 #2835190]  INFO -- : - Integrations::IssueTrackerData failures: 0
+I, [2026-09-06T12:37:34.184786 #2835190]  INFO -- : - IncidentManagement::ProjectIncidentManagementSetting failures: 0
+I, [2026-09-06T12:37:34.189827 #2835190]  INFO -- : - ErrorTracking::ProjectErrorTrackingSetting failures: 0
+I, [2026-09-06T12:37:34.214728 #2835190]  INFO -- : - Clusters::KubernetesNamespace failures: 0
+I, [2026-09-06T12:37:34.223222 #2835190]  INFO -- : - BulkImports::Configuration failures: 0
+I, [2026-09-06T12:37:34.233503 #2835190]  INFO -- : - Atlassian::Identity failures: 0
+I, [2026-09-06T12:37:34.239203 #2835190]  INFO -- : - Alerting::ProjectAlertingSetting failures: 0
+I, [2026-09-06T12:37:34.245255 #2835190]  INFO -- : - Ai::ServiceAccessToken failures: 0
+I, [2026-09-06T12:37:34.266659 #2835190]  INFO -- : - SlackIntegration failures: 0
+I, [2026-09-06T12:37:34.338562 #2835190]  INFO -- : - RemoteMirror failures: 0
+I, [2026-09-06T12:37:34.371144 #2835190]  INFO -- : - ProjectSetting failures: 0
+I, [2026-09-06T12:37:34.385342 #2835190]  INFO -- : - PagesDomainAcmeOrder failures: 0
+I, [2026-09-06T12:37:34.395681 #2835190]  INFO -- : - PagesDomain failures: 0
+I, [2026-09-06T12:37:34.406583 #2835190]  INFO -- : - JiraConnectInstallation failures: 0
+I, [2026-09-06T12:37:34.416923 #2835190]  INFO -- : - GrafanaIntegration failures: 0
+I, [2026-09-06T12:37:34.429207 #2835190]  INFO -- : - ChatName failures: 0
+I, [2026-09-06T12:37:34.439809 #2835190]  INFO -- : - AlertManagement::HttpIntegration failures: 0
+I, [2026-09-06T12:37:34.442345 #2835190]  INFO -- : - Integration failures: 0
+I, [2026-09-06T12:37:34.450479 #2835190]  INFO -- : - ProjectImportData failures: 0
+I, [2026-09-06T12:37:34.461434 #2835190]  INFO -- : - Snippet failures: 0
+I, [2026-09-06T12:37:34.470991 #2835190]  INFO -- : - Clusters::Platforms::Kubernetes failures: 0
+I, [2026-09-06T12:37:34.472503 #2835190]  INFO -- : - SystemHook failures: 0
+I, [2026-09-06T12:37:34.473784 #2835190]  INFO -- : - ServiceHook failures: 0
+I, [2026-09-06T12:37:34.474983 #2835190]  INFO -- : - ProjectHook failures: 0
+I, [2026-09-06T12:37:34.476337 #2835190]  INFO -- : - Integrations::Pushover failures: 0
+I, [2026-09-06T12:37:34.477913 #2835190]  INFO -- : - Integrations::BaseMonitoring failures: 0
+I, [2026-09-06T12:37:34.479321 #2835190]  INFO -- : - Integrations::Pivotaltracker failures: 0
+I, [2026-09-06T12:37:34.480578 #2835190]  INFO -- : - Integrations::PipelinesEmail failures: 0
+I, [2026-09-06T12:37:34.481798 #2835190]  INFO -- : - Integrations::Packagist failures: 0
+I, [2026-09-06T12:37:34.483152 #2835190]  INFO -- : - Integrations::Irker failures: 0
+I, [2026-09-06T12:37:34.484374 #2835190]  INFO -- : - Integrations::EmailsOnPush failures: 0
+I, [2026-09-06T12:37:34.485583 #2835190]  INFO -- : - Integrations::Datadog failures: 0
+I, [2026-09-06T12:37:34.486868 #2835190]  INFO -- : - Integrations::SquashTm failures: 0
+I, [2026-09-06T12:37:34.488153 #2835190]  INFO -- : - Integrations::BaseSlashCommands failures: 0
+I, [2026-09-06T12:37:34.489435 #2835190]  INFO -- : - Integrations::Harbor failures: 0
+I, [2026-09-06T12:37:34.490687 #2835190]  INFO -- : - Integrations::GooglePlay failures: 0
+I, [2026-09-06T12:37:34.491982 #2835190]  INFO -- : - Integrations::ExternalWiki failures: 0
+I, [2026-09-06T12:37:34.493494 #2835190]  INFO -- : - Integrations::BaseChatNotification failures: 0
+I, [2026-09-06T12:37:34.494765 #2835190]  INFO -- : - Integrations::DiffblueCover failures: 0
+I, [2026-09-06T12:37:34.496103 #2835190]  INFO -- : - Integrations::BaseThirdPartyWiki failures: 0
+I, [2026-09-06T12:37:34.497386 #2835190]  INFO -- : - Integrations::Campfire failures: 0
+I, [2026-09-06T12:37:34.498859 #2835190]  INFO -- : - Integrations::BaseIssueTracker failures: 0
+I, [2026-09-06T12:37:34.500304 #2835190]  INFO -- : - Integrations::BaseCi failures: 0
+I, [2026-09-06T12:37:34.503670 #2835190]  INFO -- : - Integrations::Assembla failures: 0
+I, [2026-09-06T12:37:34.505200 #2835190]  INFO -- : - Integrations::Asana failures: 0
+I, [2026-09-06T12:37:34.506703 #2835190]  INFO -- : - Integrations::AppleAppStore failures: 0
+I, [2026-09-06T12:37:34.508189 #2835190]  INFO -- : - Integrations::MockMonitoring failures: 0
+I, [2026-09-06T12:37:34.509526 #2835190]  INFO -- : - Integrations::Prometheus failures: 0
+I, [2026-09-06T12:37:34.510825 #2835190]  INFO -- : - Integrations::SlackSlashCommands failures: 0
+I, [2026-09-06T12:37:34.512108 #2835190]  INFO -- : - Integrations::MattermostSlashCommands failures: 0
+I, [2026-09-06T12:37:34.513405 #2835190]  INFO -- : - Integrations::WebexTeams failures: 0
+I, [2026-09-06T12:37:34.514888 #2835190]  INFO -- : - Integrations::UnifyCircuit failures: 0
+I, [2026-09-06T12:37:34.516416 #2835190]  INFO -- : - Integrations::Telegram failures: 0
+I, [2026-09-06T12:37:34.517755 #2835190]  INFO -- : - Integrations::Pumble failures: 0
+I, [2026-09-06T12:37:34.519219 #2835190]  INFO -- : - Integrations::MicrosoftTeams failures: 0
+I, [2026-09-06T12:37:34.520674 #2835190]  INFO -- : - Integrations::HangoutsChat failures: 0
+I, [2026-09-06T12:37:34.522107 #2835190]  INFO -- : - Integrations::Mattermost failures: 0
+I, [2026-09-06T12:37:34.523466 #2835190]  INFO -- : - Integrations::BaseSlackNotification failures: 0
+I, [2026-09-06T12:37:34.524925 #2835190]  INFO -- : - Integrations::Discord failures: 0
+I, [2026-09-06T12:37:34.526294 #2835190]  INFO -- : - Integrations::GitlabSlackApplication failures: 0
+I, [2026-09-06T12:37:34.527533 #2835190]  INFO -- : - Integrations::Slack failures: 0
+I, [2026-09-06T12:37:34.529119 #2835190]  INFO -- : - Integrations::Confluence failures: 0
+I, [2026-09-06T12:37:34.530632 #2835190]  INFO -- : - Integrations::Zentao failures: 0
+I, [2026-09-06T12:37:34.532100 #2835190]  INFO -- : - Integrations::Jira failures: 0
+I, [2026-09-06T12:37:34.533426 #2835190]  INFO -- : - Integrations::Clickup failures: 0
+I, [2026-09-06T12:37:34.594063 #2835190]  INFO -- : - Integrations::Youtrack failures: 0
+I, [2026-09-06T12:37:34.595831 #2835190]  INFO -- : - Integrations::Ewm failures: 0
+I, [2026-09-06T12:37:34.597252 #2835190]  INFO -- : - Integrations::Redmine failures: 0
+I, [2026-09-06T12:37:34.598924 #2835190]  INFO -- : - Integrations::CustomIssueTracker failures: 0
+I, [2026-09-06T12:37:34.600638 #2835190]  INFO -- : - Integrations::Bugzilla failures: 0
+I, [2026-09-06T12:37:34.602001 #2835190]  INFO -- : - Integrations::MockCi failures: 0
+I, [2026-09-06T12:37:34.603654 #2835190]  INFO -- : - Integrations::Teamcity failures: 0
+I, [2026-09-06T12:37:34.605292 #2835190]  INFO -- : - Integrations::Jenkins failures: 0
+I, [2026-09-06T12:37:34.606597 #2835190]  INFO -- : - Integrations::DroneCi failures: 0
+I, [2026-09-06T12:37:34.608091 #2835190]  INFO -- : - Integrations::Buildkite failures: 0
+I, [2026-09-06T12:37:34.609564 #2835190]  INFO -- : - Integrations::Bamboo failures: 0
+I, [2026-09-06T12:37:34.610679 #2835190]  INFO -- : - ProjectSnippet failures: 0
+I, [2026-09-06T12:37:34.612039 #2835190]  INFO -- : - PersonalSnippet failures: 0
+I, [2026-09-06T12:37:35.237315 #2835190]  INFO -- : - User failures: 0
+I, [2026-09-06T12:37:35.245944 #2835190]  INFO -- : - ApplicationSetting failures: 0
+I, [2026-09-06T12:37:35.273123 #2835190]  INFO -- : - Gitlab::BackgroundMigration::EncryptCiTriggerToken::CiTrigger failures: 0
+I, [2026-09-06T12:37:35.294583 #2835190]  INFO -- : - Ci::JobVariable failures: 0
+I, [2026-09-06T12:37:35.295666 #2835190]  INFO -- : - Ci::Trigger failures: 0
+I, [2026-09-06T12:37:35.303893 #2835190]  INFO -- : - Ci::GroupVariable failures: 0
+I, [2026-09-06T12:37:35.314594 #2835190]  INFO -- : - Ci::Variable failures: 0
+I, [2026-09-06T12:37:35.324165 #2835190]  INFO -- : - Ci::PipelineScheduleVariable failures: 0
+I, [2026-09-06T12:37:35.352263 #2835190]  INFO -- : - Ci::PipelineVariable failures: 0
+I, [2026-09-06T12:37:35.361296 #2835190]  INFO -- : - Ci::InstanceVariable failures: 0
+I, [2026-09-06T12:37:35.373521 #2835190]  INFO -- : - Operations::FeatureFlagsClient failures: 0
+I, [2026-09-06T12:37:35.393378 #2835190]  INFO -- : - Clusters::AgentToken failures: 0
+I, [2026-09-06T12:37:35.433790 #2835190]  INFO -- : - Project failures: 0
+I, [2026-09-06T12:37:35.451677 #2835190]  INFO -- : - DeployToken failures: 0
+I, [2026-09-06T12:37:36.101508 #2835190]  INFO -- : - Group failures: 0
+I, [2026-09-06T12:37:36.167509 #2835190]  INFO -- : - Ci::Runner failures: 0
+I, [2026-09-06T12:37:36.211019 #2835190]  INFO -- : - Ci::Build failures: 0
+I, [2026-09-06T12:37:36.211079 #2835190]  INFO -- : Total: 0 row(s) affected
+I, [2026-09-06T12:37:36.211093 #2835190]  INFO -- : Done!
+
+[root@tss-ideasvnuat ~]# gitlab-ctl show-config
+Cinc Client, version 17.10.0
+Patents: https://www.chef.io/patents
+Infra Phase starting
+Resolving cookbooks for run list: ["gitlab::show_config"]
+Synchronizing cookbooks:
+  - gitlab (0.0.1)
+  - package (0.1.0)
+  - logrotate (0.1.0)
+  - postgresql (0.1.0)
+  - redis (0.1.0)
+  - registry (0.1.0)
+  - monitoring (0.1.0)
+  - mattermost (0.1.0)
+  - gitaly (0.1.0)
+  - consul (0.1.0)
+  - praefect (0.1.0)
+  - gitlab-kas (0.1.0)
+  - gitlab-pages (0.1.0)
+  - letsencrypt (0.1.0)
+  - nginx (0.1.0)
+  - runit (5.1.7)
+  - crond (0.1.0)
+  - acme (4.1.6)
+Installing cookbook gem dependencies:
+Compiling cookbooks...
+/opt/gitlab/embedded/cookbooks/cache/cookbooks/package/libraries/helpers/selinux_distro_helper.rb:2: warning: already initialized constant SELinuxDistroHelper::REDHAT_RELEASE_FILE
+/opt/gitlab/embedded/cookbooks/package/libraries/helpers/selinux_distro_helper.rb:2: warning: previous definition of REDHAT_RELEASE_FILE was here
+/opt/gitlab/embedded/cookbooks/cache/cookbooks/package/libraries/helpers/selinux_distro_helper.rb:3: warning: already initialized constant SELinuxDistroHelper::OS_RELEASE_FILE
+/opt/gitlab/embedded/cookbooks/package/libraries/helpers/selinux_distro_helper.rb:3: warning: previous definition of OS_RELEASE_FILE was here
+/opt/gitlab/embedded/cookbooks/cache/cookbooks/package/libraries/helpers/secrets_helper.rb:4: warning: already initialized constant SecretsHelper::SECRETS_FILE
+/opt/gitlab/embedded/cookbooks/package/libraries/helpers/secrets_helper.rb:4: warning: previous definition of SECRETS_FILE was here
+/opt/gitlab/embedded/cookbooks/cache/cookbooks/package/libraries/helpers/secrets_helper.rb:5: warning: already initialized constant SecretsHelper::SECRETS_FILE_CHEF_ATTR
+/opt/gitlab/embedded/cookbooks/package/libraries/helpers/secrets_helper.rb:5: warning: previous definition of SECRETS_FILE_CHEF_ATTR was here
+/opt/gitlab/embedded/cookbooks/cache/cookbooks/package/libraries/helpers/secrets_helper.rb:6: warning: already initialized constant SecretsHelper::SKIP_GENERATE_SECRETS_CHEF_ATTR
+/opt/gitlab/embedded/cookbooks/package/libraries/helpers/secrets_helper.rb:6: warning: previous definition of SKIP_GENERATE_SECRETS_CHEF_ATTR was here
+/opt/gitlab/embedded/cookbooks/cache/cookbooks/package/libraries/gitlab_cluster.rb:16: warning: already initialized constant GitlabCluster::CONFIG_PATH
+/opt/gitlab/embedded/cookbooks/package/libraries/gitlab_cluster.rb:16: warning: previous definition of CONFIG_PATH was here
+/opt/gitlab/embedded/cookbooks/cache/cookbooks/package/libraries/gitlab_cluster.rb:17: warning: already initialized constant GitlabCluster::JSON_FILE
+/opt/gitlab/embedded/cookbooks/package/libraries/gitlab_cluster.rb:17: warning: previous definition of JSON_FILE was here
+Top level ::CompositeIO is deprecated, require 'multipart/post' and use `Multipart::Post::CompositeReadIO` instead!
+Top level ::Parts is deprecated, require 'multipart/post' and use `Multipart::Post::Parts` instead!
+Loading Cinc Auditor profile files:
+Loading Cinc Auditor input files:
+Loading Cinc Auditor waiver files:
+{
+  "gitlab": {
+    "gitlab_sshd": {
+
+    },
+    "gitlab_shell": {
+      "secret_token": "a536ded77cfd0d80c82f1be4be3efba42979b3a50b50b3dc77d803a99b8b019d2c94429e89b2c3b47ade6cec384680d1c88cdf6042062f24c951287e5ab361c8",
+      "auth_file": "/var/opt/gitlab/.ssh/authorized_keys"
+    },
+    "gitlab_rails": {
+      "redis_host": "127.0.0.1",
+      "redis_port": 6829,
+      "redis_socket": "",
+      "secret_key_base": "4c5e12169afaee5c946776de7c4a4047f337abd84cd28609630f1be2024bba450adea7a01133a36a777a1ed2a9b510a8bc91c62cf55c3b9f2989368677b2af1a",
+      "db_key_base": "30d244862d7257a6d2d22bdb8cc89468176d97be2e80ce9aae6cc596eff0e0a119cbc3e3ae4d1e6e227f7bdd1332ca484b63cf7ca46db52d913f0e91f5d8d17c",
+      "otp_key_base": "59da6cf6188b30ac3a4a8f83271960ba410efc6cb4e2d96e74fbf3ec31197cc4ab0c445cca44a7dd8adac69f0f26689218a8756dfaaeab6e31d0882895626043",
+      "encrypted_settings_key_base": "ec1367dc9dc19307594504f802908783748a2a8cdb049f5f896de59a60e7f8e53a2dba0f97912aea0fa8b0d0616b0469ed33baed2c7dae15bce6061a42b6d8a8",
+      "openid_connect_signing_key": "-----BEGIN RSA PRIVATE KEY-----\n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\n-----END RSA PRIVATE KEY-----\n",
+      "ci_jwt_signing_key": "-----BEGIN RSA PRIVATE KEY-----\n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\n-----END RSA PRIVATE KEY-----\n",
+      "initial_root_password": "130necUQhfFpd/stKB4ydYHwsLxo5y2JsuksNiHYO5I=",
+      "store_initial_root_password": true,
+      "db_username": "gitlab",
+      "db_host": "/var/opt/gitlab/postgresql",
+      "db_port": 5432,
+      "databases": {
+        "main": {
+          "enable": true,
+          "db_adapter": "postgresql",
+          "db_encoding": "unicode",
+          "db_database": "gitlabhq_production",
+          "db_username": "gitlab",
+          "db_load_balancing": {
+            "hosts": [
+
+            ]
+          },
+          "db_host": "/var/opt/gitlab/postgresql",
+          "db_port": 5432,
+          "db_sslcompression": 0,
+          "db_prepared_statements": false,
+          "db_database_tasks": true,
+          "db_statements_limit": 1000
+        },
+        "ci": {
+          "enable": true,
+          "db_adapter": "postgresql",
+          "db_encoding": "unicode",
+          "db_database": "gitlabhq_production",
+          "db_username": "gitlab",
+          "db_load_balancing": {
+            "hosts": [
+
+            ]
+          },
+          "db_host": "/var/opt/gitlab/postgresql",
+          "db_port": 5432,
+          "db_sslcompression": 0,
+          "db_prepared_statements": false,
+          "db_database_tasks": false,
+          "db_statements_limit": 1000
+        }
+      },
+      "gitlab_url": "https://ideagit.sbi.co.in:10000",
+      "gitlab_host": "ideagit.sbi.co.in",
+      "gitlab_email_from": "gitlab@ideagit.sbi.co.in",
+      "gitlab_https": true,
+      "gitlab_port": 10000,
+      "shared_path": "/var/opt/gitlab/gitlab-rails/shared",
+      "artifacts_path": "/var/opt/gitlab/gitlab-rails/shared/artifacts",
+      "external_diffs_storage_path": "/var/opt/gitlab/gitlab-rails/shared/external-diffs",
+      "lfs_storage_path": "/var/opt/gitlab/gitlab-rails/shared/lfs-objects",
+      "uploads_storage_path": "/opt/gitlab/embedded/service/gitlab-rails/public",
+      "packages_storage_path": "/var/opt/gitlab/gitlab-rails/shared/packages",
+      "dependency_proxy_storage_path": "/var/opt/gitlab/gitlab-rails/shared/dependency_proxy",
+      "terraform_state_storage_path": "/var/opt/gitlab/gitlab-rails/shared/terraform_state",
+      "ci_secure_files_storage_path": "/var/opt/gitlab/gitlab-rails/shared/ci_secure_files",
+      "encrypted_settings_path": "/var/opt/gitlab/gitlab-rails/shared/encrypted_settings",
+      "redis_cache_encrypted_settings_file": "/var/opt/gitlab/gitlab-rails/shared/encrypted_settings/redis.cache.yml.enc",
+      "redis_queues_encrypted_settings_file": "/var/opt/gitlab/gitlab-rails/shared/encrypted_settings/redis.queues.yml.enc",
+      "redis_shared_state_encrypted_settings_file": "/var/opt/gitlab/gitlab-rails/shared/encrypted_settings/redis.shared_state.yml.enc",
+      "redis_trace_chunks_encrypted_settings_file": "/var/opt/gitlab/gitlab-rails/shared/encrypted_settings/redis.trace_chunks.yml.enc",
+      "redis_rate_limiting_encrypted_settings_file": "/var/opt/gitlab/gitlab-rails/shared/encrypted_settings/redis.rate_limiting.yml.enc",
+      "redis_sessions_encrypted_settings_file": "/var/opt/gitlab/gitlab-rails/shared/encrypted_settings/redis.sessions.yml.enc",
+      "redis_repository_cache_encrypted_settings_file": "/var/opt/gitlab/gitlab-rails/shared/encrypted_settings/redis.repository_cache.yml.enc",
+      "redis_cluster_rate_limiting_encrypted_settings_file": "/var/opt/gitlab/gitlab-rails/shared/encrypted_settings/redis.cluster_rate_limiting.yml.enc",
+      "redis_workhorse_encrypted_settings_file": "/var/opt/gitlab/gitlab-rails/shared/encrypted_settings/redis.workhorse.yml.enc",
+      "redis_encrypted_settings_file": "/var/opt/gitlab/gitlab-rails/shared/encrypted_settings/redis.yml.enc",
+      "pages_path": "/var/opt/gitlab/gitlab-rails/shared/pages",
+      "pages_local_store_path": "/var/opt/gitlab/gitlab-rails/shared/pages",
+      "repositories_storages": {
+        "default": {
+          "path": "/var/opt/gitlab/git-data/repositories",
+          "gitaly_address": "unix:/var/opt/gitlab/gitaly/gitaly.socket"
+        }
+      },
+      "trusted_proxies": [
+
+      ],
+      "incoming_email_log_file": "/var/log/gitlab/mailroom/mail_room_json.log",
+      "service_desk_email_log_file": "/var/log/gitlab/mailroom/mail_room_json.log",
+      "max_request_duration_seconds": 57,
+      "gitlab_kas_enabled": false
+    },
+    "gitlab_workhorse": {
+      "secret_token": "egEKl8ZcqJ7k8BGLE0UFR2hwP096oOgNDr5aL4Mbr4I=",
+      "sockets_directory": "/var/opt/gitlab/gitlab-workhorse/sockets",
+      "listen_addr": "/var/opt/gitlab/gitlab-workhorse/sockets/socket",
+      "redis_host": "127.0.0.1",
+      "redis_socket": "",
+      "redis_port": 6829,
+      "redis_sentinel_master": "gitlab-redis",
+      "redis_sentinel_master_port": 6379
+    },
+    "logging": {
+
+    },
+    "unicorn": {
+
+    },
+    "puma": {
+      "exporter_enabled": false
+    },
+    "mailroom": {
+
+    },
+    "external_url": "https://ideagit.sbi.co.in:10000",
+    "runtime_dir": "/run",
+    "actioncable": {
+
+    },
+    "bootstrap": {
+
+    },
+    "omnibus_gitconfig": {
+
+    },
+    "manage_accounts": {
+
+    },
+    "manage_storage_directories": {
+
+    },
+    "user": {
+      "home": "/var/opt/gitlab",
+      "git_user_email": "gitlab@ideagit.sbi.co.in"
+    },
+    "gitlab_ci": {
+
+    },
+    "sidekiq": {
+      "metrics_enabled": false
+    },
+    "mattermost_nginx": {
+
+    },
+    "pages_nginx": {
+
+    },
+    "registry_nginx": {
+
+    },
+    "gitlab_kas_nginx": {
+
+    },
+    "remote_syslog": {
+
+    },
+    "high_availability": {
+
+    },
+    "web_server": {
+      "external_users": [
+        "nodeuser"
+      ]
+    },
+    "prometheus_monitoring": {
+      "enable": false
+    },
+    "storage_check": {
+      "target": "unix:///var/opt/gitlab/gitlab-rails/sockets/gitlab.socket"
+    },
+    "nginx": {
+      "enable": false,
+      "redirect_http_to_https": true,
+      "ssl_certificate": "/etc/gitlab/ssl/idea_cicd_pub.crt",
+      "ssl_certificate_key": "/etc/gitlab/ssl/idea_cicd_pvt.key",
+      "ssl_password_file": "/etc/gitlab/ssl/key_file_password.txt",
+      "proxy_set_headers": {
+        "Host": "$http_host_with_default",
+        "X-Real-IP": "$remote_addr",
+        "X-Forwarded-For": "$proxy_add_x_forwarded_for",
+        "Upgrade": "$http_upgrade",
+        "Connection": "$connection_upgrade",
+        "X-Forwarded-Ssl": "on",
+        "X-Forwarded-Proto": "https"
+      },
+      "real_ip_trusted_addresses": [
+
+      ],
+      "listen_port": 10000
+    }
+  },
+  "roles": {
+    "application": {
+
+    },
+    "redis_sentinel": {
+
+    },
+    "redis_master": {
+
+    },
+    "redis_replica": {
+
+    },
+    "geo_primary": {
+
+    },
+    "geo_secondary": {
+
+    },
+    "monitoring": {
+
+    },
+    "postgres": {
+
+    },
+    "pgbouncer": {
+
+    },
+    "patroni": {
+
+    },
+    "consul": {
+
+    },
+    "pages": {
+
+    },
+    "sidekiq": {
+
+    },
+    "spamcheck": {
+
+    }
+  },
+  "monitoring": {
+    "grafana": {
+
+    },
+    "prometheus": {
+      "alertmanagers": [
+
+      ],
+      "flags": {
+        "web.listen-address": "localhost:9090",
+        "storage.tsdb.path": "/var/opt/gitlab/prometheus/data",
+        "config.file": "/var/opt/gitlab/prometheus/prometheus.yml"
+      }
+    },
+    "alertmanager": {
+      "flags": {
+        "web.listen-address": "localhost:9093",
+        "storage.path": "/var/opt/gitlab/alertmanager/data",
+        "config.file": "/var/opt/gitlab/alertmanager/alertmanager.yml"
+      }
+    },
+    "node_exporter": {
+      "flags": {
+        "web.listen-address": "localhost:9100",
+        "collector.mountstats": true,
+        "collector.runit": true,
+        "collector.runit.servicedir": "/opt/gitlab/sv",
+        "collector.textfile.directory": "/var/opt/gitlab/node-exporter/textfile_collector"
+      }
+    },
+    "redis_exporter": {
+      "flags": {
+        "web.listen-address": "localhost:9121",
+        "redis.addr": "unix:///var/opt/gitlab/redis/redis.socket"
+      }
+    },
+    "postgres_exporter": {
+      "flags": {
+        "web.listen-address": "localhost:9187",
+        "extend.query-path": "/var/opt/gitlab/postgres-exporter/queries.yaml"
+      }
+    },
+    "pgbouncer_exporter": {
+
+    },
+    "gitlab_exporter": {
+      "probe_sidekiq": true
+    }
+  },
+  "letsencrypt": {
+    "auto_enabled": false,
+    "enable": false
+  },
+  "package": {
+
+  },
+  "registry": {
+    "http_secret": "d0388cd84dad4aa1cf9b3515d073b23f1e7f49874aa9f843ea449ab5fc23a4546e888b8dac3d0f90e45d2ceac6b31ea1091fe4934ea5ad1f1d37d66a86707407",
+    "internal_certificate": "-----BEGIN CERTIFICATE-----\nMIIFBTCCAu2gAwIBAgIBADANBgkqhkiG9w0BAQsFADBGMQwwCgYDVQQGEwNVU0Ex\nDzANBgNVBAoMBkdpdExhYjESMBAGA1UECwwJQ29udGFpbmVyMREwDwYDVQQDDAhS\nZWdpc3RyeTAeFw0yNDAyMDIwOTUwMTlaFw0zNDAxMzAwOTUwMTlaMEYxDDAKBgNV\nBAYTA1VTQTEPMA0GA1UECgwGR2l0TGFiMRIwEAYDVQQLDAlDb250YWluZXIxETAP\nBgNVBAMMCFJlZ2lzdHJ5MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA\ntGR06qwrK1Ii7bn/dyK/qZBfWhK2xXn9qIanv/jHnHH+kiR51O6LPGmXSxiHVMOZ\nb9RUFkAFLZXp2ZIGA3nh33bc13W3ZIsFOoQuLzHp5mNZMbJ6sQKoqsCyrPlIU+jo\nQwOSn+h4UtvH6hJ/a2yrJpjf4pJEkNfFGLBYGs4blI5qcSe/lIWC2xV40HQ5/G+V\nfzz2RTI3zYNzPuKIcxmg1cEOIbugIwsPf8+RtbO7PopZ0PMppP6uzKqBGwAgZqMR\nvFczVVC4Ei9OY/S8dRE+2DybpE3Jyj684sg3zQp9Jcbm0f0buE3xzyBNhgoxL2N+\nSFlaOxxb++ZE+tBRBb/RuDWeGQg+bbh36yRUgQ4WfZThfkH1b9XEBGaR9SKsz3no\n5GEisLx3nmYZBsb1VBo1aJMrMmhmrcE8+/TyobbYLKCtR6rm85kGk+xFRLM6iXaT\nGSbJOUY9n+sB/USOT8kapRcthj36w7dQSzDhPFk/D/Z4fUmwF0naWzi7LSYaB8iM\nXt7AW+ppC/9pz3+m9kDG0ah0aQtnkGfG17vwAFaQ0f2I9enZwb/V4drfkdPC5CW3\niZNIeeq5P8KZqPzZyZKulyUoR1Dv0Xcg4gjo1oF5YjMWcketGqEj0wznZ3ydCO7H\nCInkjwYnPVamIO4Ug0+cHt3tldFLUDx5gYE7z0wmmrECAwEAATANBgkqhkiG9w0B\nAQsFAAOCAgEAqNWMVHVrqMwDN/IUIUsoE7pcbv5mVFYKNsV8+WY4XQ5NRrdX/C1t\nsYbdPxr493zMqQrkLNEJiFBjwcN7gN4cCZCkH/TdakbRrdpe/KjZq7ZqFJMsq82O\nEz1ZjIoVdoGh4woe84lamjfhtxAmAOwL6lsFwDpnW04USch3/98pv2K04gXiuIsc\nvuwhC0B84mNmLnRoTTgVPRriGnj7+o72WXHeiPI4LtwaSKyVUmMrB4o9geE0e4Tp\nXbANvCYTxLuWWw8gB8x/vpQ9SvlXnsfI/Hn3vkDnwI/WHHno10Vm3O/AGlzEBkBC\nOAErWa3xB1Ume8xUhUTWPwfCltPWzCTS3EnAk/mp8kTXJxq0337Nj2icYMqYMHk6\nKaEw1R6E5OJ6pu6hX0rGB4PK6/5Dtf7HHHQnRE+R6iCtrsw4UaiCc9HtYUA3aLmb\nLAGQHABPiO6eyN94eXOjQziYCp6rfoAOeYrE0h3JijW8AP8Pfc9l4A9B0Oc9YWH9\namFQLq1bxa+rygPnfxHN+cahNvLyJZg6ofMRAobwlPP3NgiwBRFnAMVRlB7eoQ2C\ndNI0JKZEFPAakF/DLYPsCYOIFSCzZ+VoRMKkBUXKtOCYadFTCgFrIyN4VR1g4po9\na25EYn9e9XKK7G/ZTci30XIoQPOjI2R1j4cTuJ2AChlf8Eyv3UatWG0=\n-----END CERTIFICATE-----\n",
+    "internal_key": "-----BEGIN RSA PRIVATE KEY-----\n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\n-----END RSA PRIVATE KEY-----\n"
+  },
+  "redis": {
+    "enable": false,
+    "bind": "127.0.0.1",
+    "port": 6829,
+    "unixsocket": false,
+    "rename_commands": {
+      "KEYS": ""
+    }
+  },
+  "postgresql": {
+    "internal_certificate": "-----BEGIN CERTIFICATE-----\nMIIFBzCCAu+gAwIBAgIBADANBgkqhkiG9w0BAQsFADBHMQwwCgYDVQQGEwNVU0Ex\nDzANBgNVBAoMBkdpdExhYjERMA8GA1UECwwIRGF0YWJhc2UxEzARBgNVBAMMClBv\nc3RncmVTUUwwHhcNMjQwMjAyMDk1MDE5WhcNMzQwMTMwMDk1MDE5WjBHMQwwCgYD\nVQQGEwNVU0ExDzANBgNVBAoMBkdpdExhYjERMA8GA1UECwwIRGF0YWJhc2UxEzAR\nBgNVBAMMClBvc3RncmVTUUwwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoIC\nAQDuhauHYsLiYJ+D0lApCqSAthXKDKhWznk/DigX1CUAdx2OHol4ySuFHRFkQ784\nT9wk7M2KvAKyhqwzD5STajGJVxi4zpwffEne7cj83kzMU6WGyCR7WdnkZrdDMYUk\niCg28PkJrs5I8lfqvRSU++umho/47wl4C4EPCzmQgS+G83Z7zXZQvYsLLQ2uGAvv\nGhxpHNqvA5F0PtWZM9MVDhJh0dcpsXk7xgmROfElRFWqobNsek7D4XdTXoWgbOkD\nhPuNyyaHgnJHq7EGhXA/0r61iHkIjp3ZAfPvUrXgfVUMFAhWw+U4uQalD6X4EvoA\nghQXaMHsSNeltKhGBZtwHFUoyepvJUPgDR1IBpwo3id1K8hF8vM5LpEhCLtRO53q\nSUmp1N2VGZcmMSF2VV5gyV49nZ3RgkOAdb6Wr5SpGRayCgp3+1Bt1jx6oZbcVwP4\n1Vnl1gsZ1OvePo/aF8gyl/rgX+wZolAsad+bfTIYBM4/LuhxXdjOwk65FaYCso+Z\ntNFGKbdYUMQ8qZdywJB/vI4MNwI6ElO88KDUmmJNWWW8sW0aolZdv9ZOahFA9gTV\ns/+2ZBOCNSwEzJdL76Cos1IC2QgZQBCwSPV96nRmqxDQtCnr0Y5SzFLcgnzvHY2Y\ntGNuhz169/78nypp7k2kHGU9WES9xmU5G71a0mXs2zQbnQIDAQABMA0GCSqGSIb3\nDQEBCwUAA4ICAQAZigOOKachPw01GmJo12uQFHqQ7yd2T0iOyh1sa4mnz0zzg6Zt\nY99wtd+sgGBQ7TsmyvSztM7fWUJZeful27ojwMtDRN48OsJfm6LUzx9r9VL4WEwX\nUqlLdgMOtuIcnii7Zv09RzjnaMwU73VJRLqcj6lr6hdxtAHa6SmxJ4YajoSbOyn8\nym+DZ4eBGcY3JcrMo03t8E6mNpE0Uc1Gcsq1XjtMyiKeIk8Sn7bMywIqAN+mtgTs\nfFUPnTPbqlfhIM3A0Sj/HtSSaToeCKTDM4yxLYvGtR7Onge6h96IVGoy/2kdKMBc\nJCehrXeSiF/h1JHS+CvjE67O6HFRnMoPU2upYYtWlo4P+gmmeCba65hBsonMYkqH\nRpQoRJI6cMjtF1VE15Xbu98SUwZk8kC2mtnPRvFtPK+m4SYZLOWYYKhPWcvw5Myy\nXuRWvVXxN/Jld6z37zKe3AzoqiINJOwYVjk/H+dmk4UEy6eD1WSVHfMbEDbnGIBz\nNU4V6S1t/PBC6sEL1TzU3fNeE+uGDoWZkchMdg2ILX4hZTVL73bEJ4sklLfrwvvF\nPgkBKHXtd+7TQ+MCeoBaXUGiDEU6h5cF7jO6rTEuMtDhAYt4cu9tLMhHrHWqCBrA\nuwl8ThEbZ4ekhSLoFFe6QF+SeGxsd6rlf5IuVjViHizFQqB9cJJ2sXoSEg==\n-----END CERTIFICATE-----\n",
+    "internal_key": "-----BEGIN RSA PRIVATE KEY-----\n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\n-----END RSA PRIVATE KEY-----\n",
+    "connect_port": 5432,
+    "wal_keep_size": 160
+  },
+  "gitlab_kas": {
+    "api_secret_key": "NDdjOWI0MzM4YzFmNWU3ZDY3NTNlZmFlNmJiOTFmZjc=",
+    "private_api_secret_key": "MzQ0MGQ5YTQzMWMzOTZlZTllZDdlY2NjN2IzMTNkMzA=",
+    "gitlab_address": "https://ideagit.sbi.co.in:10000",
+    "gitlab_external_url": "https://ideagit.sbi.co.in",
+    "redis_socket": "",
+    "redis_host": "127.0.0.1",
+    "redis_port": 6829
+  },
+  "gitlab_pages": {
+    "gitlab_secret": "Pee-Ofj8jP9UwEw_MLBQIce8-Ci1wKk8qpP3jx3jAWE",
+    "gitlab_id": "uTzrH9ECK4Cve0Ea9JwfUhMpKK2zREI-34Gjz_vx9BM",
+    "api_secret_key": "FnKEG1ohebWJ5psRtkDLzpxaCzWuK6h4wqlmO+/oKUc="
+  },
+  "pgbouncer": {
+
+  },
+  "repmgr": {
+
+  },
+  "repmgrd": {
+
+  },
+  "consul": {
+
+  },
+  "spamcheck": {
+
+  },
+  "patroni": {
+
+  },
+  "gitaly": {
+    "configuration": {
+      "storage": [
+        {
+          "name": "default",
+          "path": "/var/opt/gitlab/git-data/repositories"
+        }
+      ]
+    }
+  },
+  "praefect": {
+
+  },
+  "crond": {
+
+  },
+  "logrotate": {
+
+  },
+  "mattermost": {
+    "email_invite_salt": "3781c61f45076b6a28234ea8ac91f093",
+    "file_public_link_salt": "47c3506492669144dd477c05a2bb17cb",
+    "sql_at_rest_encrypt_key": "3705f7256f688d56292f33fda75a48cb",
+    "gitlab_id": "XTEtMcormGlEPFhyjVbMNpEMMOxghYcu8Qd3HUV4Jic",
+    "gitlab_secret": "jXlIFh-zqMzMs7XWrNfblllUqBqCXf17xN0y_li4drI",
+    "sql_data_source": "user=gitlab_mattermost host=/var/opt/gitlab/postgresql port=5432 dbname=mattermost_production"
+  }
 }
+Converging 0 resources
 
-log() { echo -e "$1" | tee -a "$LOG_FILE"; }
+Running handlers:
+Running handlers complete
+Infra Phase complete, 0/0 resources updated in 05 seconds
 
-log "===== Protected branch force-push check started: $(date) ====="
 
-while IFS=, read -r internal_url org_url; do
-  [[ -z "$internal_url" || "$internal_url" == \#* ]] && continue
-  org_url=$(echo "$org_url" | xargs)
+[root@tss-ideasvnuat ~]# gitlab-rake gitlab:env:info | grep -i version
+Ruby Version:   3.1.4p223
+Gem Version:    3.4.22
+Bundler Version:2.5.4
+Rake Version:   13.0.6
+Redis Version:  7.0.15
+Sidekiq Version:7.1.6
+Go Version:     unknown
+Version:        16.8.1
+DB Version:     14.9
+Version:        14.33.0
+- default Version:      16.8.1
+- default Git Version:  2.42.0
 
-  org_relative_path=$(echo "$org_url" | sed "s|${ORG_GITLAB}/||" | sed 's|\.git$||')
-  encoded_org_path=$(urlencode "$org_relative_path")
+[root@tss-ideasvnuat ~]# rpm -qa | grep gitlab
+gitlab-ce-16.8.1-ce.0.el8.x86_64
+[root@tss-ideasvnuat ~]# grep -nE "nginx|web_server|trusted_proxies|external_url" /etc/gitlab/gitlab.rb
+24:##! For more details on configuring external_url see:
+32:external_url 'https://ideagit.sbi.co.in:10000'
+205:# gitlab_rails['trusted_proxies'] = []
+930:# registry_external_url 'https://10.191.158.43:10001'
+1622:##! Docs: https://docs.gitlab.com/omnibus/settings/nginx.html#using-a-non-bundled-web-server
+1625:##! When bundled nginx is disabled we need to add the external webserver user to
+1627:web_server['external_users'] = ['nodeuser']
+1628:# web_server['username'] = 'gitlab-www'
+1629:# web_server['group'] = 'gitlab-www'
+1630:# web_server['uid'] = nil
+1631:# web_server['gid'] = nil
+1632:# web_server['shell'] = '/bin/false'
+1633:# web_server['home'] = '/var/opt/gitlab/nginx'
+1637:##! Docs: https://docs.gitlab.com/omnibus/settings/nginx.html
+1640:nginx['enable'] = false
+1641:# nginx['client_max_body_size'] = '250m'
+1642: nginx['redirect_http_to_https'] = true
+1643:# nginx['redirect_http_to_https_port'] = 80
+1646:# nginx['ssl_client_certificate'] = "/etc/gitlab/ssl/ca.crt"
+1649:# nginx['ssl_verify_client'] = "off"
+1652:# nginx['ssl_verify_depth'] = "1"
+1654: nginx['ssl_certificate'] = "/etc/gitlab/ssl/idea_cicd_pub.crt"
+1655: nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/idea_cicd_pvt.key"
+1656:# nginx['ssl_ciphers'] = "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384"
+1657:# nginx['ssl_prefer_server_ciphers'] = "off"
+1659:##! **Recommended by: https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html
+1661:# nginx['ssl_protocols'] = "TLSv1.2 TLSv1.3"
+1663:##! **Recommended in: https://nginx.org/en/docs/http/ngx_http_ssl_module.html**
+1664:# nginx['ssl_session_cache'] = "shared:SSL:10m"
+1666:##! **Recommended in: https://ssl-config.mozilla.org/#server=nginx&version=1.17.7&config=intermediate&openssl=1.1.1d&ocsp=false&guideline=5.6**
+1667:# nginx['ssl_session_tickets'] = "off"
+1669:##! **Default according to https://nginx.org/en/docs/http/ngx_http_ssl_module.html**
+1670:# nginx['ssl_session_timeout'] = "1d"
+1672:# nginx['ssl_dhparam'] = nil # Path to dhparams.pem, eg. /etc/gitlab/ssl/dhparams.pem
+1673: nginx['ssl_password_file'] = '/etc/gitlab/ssl/key_file_password.txt' # Path to file with passphrases for ssl certificate secret keys
+1674:# nginx['listen_addresses'] = ['*', '[::]']
+1677:##! Docs: https://docs.gitlab.com/omnibus/settings/nginx.html#setting-http-strict-transport-security
+1678:# nginx['hsts_max_age'] = 63072000
+1679:# nginx['hsts_include_subdomains'] = false
+1682:# nginx['referrer_policy'] = 'strict-origin-when-cross-origin'
+1684:##! **Docs: http://nginx.org/en/docs/http/ngx_http_gzip_module.html**
+1685:# nginx['gzip_enabled'] = true
+1688:##! Docs: https://docs.gitlab.com/omnibus/settings/nginx.html#setting-the-nginx-listen-port
+1689:# nginx['listen_port'] = nil
+1692:##! Docs: https://docs.gitlab.com/omnibus/settings/nginx.html#supporting-proxied-ssl
+1693:# nginx['listen_https'] = nil
+1696:##! Docs: https://docs.gitlab.com/omnibus/settings/nginx.html#configuring-proxy-protocol
+1697:# nginx['proxy_protocol'] = false
+1699:# nginx['custom_gitlab_server_config'] = "location ^~ /foo-namespace/bar-project/raw/ {\n deny all;\n}\n"
+1700:# nginx['custom_nginx_config'] = "include /etc/nginx/conf.d/example.conf;"
+1701:# nginx['proxy_read_timeout'] = 3600
+1702:# nginx['proxy_connect_timeout'] = 300
+1703:# nginx['proxy_set_headers'] = {
+1712:# nginx['proxy_cache_path'] = 'proxy_cache keys_zone=gitlab:10m max_size=1g levels=1:2'
+1713:# nginx['proxy_cache'] = 'gitlab'
+1714:# nginx['proxy_custom_buffer_size'] = '4k'
+1715:# nginx['http2_enabled'] = true
+1716:# nginx['real_ip_trusted_addresses'] = []
+1717:# nginx['real_ip_header'] = nil
+1718:# nginx['real_ip_recursive'] = nil
+1719:# nginx['custom_error_pages'] = {
+1728:# nginx['dir'] = "/var/opt/gitlab/nginx"
+1729:# nginx['log_directory'] = "/var/log/gitlab/nginx"
+1730:# nginx['log_group'] = nil
+1731:# nginx['error_log_level'] = "error"
+1732:# nginx['worker_processes'] = 4
+1733:# nginx['worker_connections'] = 10240
+1734:# nginx['log_format'] = '$remote_addr - $remote_user [$time_local] "$request_method $filtered_request_uri $server_protocol" $status $body_bytes_sent "$filtered_http_referer" "$http_user_agent" $gzip_ratio'
+1735:# nginx['sendfile'] = 'on'
+1736:# nginx['tcp_nopush'] = 'on'
+1737:# nginx['tcp_nodelay'] = 'on'
+1738:# nginx['hide_server_tokens'] = 'off'
+1739:# nginx['gzip_http_version'] = "1.0"
+1740:# nginx['gzip_comp_level'] = "2"
+1741:# nginx['gzip_proxied'] = "any"
+1742:# nginx['gzip_types'] = [ "text/plain", "text/css", "application/x-javascript", "text/xml", "application/xml", "application/xml+rss", "text/javascript", "application/json" ]
+1743:# nginx['keepalive_timeout'] = 65
+1744:# nginx['keepalive_time'] = '1h'
+1745:# nginx['cache_max_size'] = '5000m'
+1746:# nginx['server_names_hash_bucket_size'] = 64
+1748:# nginx['request_buffering_off_path_regex'] = "/api/v\\d/jobs/\\d+/artifacts$|/import/gitlab_project$|\\.git/git-receive-pack$|\\.git/gitlab-lfs/objects|\\.git/info/lfs/objects/batch$"
+1751:# nginx['status'] = {
+1766:# nginx['consul_service_name'] = 'nginx'
+1768:# nginx['consul_service_meta'] = {}
+1861:# pages_external_url "http://pages.example.com/"
+1917:# gitlab_pages['artifacts_server_url'] = nil # Defaults to external_url + '/api/v4'
+1933:# gitlab_pages['auth_redirect_uri'] = nil # Defaults to projects subdomain of pages_external_url and + '/auth'
+1934:# gitlab_pages['gitlab_server'] = nil # Defaults to external_url
+2046:# this "GitLab Pages NGINX" section, using the key `pages_nginx`.  However,
+2048:# `nginx['some_setting']` WILL NOT be automatically replicated as
+2049:# `pages_nginx['some_setting']` and should be set separately.
+2052:# pages_nginx['enable'] = true
+2072:# gitlab_rails['gitlab_kas_external_url'] = 'ws://gitlab.example.com/-/kubernetes-agent/'
+2077:# gitlab_kas_external_url "ws://gitlab.example.com/-/kubernetes-agent/"
+2175:# mattermost_external_url 'http://mattermost.example.com'
+2212:# this "Mattermost NGINX" section, using the key `mattermost_nginx`.  However,
+2214:# `nginx['some_setting']` WILL NOT be automatically replicated as
+2215:# `mattermost_nginx['some_setting']` and should be set separately.
+2218:# mattermost_nginx['enable'] = false
+2220:# mattermost_nginx['custom_gitlab_mattermost_server_config'] = "location ^~ /foo-namespace/bar-project/raw/ {\n deny all;\n}\n"
+2221:# mattermost_nginx['proxy_set_headers'] = {
+2238:# this "Registry NGINX" section, using the key `registry_nginx`.  However, those
+2240:# `nginx['some_setting']` WILL NOT be automatically replicated as
+2241:# `registry_nginx['some_setting']` and should be set separately.
+2244:# registry_nginx['enable'] = false
+2246:# registry_nginx['proxy_set_headers'] = {
+2254:# When the registry is automatically enabled using the same domain as `external_url`,
+2256:# registry_nginx['listen_port'] = 5050
+2756:# letsencrypt['wwwroot'] = '/var/opt/gitlab/nginx/www'
+2988:# For example, if external_url is the same for two secondaries, you must specify
+2991:# If it is blank, it defaults to external_url.
 
-  log "==> Checking $org_relative_path"
 
-  PROTECTED=$(curl -k -s --header "PRIVATE-TOKEN: $ORG_TOKEN" \
-       "${ORG_GITLAB}/api/v4/projects/${encoded_org_path}/protected_branches")
 
-  if [[ "$(echo "$PROTECTED" | jq -r 'type' 2>/dev/null)" != "array" ]]; then
-    log "    FAILED to fetch protected branches — response: $PROTECTED"
-    log "-----------------------------------"
-    continue
-  fi
 
-  echo "$PROTECTED" | jq -c '.[]' > /tmp/branches.jsonl
+[root@tss-ideasvnuat ~]# grep -nE "redis|sidekiq" /etc/gitlab/gitlab.rb
+37:##!   redis_sentinel_role redis_master_role redis_replica_role geo_primary_role geo_secondary_role
+42:# roles ['redis_sentinel_role', 'redis_master_role']
+161:###! Docs: https://github.com/ondrejbartas/sidekiq-cron#adding-cron-job
+313:#### How incoming emails are delivered to Rails process. Accept either sidekiq
+779:###! Docs: https://docs.gitlab.com/omnibus/settings/redis.html
+782:gitlab_rails['redis_host'] = "127.0.0.1"
+783:gitlab_rails['redis_port'] = 6829
+784:# gitlab_rails['redis_ssl'] = false
+785:# gitlab_rails['redis_password'] = nil
+786:# gitlab_rails['redis_database'] = 0
+787:# gitlab_rails['redis_enable_client'] = true
+788:# gitlab_rails['redis_tls_ca_cert_dir'] = '/opt/gitlab/embedded/ssl/certs/'
+789:# gitlab_rails['redis_tls_ca_cert_file'] = '/opt/gitlab/embedded/ssl/certs/cacert.pem'
+790:# gitlab_rails['redis_tls_client_cert_file'] = nil
+791:# gitlab_rails['redis_tls_client_key_file'] = nil
+794:gitlab_rails['redis_socket'] = ""
+802:# gitlab_rails['redis_sentinels'] = [
+805:# gitlab_rails['redis_sentinels_password'] = 'sentinel-requirepass-goes-here'
+811:####! To have Redis Cluster working, you must declare `redis_{instance}_cluster_nodes`
+812:####! `redis_{instance}_username` and `redis_{instance}_password` are required if ACL
+814:# gitlab_rails['redis_xxxx_cluster_nodes'] = [
+819:###! Docs: https://docs.gitlab.com/omnibus/settings/redis.html#running-with-multiple-redis-instances
+820:# gitlab_rails['redis_cache_instance'] = nil
+821:# gitlab_rails['redis_cache_sentinels'] = nil
+822:# gitlab_rails['redis_cache_sentinels_password'] = nil
+823:# gitlab_rails['redis_cache_username'] = nil
+824:# gitlab_rails['redis_cache_password'] = nil
+825:# gitlab_rails['redis_cache_cluster_nodes'] = nil
+826:# gitlab_rails['redis_cache_tls_ca_cert_dir'] = '/opt/gitlab/embedded/ssl/certs/'
+827:# gitlab_rails['redis_cache_tls_ca_cert_file'] = '/opt/gitlab/embedded/ssl/certs/cacert.pem'
+828:# gitlab_rails['redis_cache_tls_client_cert_file'] = nil
+829:# gitlab_rails['redis_cache_tls_client_key_file'] = nil
+830:# gitlab_rails['redis_queues_instance'] = nil
+831:# gitlab_rails['redis_queues_sentinels'] = nil
+832:# gitlab_rails['redis_queues_sentinels_password'] = nil
+833:# gitlab_rails['redis_queues_username'] = nil
+834:# gitlab_rails['redis_queues_password'] = nil
+835:# gitlab_rails['redis_queues_cluster_nodes'] = nil
+836:# gitlab_rails['redis_queues_tls_ca_cert_dir'] = '/opt/gitlab/embedded/ssl/certs/'
+837:# gitlab_rails['redis_queues_tls_ca_cert_file'] = '/opt/gitlab/embedded/ssl/certs/cacert.pem'
+838:# gitlab_rails['redis_queues_tls_client_cert_file'] = nil
+839:# gitlab_rails['redis_queues_tls_client_key_file'] = nil
+840:# gitlab_rails['redis_shared_state_instance'] = nil
+841:# gitlab_rails['redis_shared_state_sentinels'] = nil
+842:# gitlab_rails['redis_shared_state_sentinels_password'] = nil
+843:# gitlab_rails['redis_shared_state_username'] = nil
+844:# gitlab_rails['redis_shared_state_password'] = nil
+845:# gitlab_rails['redis_shared_state_cluster_nodes'] = nil
+846:# gitlab_rails['redis_shared_state_tls_ca_cert_dir'] = '/opt/gitlab/embedded/ssl/certs/'
+847:# gitlab_rails['redis_shared_state_tls_ca_cert_file'] = '/opt/gitlab/embedded/ssl/certs/cacert.pem'
+848:# gitlab_rails['redis_shared_state_tls_client_cert_file'] = nil
+849:# gitlab_rails['redis_shared_state_tls_client_key_file'] = nil
+850:# gitlab_rails['redis_trace_chunks_instance'] = nil
+851:# gitlab_rails['redis_trace_chunks_sentinels'] = nil
+852:# gitlab_rails['redis_trace_chunks_sentinels_password'] = nil
+853:# gitlab_rails['redis_trace_chunks_username'] = nil
+854:# gitlab_rails['redis_trace_chunks_password'] = nil
+855:# gitlab_rails['redis_trace_chunks_cluster_nodes'] = nil
+856:# gitlab_rails['redis_trace_chunks_tls_ca_cert_dir'] = '/opt/gitlab/embedded/ssl/certs/'
+857:# gitlab_rails['redis_trace_chunks_tls_ca_cert_file'] = '/opt/gitlab/embedded/ssl/certs/cacert.pem'
+858:# gitlab_rails['redis_trace_chunks_tls_client_cert_file'] = nil
+859:# gitlab_rails['redis_trace_chunks_tls_client_key_file'] = nil
+860:# gitlab_rails['redis_actioncable_instance'] = nil
+861:# gitlab_rails['redis_actioncable_sentinels'] = nil
+862:# gitlab_rails['redis_actioncable_sentinels_password'] = nil
+863:# gitlab_rails['redis_actioncable_username'] = nil
+864:# gitlab_rails['redis_actioncable_password'] = nil
+865:# gitlab_rails['redis_actioncable_cluster_nodes'] = nil
+866:# gitlab_rails['redis_actioncable_tls_ca_cert_dir'] = '/opt/gitlab/embedded/ssl/certs/'
+867:# gitlab_rails['redis_actioncable_tls_ca_cert_file'] = '/opt/gitlab/embedded/ssl/certs/cacert.pem'
+868:# gitlab_rails['redis_actioncable_tls_client_cert_file'] = nil
+869:# gitlab_rails['redis_actioncable_tls_client_key_file'] = nil
+870:# gitlab_rails['redis_rate_limiting_instance'] = nil
+871:# gitlab_rails['redis_rate_limiting_sentinels'] = nil
+872:# gitlab_rails['redis_rate_limiting_sentinels_password'] = nil
+873:# gitlab_rails['redis_rate_limiting_username'] = nil
+874:# gitlab_rails['redis_rate_limiting_password'] = nil
+875:# gitlab_rails['redis_rate_limiting_cluster_nodes'] = nil
+876:# gitlab_rails['redis_rate_limiting_tls_ca_cert_dir'] = '/opt/gitlab/embedded/ssl/certs/'
+877:# gitlab_rails['redis_rate_limiting_tls_ca_cert_file'] = '/opt/gitlab/embedded/ssl/certs/cacert.pem'
+878:# gitlab_rails['redis_rate_limiting_tls_client_cert_file'] = nil
+879:# gitlab_rails['redis_rate_limiting_tls_client_key_file'] = nil
+880:# gitlab_rails['redis_sessions_instance'] = nil
+881:# gitlab_rails['redis_sessions_sentinels'] = nil
+882:# gitlab_rails['redis_sessions_sentinels_password'] = nil
+883:# gitlab_rails['redis_sessions_username'] = nil
+884:# gitlab_rails['redis_sessions_password'] = nil
+885:# gitlab_rails['redis_sessions_cluster_nodes'] = nil
+886:# gitlab_rails['redis_sessions_tls_ca_cert_dir'] = '/opt/gitlab/embedded/ssl/certs/'
+887:# gitlab_rails['redis_sessions_tls_ca_cert_file'] = '/opt/gitlab/embedded/ssl/certs/cacert.pem'
+888:# gitlab_rails['redis_sessions_tls_client_cert_file'] = nil
+889:# gitlab_rails['redis_sessions_tls_client_key_file'] = nil
+890:# gitlab_rails['redis_cluster_rate_limiting_instance'] = nil
+891:# gitlab_rails['redis_cluster_rate_limiting_sentinels'] = nil
+892:# gitlab_rails['redis_cluster_rate_limiting_sentinels_password'] = nil
+893:# gitlab_rails['redis_cluster_rate_limiting_username'] = nil
+894:# gitlab_rails['redis_cluster_rate_limiting_password'] = nil
+895:# gitlab_rails['redis_cluster_rate_limiting_cluster_nodes'] = nil
+896:# gitlab_rails['redis_cluster_rate_limiting_tls_ca_cert_dir'] = '/opt/gitlab/embedded/ssl/certs/'
+897:# gitlab_rails['redis_cluster_rate_limiting_tls_ca_cert_file'] = '/opt/gitlab/embedded/ssl/certs/cacert.pem'
+898:# gitlab_rails['redis_cluster_rate_limiting_tls_client_cert_file'] = nil
+899:# gitlab_rails['redis_cluster_rate_limiting_tls_client_key_file'] = nil
+900:# gitlab_rails['redis_repository_cache_instance'] = nil
+901:# gitlab_rails['redis_repository_cache_sentinels'] = nil
+902:# gitlab_rails['redis_repository_cache_sentinels_password'] = nil
+903:# gitlab_rails['redis_repository_cache_username'] = nil
+904:# gitlab_rails['redis_repository_cache_password'] = nil
+905:# gitlab_rails['redis_repository_cache_cluster_nodes'] = nil
+906:# gitlab_rails['redis_repository_cache_tls_ca_cert_dir'] = '/opt/gitlab/embedded/ssl/certs/'
+907:# gitlab_rails['redis_repository_cache_tls_ca_cert_file'] = '/opt/gitlab/embedded/ssl/certs/cacert.pem'
+908:# gitlab_rails['redis_repository_cache_tls_client_cert_file'] = nil
+909:# gitlab_rails['redis_repository_cache_tls_client_key_file'] = nil
+910:# gitlab_rails['redis_workhorse_instance'] = nil
+911:# gitlab_rails['redis_workhorse_sentinels'] = nil
+912:# gitlab_rails['redis_workhorse_sentinels_password'] = nil
+913:# gitlab_rails['redis_workhorse_username'] = nil
+914:# gitlab_rails['redis_workhorse_password'] = nil
+915:# gitlab_rails['redis_workhorse_cluster_nodes'] = nil
+916:# gitlab_rails['redis_workhorse_tls_ca_cert_dir'] = '/opt/gitlab/embedded/ssl/certs/'
+917:# gitlab_rails['redis_workhorse_tls_ca_cert_file'] = '/opt/gitlab/embedded/ssl/certs/cacert.pem'
+918:# gitlab_rails['redis_workhorse_tls_client_cert_file'] = nil
+919:# gitlab_rails['redis_workhorse_tls_client_key_file'] = nil
+921:# gitlab_rails['redis_workhorse_sentinel_master'] = nil
+923:# gitlab_rails['redis_yml_override'] = nil
+1136:##! `gitlab_rails['redis_workhorse_*']` settings, if specified. If not specified,
+1137:##! they are inferred from the below values. `gitlab_rails['redis_workhorse_*']`
+1139:##! and `gitlab_workhorse['redis_*']` tells Workhorse which Redis has channels to
+1141:# gitlab_workhorse['redis_socket'] = "/var/opt/gitlab/redis/redis.socket"
+1142:# gitlab_workhorse['redis_host'] = "127.0.0.1"
+1143:# gitlab_workhorse['redis_port'] = nil
+1144:# gitlab_workhorse['redis_database'] = nil
+1145:# gitlab_workhorse['redis_username'] = nil
+1146:# gitlab_workhorse['redis_password'] = nil
+1147:# gitlab_workhorse['redis_ssl'] = false
+1148:# gitlab_workhorse['redis_cluster_nodes'] = []
+1149:# gitlab_workhorse['redis_sentinels'] = []
+1150:# gitlab_workhorse['redis_sentinels_password'] = nil
+1151:# gitlab_workhorse['redis_sentinel_master'] = nil
+1152:# gitlab_workhorse['redis_sentinel_master_ip'] = nil
+1153:# gitlab_workhorse['redis_sentinel_master_port'] = nil
+1238:##! GitLab allows one to start multiple sidekiq processes. These
+1241:##! https://docs.gitlab.com/ee/administration/operations/extra_sidekiq_processes.html
+1243:# sidekiq['enable'] = true
+1244:# sidekiq['log_directory'] = "/var/log/gitlab/sidekiq"
+1245:# sidekiq['log_format'] = "json"
+1246:# sidekiq['shutdown_timeout'] = 4
+1247:# sidekiq['interval'] = nil
+1248:# sidekiq['max_concurrency'] = 20
+1249:# sidekiq['min_concurrency'] = nil
+1255:# sidekiq['routing_rules'] = []
+1261:# sidekiq['queue_groups'] = ['*']
+1264:sidekiq['metrics_enabled'] = false
+1265:# sidekiq['exporter_log_enabled'] = false
+1266:# sidekiq['exporter_tls_enabled'] = false
+1267:# sidekiq['exporter_tls_cert_path'] = ""
+1268:# sidekiq['exporter_tls_key_path'] = ""
+1269:# sidekiq['listen_address'] = "localhost"
+1270:# sidekiq['listen_port'] = 8082
+1274:# sidekiq['health_checks_enabled'] = true
+1275:# sidekiq['health_checks_listen_address'] = "localhost"
+1276:# sidekiq['health_checks_listen_port'] = 8092
+1279:# sidekiq['consul_service_name'] = 'sidekiq'
+1281:# sidekiq['consul_service_meta'] = {}
+1497:##! Docs: https://docs.gitlab.com/omnibus/settings/redis.html
+1500:redis['enable'] = false
+1501:# redis['ha'] = false
+1502:# redis['start_down'] = false
+1503:# redis['set_replicaof'] = false
+1504:# redis['hz'] = 10
+1505:# redis['dir'] = "/var/opt/gitlab/redis"
+1506:# redis['log_directory'] = "/var/log/gitlab/redis"
+1507:# redis['log_group'] = nil
+1508:# redis['username'] = "gitlab-redis"
+1509:# redis['group'] = "gitlab-redis"
+1510:# redis['maxclients'] = "10000"
+1511:# redis['open_files_ulimit'] = nil # Maximum number of open files allowed for the redis process (defaults to ope
+1512:# redis['maxmemory'] = "0"
+1513:# redis['maxmemory_policy'] = "noeviction"
+1514:# redis['maxmemory_samples'] = "5"
+1515:# redis['stop_writes_on_bgsave_error'] = true
+1516:# redis['tcp_backlog'] = 511
+1517:# redis['tcp_timeout'] = "60"
+1518:# redis['tcp_keepalive'] = "300"
+1519:# redis['uid'] = nil
+1520:# redis['gid'] = nil
+1521:# redis['startup_delay'] = 0
+1525:# redis['tls_port'] = nil
+1526:# redis['tls_cert_file'] = nil
+1527:# redis['tls_key_file'] = nil
+1530:# redis['tls_dh_params_file'] = nil
+1531:# redis['tls_ca_cert_dir'] = '/opt/gitlab/embedded/ssl/certs/'
+1532:# redis['tls_ca_cert_file'] = '/opt/gitlab/embedded/ssl/certs/cacert.pem'
+1533:# redis['tls_auth_clients'] = 'optional'
+1534:# redis['tls_replication'] = nil
+1535:# redis['tls_cluster'] = nil
+1536:# redis['tls_protocols'] = nil
+1537:# redis['tls_ciphers'] = nil
+1538:# redis['tls_ciphersuites'] = nil
+1539:# redis['tls_prefer_server_ciphers'] = nil
+1540:# redis['tls_session_caching'] = nil
+1541:# redis['tls_session_cache_size'] = nil
+1542:# redis['tls_session_cache_timeout'] = nil
+1544:### Disable or obfuscate unnecessary redis command names
+1546:### See https://docs.gitlab.com/omnibus/settings/redis.html#renamed-commands
+1549:# redis['rename_commands'] = {
+1556:# redis['runit_sv_timeout'] = nil
+1560:###! Docs: https://docs.gitlab.com/omnibus/settings/redis.html
+1561:###!       https://docs.gitlab.com/ee/administration/high_availability/redis.html
+1562:# redis_master_role['enable'] = true
+1563:# redis_replica_role['enable'] = true
+1566:redis['bind'] = '127.0.0.1' # or specify an IP to bind to a single one
+1567:redis['port'] = 6829
+1568:# redis['password'] = 'redis-password-goes-here'
+1574:###! Docs: https://docs.gitlab.com/ee/administration/high_availability/redis.html
+1578:# redis['master'] = false # by default this is true
+1583:# redis['master_name'] = 'gitlab-redis'
+1584:# redis['master_ip'] = nil
+1585:# redis['master_port'] = 6379
+1587:#### Support to run redis replicas in a Docker or NAT environment
+1588:####! Docs: https://redis.io/topics/replication#configuring-replication-in-docker-and-nat
+1589:# redis['announce_ip'] = nil
+1590:# redis['announce_port'] = nil
+1591:# redis['announce_ip_from_hostname'] = false
+1594:####!   redis['password'] to enable the instance to transition to/from
+1596:# redis['master_password'] = 'redis-password-goes-here'
+1599:# redis['client_output_buffer_limit_normal'] = '0 0 0'
+1600:# redis['client_output_buffer_limit_replica'] = '256mb 64mb 60'
+1601:# redis['client_output_buffer_limit_pubsub'] = '32mb 8mb 60'
+1606:# redis['save'] = [ '900 1', '300 10', '60 10000' ]
+1610:# redis['lazyfree_lazy_eviction'] = true
+1611:# redis['lazyfree_lazy_expire'] = true
+1612:# redis['lazyfree_lazy_server_del'] = true
+1613:# redis['replica_lazy_flush'] = true
+1617:# redis['io_threads'] = 4
+1618:# redis['io_threads_do_reads'] = true
+2145:# gitlab_kas['redis_socket'] = ''
+2146:# gitlab_kas['redis_host'] = '127.0.0.1'
+2147:# gitlab_kas['redis_port'] = '6379'
+2148:# gitlab_kas['redis_password'] = nil
+2150:# gitlab_kas['redis_sentinels'] = []
+2151:# gitlab_kas['redis_sentinels_master_name'] = nil
+2152:# gitlab_kas['redis_sentinels_password'] = ''
+2154:# gitlab_kas['redis_ssl'] = false
+2155:# gitlab_kas['redis_tls_ca_cert_file'] = '/opt/gitlab/embedded/ssl/certs/cacert.pem'
+2156:# gitlab_kas['redis_tls_client_cert_file'] = nil
+2157:# gitlab_kas['redis_tls_client_key_file'] = nil
+2398:##! Docs: https://docs.gitlab.com/ee/administration/monitoring/prometheus/redis_exporter.html
+2401:# redis_exporter['enable'] = true
+2402:# redis_exporter['log_directory'] = '/var/log/gitlab/redis-exporter'
+2403:# redis_exporter['log_group'] = nil
+2404:# redis_exporter['flags'] = {
+2405:#   'redis.addr' => "unix:///var/opt/gitlab/redis/redis.socket",
+2407:# redis_exporter['env_directory'] = '/opt/gitlab/etc/redis-exporter/env'
+2408:# redis_exporter['env'] = {
+2413:# redis_exporter['listen_address'] = 'localhost:9121'
+2416:# redis_exporter['consul_service_name'] = 'redis-exporter'
+2418:# redis_exporter['consul_service_meta'] = {}
+2485:##! Manage gitlab-exporter sidekiq probes. false by default when Sentinels are
+2487:# gitlab_exporter['probe_sidekiq'] = true
+2874:##! Docs: http://docs.gitlab.com/ce/administration/high_availability/redis.html#high-availability-with-sentinel
+2877:##! **Make sure you configured all redis['master_*'] keys above before
+2882:##! Docs: https://docs.gitlab.com/ee/administration/high_availability/redis.html
+2883:# redis_sentinel_role['enable'] = true
+2897:#####! Docs: https://redis.io/topics/sentinel#sentinel-docker-nat-and-possible-issues
+2900:# sentinel['announce_ip'] = nil # If not defined, its value will be taken from redis['announce_ip'] or nil if not present
+2901:# sentinel['announce_port'] = nil # If not defined, its value will be taken from sentinel['port'] or nil if redis['announce_ip'] not present
+2966:###! the provided input from `redis['announce_ip']`
+3385:#### sidekiq or webhook. The default config is webhook.
 
-  while IFS= read -r branch; do
-    name=$(echo "$branch" | jq -r '.name')
-    allow_force_push=$(echo "$branch" | jq -r '.allow_force_push')
 
-    if [[ "$allow_force_push" == "true" ]]; then
-      log "    [$name] already allows force push — skipping"
-      continue
-    fi
 
-    log "    [$name] force push disabled — enabling..."
-    enc_name=$(urlencode "$name")
 
-    RESP=$(curl -k -s --request PATCH --header "PRIVATE-TOKEN: $ORG_TOKEN" \
-         --data "allow_force_push=true" \
-         "${ORG_GITLAB}/api/v4/projects/${encoded_org_path}/protected_branches/${enc_name}")
+[root@tss-ideasvnuat ~]# gitlab-ctl show-config | grep -i redis
+  - redis (0.1.0)
+/opt/gitlab/embedded/cookbooks/cache/cookbooks/package/libraries/helpers/selinux_distro_helper.rb:2: warning: already initialized constant SELinuxDistroHelper::REDHAT_RELEASE_FILE
+/opt/gitlab/embedded/cookbooks/package/libraries/helpers/selinux_distro_helper.rb:2: warning: previous definition of REDHAT_RELEASE_FILE was here
+/opt/gitlab/embedded/cookbooks/cache/cookbooks/package/libraries/helpers/selinux_distro_helper.rb:3: warning: already initialized constant SELinuxDistroHelper::OS_RELEASE_FILE
+/opt/gitlab/embedded/cookbooks/package/libraries/helpers/selinux_distro_helper.rb:3: warning: previous definition of OS_RELEASE_FILE was here
+/opt/gitlab/embedded/cookbooks/cache/cookbooks/package/libraries/helpers/secrets_helper.rb:4: warning: already initialized constant SecretsHelper::SECRETS_FILE
+/opt/gitlab/embedded/cookbooks/package/libraries/helpers/secrets_helper.rb:4: warning: previous definition of SECRETS_FILE was here
+/opt/gitlab/embedded/cookbooks/cache/cookbooks/package/libraries/helpers/secrets_helper.rb:5: warning: already initialized constant SecretsHelper::SECRETS_FILE_CHEF_ATTR
+/opt/gitlab/embedded/cookbooks/package/libraries/helpers/secrets_helper.rb:5: warning: previous definition of SECRETS_FILE_CHEF_ATTR was here
+/opt/gitlab/embedded/cookbooks/cache/cookbooks/package/libraries/helpers/secrets_helper.rb:6: warning: already initialized constant SecretsHelper::SKIP_GENERATE_SECRETS_CHEF_ATTR
+/opt/gitlab/embedded/cookbooks/package/libraries/helpers/secrets_helper.rb:6: warning: previous definition of SKIP_GENERATE_SECRETS_CHEF_ATTR was here
+/opt/gitlab/embedded/cookbooks/cache/cookbooks/package/libraries/gitlab_cluster.rb:16: warning: already initialized constant GitlabCluster::CONFIG_PATH
+/opt/gitlab/embedded/cookbooks/package/libraries/gitlab_cluster.rb:16: warning: previous definition of CONFIG_PATH was here
+/opt/gitlab/embedded/cookbooks/cache/cookbooks/package/libraries/gitlab_cluster.rb:17: warning: already initialized constant GitlabCluster::JSON_FILE
+/opt/gitlab/embedded/cookbooks/package/libraries/gitlab_cluster.rb:17: warning: previous definition of JSON_FILE was here
+Top level ::CompositeIO is deprecated, require 'multipart/post' and use `Multipart::Post::CompositeReadIO` instead!
+Top level ::Parts is deprecated, require 'multipart/post' and use `Multipart::Post::Parts` instead!
+      "redis_host": "127.0.0.1",
+      "redis_port": 6829,
+      "redis_socket": "",
+      "redis_cache_encrypted_settings_file": "/var/opt/gitlab/gitlab-rails/shared/encrypted_settings/redis.cache.yml.enc",
+      "redis_queues_encrypted_settings_file": "/var/opt/gitlab/gitlab-rails/shared/encrypted_settings/redis.queues.yml.enc",
+      "redis_shared_state_encrypted_settings_file": "/var/opt/gitlab/gitlab-rails/shared/encrypted_settings/redis.shared_state.yml.enc",
+      "redis_trace_chunks_encrypted_settings_file": "/var/opt/gitlab/gitlab-rails/shared/encrypted_settings/redis.trace_chunks.yml.enc",
+      "redis_rate_limiting_encrypted_settings_file": "/var/opt/gitlab/gitlab-rails/shared/encrypted_settings/redis.rate_limiting.yml.enc",
+      "redis_sessions_encrypted_settings_file": "/var/opt/gitlab/gitlab-rails/shared/encrypted_settings/redis.sessions.yml.enc",
+      "redis_repository_cache_encrypted_settings_file": "/var/opt/gitlab/gitlab-rails/shared/encrypted_settings/redis.repository_cache.yml.enc",
+      "redis_cluster_rate_limiting_encrypted_settings_file": "/var/opt/gitlab/gitlab-rails/shared/encrypted_settings/redis.cluster_rate_limiting.yml.enc",
+      "redis_workhorse_encrypted_settings_file": "/var/opt/gitlab/gitlab-rails/shared/encrypted_settings/redis.workhorse.yml.enc",
+      "redis_encrypted_settings_file": "/var/opt/gitlab/gitlab-rails/shared/encrypted_settings/redis.yml.enc",
+      "redis_host": "127.0.0.1",
+      "redis_socket": "",
+      "redis_port": 6829,
+      "redis_sentinel_master": "gitlab-redis",
+      "redis_sentinel_master_port": 6379
+    "redis_sentinel": {
+    "redis_master": {
+    "redis_replica": {
+    "redis_exporter": {
+        "redis.addr": "unix:///var/opt/gitlab/redis/redis.socket"
+  "redis": {
+    "redis_socket": "",
+    "redis_host": "127.0.0.1",
+    "redis_port": 6829
 
-    updated=$(echo "$RESP" | jq -r '.allow_force_push // empty')
-    if [[ "$updated" == "true" ]]; then
-      log "    [$name] OK — force push now allowed"
-    else
-      log "    [$name] FAILED — response: $RESP"
-    fi
-  done < /tmp/branches.jsonl
+[root@tss-ideasvnuat ~]# /devtools/redis/bin/redis-cli -h 127.0.0.1 -p 6829 ping
+PONG
 
-  log "-----------------------------------"
-done < "$INPUT_FILE"
+[root@tss-ideasvnuat ~]# /devtools/redis/bin/redis-server --version
+Redis server v=7.4.0 sha=00000000:0 malloc=jemalloc-5.3.0 bits=64 build=6c45e971813655ed
 
-log "===== Run finished: $(date) ====="
+[root@tss-ideasvnuat ~]# /devtools/redis/bin/redis-cli -h 127.0.0.1 -p 6829 INFO server | grep redis_version
+redis_version:7.4.0
+
+[root@tss-ideasvnuat ~]# /devtools/redis/bin/redis-cli -h 127.0.0.1 -p 6829 INFO server
+# Server
+redis_version:7.4.0
+redis_git_sha1:00000000
+redis_git_dirty:0
+redis_build_id:6c45e971813655ed
+redis_mode:standalone
+os:Linux 4.18.0-553.153.1.el8_10.x86_64 x86_64
+arch_bits:64
+monotonic_clock:POSIX clock_gettime
+multiplexing_api:epoll
+atomicvar_api:c11-builtin
+gcc_version:8.5.0
+process_id:68011
+process_supervised:no
+run_id:09c3f52b516c41460eec0c9e40a1dd5f443a2985
+tcp_port:6829
+server_time_usec:1788679011415878
+uptime_in_seconds:1379391
+uptime_in_days:15
+hz:10
+configured_hz:10
+lru_clock:10294115
+executable:/devtools/redis/bin/./redis-server
+config_file:/devtools/redis/conf/redis.conf
+io_threads_active:0
+listener0:name=tcp,bind=127.0.0.1,port=6829
+
+[root@tss-ideasvnuat gitlab]# gitlab-psql -d gitlabhq_production -c "SELECT version();"
+                                                 version
+---------------------------------------------------------------------------------------------------------
+ PostgreSQL 14.9 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 8.5.0 20210514 (Red Hat 8.5.0-20), 64-bit
+(1 row)
+
+[root@tss-ideasvnuat gitlab]# gitlab-psql -d gitlabhq_production -c "SHOW server_version;"
+ server_version
+----------------
+ 14.9
+(1 row)
+
+[root@tss-ideasvnuat gitlab]# gitlab-ctl status | grep postgres
+run: postgresql: (pid 2763) 1385716s; run: log: (pid 2759) 1385716s
+
+[root@tss-ideasvnuat gitlab]# grep -n "postgresql\['" /etc/gitlab/gitlab.rb
+1348:# postgresql['enable'] = true
+1349:# postgresql['listen_address'] = nil
+1350:# postgresql['port'] = 5432
+1354:## endpoint to the cluster. By default it is the same as postgresql['port'].
+1355:# postgresql['connect_port'] = 5432
+1358:# postgresql['shared_buffers'] = "256MB"
+1361:# postgresql['ha'] = false
+1362:# postgresql['dir'] = "/var/opt/gitlab/postgresql"
+1363:# postgresql['log_directory'] = "/var/log/gitlab/postgresql"
+1364:# postgresql['log_destination'] = nil
+1365:# postgresql['logging_collector'] = nil
+1366:# postgresql['log_truncate_on_rotation'] = nil
+1367:# postgresql['log_rotation_age'] = nil
+1368:# postgresql['log_rotation_size'] = nil
+1371:# postgresql['username'] = "gitlab-psql"
+1372:# postgresql['group'] = "gitlab-psql"
+1374:# postgresql['sql_user_password'] = 'SQL_USER_PASSWORD_HASH'
+1375:# postgresql['uid'] = nil
+1376:# postgresql['gid'] = nil
+1377:# postgresql['shell'] = "/bin/sh"
+1378:# postgresql['home'] = "/var/opt/gitlab/postgresql"
+1379:# postgresql['user_path'] = "/opt/gitlab/embedded/bin:/opt/gitlab/bin:$PATH"
+1380:# postgresql['sql_user'] = "gitlab"
+1381:# postgresql['max_connections'] = 400
+1382:# postgresql['md5_auth_cidr_addresses'] = []
+1383:# postgresql['trust_auth_cidr_addresses'] = []
+1384:# postgresql['wal_buffers'] = "-1"
+1385:# postgresql['autovacuum_max_workers'] = "3"
+1386:# postgresql['autovacuum_freeze_max_age'] = "200000000"
+1387:# postgresql['log_statement'] = nil
+1388:# postgresql['track_activity_query_size'] = "1024"
+1389:# postgresql['shared_preload_libraries'] = nil
+1390:# postgresql['dynamic_shared_memory_type'] = nil
+1391:# postgresql['hot_standby'] = "off"
+1395:# postgresql['ssl'] = 'on'
+1396:# postgresql['hostssl'] = false
+1397:# postgresql['ssl_ciphers'] = 'HIGH:MEDIUM:+3DES:!aNULL:!SSLv3:!TLSv1'
+1398:# postgresql['ssl_cert_file'] = 'server.crt'
+1399:# postgresql['ssl_key_file'] = 'server.key'
+1400:# postgresql['ssl_ca_file'] = '/opt/gitlab/embedded/ssl/certs/cacert.pem'
+1401:# postgresql['ssl_crl_file'] = nil
+1402:# postgresql['cert_auth_addresses'] = {
+1411:# postgresql['wal_level'] = "hot_standby"
+1412:# postgresql['wal_log_hints'] = 'off'
+1413:# postgresql['max_wal_senders'] = 5
+1414:# postgresql['max_replication_slots'] = 0
+1415:# postgresql['max_locks_per_transaction'] = 128
+1418:# postgresql['archive_mode'] = "off"
+1422:# postgresql['work_mem'] = "16MB"
+1423:# postgresql['maintenance_work_mem'] = "16MB"
+1424:# postgresql['checkpoint_timeout'] = "5min"
+1425:# postgresql['checkpoint_completion_target'] = 0.9
+1426:# postgresql['effective_io_concurrency'] = 1
+1427:# postgresql['checkpoint_warning'] = "30s"
+1428:# postgresql['effective_cache_size'] = "1MB"
+1429:# postgresql['shmmax'] =  17179869184 # or 4294967295
+1430:# postgresql['shmall'] =  4194304 # or 1048575
+1431:# postgresql['autovacuum'] = "on"
+1432:# postgresql['log_autovacuum_min_duration'] = "-1"
+1433:# postgresql['autovacuum_naptime'] = "1min"
+1434:# postgresql['autovacuum_vacuum_threshold'] = "50"
+1435:# postgresql['autovacuum_analyze_threshold'] = "50"
+1436:# postgresql['autovacuum_vacuum_scale_factor'] = "0.02"
+1437:# postgresql['autovacuum_analyze_scale_factor'] = "0.01"
+1438:# postgresql['autovacuum_vacuum_cost_delay'] = "20ms"
+1439:# postgresql['autovacuum_vacuum_cost_limit'] = "-1"
+1440:# postgresql['statement_timeout'] = "60000"
+1441:# postgresql['idle_in_transaction_session_timeout'] = "60000"
+1442:# postgresql['log_line_prefix'] = "%a"
+1443:# postgresql['max_worker_processes'] = 8
+1444:# postgresql['max_parallel_workers_per_gather'] = 0
+1445:# postgresql['log_lock_waits'] = 1
+1446:# postgresql['deadlock_timeout'] = '5s'
+1447:# postgresql['track_io_timing'] = 0
+1448:# postgresql['default_statistics_target'] = 1000
+1451:# postgresql['min_wal_size'] = "80MB"
+1452:# postgresql['max_wal_size'] = "1GB"
+1455:# postgresql['archive_command'] = nil
+1456:# postgresql['archive_timeout'] = "0"
+1459:# postgresql['sql_replication_user'] = "gitlab_replicator"
+1460:# postgresql['sql_replication_password'] = "md5 hash of postgresql password" # You can generate with `gitlab-ctl pg-password-md5 <dbuser>`
+1461:# postgresql['wal_keep_segments'] = 10
+1462:# postgresql['max_standby_archive_delay'] = "30s"
+1463:# postgresql['max_standby_streaming_delay'] = "30s"
+1464:# postgresql['synchronous_commit'] = on
+1465:# postgresql['synchronous_standby_names'] = ''
+1466:# postgresql['hot_standby_feedback'] = 'off'
+1467:# postgresql['random_page_cost'] = 2.0
+1468:# postgresql['log_temp_files'] = -1
+1469:# postgresql['log_checkpoints'] = 'off'
+1471:# postgresql['custom_pg_hba_entries'] = {
+1488:# postgresql['version'] = 10
+1492:# postgresql['auto_restart_on_version_change'] = true
+3022:# geo_postgresql['enable'] = false
+3023:# geo_postgresql['ha'] = false
+3024:# geo_postgresql['dir'] = '/var/opt/gitlab/geo-postgresql'
+3025:# geo_postgresql['pgbouncer_user'] = nil
+3026:# geo_postgresql['pgbouncer_user_password'] = nil
+3028:# geo_postgresql['sql_user_password'] = 'SQL_USER_PASSWORD_HASH'
+3029:# geo_postgresql['log_directory'] = '/var/log/gitlab/geo-postgresql'
+3032:# geo_postgresql['auto_restart_on_version_change'] = true
+3110:# postgresql['pgbouncer_user'] = nil
+3111:# postgresql['pgbouncer_user_password'] = nil
+
