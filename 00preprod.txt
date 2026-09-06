@@ -1,1 +1,44 @@
-curl -s --request POST --header "PRIVATE-TOKEN: token" --form "url=https://user:pat@gitlab.sbi/it-tss/fxs/backend/BouncyCastleService.git" --form "enabled=true" "https://ideagit.sbi.co.in:10000/api/v4/projects/fxs%2FBouncyCastleService/remote_mirrors"
+#!/usr/bin/env bash
+set -euo pipefail
+
+INTERNAL_GITLAB="https://ideagit.sbi.co.in:10000"
+INTERNAL_TOKEN="glpat-xxxxxxxxxxxxxxxxxxxx"
+
+ORG_USER="orguser1"
+ORG_PASS='orgpass_or_token'
+
+INPUT_FILE="mirrors.csv"
+
+urlencode() {
+  python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "$1"
+}
+
+ENC_ORG_USER=$(urlencode "$ORG_USER")
+ENC_ORG_PASS=$(urlencode "$ORG_PASS")
+
+while IFS=, read -r internal_url org_url; do
+  [[ -z "$internal_url" || "$internal_url" == \#* ]] && continue
+  internal_url=$(echo "$internal_url" | xargs)
+  org_url=$(echo "$org_url" | xargs)
+
+  relative_path=$(echo "$internal_url" | sed "s|${INTERNAL_GITLAB}/||" | sed 's|\.git$||')
+  encoded_path=$(echo -n "$relative_path" | jq -sRr @uri)
+
+  org_host_and_path="${org_url#https://}"
+  mirror_url="https://${ENC_ORG_USER}:${ENC_ORG_PASS}@${org_host_and_path}"
+
+  echo "==> Configuring mirror for $relative_path -> $org_url"
+
+  RESP=$(curl --max-time 30 --request POST --header "PRIVATE-TOKEN: $INTERNAL_TOKEN" \
+       --form "url=$mirror_url" \
+       --form "enabled=true" \
+       "${INTERNAL_GITLAB}/api/v4/projects/${encoded_path}/remote_mirrors")
+
+  mirror_id=$(echo "$RESP" | jq -r '.id // empty')
+  if [[ -n "$mirror_id" ]]; then
+    echo "   OK — mirror id: $mirror_id"
+  else
+    echo "   RESPONSE: $RESP"
+  fi
+  echo "-----------------------------------"
+done < "$INPUT_FILE"
