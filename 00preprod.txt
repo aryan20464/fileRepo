@@ -1,86 +1,9 @@
-Health baseline — RESOLVED ✅
-
-Your results show:
-
-All GitLab services are run ✅
-GitLab version: 16.8.1 ✅
-Revision: a658d811568 ✅
-PostgreSQL: 14.9 ✅
-Redis: 7.0.15 as reported by GitLab environment check
-GitLab Shell: 14.33.0 ✅
-Gitaly: 16.8.1 ✅
-Git: 2.42.0 ✅
-All migrations up to date ✅
-GitLab configuration up to date ✅
-No orphaned GroupMembers ✅
-Redis connectivity ✅
-Sidekiq running ✅
-Gitaly healthy ✅
-Uploads and permissions healthy ✅
-66 active users
-All projects using hashed storage ✅
-All projects confirmed in hashed storage ✅
-
-The gitlab:check SANITIZE=true completed without errors, which is particularly important because this gives us a clean before-upgrade reference point.
-
-Disk space
-
-Also looks comfortable:
-
-/data: 42 GB free
-/devtools: 27 GB free
-/var: 3.3 GB free
-/: 19 GB free
-/tmp: 4.6 GB free
-
-However, /var has only 3.3 GB free, so we should be careful with temporary files during the upgrade. In particular, don't create another 4–5 GB backup under /var.
-
-Updated overall backup status
-Component	Status
-GitLab DB gitlabhq_production	✅ RESOLVED
-PostgreSQL dump integrity	✅ RESOLVED — 12,065 lines
-PostgreSQL 14.9	✅ RESOLVED
-External NGINX /devtools/nginx	✅ RESOLVED
-NGINX SSL certificates	✅ RESOLVED
-NGINX configuration	✅ RESOLVED
-NGINX build options	✅ RESOLVED
-External Redis /devtools/redis	✅ RESOLVED
-/etc/gitlab	✅ RESOLVED
-GitLab official application backup	✅ RESOLVED — 4.7 GB
-Official backup copied to /data/backup/gitlab	✅ RESOLVED
-GitLab CE 16.8.1 RPM	✅ RESOLVED
-GitLab health/status baseline	✅ RESOLVED — HEALTHY
-Final SHA256 manifest	⏳ Pending
-Secondary/offline backup copy	⏳ Pending
-One more important thing before the final checksum
-
-I recommend not upgrading yet.
-
-We have the actual recovery files, but now we should make one consolidated inventory and checksum set. This gives us a definitive record saying:
-
-"This is exactly what existed on the server immediately before the GitLab upgrade."
-
-We'll also verify that /data has enough space for all the backup artifacts.
-
-Run:
-
-cd /data/backup/gitlab-pre-upgrade-16.8.1
-
-ls -lah
-
-and:
-
-du -sh .
-
-Then:
-
-sudo sha256sum \
-  /data/backup/gitlab-pre-upgrade-16.8.1/gitlabhq_production-16.8.1.dump \
-  /data/backup/gitlab-pre-upgrade-16.8.1/etc-gitlab-16.8.1.tar.gz \
-  /devtools/nginx.tar.gz \
-  /devtools/redis.tar.gz \
-  | tee SHA256SUMS
-
-Don't worry if your /etc-gitlab archive has a different filename—if it does, show me the ls -lah output first and I'll give you the exact checksum command.
-
-After this, we'll have only the secondary/offline copy verification left. Then we can move from backup preparation to the actual 16.8.1 → 16.11.10 upgrade planning.
+[root@tss-ideasvnuat gitlab-rpm]# cat /etc/redhat-release
+Red Hat Enterprise Linux release 8.10 (Ootpa)
+[root@tss-ideasvnuat gitlab-rpm]# find /data/ -type f -name 'gitlab-ce-16.11.10*.rpm' 2>/dev/null
+/data/backup/gitlab-pre-upgrade-16.8.1/gitlab-rpm/gitlab-ce-16.11.10-ce.0.el8.x86_64.rpm
+[root@tss-ideasvnuat gitlab-rpm]# cat /etc/redhat-release
+Red Hat Enterprise Linux release 8.10 (Ootpa)
+[root@tss-ideasvnuat gitlab-rpm]# uname -m
+x86_64
+[root@tss-ideasvnuat gitlab-rpm]#
