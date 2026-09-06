@@ -1,10 +1,19 @@
-[root@tss-ideasvnuat gitlab-rpm]# gitlab-rake gitlab:background_migrations:status
-Database: main
-[root@tss-ideasvnuat gitlab-rpm]# gitlab-ctl status
-run: gitaly: (pid 2765) 1392807s; run: log: (pid 2762) 1392807s
-run: gitlab-kas: (pid 68017) 1386892s; run: log: (pid 2760) 1392807s
-run: gitlab-workhorse: (pid 2758) 1392807s; run: log: (pid 2754) 1392807s
-run: logrotate: (pid 2845926) 3185s; run: log: (pid 2755) 1392807s
-run: postgresql: (pid 2763) 1392807s; run: log: (pid 2759) 1392807s
-run: puma: (pid 2757) 1392807s; run: log: (pid 2752) 1392807s
-run: sidekiq: (pid 67933) 1386899s; run: log: (pid 2753) 1392807s
+Current pre-upgrade state
+Check	Result
+GitLab version	16.8.1
+Target version	16.11.10
+DNF dependency resolution	✅ Only gitlab-ce upgrade
+Database migrations	✅ All migrations up
+Background migration command	Database: main — no pending migration details reported
+Redis connectivity	✅
+Redis version requirement	✅ ≥ 6.0
+Gitaly	✅ Running
+Sidekiq	✅ Running
+Puma	✅ Running
+PostgreSQL	✅ Running
+GitLab Workhorse	✅ Running
+GitLab KAS	✅ Running
+Backups	✅ Completed
+Rollback 16.8.1 RPM	✅ Available
+External NGINX	✅ Preserved
+External Redis	✅ Preserved
