@@ -1,12 +1,20 @@
-Current checkpoint
-GitLab: 17.3.7 ✅
-PostgreSQL: 14.11 ✅
-Redis: 7.0.15 ✅
-All GitLab services running ✅
-gitlab:check SANITIZE=true: clean ✅
-Background migrations: no active; AlterWebhookDeletedAuditEvent is now finished ✅
-ci_pipeline_messages migration: finalized ✅
-External Redis configuration: correct ✅
-Embedded NGINX disabled: correct ✅
-External NGINX remains authoritative ✅
-Disk space: sufficient for the 17.5.5 RPM; / has 19G free and /data has 34G free ✅
+[root@tss-ideasvnuat gitlab-rpm]# dnf install --assumeno gitlab-ce-17.5.5-ce.0.el8.x86_64.rpm
+Updating Subscription Management repositories.
+Unable to read consumer identity
+
+This system is not registered with an entitlement server. You can use subscription-manager to register.
+
+Warning: failed loading '/etc/yum.repos.d/dummy.repo', skipping.
+Dependencies resolved.
+=============================================================================================================================================================================================================================================
+ Package                                                 Architecture                                         Version                                                       Repository                                                  Size
+=============================================================================================================================================================================================================================================
+Upgrading:
+ gitlab-ce                                               x86_64                                               17.5.5-ce.0.el8                                               @commandline                                               1.2 G
+
+Transaction Summary
+=============================================================================================================================================================================================================================================
+Upgrade  1 Package
+
+Total size: 1.2 G
+Operation aborted.
