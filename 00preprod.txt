@@ -1,6 +1,4 @@
-gitlab-psql -d gitlabhq_production -c "
-SELECT relname AS table, n_live_tup AS rows
-FROM pg_stat_user_tables
-WHERE relname = 'ci_pipeline_messages'
-AND n_live_tup > 1500000;
-"
+grep -nE '^[[:space:]]*[A-Za-z0-9_]+\[[^]]+\]' /etc/gitlab/gitlab.rb | \
+grep -Ei 'grafana|sidekiq|prometheus|redis|nginx|postgresql|gitlab_kas'
+
+rpm -q gitlab-ce
