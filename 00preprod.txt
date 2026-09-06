@@ -1,10 +1,15 @@
-[root@tss-ideasvnuat gitlab-rpm]# gitlab-rake gitlab:background_migrations:status | grep active
-[root@tss-ideasvnuat gitlab-rpm]# du -sh /var/opt/gitlab/postgresql/data/
-527M    /var/opt/gitlab/postgresql/data/
-[root@tss-ideasvnuat gitlab-rpm]# df -h /var /data/
-Filesystem             Size  Used Avail Use% Mounted on
-/dev/mapper/rhel-var   6.9G  3.2G  3.3G  50% /var
-/dev/mapper/data-data   49G   14G   34G  29% /data
-[root@tss-ideasvnuat gitlab-rpm]# gitlab-rake gitlab:background_migrations:status | grep -E 'active|pending'
-finished   | BackfillIncidentManagementPendingAlertEscalationsProjectId,incident_management_pending_alert_escalations,id,["project_id","alert_management_alerts","project_id","alert_id"]
-[
+/opt/gitlab/embedded/bin/pg_dump \
+  -U gitlab-psql \
+  -h /var/opt/gitlab/postgresql \
+  -Fc \
+  -d gitlabhq_production \
+  -f /data/backup/gitlab-pre-pg16-17.5.5/gitlabhq_production-17.5.5-pg14.dump
+
+ls -lh /data/backup/gitlab-pre-pg16-17.5.5/
+
+/opt/gitlab/embedded/bin/pg_restore \
+  --list \
+  /data/backup/gitlab-pre-pg16-17.5.5/gitlabhq_production-17.5.5-pg14.dump \
+  > /data/backup/gitlab-pre-pg16-17.5.5/restore-list.txt
+
+wc -l /data/backup/gitlab-pre-pg16-17.5.5/restore-list.txt
