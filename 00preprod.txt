@@ -1,11 +1,1 @@
-[osadmin@tss-ideasvnuat ~]$ ./ideagit_ui_mirror_sync.sh
-===== Session-based mirror sync trigger run started: Sun Sep  6 11:15:53 IST 2026 =====
-Logging in as chakri94...
-Login successful (session cookie confirmed).
-
-==> [11:15:53] fxs/fac-api
-    HTTP status: 301
-    FAILED — response: <html><body>You are being <a href="https://ideagit.sbi.co.in:10000/fxs/fac-api/-/mirror/update_now">redirected</a>.</body></html>
------------------------------------
-===== Run finished: Sun Sep  6 11:16:03 IST 2026 =====
-[
+https://ideagit.sbi.co.in:10000/fxs/fac-api/-/mirror/update_now?sync_remote=true
