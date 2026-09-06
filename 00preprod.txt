@@ -1,1 +1,9 @@
-sudo grep -E '^[[:space:]]*gitlab_rails\['"'"'backup_path'"'"'\]|^[[:space:]]*gitlab_rails\['"'"'backup_keep_time'"'"'\]' /etc/gitlab/gitlab.rb
+[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# grep -E '^[[:space:]]*gitlab_rails\['"'"'backup_path'"'"'\]|^[[:space:]]*gitlab_rails\['"'"'backup_keep_time'"'"'\]' /etc/gitlab/gitlab.rb
+[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# gitlab-rails runner 'puts Gitlab.config.backup.path'
+/var/opt/gitlab/backups
+[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# ls -lah /var/opt/gitlab/backups/
+total 4.7G
+drwx------.  2 git  root 4.0K Sep  6 13:21 .
+drwxr-xr-x. 20 root root 4.0K Jul 29 11:08 ..
+-rw-------.  1 git  git  4.7G Sep  6 13:21 1788680959_2026_09_06_16.8.1_gitlab_backup.tar
+[
