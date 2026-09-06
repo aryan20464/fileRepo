@@ -1,20 +1,53 @@
-[root@tss-ideasvnuat gitlab-rpm]# dnf install --assumeno gitlab-ce-17.5.5-ce.0.el8.x86_64.rpm
-Updating Subscription Management repositories.
-Unable to read consumer identity
+[2026-09-06T16:09:52+05:30] INFO: bash[Set proper security context on ssh files for selinux] ran successfully
+    - execute "bash"
+[2026-09-06T16:09:52+05:30] INFO: file[/var/opt/gitlab/gitaly/.gitlab_secret] sending restart action to runit_service[gitaly] (delayed)
+Recipe: gitaly::enable
+  * runit_service[gitaly] action restart (up to date)
+[2026-09-06T16:09:53+05:30] INFO: template[Create Gitaly config.toml] sending hup action to runit_service[gitaly] (delayed)
+  * runit_service[gitaly] action hup[2026-09-06T16:09:53+05:30] INFO: runit_service[gitaly] signalled (HUP)
+[2026-09-06T16:09:53+05:30] INFO: runit_service[gitaly] sent hup
 
-This system is not registered with an entitlement server. You can use subscription-manager to register.
+    - send hup to runit_service[gitaly]
+[2026-09-06T16:09:53+05:30] INFO: version_file[Create version file for Workhorse] sending restart action to runit_service[gitlab-workhorse] (delayed)
+Recipe: gitlab::gitlab-workhorse
+  * runit_service[gitlab-workhorse] action restart (up to date)
+[2026-09-06T16:09:53+05:30] INFO: Cinc Client Run complete in 100.541804491 seconds
 
-Warning: failed loading '/etc/yum.repos.d/dummy.repo', skipping.
-Dependencies resolved.
-=============================================================================================================================================================================================================================================
- Package                                                 Architecture                                         Version                                                       Repository                                                  Size
-=============================================================================================================================================================================================================================================
-Upgrading:
- gitlab-ce                                               x86_64                                               17.5.5-ce.0.el8                                               @commandline                                               1.2 G
+Running handlers:
+[2026-09-06T16:09:53+05:30] INFO: Running report handlers
+Running handlers complete
+[2026-09-06T16:09:53+05:30] INFO: Report handlers complete
+Infra Phase complete, 25/592 resources updated in 02 minutes 07 seconds
+gitlab Reconfigured!
+Restarting previously running GitLab services
+ok: run: gitaly: (pid 2862792) 1s
+ok: run: gitlab-kas: (pid 2862838) 1s
+ok: run: gitlab-workhorse: (pid 2862821) 1s
+ok: run: logrotate: (pid 2862857) 0s
+ok: run: postgresql: (pid 2853432) 4361s
+ok: run: puma: (pid 2862864) 1s
+ok: run: sidekiq: (pid 2862869) 0s
 
-Transaction Summary
-=============================================================================================================================================================================================================================================
-Upgrade  1 Package
+     _______ __  __          __
+    / ____(_) /_/ /   ____ _/ /_
+   / / __/ / __/ /   / __ `/ __ \
+  / /_/ / / /_/ /___/ /_/ / /_/ /
+  \____/_/\__/_____/\__,_/_.___/
 
-Total size: 1.2 G
-Operation aborted.
+
+Upgrade complete! If your GitLab server is misbehaving try running
+  sudo gitlab-ctl restart
+before anything else.
+If you need to roll back to the previous version you can use the database
+backup made during the upgrade (scroll up for the filename).
+
+
+  Verifying        : gitlab-ce-17.5.5-ce.0.el8.x86_64                                                                                                                                                                                    1/2
+  Verifying        : gitlab-ce-17.3.7-ce.0.el8.x86_64                                                                                                                                                                                    2/2
+Installed products updated.
+
+Upgraded:
+  gitlab-ce-17.5.5-ce.0.el8.x86_64
+
+Complete!
+[root@tss-ideasvnuat gitlab-rpm]#
