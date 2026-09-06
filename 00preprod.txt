@@ -1,20 +1,10 @@
-[root@tss-ideasvnuat gitlab-rpm]# grep -nEi 'grafana' /etc/gitlab/gitlab.rb
-[root@tss-ideasvnuat gitlab-rpm]# grep -nE '^[[:space:]]*[A-Za-z0-9_]+\[[^]]+\]' /etc/gitlab/gitlab.rb | \
-> ^C
-[root@tss-ideasvnuat gitlab-rpm]# grep -nE '^[[:space:]]*[A-Za-z0-9_]+\[[^]]+\]' /etc/gitlab/gitlab.rb | grep -Ei 'grafana|sidekiq|prometheus|redis|nginx|postgresql|gitlab_kas'
-782:gitlab_rails['redis_host'] = "127.0.0.1"
-783:gitlab_rails['redis_port'] = 6829
-794:gitlab_rails['redis_socket'] = ""
-1264:sidekiq['metrics_enabled'] = false
-1500:redis['enable'] = false
-1566:redis['bind'] = '127.0.0.1' # or specify an IP to bind to a single one
-1567:redis['port'] = 6829
-1640:nginx['enable'] = false
-1642: nginx['redirect_http_to_https'] = true
-1654: nginx['ssl_certificate'] = "/etc/gitlab/ssl/idea_cicd_pub.crt"
-1655: nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/idea_cicd_pvt.key"
-1673: nginx['ssl_password_file'] = '/etc/gitlab/ssl/key_file_password.txt' # Path to file with passphrases for ssl certificate secret keys
-2504:prometheus_monitoring['enable'] = false
-[root@tss-ideasvnuat gitlab-rpm]# rpm -q gitlab-ce
-gitlab-ce-16.11.10-ce.0.el8.x86_64
+ls -lh /data/backup/gitlab-pre-upgrade-16.8.1/gitlab-rpm
+total 7.9G
+-rw-r-----. 1 root root  926M Sep  6 14:29 gitlab-ce-16.11.10-ce.0.el8.x86_64.rpm
+-rw-r-----. 1 root root  1.1G Sep  6 14:29 gitlab-ce-16.8.1-ce.0.el8.x86_64.rpm
+-rw-r-----. 1 root root  1.5G Sep  6 14:29 gitlab-ce-17.11.7-ce.0.el8.x86_64.rpm
+-rw-r-----. 1 root root  996M Sep  6 14:29 gitlab-ce-17.1.8-ce.0.el8.x86_64.rpm
+-rw-r-----. 1 root root 1008M Sep  6 14:29 gitlab-ce-17.3.7-ce.0.el8.x86_64.rpm
+-rw-r-----. 1 root root  1.3G Sep  6 14:29 gitlab-ce-17.5.5-ce.0.el8.x86_64.rpm
+-rw-r-----. 1 root root  1.4G Sep  6 14:29 gitlab-ce-17.8.7-ce.0.el8.x86_64.rpm
 [root@tss-ideasvnuat gitlab-rpm]#
