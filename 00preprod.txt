@@ -1,4 +1,7 @@
-rpm -qp --qf '%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH}\n' \
-/data/backup/gitlab-pre-upgrade-16.8.1/gitlab-rpm/gitlab-ce-17.3.7-ce.0.el8.x86_64.rpm
-
-rpm -K /data/backup/gitlab-pre-upgrade-16.8.1/gitlab-rpm/gitlab-ce-17.3.7-ce.0.el8.x86_64.rpm
+[root@tss-ideasvnuat gitlab-rpm]# rpm -qp --qf '%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH}\n' \
+> /data/backup/gitlab-pre-upgrade-16.8.1/gitlab-rpm/gitlab-ce-17.3.7-ce.0.el8.x86_64.rpm
+warning: /data/backup/gitlab-pre-upgrade-16.8.1/gitlab-rpm/gitlab-ce-17.3.7-ce.0.el8.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID f27eab47: NOKEY
+gitlab-ce-17.3.7-ce.0.el8.x86_64
+[root@tss-ideasvnuat gitlab-rpm]# rpm -K /data/backup/gitlab-pre-upgrade-16.8.1/gitlab-rpm/gitlab-ce-17.3.7-ce.0.el8.x86_64.rpm
+/data/backup/gitlab-pre-upgrade-16.8.1/gitlab-rpm/gitlab-ce-17.3.7-ce.0.el8.x86_64.rpm: digests SIGNATURES NOT OK
+[root@tss-ideasvnuat gitlab-rpm]#
