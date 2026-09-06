@@ -1,47 +1,322 @@
-[root@tss-ideasvnuat gitlab-rpm]# ss -tunlp | grep '6829'
-tcp   LISTEN 0      511         127.0.0.1:6829       0.0.0.0:*    users:(("redis-server",pid=68011,fd=8))
-[root@tss-ideasvnuat gitlab-rpm]# gitlab-rails runner 'puts Gitlab::Redis::SharedState.with { |r| r.redis_version }'
-/opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/redis-4.8.0/lib/redis/client.rb:162:in `call': ERR unknown command 'redis_version', with args beginning with: (Redis::CommandError)
-        from /opt/gitlab/embedded/service/gitlab-rails/lib/gitlab/instrumentation/redis_interceptor.rb:10:in `block in call'
-        from /opt/gitlab/embedded/service/gitlab-rails/lib/gitlab/instrumentation/redis_helper.rb:17:in `instrument_call'
-        from /opt/gitlab/embedded/service/gitlab-rails/lib/gitlab/instrumentation/redis_interceptor.rb:9:in `call'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/redis-4.8.0/lib/redis.rb:270:in `block in send_command'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/redis-4.8.0/lib/redis.rb:269:in `synchronize'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/redis-4.8.0/lib/redis.rb:269:in `send_command'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/redis-4.8.0/lib/redis/commands.rb:237:in `method_missing'
-        from /opt/gitlab/embedded/service/gitlab-rails/lib/gitlab/redis/multi_store.rb:206:in `method_missing'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/railties-7.0.8/lib/rails/commands/runner/runner_command.rb:46:in `block in <main>'
-        from /opt/gitlab/embedded/service/gitlab-rails/lib/gitlab/redis/multi_store_wrapper.rb:10:in `block (2 levels) in with'
-        from /opt/gitlab/embedded/service/gitlab-rails/lib/gitlab/redis/multi_store.rb:227:in `block (2 levels) in with_borrowed_connection'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/connection_pool-2.4.1/lib/connection_pool.rb:110:in `block (2 levels) in with'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/connection_pool-2.4.1/lib/connection_pool.rb:109:in `handle_interrupt'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/connection_pool-2.4.1/lib/connection_pool.rb:109:in `block in with'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/connection_pool-2.4.1/lib/connection_pool.rb:106:in `handle_interrupt'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/connection_pool-2.4.1/lib/connection_pool.rb:106:in `with'
-        from /opt/gitlab/embedded/service/gitlab-rails/lib/gitlab/redis/multi_store.rb:216:in `block in with_borrowed_connection'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/connection_pool-2.4.1/lib/connection_pool.rb:110:in `block (2 levels) in with'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/connection_pool-2.4.1/lib/connection_pool.rb:109:in `handle_interrupt'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/connection_pool-2.4.1/lib/connection_pool.rb:109:in `block in with'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/connection_pool-2.4.1/lib/connection_pool.rb:106:in `handle_interrupt'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/connection_pool-2.4.1/lib/connection_pool.rb:106:in `with'
-        from /opt/gitlab/embedded/service/gitlab-rails/lib/gitlab/redis/multi_store.rb:215:in `with_borrowed_connection'
-        from /opt/gitlab/embedded/service/gitlab-rails/lib/gitlab/redis/multi_store_wrapper.rb:9:in `block in with'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/connection_pool-2.4.1/lib/connection_pool.rb:110:in `block (2 levels) in with'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/connection_pool-2.4.1/lib/connection_pool.rb:109:in `handle_interrupt'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/connection_pool-2.4.1/lib/connection_pool.rb:109:in `block in with'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/connection_pool-2.4.1/lib/connection_pool.rb:106:in `handle_interrupt'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/connection_pool-2.4.1/lib/connection_pool.rb:106:in `with'
-        from /opt/gitlab/embedded/service/gitlab-rails/lib/gitlab/redis/multi_store_wrapper.rb:8:in `with'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/railties-7.0.8/lib/rails/commands/runner/runner_command.rb:46:in `<main>'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/railties-7.0.8/lib/rails/commands/runner/runner_command.rb:46:in `eval'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/railties-7.0.8/lib/rails/commands/runner/runner_command.rb:46:in `perform'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/thor-1.3.0/lib/thor/command.rb:28:in `run'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/thor-1.3.0/lib/thor/invocation.rb:127:in `invoke_command'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/thor-1.3.0/lib/thor.rb:527:in `dispatch'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/railties-7.0.8/lib/rails/command/base.rb:87:in `perform'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/railties-7.0.8/lib/rails/command.rb:48:in `invoke'
-        from /opt/gitlab/embedded/lib/ruby/gems/3.1.0/gems/railties-7.0.8/lib/rails/commands.rb:18:in `<top (required)>'
-        from <internal:/opt/gitlab/embedded/lib/ruby/site_ruby/3.1.0/rubygems/core_ext/kernel_require.rb>:38:in `require'
-        from <internal:/opt/gitlab/embedded/lib/ruby/site_ruby/3.1.0/rubygems/core_ext/kernel_require.rb>:38:in `require'
-        from bin/rails:4:in `<main>'
-[
+[root@tss-ideasvnuat gitlab-rpm]# gitlab-rake gitlab:check SANITIZE=true
+Checking GitLab subtasks ...
+
+Checking GitLab Shell ...
+
+GitLab Shell: ... GitLab Shell version >= 14.33.0 ? ... OK (14.33.0)
+Running /opt/gitlab/embedded/service/gitlab-shell/bin/check
+Internal API available: OK
+Redis available via internal API: OK
+gitlab-shell self-check successful
+
+Checking GitLab Shell ... Finished
+
+Checking Gitaly ...
+
+Gitaly: ... default ... OK
+
+Checking Gitaly ... Finished
+
+Checking Sidekiq ...
+
+Sidekiq: ... Running? ... yes
+Number of Sidekiq processes (cluster/worker) ... 1/1
+
+Checking Sidekiq ... Finished
+
+Checking Incoming Email ...
+
+Incoming Email: ... Reply by email is disabled in config/gitlab.yml
+
+Checking Incoming Email ... Finished
+
+Checking LDAP ...
+
+LDAP: ... LDAP is disabled in config/gitlab.yml
+
+Checking LDAP ... Finished
+
+Checking GitLab App ...
+
+Database config exists? ... yes
+Tables are truncated? ... skipped
+All migrations up? ... yes
+Database contains orphaned GroupMembers? ... no
+GitLab config exists? ... yes
+GitLab config up to date? ... yes
+Cable config exists? ... yes
+Resque config exists? ... yes
+Log directory writable? ... yes
+Tmp directory writable? ... yes
+Uploads directory exists? ... yes
+Uploads directory has correct permissions? ... yes
+Uploads directory tmp has correct permissions? ... yes
+Systemd unit files or init script exist? ... skipped (omnibus-gitlab has neither init script nor systemd units)
+Systemd unit files or init script up-to-date? ... skipped (omnibus-gitlab has neither init script nor systemd units)
+Projects have namespace: ...
+5/1 ... yes
+5/2 ... yes
+9/3 ... yes
+9/4 ... yes
+9/5 ... yes
+9/6 ... yes
+9/7 ... yes
+9/8 ... yes
+9/9 ... yes
+9/10 ... yes
+9/11 ... yes
+9/12 ... yes
+10/14 ... yes
+10/15 ... yes
+10/16 ... yes
+10/17 ... yes
+43/18 ... yes
+43/19 ... yes
+43/20 ... yes
+43/21 ... yes
+43/22 ... yes
+9/24 ... yes
+43/25 ... yes
+43/26 ... yes
+43/27 ... yes
+43/28 ... yes
+43/29 ... yes
+43/30 ... yes
+43/31 ... yes
+43/32 ... yes
+43/33 ... yes
+43/34 ... yes
+43/35 ... yes
+43/36 ... yes
+43/37 ... yes
+43/38 ... yes
+43/39 ... yes
+43/40 ... yes
+9/41 ... yes
+43/42 ... yes
+43/43 ... yes
+9/44 ... yes
+9/45 ... yes
+10/46 ... yes
+9/47 ... yes
+9/48 ... yes
+9/49 ... yes
+27/50 ... yes
+8/51 ... yes
+27/52 ... yes
+8/53 ... yes
+27/54 ... yes
+27/56 ... yes
+27/57 ... yes
+26/58 ... yes
+43/59 ... yes
+43/60 ... yes
+8/61 ... yes
+27/62 ... yes
+27/63 ... yes
+96/64 ... yes
+29/65 ... yes
+9/66 ... yes
+8/67 ... yes
+97/68 ... yes
+97/69 ... yes
+97/70 ... yes
+97/71 ... yes
+97/72 ... yes
+97/73 ... yes
+97/74 ... yes
+97/75 ... yes
+27/78 ... yes
+9/79 ... yes
+43/80 ... yes
+123/82 ... yes
+123/83 ... yes
+123/84 ... yes
+43/85 ... yes
+27/88 ... yes
+9/89 ... yes
+10/90 ... yes
+10/92 ... yes
+10/93 ... yes
+123/94 ... yes
+9/95 ... yes
+43/96 ... yes
+43/97 ... yes
+43/98 ... yes
+43/99 ... yes
+27/101 ... yes
+27/102 ... yes
+27/103 ... yes
+27/104 ... yes
+9/105 ... yes
+134/106 ... yes
+134/110 ... yes
+43/112 ... yes
+10/113 ... yes
+43/114 ... yes
+9/115 ... yes
+9/116 ... yes
+10/117 ... yes
+123/118 ... yes
+27/119 ... yes
+10/120 ... yes
+27/121 ... yes
+26/124 ... yes
+9/125 ... yes
+150/127 ... yes
+181/130 ... yes
+8/132 ... yes
+97/133 ... yes
+165/134 ... yes
+189/135 ... yes
+189/136 ... yes
+43/137 ... yes
+27/138 ... yes
+26/139 ... yes
+27/140 ... yes
+9/142 ... yes
+9/143 ... yes
+196/144 ... yes
+219/145 ... yes
+27/146 ... yes
+196/151 ... yes
+175/152 ... yes
+196/153 ... yes
+196/154 ... yes
+196/156 ... yes
+43/157 ... yes
+196/158 ... yes
+196/159 ... yes
+196/160 ... yes
+9/161 ... yes
+10/162 ... yes
+26/163 ... yes
+26/164 ... yes
+43/165 ... yes
+43/166 ... yes
+27/168 ... yes
+10/170 ... yes
+123/171 ... yes
+43/172 ... yes
+196/173 ... yes
+196/174 ... yes
+43/175 ... yes
+27/176 ... yes
+205/177 ... yes
+196/178 ... yes
+43/179 ... yes
+111/180 ... yes
+111/181 ... yes
+111/182 ... yes
+111/183 ... yes
+111/184 ... yes
+196/185 ... yes
+9/186 ... yes
+271/187 ... yes
+9/188 ... yes
+196/190 ... yes
+289/192 ... yes
+282/193 ... yes
+282/194 ... yes
+282/195 ... yes
+282/196 ... yes
+282/197 ... yes
+282/198 ... yes
+43/199 ... yes
+43/200 ... yes
+9/201 ... yes
+295/202 ... yes
+111/203 ... yes
+111/204 ... yes
+196/205 ... yes
+289/206 ... yes
+196/207 ... yes
+196/208 ... yes
+196/209 ... yes
+43/210 ... yes
+43/211 ... yes
+289/212 ... yes
+27/213 ... yes
+314/215 ... yes
+264/216 ... yes
+196/217 ... yes
+27/218 ... yes
+314/219 ... yes
+111/220 ... yes
+196/221 ... yes
+9/222 ... yes
+43/223 ... yes
+196/224 ... yes
+27/225 ... yes
+27/226 ... yes
+27/227 ... yes
+27/228 ... yes
+9/229 ... yes
+314/230 ... yes
+314/231 ... yes
+196/232 ... yes
+9/233 ... yes
+219/234 ... yes
+219/235 ... yes
+219/236 ... yes
+43/237 ... yes
+196/238 ... yes
+43/239 ... yes
+9/240 ... yes
+196/244 ... yes
+343/246 ... yes
+343/247 ... yes
+343/248 ... yes
+343/249 ... yes
+343/250 ... yes
+343/251 ... yes
+343/252 ... yes
+343/253 ... yes
+196/254 ... yes
+9/256 ... yes
+196/257 ... yes
+343/258 ... yes
+9/260 ... yes
+9/261 ... yes
+365/262 ... yes
+343/263 ... yes
+43/264 ... yes
+9/265 ... yes
+9/266 ... yes
+43/267 ... yes
+196/268 ... yes
+196/270 ... yes
+10/271 ... yes
+274/272 ... yes
+27/275 ... yes
+27/276 ... yes
+274/277 ... yes
+27/278 ... yes
+43/279 ... yes
+27/280 ... yes
+196/281 ... yes
+111/283 ... yes
+27/284 ... yes
+196/285 ... yes
+43/286 ... yes
+393/290 ... yes
+393/291 ... yes
+196/292 ... yes
+27/293 ... yes
+43/294 ... yes
+26/295 ... yes
+26/296 ... yes
+27/297 ... yes
+Redis version >= 6.0.0? ... yes
+Ruby version >= 3.0.6 ? ... yes (3.1.4)
+Git user has default SSH configuration? ... yes
+Active users: ... 66
+Is authorized keys file accessible? ... yes
+GitLab configured to store new projects in hashed storage? ... yes
+All projects are in hashed storage? ... yes
+
+Checking GitLab App ... Finished
+
+
+Checking GitLab subtasks ... Finished
+
