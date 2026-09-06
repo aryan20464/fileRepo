@@ -1,28 +1,3 @@
-
-
- ll /opt/gitlab/embedded/bin/
-lrwxrwxrwx. 1 root root        49 Feb  2  2024 pg_amcheck -> /opt/gitlab/embedded/postgresql/14/bin/pg_amcheck
-lrwxrwxrwx. 1 root root        56 Feb  2  2024 pg_archivecleanup -> /opt/gitlab/embedded/postgresql/14/bin/pg_archivecleanup
-lrwxrwxrwx. 1 root root        52 Feb  2  2024 pg_basebackup -> /opt/gitlab/embedded/postgresql/14/bin/pg_basebackup
-lrwxrwxrwx. 1 root root        46 Feb  2  2024 pgbench -> /opt/gitlab/embedded/postgresql/14/bin/pgbench
-lrwxrwxrwx. 1 root root        51 Feb  2  2024 pg_checksums -> /opt/gitlab/embedded/postgresql/14/bin/pg_checksums
-lrwxrwxrwx. 1 root root        48 Feb  2  2024 pg_config -> /opt/gitlab/embedded/postgresql/14/bin/pg_config
-lrwxrwxrwx. 1 root root        53 Feb  2  2024 pg_controldata -> /opt/gitlab/embedded/postgresql/14/bin/pg_controldata
-lrwxrwxrwx. 1 root root        45 Feb  2  2024 pg_ctl -> /opt/gitlab/embedded/postgresql/14/bin/pg_ctl
-lrwxrwxrwx. 1 root root        46 Feb  2  2024 pg_dump -> /opt/gitlab/embedded/postgresql/14/bin/pg_dump
-lrwxrwxrwx. 1 root root        49 Feb  2  2024 pg_dumpall -> /opt/gitlab/embedded/postgresql/14/bin/pg_dumpall
-lrwxrwxrwx. 1 root root        49 Feb  2  2024 pg_isready -> /opt/gitlab/embedded/postgresql/14/bin/pg_isready
-lrwxrwxrwx. 1 root root        52 Feb  2  2024 pg_receivewal -> /opt/gitlab/embedded/postgresql/14/bin/pg_receivewal
-lrwxrwxrwx. 1 root root        53 Feb  2  2024 pg_recvlogical -> /opt/gitlab/embedded/postgresql/14/bin/pg_recvlogical
-lrwxrwxrwx. 1 root root        50 Feb  2  2024 pg_resetwal -> /opt/gitlab/embedded/postgresql/14/bin/pg_resetwal
-lrwxrwxrwx. 1 root root        49 Feb  2  2024 pg_restore -> /opt/gitlab/embedded/postgresql/14/bin/pg_restore
-lrwxrwxrwx. 1 root root        48 Feb  2  2024 pg_rewind -> /opt/gitlab/embedded/postgresql/14/bin/pg_rewind
-lrwxrwxrwx. 1 root root        52 Feb  2  2024 pg_test_fsync -> /opt/gitlab/embedded/postgresql/14/bin/pg_test_fsync
-lrwxrwxrwx. 1 root root        53 Feb  2  2024 pg_test_timing -> /opt/gitlab/embedded/postgresql/14/bin/pg_test_timing
-lrwxrwxrwx. 1 root root        49 Feb  2  2024 pg_upgrade -> /opt/gitlab/embedded/postgresql/14/bin/pg_upgrade
-lrwxrwxrwx. 1 root root        54 Feb  2  2024 pg_verifybackup -> /opt/gitlab/embedded/postgresql/14/bin/pg_verifybackup
-lrwxrwxrwx. 1 root root        49 Feb  2  2024 pg_waldump -> /opt/gitlab/embedded/postgresql/14/bin/pg_waldump
-
- find /opt/gitlab/embedded/bin -name pg_dump -type f -ls 
-
-returned nothing
+ /opt/gitlab/embedded/bin/pg_dump -Fc -d gitlabhq_production -f /data/backup/gitlab-pre-upgrade-16.8.1/gitlabhq_production-16.8.1.dump
+pg_dump: error: connection to server on socket "/tmp/.s.PGSQL.5432" failed: No such file or directory
+        Is the server running locally and accepting connections on that socket?
