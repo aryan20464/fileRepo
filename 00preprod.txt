@@ -1,9 +1,31 @@
-[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# /opt/gitlab/embedded/bin/pg_dump -Fc -h /var/opt/gitlab/postgresql -p 5432 -d gitlabhq_production -f /data/backup/gitlab-pre-upgrade-16.8.1/gitlabhq_production-16.8.1.dump
-pg_dump: error: connection to server on socket "/var/opt/gitlab/postgresql/.s.PGSQL.5432" failed: FATAL:  role "root" does not exist
-[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# /opt/gitlab/embedded/bin/pg_dump -Fc -h /var/opt/gitlab/postgresql -p 5432 -U gitlab-psql -d gitlabhq_production -f /data/backup/gitlab-pre-upgrade-16.8.1/gitlabhq_production-16.8.1.dump
-pg_dump: error: connection to server on socket "/var/opt/gitlab/postgresql/.s.PGSQL.5432" failed: FATAL:  Peer authentication failed for user "gitlab-psql"
-[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# sudo -u gitlab-psql /opt/gitlab/embedded/bin/pg_dump -Fc -h /var/opt/gitlab/postgresql -p 5432 -U gitlab-psql -d gitlabhq_production -f /data/backup/gitlab-pre-upgrade-16.8.1/gitlabhq_production-16.8.1.dump
-could not change directory to "/data/backup/gitlab-pre-upgrade-16.8.1": Permission denied
-pg_dump: error: could not open output file "/data/backup/gitlab-pre-upgrade-16.8.1/gitlabhq_production-16.8.1.dump": Permission denied
-[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]#
-
+[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# head -30 contents.txt
+;
+; Archive created at 2026-09-06 13:53:02 IST
+;     dbname: gitlabhq_production
+;     TOC Entries: 12054
+;     Compression: -1
+;     Dump Version: 1.14-0
+;     Format: CUSTOM
+;     Integer: 4 bytes
+;     Offset: 8 bytes
+;     Dumped from database version: 14.9
+;     Dumped by pg_dump version: 14.9
+;
+;
+; Selected TOC Entries:
+;
+6; 2615 17091 SCHEMA - gitlab_partitions_dynamic gitlab
+22898; 0 0 COMMENT - SCHEMA gitlab_partitions_dynamic gitlab
+7; 2615 17092 SCHEMA - gitlab_partitions_static gitlab
+22899; 0 0 COMMENT - SCHEMA gitlab_partitions_static gitlab
+3; 3079 16468 EXTENSION - btree_gist
+22900; 0 0 COMMENT - EXTENSION btree_gist
+2; 3079 16387 EXTENSION - pg_trgm
+22901; 0 0 COMMENT - EXTENSION pg_trgm
+2192; 1255 17093 FUNCTION public assign_p_ci_builds_id_value() gitlab
+2193; 1255 17094 FUNCTION public delete_associated_project_namespace() gitlab
+213; 1259 17095 TABLE public namespaces gitlab
+2194; 1255 17114 FUNCTION public find_namespaces_by_id(bigint) gitlab
+214; 1259 17115 TABLE public projects gitlab
+2195; 1255 17144 FUNCTION public find_projects_by_id(bigint) gitlab
+215; 1259 17145 TABLE public users gitlab
