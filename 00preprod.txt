@@ -1,4 +1,20 @@
-grep -nE '^[[:space:]]*[A-Za-z0-9_]+\[[^]]+\]' /etc/gitlab/gitlab.rb | \
-grep -Ei 'grafana|sidekiq|prometheus|redis|nginx|postgresql|gitlab_kas'
-
-rpm -q gitlab-ce
+[root@tss-ideasvnuat gitlab-rpm]# grep -nEi 'grafana' /etc/gitlab/gitlab.rb
+[root@tss-ideasvnuat gitlab-rpm]# grep -nE '^[[:space:]]*[A-Za-z0-9_]+\[[^]]+\]' /etc/gitlab/gitlab.rb | \
+> ^C
+[root@tss-ideasvnuat gitlab-rpm]# grep -nE '^[[:space:]]*[A-Za-z0-9_]+\[[^]]+\]' /etc/gitlab/gitlab.rb | grep -Ei 'grafana|sidekiq|prometheus|redis|nginx|postgresql|gitlab_kas'
+782:gitlab_rails['redis_host'] = "127.0.0.1"
+783:gitlab_rails['redis_port'] = 6829
+794:gitlab_rails['redis_socket'] = ""
+1264:sidekiq['metrics_enabled'] = false
+1500:redis['enable'] = false
+1566:redis['bind'] = '127.0.0.1' # or specify an IP to bind to a single one
+1567:redis['port'] = 6829
+1640:nginx['enable'] = false
+1642: nginx['redirect_http_to_https'] = true
+1654: nginx['ssl_certificate'] = "/etc/gitlab/ssl/idea_cicd_pub.crt"
+1655: nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/idea_cicd_pvt.key"
+1673: nginx['ssl_password_file'] = '/etc/gitlab/ssl/key_file_password.txt' # Path to file with passphrases for ssl certificate secret keys
+2504:prometheus_monitoring['enable'] = false
+[root@tss-ideasvnuat gitlab-rpm]# rpm -q gitlab-ce
+gitlab-ce-16.11.10-ce.0.el8.x86_64
+[root@tss-ideasvnuat gitlab-rpm]#
