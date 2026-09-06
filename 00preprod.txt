@@ -1,8 +1,12 @@
-gitlab-ctl status | grep sidekiq
-run: sidekiq: (pid 67933) 1373276s; run: log: (pid 2753) 1379184s
-[root@tss-ideasvnuat ~]# ps -ef | grep sidekiq
-root        2751    2742  0 Aug21 ?        00:00:00 runsv sidekiq
-root        2753    2751  0 Aug21 ?        00:01:45 svlogd /var/log/gitlab/sidekiq
-git        67933    2751  0 Aug21 ?        00:00:31 ruby /opt/gitlab/embedded/service/gitlab-rails/bin/sidekiq-cluster -e production -r /opt/gitlab/embedded/service/gitlab-rails -m 20 --timeout 25 *
-git        67956   67933  3 Aug21 ?        11:37:56 sidekiq 7.1.6 queues:activity_pub:activity_pub_projects_releases_subscription,authorized_project_update:authorized_project_update_project_recalculate,authorized_project_update:authorized_project_update_project_recalculate_per_user,authorized_project_update:authorized_project_update_user_refresh_from_replica,authorized_project_update:authorized_project_update_user_refresh_over_user_range,authorized_project_update:authorized_project_update_user_refresh_with_low_urgency,auto_devops:auto_devops_disable,auto_merge:auto_merge_process,batched_background_migrations:database_batched_background_migration_ci_execution,batched_background_migrations:database_batched_background_migration_main_execution,chaos:chaos_cpu_spin,chaos:chaos_db_spin,chaos:chaos_kill,chaos:chaos_leak_mem,chaos:chaos_sleep,cluster_agent:clusters_agents_delete_expired_events,cluster_agent:clusters_agents_notify_git_push,container_repository:cleanup_container_repository,container_repository:container_expiration_policies_cleanup_container_repository,
-root     2816346 2816259  0 11:05 pts/1    00:00:00 grep --color=auto sidekiq
+# Check if jobs exist in the mirror-related queue
+Sidekiq::Queue.new("repository_update_remote_mirror").size
+
+# Check if any jobs are stuck/retrying
+Sidekiq::RetrySet.new.size
+Sidekiq::DeadSet.new.size
+
+# Directly check the mirror record's state from the DB side
+mirror = RemoteMirror.find(32)
+mirror.update_status
+mirror.last_error
+mirror.last_update_started_at
