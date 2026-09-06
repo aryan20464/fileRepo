@@ -1,10 +1,4 @@
-ls -lh /data/backup/gitlab-pre-upgrade-16.8.1/gitlab-rpm
-total 7.9G
--rw-r-----. 1 root root  926M Sep  6 14:29 gitlab-ce-16.11.10-ce.0.el8.x86_64.rpm
--rw-r-----. 1 root root  1.1G Sep  6 14:29 gitlab-ce-16.8.1-ce.0.el8.x86_64.rpm
--rw-r-----. 1 root root  1.5G Sep  6 14:29 gitlab-ce-17.11.7-ce.0.el8.x86_64.rpm
--rw-r-----. 1 root root  996M Sep  6 14:29 gitlab-ce-17.1.8-ce.0.el8.x86_64.rpm
--rw-r-----. 1 root root 1008M Sep  6 14:29 gitlab-ce-17.3.7-ce.0.el8.x86_64.rpm
--rw-r-----. 1 root root  1.3G Sep  6 14:29 gitlab-ce-17.5.5-ce.0.el8.x86_64.rpm
--rw-r-----. 1 root root  1.4G Sep  6 14:29 gitlab-ce-17.8.7-ce.0.el8.x86_64.rpm
-[root@tss-ideasvnuat gitlab-rpm]#
+rpm -qp --qf '%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH}\n' \
+/data/backup/gitlab-pre-upgrade-16.8.1/gitlab-rpm/gitlab-ce-17.3.7-ce.0.el8.x86_64.rpm
+
+rpm -K /data/backup/gitlab-pre-upgrade-16.8.1/gitlab-rpm/gitlab-ce-17.3.7-ce.0.el8.x86_64.rpm
