@@ -4,24 +4,14 @@ set -euo pipefail
 INTERNAL_GITLAB="https://ideagit.sbi.co.in:10000"
 INTERNAL_TOKEN="glpat-xxxxxxxxxxxxxxxxxxxx"
 
-ORG_USER="orguser1"
-ORG_PASS='orgpass_or_token'
-
 INPUT_FILE="mirrors.csv"
-LOG_FILE="add_mirrors_$(date +%Y%m%d_%H%M%S).log"
-
-urlencode() {
-  python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "$1"
-}
-
-ENC_ORG_USER=$(urlencode "$ORG_USER")
-ENC_ORG_PASS=$(urlencode "$ORG_PASS")
+LOG_FILE="trigger_sync_$(date +%Y%m%d_%H%M%S).log"
 
 log() {
   echo -e "$1" | tee -a "$LOG_FILE"
 }
 
-log "===== Mirror creation run started: $(date) ====="
+log "===== Mirror sync trigger run started: $(date) ====="
 log "Log file: $LOG_FILE"
 log ""
 
@@ -32,24 +22,35 @@ while IFS=, read -r internal_url org_url; do
 
   relative_path=$(echo "$internal_url" | sed "s|${INTERNAL_GITLAB}/||" | sed 's|\.git$||')
   encoded_path=$(echo -n "$relative_path" | jq -sRr @uri)
-
   org_host_and_path="${org_url#https://}"
-  mirror_url="https://${ENC_ORG_USER}:${ENC_ORG_PASS}@${org_host_and_path}"
 
-  log "==> [$(date +%H:%M:%S)] Configuring mirror for $relative_path -> $org_url"
+  log "==> [$(date +%H:%M:%S)] Looking up mirror for $relative_path"
 
-  HTTP_STATUS=$(curl -k --max-time 30 -o /tmp/mirror_resp.json -w "%{http_code}" \
+  # Fetch the list of remote mirrors for this project
+  MIRRORS_JSON=$(curl -k -s --max-time 30 --header "PRIVATE-TOKEN: $INTERNAL_TOKEN" \
+       "${INTERNAL_GITLAB}/api/v4/projects/${encoded_path}/remote_mirrors")
+
+  mirror_id=$(echo "$MIRRORS_JSON" | jq -r --arg h "$org_host_and_path" \
+       '.[] | select(.url | endswith($h)) | .id' | head -n1)
+
+  if [[ -z "$mirror_id" || "$mirror_id" == "null" ]]; then
+    log "    FAILED — no matching mirror found. Raw response: $MIRRORS_JSON"
+    log "-----------------------------------"
+    sleep 10
+    continue
+  fi
+
+  log "    mirror id: $mirror_id — triggering sync"
+
+  HTTP_STATUS=$(curl -k -s --max-time 30 -o /tmp/sync_resp.json -w "%{http_code}" \
        --request POST --header "PRIVATE-TOKEN: $INTERNAL_TOKEN" \
-       --form "url=$mirror_url" \
-       --form "enabled=true" \
-       "${INTERNAL_GITLAB}/api/v4/projects/${encoded_path}/remote_mirrors" || echo "000")
+       "${INTERNAL_GITLAB}/api/v4/projects/${encoded_path}/remote_mirrors/${mirror_id}/sync" || echo "000")
 
-  RESP=$(cat /tmp/mirror_resp.json 2>/dev/null || echo "{}")
-  mirror_id=$(echo "$RESP" | jq -r '.id // empty' 2>/dev/null || echo "")
+  RESP=$(cat /tmp/sync_resp.json 2>/dev/null || echo "{}")
 
   log "    HTTP status: $HTTP_STATUS"
-  if [[ -n "$mirror_id" ]]; then
-    log "    OK — mirror id: $mirror_id"
+  if [[ "$HTTP_STATUS" == "200" || "$HTTP_STATUS" == "201" ]]; then
+    log "    OK — sync triggered"
   else
     log "    FAILED — response: $RESP"
   fi
@@ -59,4 +60,4 @@ while IFS=, read -r internal_url org_url; do
 done < "$INPUT_FILE"
 
 log ""
-log "===== Mirror creation run finished: $(date) ====="
+log "===== Sync trigger run finished: $(date) ====="
