@@ -1,48 +1,28 @@
-[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# gitlab-psql -d gitlabhq_production -c "SELECT current_user, current_database()"
- current_user |  current_database
---------------+---------------------
- gitlab-psql  | gitlabhq_production
-(1 row)
 
-[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# gitlab-psql -d postgres -c '\du'
-                                       List of roles
-     Role name     |                         Attributes                         | Member of
--------------------+------------------------------------------------------------+-----------
- gitlab            |                                                            | {}
- gitlab-psql       | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
- gitlab_replicator | Replication                                                | {}
 
-[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# ls -lah /var/opt/gitlab/postgres
-postgres-exporter/ postgresql/
-[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# ls -lah /var/opt/gitlab/postgresql/data/
-total 140K
-drwx------. 19 gitlab-psql root        4.0K Aug 21 11:58 .
-drwxr-xr-x.  5 gitlab-psql root        4.0K Aug 21 11:58 ..
-drwx------.  6 gitlab-psql root        4.0K Feb  2  2024 base
-drwx------.  2 gitlab-psql root         12K Sep  6 13:35 global
-drwx------.  2 gitlab-psql root        4.0K Feb  2  2024 pg_commit_ts
-drwx------.  2 gitlab-psql root        4.0K Feb  2  2024 pg_dynshmem
--rw-r--r--.  1 gitlab-psql root        3.2K Feb  2  2024 pg_hba.conf
--rw-r--r--.  1 gitlab-psql root        1.8K Feb  2  2024 pg_ident.conf
-drwx------.  4 gitlab-psql root        4.0K Feb  2  2024 pg_logical
-drwx------.  4 gitlab-psql root        4.0K Feb  2  2024 pg_multixact
-drwx------.  2 gitlab-psql root        4.0K Feb  2  2024 pg_notify
-drwx------.  2 gitlab-psql root        4.0K Feb  2  2024 pg_replslot
-drwx------.  2 gitlab-psql root        4.0K Feb  2  2024 pg_serial
-drwx------.  2 gitlab-psql root        4.0K Feb  2  2024 pg_snapshots
-drwx------.  2 gitlab-psql root        4.0K Aug 21 11:58 pg_stat
-drwx------.  2 gitlab-psql root        4.0K Sep  6 13:34 pg_stat_tmp
-drwx------.  2 gitlab-psql root        4.0K Sep  1 15:28 pg_subtrans
-drwx------.  2 gitlab-psql root        4.0K Feb  2  2024 pg_tblspc
-drwx------.  2 gitlab-psql root        4.0K Feb  2  2024 pg_twophase
--rw-------.  1 gitlab-psql root           3 Feb  2  2024 PG_VERSION
-drwx------.  3 gitlab-psql root        4.0K Sep  6 12:40 pg_wal
-drwx------.  2 gitlab-psql root        4.0K Feb  2  2024 pg_xact
--rw-------.  1 gitlab-psql root          88 Feb  2  2024 postgresql.auto.conf
--rw-r--r--.  1 gitlab-psql root         15K Sep 12  2024 postgresql.conf
--rw-------.  1 gitlab-psql gitlab-psql   87 Aug 21 11:58 postmaster.opts
--rw-------.  1 gitlab-psql gitlab-psql  110 Aug 21 11:58 postmaster.pid
--rw-r--r--.  1 gitlab-psql root        4.5K Sep 12  2024 runtime.conf
--r--------.  1 gitlab-psql gitlab-psql 1.8K Feb  2  2024 server.crt
--r--------.  1 gitlab-psql gitlab-psql 3.2K Feb  2  2024 server.key
-[root
+ ll /opt/gitlab/embedded/bin/
+lrwxrwxrwx. 1 root root        49 Feb  2  2024 pg_amcheck -> /opt/gitlab/embedded/postgresql/14/bin/pg_amcheck
+lrwxrwxrwx. 1 root root        56 Feb  2  2024 pg_archivecleanup -> /opt/gitlab/embedded/postgresql/14/bin/pg_archivecleanup
+lrwxrwxrwx. 1 root root        52 Feb  2  2024 pg_basebackup -> /opt/gitlab/embedded/postgresql/14/bin/pg_basebackup
+lrwxrwxrwx. 1 root root        46 Feb  2  2024 pgbench -> /opt/gitlab/embedded/postgresql/14/bin/pgbench
+lrwxrwxrwx. 1 root root        51 Feb  2  2024 pg_checksums -> /opt/gitlab/embedded/postgresql/14/bin/pg_checksums
+lrwxrwxrwx. 1 root root        48 Feb  2  2024 pg_config -> /opt/gitlab/embedded/postgresql/14/bin/pg_config
+lrwxrwxrwx. 1 root root        53 Feb  2  2024 pg_controldata -> /opt/gitlab/embedded/postgresql/14/bin/pg_controldata
+lrwxrwxrwx. 1 root root        45 Feb  2  2024 pg_ctl -> /opt/gitlab/embedded/postgresql/14/bin/pg_ctl
+lrwxrwxrwx. 1 root root        46 Feb  2  2024 pg_dump -> /opt/gitlab/embedded/postgresql/14/bin/pg_dump
+lrwxrwxrwx. 1 root root        49 Feb  2  2024 pg_dumpall -> /opt/gitlab/embedded/postgresql/14/bin/pg_dumpall
+lrwxrwxrwx. 1 root root        49 Feb  2  2024 pg_isready -> /opt/gitlab/embedded/postgresql/14/bin/pg_isready
+lrwxrwxrwx. 1 root root        52 Feb  2  2024 pg_receivewal -> /opt/gitlab/embedded/postgresql/14/bin/pg_receivewal
+lrwxrwxrwx. 1 root root        53 Feb  2  2024 pg_recvlogical -> /opt/gitlab/embedded/postgresql/14/bin/pg_recvlogical
+lrwxrwxrwx. 1 root root        50 Feb  2  2024 pg_resetwal -> /opt/gitlab/embedded/postgresql/14/bin/pg_resetwal
+lrwxrwxrwx. 1 root root        49 Feb  2  2024 pg_restore -> /opt/gitlab/embedded/postgresql/14/bin/pg_restore
+lrwxrwxrwx. 1 root root        48 Feb  2  2024 pg_rewind -> /opt/gitlab/embedded/postgresql/14/bin/pg_rewind
+lrwxrwxrwx. 1 root root        52 Feb  2  2024 pg_test_fsync -> /opt/gitlab/embedded/postgresql/14/bin/pg_test_fsync
+lrwxrwxrwx. 1 root root        53 Feb  2  2024 pg_test_timing -> /opt/gitlab/embedded/postgresql/14/bin/pg_test_timing
+lrwxrwxrwx. 1 root root        49 Feb  2  2024 pg_upgrade -> /opt/gitlab/embedded/postgresql/14/bin/pg_upgrade
+lrwxrwxrwx. 1 root root        54 Feb  2  2024 pg_verifybackup -> /opt/gitlab/embedded/postgresql/14/bin/pg_verifybackup
+lrwxrwxrwx. 1 root root        49 Feb  2  2024 pg_waldump -> /opt/gitlab/embedded/postgresql/14/bin/pg_waldump
+
+ find /opt/gitlab/embedded/bin -name pg_dump -type f -ls 
+
+returned nothing
