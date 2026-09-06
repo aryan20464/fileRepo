@@ -1,25 +1,6 @@
-[root@tss-ideasvnuat gitlab-rpm]# gitlab-rake gitlab:background_migrations:status
-Database: main
-finished   | DeleteOrphansApprovalMergeRequestRules2,approval_merge_request_rules,id,[]
-finished   | PopulateTopicsSlugColumn,topics,id,[]
-finalized  | BackfillCatalogResourceVersionsReleasedAt,catalog_resource_versions,id,[]
-finalized  | BackfillDefaultOrganizationOwnersAgain,users,id,[]
-finalized  | BackfillDefaultOrganizationUsers,users,id,[]
-finished   | BackfillSbomOccurrencesTraversalIdsAndArchived,sbom_occurrences,id,[]
-finished   | BackfillClusterAgentTokensProjectId,cluster_agent_tokens,id,["project_id","cluster_agents","project_id","agent_id"]
-finished   | BackfillUsersColorModeId,users,id,[]
-finished   | UpdateSbomComponentsNameBasedOnPep503,sbom_components,id,[]
-finished   | BackupAndRemoveNotesWithNullNoteableType,notes,id,[]
-finalized  | BackfillOnboardingStatusStepUrl,users,id,[]
-finalized  | BackfillHasIssuesForExternalIssueLinks,vulnerability_reads,vulnerability_id,[]
-finished   | BackfillCatalogResourceVersionSemVer,catalog_resource_versions,id,[]
-finished   | UpdateSbomOccurrencesComponentNameBasedOnPep503,sbom_occurrences,id,[]
-finished   | CopyColumnUsingBackgroundMigrationJob,merge_request_metrics,id,[["pipeline_id"],["pipeline_id_convert_to_bigint"]]
-finished   | CopyColumnUsingBackgroundMigrationJob,merge_requests,id,[["head_pipeline_id"],["head_pipeline_id_convert_to_bigint"]]
-finished   | CopyColumnUsingBackgroundMigrationJob,merge_trains,id,[["pipeline_id"],["pipeline_id_convert_to_bigint"]]
-finished   | CopyColumnUsingBackgroundMigrationJob,packages_build_infos,id,[["pipeline_id"],["pipeline_id_convert_to_bigint"]]
-finished   | CopyColumnUsingBackgroundMigrationJob,vulnerability_feedback,id,[["pipeline_id"],["pipeline_id_convert_to_bigint"]]
-finished   | CopyColumnUsingBackgroundMigrationJob,vulnerability_occurrence_pipelines,id,[["pipeline_id"],["pipeline_id_convert_to_bigint"]]
-finished   | FixCorruptedScannerIdsOfVulnerabilityReads,vulnerability_reads,id,[]
-finished   | BackfillArchivedAndTraversalIdsToVulnerabilityReads,vulnerability_reads,id,[]
-finished   | BackfillDeploymentApprovalsProjectId,deployment_approvals,id,["project_id","deployments","project_id","deployment_id"]
+gitlab-psql -d gitlabhq_production -c "
+SELECT relname AS table, n_live_tup AS rows
+FROM pg_stat_user_tables
+WHERE relname = 'ci_pipeline_messages'
+AND n_live_tup > 1500000;
+"
