@@ -1,1 +1,65 @@
-3:push to mirror: git push: exit status 1, stderr: "remote: GitLab: You are not allowed to force push code to a protected branch on this project.\nTo https://gitlab.sbi/it-tss/rforex/backend/outwardRemittance.git\n ! [remote rejected] FlyWireCodeChanges (pre-receive hook declined)\n ! [remote rejected] feature-akash -> feature-akash (pre-receive hook declined)\n ! [remote rejected] main -> main (pre-receive hook declined)\n ! [remote rejected] release-uat/outwardremittance (pre-receive hook declined)\n ! [remote rejected] Flywire -> Flywire (pre-receive hook declined)\n ! [remote rejected] Production_Feature_Changes -> Production_Feature_Changes (pre-receive hook declined)\n ! [remote rejected] revert-18e4c900 -> revert-18e4c900 (pre-receive hook declined)\n ! [remote rejected] revert-8991fd29 -> revert-8991fd29 (pre-receive hook declined)\n ! [remote rejected] revert-f519e883 -> revert-f519e883 (pre-receive hook declined)\n ! [remote rejected] yono_enquiry_api -> yono_enquiry_api (pre-receive hook declined)\nerror: failed to push some refs to 'https://gitlab.sbi/it-tss/rforex/backend/outwardRemittance.git'\n".
+#!/usr/bin/env bash
+set -euo pipefail
+
+ORG_GITLAB="https://gitlab.sbi"
+ORG_TOKEN="org-pat-with-api-scope"    # needs Maintainer/Owner on each org project
+
+INPUT_FILE="mirrors.csv"              # reuses internal_url,org_url columns
+LOG_FILE="protected_branch_fix_$(date +%Y%m%d_%H%M%S).log"
+
+urlencode() {
+  python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "$1"
+}
+
+log() { echo -e "$1" | tee -a "$LOG_FILE"; }
+
+log "===== Protected branch force-push check started: $(date) ====="
+
+while IFS=, read -r internal_url org_url; do
+  [[ -z "$internal_url" || "$internal_url" == \#* ]] && continue
+  org_url=$(echo "$org_url" | xargs)
+
+  org_relative_path=$(echo "$org_url" | sed "s|${ORG_GITLAB}/||" | sed 's|\.git$||')
+  encoded_org_path=$(urlencode "$org_relative_path")
+
+  log "==> Checking $org_relative_path"
+
+  PROTECTED=$(curl -k -s --header "PRIVATE-TOKEN: $ORG_TOKEN" \
+       "${ORG_GITLAB}/api/v4/projects/${encoded_org_path}/protected_branches")
+
+  if [[ "$(echo "$PROTECTED" | jq -r 'type' 2>/dev/null)" != "array" ]]; then
+    log "    FAILED to fetch protected branches — response: $PROTECTED"
+    log "-----------------------------------"
+    continue
+  fi
+
+  echo "$PROTECTED" | jq -c '.[]' > /tmp/branches.jsonl
+
+  while IFS= read -r branch; do
+    name=$(echo "$branch" | jq -r '.name')
+    allow_force_push=$(echo "$branch" | jq -r '.allow_force_push')
+
+    if [[ "$allow_force_push" == "true" ]]; then
+      log "    [$name] already allows force push — skipping"
+      continue
+    fi
+
+    log "    [$name] force push disabled — enabling..."
+    enc_name=$(urlencode "$name")
+
+    RESP=$(curl -k -s --request PATCH --header "PRIVATE-TOKEN: $ORG_TOKEN" \
+         --data "allow_force_push=true" \
+         "${ORG_GITLAB}/api/v4/projects/${encoded_org_path}/protected_branches/${enc_name}")
+
+    updated=$(echo "$RESP" | jq -r '.allow_force_push // empty')
+    if [[ "$updated" == "true" ]]; then
+      log "    [$name] OK — force push now allowed"
+    else
+      log "    [$name] FAILED — response: $RESP"
+    fi
+  done < /tmp/branches.jsonl
+
+  log "-----------------------------------"
+done < "$INPUT_FILE"
+
+log "===== Run finished: $(date) ====="
