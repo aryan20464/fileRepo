@@ -1,9 +1,32 @@
-[root@tss-ideasvnuat gitlab-rpm]# cat /etc/redhat-release
-Red Hat Enterprise Linux release 8.10 (Ootpa)
-[root@tss-ideasvnuat gitlab-rpm]# find /data/ -type f -name 'gitlab-ce-16.11.10*.rpm' 2>/dev/null
-/data/backup/gitlab-pre-upgrade-16.8.1/gitlab-rpm/gitlab-ce-16.11.10-ce.0.el8.x86_64.rpm
-[root@tss-ideasvnuat gitlab-rpm]# cat /etc/redhat-release
-Red Hat Enterprise Linux release 8.10 (Ootpa)
-[root@tss-ideasvnuat gitlab-rpm]# uname -m
-x86_64
+[root@tss-ideasvnuat gitlab-rpm]# ls -lh gitlab-ce-16.
+gitlab-ce-16.11.10-ce.0.el8.x86_64.rpm  gitlab-ce-16.8.1-ce.0.el8.x86_64.rpm
+[root@tss-ideasvnuat gitlab-rpm]# ls -lh gitlab-ce-16.11.10-ce.0.el8.x86_64.rpm
+-rw-r-----. 1 root root 926M Sep  6 14:29 gitlab-ce-16.11.10-ce.0.el8.x86_64.rpm
+[root@tss-ideasvnuat gitlab-rpm]# rpm -qpi gitlab-ce-16.11.10-ce.0.el8.x86_64.rpm
+warning: gitlab-ce-16.11.10-ce.0.el8.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID f27eab47: NOKEY
+Name        : gitlab-ce
+Version     : 16.11.10
+Release     : ce.0.el8
+Architecture: x86_64
+Install Date: (not installed)
+Group       : default
+Size        : 2737123683
+License     : MIT
+Signature   : RSA/SHA256, Tuesday 17 September 2024 01:32:00 AM IST, Key ID 3cfcf9baf27eab47
+Source RPM  : gitlab-ce-16.11.10-ce.0.el8.src.rpm
+Build Date  : Tuesday 17 September 2024 01:30:47 AM IST
+Build Host  : runner-zbuqbo14-project-283-concurrent-0
+Relocations : /
+Packager    : GitLab, Inc. <support@gitlab.com>
+Vendor      : GitLab, Inc. <support@gitlab.com>
+URL         : https://about.gitlab.com/
+Summary     : GitLab Community Edition (including NGINX, Postgres, Redis)
+Description :
+GitLab Community Edition (including NGINX, Postgres, Redis)
+[root@tss-ideasvnuat gitlab-rpm]# rpm -k gitlab-ce-16.11.10-ce.0.el8.x86_64.rpm
+rpm: -k: unknown option
+[root@tss-ideasvnuat gitlab-rpm]# rpm -K gitlab-ce-16.11.10-ce.0.el8.x86_64.rpm
+gitlab-ce-16.11.10-ce.0.el8.x86_64.rpm: digests SIGNATURES NOT OK
+[root@tss-ideasvnuat gitlab-rpm]# rpm -q gitlab-ce
+gitlab-ce-16.8.1-ce.0.el8.x86_64
 [root@tss-ideasvnuat gitlab-rpm]#
