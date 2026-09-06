@@ -10,8 +10,7 @@ LOG_FILE="trigger_sync_$(date +%Y%m%d_%H%M%S).log"
 COOKIE_JAR=$(mktemp)
 
 log() { echo -e "$1" | tee -a "$LOG_FILE"; }
-
-cleanup() { rm -f "$COOKIE_JAR"; }
+cleanup() { rm -f "$COOKIE_JAR" /tmp/login_resp.html /tmp/update_now_resp.json; }
 trap cleanup EXIT
 
 log "===== Session-based mirror sync trigger run started: $(date) ====="
@@ -26,19 +25,19 @@ if [[ -z "$AUTH_TOKEN" ]]; then
   exit 1
 fi
 
-# --- Step 2: submit login form ---
-curl -k -s -b "$COOKIE_JAR" -c "$COOKIE_JAR" \
+# --- Step 2: submit login form, follow the redirect (-L) ---
+curl -k -sL -b "$COOKIE_JAR" -c "$COOKIE_JAR" \
   --data-urlencode "user[login]=$GITLAB_USER" \
   --data-urlencode "user[password]=$GITLAB_PASS" \
   --data-urlencode "authenticity_token=$AUTH_TOKEN" \
   "${INTERNAL_GITLAB}/users/sign_in" -o /tmp/login_resp.html
 
-# Verify login succeeded (look for sign-out link or dashboard marker)
-if ! grep -q "sign_out\|dashboard" /tmp/login_resp.html; then
-  log "FAILED — login may not have succeeded. Check credentials manually."
+# Verify by checking the cookie jar for an actual session cookie
+if ! grep -q "_gitlab_session" "$COOKIE_JAR"; then
+  log "FAILED — no session cookie found after login. Check credentials manually."
   exit 1
 fi
-log "Login successful."
+log "Login successful (session cookie confirmed)."
 log ""
 
 # --- Step 3: loop through repos ---
@@ -50,7 +49,6 @@ while IFS=, read -r internal_url org_url; do
 
   log "==> [$(date +%H:%M:%S)] $project_path"
 
-  # Get a fresh CSRF token from the project's repository settings page
   SETTINGS_PAGE=$(curl -k -s -b "$COOKIE_JAR" \
        "${INTERNAL_GITLAB}/${project_path}/-/settings/repository")
   CSRF_TOKEN=$(echo "$SETTINGS_PAGE" | grep -oP 'name="csrf-token" content="\K[^"]+' | head -1)
@@ -62,7 +60,6 @@ while IFS=, read -r internal_url org_url; do
     continue
   fi
 
-  # Trigger "Update Now"
   HTTP_STATUS=$(curl -k -s -b "$COOKIE_JAR" -o /tmp/update_now_resp.json -w "%{http_code}" \
        --request POST \
        -H "X-CSRF-Token: $CSRF_TOKEN" \
