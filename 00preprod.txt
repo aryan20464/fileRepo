@@ -1,24 +1,33 @@
-Components
-GitLabv16.8.1
 
-GitLab Shell14.33.0
 
-GitLab Workhorsev16.8.1
+[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# gitlab-psql -l
+                                             List of databases
+        Name         |    Owner    | Encoding |   Collate   |    Ctype    |        Access privileges
+---------------------+-------------+----------+-------------+-------------+---------------------------------
+ gitlabhq_production | gitlab      | UTF8     | en_IN.UTF-8 | en_IN.UTF-8 |
+ postgres            | gitlab-psql | UTF8     | en_IN.UTF-8 | en_IN.UTF-8 |
+ template0           | gitlab-psql | UTF8     | en_IN.UTF-8 | en_IN.UTF-8 | =c/"gitlab-psql"               +
+                     |             |          |             |             | "gitlab-psql"=CTc/"gitlab-psql"
+ template1           | gitlab-psql | UTF8     | en_IN.UTF-8 | en_IN.UTF-8 | =c/"gitlab-psql"               +
+                     |             |          |             |             | "gitlab-psql"=CTc/"gitlab-psql"
+(4 rows)
 
-GitLab APIv4
+[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# gitlab-psql -d gitlabhq_production -c '\l+'
+                                                                               List of databases
+        Name         |    Owner    | Encoding |   Collate   |    Ctype    |        Access privileges        |  Size   | Tablespace |                Description
+---------------------+-------------+----------+-------------+-------------+---------------------------------+---------+------------+--------------------------------------------
+ gitlabhq_production | gitlab      | UTF8     | en_IN.UTF-8 | en_IN.UTF-8 |                                 | 253 MB  | pg_default |
+ postgres            | gitlab-psql | UTF8     | en_IN.UTF-8 | en_IN.UTF-8 |                                 | 8409 kB | pg_default | default administrative connection database
+ template0           | gitlab-psql | UTF8     | en_IN.UTF-8 | en_IN.UTF-8 | =c/"gitlab-psql"               +| 8409 kB | pg_default | unmodifiable empty database
+                     |             |          |             |             | "gitlab-psql"=CTc/"gitlab-psql" |         |            |
+ template1           | gitlab-psql | UTF8     | en_IN.UTF-8 | en_IN.UTF-8 | =c/"gitlab-psql"               +| 8433 kB | pg_default | default template for new databases
+                     |             |          |             |             | "gitlab-psql"=CTc/"gitlab-psql" |         |            |
+(4 rows)
 
-GitLab KASv16.9.0-rc1
 
-Ruby3.1.4p223
 
-Rails7.0.8
-
-PostgreSQL (main)14.9
-
-PostgreSQL (ci)14.9
-
-Redis7.4.0
-
-Gitaly Servers
-Storage	Address	Server version	Git version	Up to date
-default	unix:/var/opt/gitlab/gitaly/gitaly.socket	16.8.1	2.42.0	
+[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# gitlab-psql -d gitlabhq_production -c 'SELECT version();'
+                                                 version
+---------------------------------------------------------------------------------------------------------
+ PostgreSQL 14.9 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 8.5.0 20210514 (Red Hat 8.5.0-20), 64-bit
+(1 row)
