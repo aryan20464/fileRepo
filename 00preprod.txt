@@ -8,6 +8,7 @@ ORG_USER="orguser1"
 ORG_PASS='orgpass_or_token'
 
 INPUT_FILE="mirrors.csv"
+LOG_FILE="add_mirrors_$(date +%Y%m%d_%H%M%S).log"
 
 urlencode() {
   python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "$1"
@@ -15,6 +16,14 @@ urlencode() {
 
 ENC_ORG_USER=$(urlencode "$ORG_USER")
 ENC_ORG_PASS=$(urlencode "$ORG_PASS")
+
+log() {
+  echo -e "$1" | tee -a "$LOG_FILE"
+}
+
+log "===== Mirror creation run started: $(date) ====="
+log "Log file: $LOG_FILE"
+log ""
 
 while IFS=, read -r internal_url org_url; do
   [[ -z "$internal_url" || "$internal_url" == \#* ]] && continue
@@ -27,18 +36,27 @@ while IFS=, read -r internal_url org_url; do
   org_host_and_path="${org_url#https://}"
   mirror_url="https://${ENC_ORG_USER}:${ENC_ORG_PASS}@${org_host_and_path}"
 
-  echo "==> Configuring mirror for $relative_path -> $org_url"
+  log "==> [$(date +%H:%M:%S)] Configuring mirror for $relative_path -> $org_url"
 
-  RESP=$(curl --max-time 30 --request POST --header "PRIVATE-TOKEN: $INTERNAL_TOKEN" \
+  HTTP_STATUS=$(curl -k --max-time 30 -o /tmp/mirror_resp.json -w "%{http_code}" \
+       --request POST --header "PRIVATE-TOKEN: $INTERNAL_TOKEN" \
        --form "url=$mirror_url" \
        --form "enabled=true" \
-       "${INTERNAL_GITLAB}/api/v4/projects/${encoded_path}/remote_mirrors")
+       "${INTERNAL_GITLAB}/api/v4/projects/${encoded_path}/remote_mirrors" || echo "000")
 
-  mirror_id=$(echo "$RESP" | jq -r '.id // empty')
+  RESP=$(cat /tmp/mirror_resp.json 2>/dev/null || echo "{}")
+  mirror_id=$(echo "$RESP" | jq -r '.id // empty' 2>/dev/null || echo "")
+
+  log "    HTTP status: $HTTP_STATUS"
   if [[ -n "$mirror_id" ]]; then
-    echo "   OK — mirror id: $mirror_id"
+    log "    OK — mirror id: $mirror_id"
   else
-    echo "   RESPONSE: $RESP"
+    log "    FAILED — response: $RESP"
   fi
-  echo "-----------------------------------"
+  log "-----------------------------------"
+
+  sleep 10
 done < "$INPUT_FILE"
+
+log ""
+log "===== Mirror creation run finished: $(date) ====="
