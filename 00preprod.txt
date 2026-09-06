@@ -1,10 +1,24 @@
-sudo grep -E '^[[:space:]]*gitlab_rails\[(.*redis|redis_)' /etc/gitlab/gitlab.rb
+[root@tss-ideasvnuat gitlab-rpm]# clear
+[root@tss-ideasvnuat gitlab-rpm]# grep -E '^[[:space:]]*gitlab_rails\[(.*redis|redis_)' /etc/gitlab/gitlab.rb
+gitlab_rails['redis_host'] = "127.0.0.1"
+gitlab_rails['redis_port'] = 6829
+gitlab_rails['redis_socket'] = ""
+[root@tss-ideasvnuat gitlab-rpm]# grep -nE 'sidekiq.*(min_concurrency|max_concurrency|concurrency)' /etc/gitlab/gitlab.rb
+1248:# sidekiq['max_concurrency'] = 20
+1249:# sidekiq['min_concurrency'] = nil
+[root@tss-ideasvnuat gitlab-rpm]# gitlab-runner --version 2>/dev/null || rpm -q gitlab-runner 2>/dev/null
+package gitlab-runner is not installed
+[root@tss-ideasvnuat gitlab-rpm]# /devtools/gitlab
+gitlab/                  gitlab_embedded_nginx/   gitlab_fbackup/          gitlab-rpm/              gitlab-runner/           gitlab-runner_amd64.rpm  gitlab-upgrade/
+[root@tss-ideasvnuat gitlab-rpm]# /devtools/gitlab-runner
+gitlab-runner/           gitlab-runner_amd64.rpm
+[root@tss-ideasvnuat gitlab-rpm]# /devtools/gitlab-runner/
+builds/        certs/         config/        gitlab-runner  .m2/
+[root@tss-ideasvnuat gitlab-rpm]# /devtools/gitlab-runner/gitlab-runner --version 2>/dev/null || rpm -q gitlab-runner 2>/dev/null
+Version:      16.8.1
+Git revision: a6097117
+Git branch:   16-8-stable
+GO version:   go1.21.5
+Built:        2024-02-15T18:34:46+0000
+OS/Arch:      linux/amd64
 
-sudo grep -nE 'sidekiq.*(min_concurrency|max_concurrency|concurrency)' /etc/gitlab/gitlab.rb
-
-gitlab-runner --version 2>/dev/null || rpm -q gitlab-runner 2>/dev/null
-
-
-cd /data/backup/gitlab-pre-upgrade-16.8.1/gitlab-rpm
-
-sudo dnf install --assumeno ./gitlab-ce-16.11.10-ce.0.el8.x86_64.rpm
