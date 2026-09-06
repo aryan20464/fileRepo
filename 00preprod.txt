@@ -1,9 +1,411 @@
-[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# grep -E '^[[:space:]]*gitlab_rails\['"'"'backup_path'"'"'\]|^[[:space:]]*gitlab_rails\['"'"'backup_keep_time'"'"'\]' /etc/gitlab/gitlab.rb
-[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# gitlab-rails runner 'puts Gitlab.config.backup.path'
-/var/opt/gitlab/backups
-[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# ls -lah /var/opt/gitlab/backups/
-total 4.7G
-drwx------.  2 git  root 4.0K Sep  6 13:21 .
-drwxr-xr-x. 20 root root 4.0K Jul 29 11:08 ..
--rw-------.  1 git  git  4.7G Sep  6 13:21 1788680959_2026_09_06_16.8.1_gitlab_backup.tar
-[
+[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# gitlab-ctl status
+run: gitaly: (pid 2765) 1390930s; run: log: (pid 2762) 1390930s
+run: gitlab-kas: (pid 68017) 1385015s; run: log: (pid 2760) 1390930s
+run: gitlab-workhorse: (pid 2758) 1390930s; run: log: (pid 2754) 1390930s
+run: logrotate: (pid 2845926) 1308s; run: log: (pid 2755) 1390930s
+run: postgresql: (pid 2763) 1390930s; run: log: (pid 2759) 1390930s
+run: puma: (pid 2757) 1390930s; run: log: (pid 2752) 1390930s
+run: sidekiq: (pid 67933) 1385022s; run: log: (pid 2753) 1390930s
+[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# gitlab-rake gitlab:version
+rake aborted!
+Don't know how to build task 'gitlab:version' (See the list of available tasks with `rake --tasks`)
+Did you mean?  gitlab:env:info
+/opt/gitlab/embedded/bin/bundle:25:in `load'
+/opt/gitlab/embedded/bin/bundle:25:in `<main>'
+(See full trace by running task with --trace)
+[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# gitlab-rake gitlab:env:info
+
+System information
+System:
+Current User:   git
+Using RVM:      no
+Ruby Version:   3.1.4p223
+Gem Version:    3.4.22
+Bundler Version:2.5.4
+Rake Version:   13.0.6
+Redis Version:  7.0.15
+Sidekiq Version:7.1.6
+Go Version:     unknown
+
+GitLab information
+Version:        16.8.1
+Revision:       a658d811568
+Directory:      /opt/gitlab/embedded/service/gitlab-rails
+DB Adapter:     PostgreSQL
+DB Version:     14.9
+URL:            https://ideagit.sbi.co.in:10000
+HTTP Clone URL: https://ideagit.sbi.co.in:10000/some-group/some-project.git
+SSH Clone URL:  git@ideagit.sbi.co.in:some-group/some-project.git
+Using LDAP:     no
+Using Omniauth: yes
+Omniauth Providers:
+
+GitLab Shell
+Version:        14.33.0
+Repository storages:
+- default:      unix:/var/opt/gitlab/gitaly/gitaly.socket
+GitLab Shell path:              /opt/gitlab/embedded/service/gitlab-shell
+
+Gitaly
+- default Address:      unix:/var/opt/gitlab/gitaly/gitaly.socket
+- default Version:      16.8.1
+- default Git Version:  2.42.0
+[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# gitlab-rake gitlab:check SANITIZE=true
+Checking GitLab subtasks ...
+
+Checking GitLab Shell ...
+
+GitLab Shell: ... GitLab Shell version >= 14.33.0 ? ... OK (14.33.0)
+Running /opt/gitlab/embedded/service/gitlab-shell/bin/check
+Internal API available: OK
+Redis available via internal API: OK
+gitlab-shell self-check successful
+
+Checking GitLab Shell ... Finished
+
+Checking Gitaly ...
+
+Gitaly: ... default ... OK
+
+Checking Gitaly ... Finished
+
+Checking Sidekiq ...
+
+Sidekiq: ... Running? ... yes
+Number of Sidekiq processes (cluster/worker) ... 1/1
+
+Checking Sidekiq ... Finished
+
+Checking Incoming Email ...
+
+Incoming Email: ... Reply by email is disabled in config/gitlab.yml
+
+Checking Incoming Email ... Finished
+
+Checking LDAP ...
+
+LDAP: ... LDAP is disabled in config/gitlab.yml
+
+Checking LDAP ... Finished
+
+Checking GitLab App ...
+
+Database config exists? ... yes
+Tables are truncated? ... skipped
+All migrations up? ... yes
+Database contains orphaned GroupMembers? ... no
+GitLab config exists? ... yes
+GitLab config up to date? ... yes
+Cable config exists? ... yes
+Resque config exists? ... yes
+Log directory writable? ... yes
+Tmp directory writable? ... yes
+Uploads directory exists? ... yes
+Uploads directory has correct permissions? ... yes
+Uploads directory tmp has correct permissions? ... yes
+Systemd unit files or init script exist? ... skipped (omnibus-gitlab has neither init script nor systemd units)
+Systemd unit files or init script up-to-date? ... skipped (omnibus-gitlab has neither init script nor systemd units)
+Projects have namespace: ...
+5/1 ... yes
+5/2 ... yes
+9/3 ... yes
+9/4 ... yes
+9/5 ... yes
+9/6 ... yes
+9/7 ... yes
+9/8 ... yes
+9/9 ... yes
+9/10 ... yes
+9/11 ... yes
+9/12 ... yes
+10/14 ... yes
+10/15 ... yes
+10/16 ... yes
+10/17 ... yes
+43/18 ... yes
+43/19 ... yes
+43/20 ... yes
+43/21 ... yes
+43/22 ... yes
+9/24 ... yes
+43/25 ... yes
+43/26 ... yes
+43/27 ... yes
+43/28 ... yes
+43/29 ... yes
+43/30 ... yes
+43/31 ... yes
+43/32 ... yes
+43/33 ... yes
+43/34 ... yes
+43/35 ... yes
+43/36 ... yes
+43/37 ... yes
+43/38 ... yes
+43/39 ... yes
+43/40 ... yes
+9/41 ... yes
+43/42 ... yes
+43/43 ... yes
+9/44 ... yes
+9/45 ... yes
+10/46 ... yes
+9/47 ... yes
+9/48 ... yes
+9/49 ... yes
+27/50 ... yes
+8/51 ... yes
+27/52 ... yes
+8/53 ... yes
+27/54 ... yes
+27/56 ... yes
+27/57 ... yes
+26/58 ... yes
+43/59 ... yes
+43/60 ... yes
+8/61 ... yes
+27/62 ... yes
+27/63 ... yes
+96/64 ... yes
+29/65 ... yes
+9/66 ... yes
+8/67 ... yes
+97/68 ... yes
+97/69 ... yes
+97/70 ... yes
+97/71 ... yes
+97/72 ... yes
+97/73 ... yes
+97/74 ... yes
+97/75 ... yes
+27/78 ... yes
+9/79 ... yes
+43/80 ... yes
+123/82 ... yes
+123/83 ... yes
+123/84 ... yes
+43/85 ... yes
+27/88 ... yes
+9/89 ... yes
+10/90 ... yes
+10/92 ... yes
+10/93 ... yes
+123/94 ... yes
+9/95 ... yes
+43/96 ... yes
+43/97 ... yes
+43/98 ... yes
+43/99 ... yes
+27/101 ... yes
+27/102 ... yes
+27/103 ... yes
+27/104 ... yes
+9/105 ... yes
+134/106 ... yes
+134/110 ... yes
+43/112 ... yes
+10/113 ... yes
+43/114 ... yes
+9/115 ... yes
+9/116 ... yes
+10/117 ... yes
+123/118 ... yes
+27/119 ... yes
+10/120 ... yes
+27/121 ... yes
+26/124 ... yes
+9/125 ... yes
+150/127 ... yes
+181/130 ... yes
+8/132 ... yes
+97/133 ... yes
+165/134 ... yes
+189/135 ... yes
+189/136 ... yes
+43/137 ... yes
+27/138 ... yes
+26/139 ... yes
+27/140 ... yes
+9/142 ... yes
+9/143 ... yes
+196/144 ... yes
+219/145 ... yes
+27/146 ... yes
+196/151 ... yes
+175/152 ... yes
+196/153 ... yes
+196/154 ... yes
+196/156 ... yes
+43/157 ... yes
+196/158 ... yes
+196/159 ... yes
+196/160 ... yes
+9/161 ... yes
+10/162 ... yes
+26/163 ... yes
+26/164 ... yes
+43/165 ... yes
+43/166 ... yes
+27/168 ... yes
+10/170 ... yes
+123/171 ... yes
+43/172 ... yes
+196/173 ... yes
+196/174 ... yes
+43/175 ... yes
+27/176 ... yes
+205/177 ... yes
+196/178 ... yes
+43/179 ... yes
+111/180 ... yes
+111/181 ... yes
+111/182 ... yes
+111/183 ... yes
+111/184 ... yes
+196/185 ... yes
+9/186 ... yes
+271/187 ... yes
+9/188 ... yes
+196/190 ... yes
+289/192 ... yes
+282/193 ... yes
+282/194 ... yes
+282/195 ... yes
+282/196 ... yes
+282/197 ... yes
+282/198 ... yes
+43/199 ... yes
+43/200 ... yes
+9/201 ... yes
+295/202 ... yes
+111/203 ... yes
+111/204 ... yes
+196/205 ... yes
+289/206 ... yes
+196/207 ... yes
+196/208 ... yes
+196/209 ... yes
+43/210 ... yes
+43/211 ... yes
+289/212 ... yes
+27/213 ... yes
+314/215 ... yes
+264/216 ... yes
+196/217 ... yes
+27/218 ... yes
+314/219 ... yes
+111/220 ... yes
+196/221 ... yes
+9/222 ... yes
+43/223 ... yes
+196/224 ... yes
+27/225 ... yes
+27/226 ... yes
+27/227 ... yes
+27/228 ... yes
+9/229 ... yes
+314/230 ... yes
+314/231 ... yes
+196/232 ... yes
+9/233 ... yes
+219/234 ... yes
+219/235 ... yes
+219/236 ... yes
+43/237 ... yes
+196/238 ... yes
+43/239 ... yes
+9/240 ... yes
+196/244 ... yes
+343/246 ... yes
+343/247 ... yes
+343/248 ... yes
+343/249 ... yes
+343/250 ... yes
+343/251 ... yes
+343/252 ... yes
+343/253 ... yes
+196/254 ... yes
+9/256 ... yes
+196/257 ... yes
+343/258 ... yes
+9/260 ... yes
+9/261 ... yes
+365/262 ... yes
+343/263 ... yes
+43/264 ... yes
+9/265 ... yes
+9/266 ... yes
+43/267 ... yes
+196/268 ... yes
+196/270 ... yes
+10/271 ... yes
+274/272 ... yes
+27/275 ... yes
+27/276 ... yes
+274/277 ... yes
+27/278 ... yes
+43/279 ... yes
+27/280 ... yes
+196/281 ... yes
+111/283 ... yes
+27/284 ... yes
+196/285 ... yes
+43/286 ... yes
+393/290 ... yes
+393/291 ... yes
+196/292 ... yes
+27/293 ... yes
+43/294 ... yes
+26/295 ... yes
+26/296 ... yes
+27/297 ... yes
+Redis version >= 6.0.0? ... yes
+Ruby version >= 3.0.6 ? ... yes (3.1.4)
+Git user has default SSH configuration? ... yes
+Active users: ... 66
+Is authorized keys file accessible? ... yes
+GitLab configured to store new projects in hashed storage? ... yes
+All projects are in hashed storage? ... yes
+
+Checking GitLab App ... Finished
+
+
+Checking GitLab subtasks ... Finished
+
+[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# df -h
+Filesystem                      Size  Used Avail Use% Mounted on
+devtmpfs                         12G     0   12G   0% /dev
+tmpfs                            12G   92K   12G   1% /dev/shm
+tmpfs                            12G  1.3G   11G  11% /run
+tmpfs                            12G     0   12G   0% /sys/fs/cgroup
+/dev/mapper/rhel-root            30G  9.3G   19G  33% /
+/dev/mapper/rhel-usr            9.8G  5.8G  3.5G  63% /usr
+/dev/mapper/data-data            49G  5.4G   42G  12% /data
+/dev/mapper/rhel-home           2.9G  2.5M  2.8G   1% /home
+/dev/mapper/rhel-var            6.9G  3.2G  3.3G  50% /var
+/dev/mapper/data-devtools        98G   67G   27G  72% /devtools
+/dev/mapper/rhel-tmp            4.9G  188K  4.6G   1% /tmp
+/dev/sda1                       974M  419M  489M  47% /boot
+/dev/mapper/rhel-var_tmp        9.8G   52K  9.3G   1% /var/tmp
+/dev/mapper/rhel-var_log        4.9G  659M  4.0G  15% /var/log
+/dev/mapper/rhel-var_log_audit  4.9G  217M  4.4G   5% /var/log/audit
+tmpfs                           2.4G     0  2.4G   0% /run/user/1005
+[root@tss-ideasvnuat gitlab-pre-upgrade-16.8.1]# df -lh
+Filesystem                      Size  Used Avail Use% Mounted on
+devtmpfs                         12G     0   12G   0% /dev
+tmpfs                            12G   92K   12G   1% /dev/shm
+tmpfs                            12G  1.3G   11G  11% /run
+tmpfs                            12G     0   12G   0% /sys/fs/cgroup
+/dev/mapper/rhel-root            30G  9.3G   19G  33% /
+/dev/mapper/rhel-usr            9.8G  5.8G  3.5G  63% /usr
+/dev/mapper/data-data            49G  5.4G   42G  12% /data
+/dev/mapper/rhel-home           2.9G  2.5M  2.8G   1% /home
+/dev/mapper/rhel-var            6.9G  3.2G  3.3G  50% /var
+/dev/mapper/data-devtools        98G   67G   27G  72% /devtools
+/dev/mapper/rhel-tmp            4.9G  188K  4.6G   1% /tmp
+/dev/sda1                       974M  419M  489M  47% /boot
+/dev/mapper/rhel-var_tmp        9.8G   52K  9.3G   1% /var/tmp
+/dev/mapper/rhel-var_log        4.9G  659M  4.0G  15% /var/log
+/dev/mapper/rhel-var_log_audit  4.9G  217M  4.4G   5% /var/log/audit
+tmpfs                           2.4G     0  2.4G   0% /run/user/1005
+
