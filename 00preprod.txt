@@ -1,20 +1,47 @@
--rw-r--r--.  1 root        root   28 Sep  6 14:57 VERSION
-[root@tss-ideasvnuat postgresql]# cd /data/backup/gitlab-pre-pg16-17.5.5/
-[root@tss-ideasvnuat gitlab-pre-pg16-17.5.5]# ll
-total 63860
--rw-r-----. 1 gitlab-psql gitlab-psql 65391437 Sep  6 16:32 gitlabhq_production-17.5.5-pg14.dump
-[root@tss-ideasvnuat gitlab-pre-pg16-17.5.5]# clear
-[root@tss-ideasvnuat gitlab-pre-pg16-17.5.5]# /opt/gitlab/embedded/bin/pg_restore --list gitlabhq_production-17.5.5-pg14.dump > restore-list.txt
-[root@tss-ideasvnuat gitlab-pre-pg16-17.5.5]# wc -l restore-list.txt
-15081 restore-list.txt
-[root@tss-ideasvnuat gitlab-pre-pg16-17.5.5]# head -10 restore-list.txt
-;
-; Archive created at 2026-09-06 16:32:36 IST
-;     dbname: gitlabhq_production
-;     TOC Entries: 15070
-;     Compression: -1
-;     Dump Version: 1.14-0
-;     Format: CUSTOM
-;     Integer: 4 bytes
-;     Offset: 8 bytes
-;     Dumped from database version: 14.11
+Recipe: monitoring::alertmanager_disable
+  * service[alertmanager] action nothing (skipped due to action :nothing)
+  * runit_service[alertmanager] action disable
+    * ruby_block[disable alertmanager] action run (skipped due to only_if)
+     (up to date)
+Recipe: monitoring::postgres-exporter_disable
+  * service[postgres-exporter] action nothing (skipped due to action :nothing)
+  * runit_service[postgres-exporter] action disable
+    * ruby_block[disable postgres-exporter] action run (skipped due to only_if)
+     (up to date)
+  * consul_service[postgres-exporter] action delete
+    * file[/var/opt/gitlab/consul/config.d/postgres-exporter-service.json] action delete (up to date)
+     (up to date)
+Recipe: gitlab::gitlab-backup-cli_disable
+  * template[/opt/gitlab/etc/gitlab-backup-cli-config.yml] action delete (up to date)
+  * account[GitLab Backup User] action remove
+    * linux_user[gitlab-backup] action remove (up to date)
+     (up to date)
+  * group[git] action manage (up to date)
+  * group[gitlab-psql] action manage (up to date)
+  * group[registry] action manage (up to date)
+Recipe: gitlab::database_reindexing_disable
+  * crond_job[database-reindexing] action delete
+    * file[/var/opt/gitlab/crond/database-reindexing] action delete (up to date)
+     (up to date)
+[2026-09-06T16:41:09+05:30] INFO: Cinc Client Run complete in 6.374194611 seconds
+
+Running handlers:
+[2026-09-06T16:41:09+05:30] INFO: Running report handlers
+Running handlers complete
+[2026-09-06T16:41:09+05:30] INFO: Report handlers complete
+Infra Phase complete, 2/584 resources updated in 08 seconds
+Running reconfigure: OK
+Waiting for Database to be running.
+Database upgrade is complete, running vacuumdb analyze
+Toggling deploy page:rm -f /opt/gitlab/embedded/service/gitlab-rails/public/index.html
+Toggling deploy page: OK
+Toggling services:ok: run: gitaly: (pid 2867198) 1s
+ok: run: gitlab-kas: (pid 2867219) 0s
+ok: run: logrotate: (pid 2867229) 1s
+ok: run: sidekiq: (pid 2867235) 0s
+Toggling services: OK
+==== Upgrade has completed ====
+Please verify everything is working and run the following if so
+sudo rm -rf /devtools/optgitlab/postgresql/data.14
+sudo rm -f /var/opt/gitlab/postgresql-version.old
+
