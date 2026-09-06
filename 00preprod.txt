@@ -1,7 +1,23 @@
-sudo -u gitlab-psql /opt/gitlab/embedded/bin/pg_dump \
-  -Fc \
-  -h /var/opt/gitlab/postgresql \
-  -p 5432 \
-  -U gitlab-psql \
-  -d gitlabhq_production \
-  -f /var/opt/gitlab/postgresql/gitlabhq_production-17.5.5-pg14.dump
+[root@tss-ideasvnuat gitlab-rpm]# cd /var/opt/gitlab/postgresql/
+[root@tss-ideasvnuat postgresql]# ll
+total 8
+drwx------. 19 gitlab-psql root 4096 Sep  6 16:08 data
+-rw-r--r--.  1 root        root   28 Sep  6 14:57 VERSION
+[root@tss-ideasvnuat postgresql]# cd /var/opt/gitlab/postgresql/
+[root@tss-ideasvnuat postgresql]# ll
+total 8
+drwx------. 19 gitlab-psql root 4096 Sep  6 16:08 data
+-rw-r--r--.  1 root        root   28 Sep  6 14:57 VERSION
+[root@tss-ideasvnuat postgresql]# sudo -u gitlab-psql /opt/gitlab/embedded/bin/pg_dump \
+>   -Fc \
+>   -h /var/opt/gitlab/postgresql \
+>   -p 5432 \
+>   -U gitlab-psql \
+>   -d gitlabhq_production \
+>   -f /var/opt/gitlab/postgresql/gitlabhq_production-17.5.5-pg14.dump
+[root@tss-ideasvnuat postgresql]# ll
+total 63868
+drwx------. 19 gitlab-psql root            4096 Sep  6 16:08 data
+-rw-r-----.  1 gitlab-psql gitlab-psql 65391437 Sep  6 16:32 gitlabhq_production-17.5.5-pg14.dump
+-rw-r--r--.  1 root        root              28 Sep  6 14:57 VERSION
+[root@tss-ideasvnuat postgresql]#
