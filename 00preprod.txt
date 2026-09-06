@@ -1,69 +1,14 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
-INTERNAL_GITLAB="https://ideagit.sbi.co.in:10000"
-INTERNAL_TOKEN="glpat-xxxxxxxxxxxxxxxxxxxx"
-
-INPUT_FILE="mirrors.csv"
-LOG_FILE="trigger_sync_$(date +%Y%m%d_%H%M%S).log"
-
-log() { echo -e "$1" | tee -a "$LOG_FILE"; }
-
-log "===== Mirror sync trigger run started: $(date) ====="
-
-while IFS=, read -r internal_url org_url; do
-  [[ -z "$internal_url" || "$internal_url" == \#* ]] && continue
-  internal_url=$(echo "$internal_url" | xargs)
-  org_url=$(echo "$org_url" | xargs)
-
-  relative_path=$(echo "$internal_url" | sed "s|${INTERNAL_GITLAB}/||" | sed 's|\.git$||')
-  encoded_path=$(echo -n "$relative_path" | jq -sRr @uri)
-  org_host_and_path="${org_url#https://}"
-
-  log "==> [$(date +%H:%M:%S)] Resolving numeric project ID for $relative_path"
-
-  PROJECT_ID=$(curl -k -s --max-time 30 --header "PRIVATE-TOKEN: $INTERNAL_TOKEN" \
-       "${INTERNAL_GITLAB}/api/v4/projects/${encoded_path}" | jq -r '.id // empty')
-
-  if [[ -z "$PROJECT_ID" ]]; then
-    log "    FAILED — could not resolve project id for $relative_path"
-    log "-----------------------------------"
-    sleep 10
-    continue
-  fi
-
-  log "    project id: $PROJECT_ID — looking up mirror"
-
-  MIRRORS_JSON=$(curl -k -s --max-time 30 --header "PRIVATE-TOKEN: $INTERNAL_TOKEN" \
-       "${INTERNAL_GITLAB}/api/v4/projects/${PROJECT_ID}/remote_mirrors")
-
-  mirror_id=$(echo "$MIRRORS_JSON" | jq -r --arg h "$org_host_and_path" \
-       '.[] | select(.url | endswith($h)) | .id' | head -n1)
-
-  if [[ -z "$mirror_id" || "$mirror_id" == "null" ]]; then
-    log "    FAILED — no matching mirror found. Raw response: $MIRRORS_JSON"
-    log "-----------------------------------"
-    sleep 10
-    continue
-  fi
-
-  log "    mirror id: $mirror_id — triggering sync"
-
-  HTTP_STATUS=$(curl -k -s --max-time 30 -o /tmp/sync_resp.json -w "%{http_code}" \
-       --request POST --header "PRIVATE-TOKEN: $INTERNAL_TOKEN" \
-       "${INTERNAL_GITLAB}/api/v4/projects/${PROJECT_ID}/remote_mirrors/${mirror_id}/sync" || echo "000")
-
-  RESP=$(cat /tmp/sync_resp.json 2>/dev/null || echo "{}")
-
-  log "    HTTP status: $HTTP_STATUS"
-  if [[ "$HTTP_STATUS" == "200" || "$HTTP_STATUS" == "201" ]]; then
-    log "    OK — sync triggered"
-  else
-    log "    FAILED — response: $RESP"
-  fi
-  log "-----------------------------------"
-
-  sleep 10
-done < "$INPUT_FILE"
-
-log "===== Run finished: $(date) ====="
+ ./ideagit_mirror_sync.sh
+===== Mirror sync trigger run started: Sun Sep  6 10:48:25 IST 2026 =====
+==> [10:48:25] Resolving numeric project ID for fxs/CryptographicService
+    project id: 41 — looking up mirror
+    mirror id: 31 — triggering sync
+    HTTP status: 404
+    FAILED — response: {"error":"404 Not Found"}
+-----------------------------------
+==> [10:48:36] Resolving numeric project ID for fxs/emailservice
+    project id: 142 — looking up mirror
+    mirror id: 32 — triggering sync
+    HTTP status: 404
+    FAILED — response: {"error":"404 Not Found"}
+-----------------------------------
