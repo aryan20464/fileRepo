@@ -1,75 +1,34 @@
-#!/usr/bin/env bash
-set -euo pipefail
+$ ./ideagit_ui_mirror_sync.sh
+===== Session-based mirror sync trigger run started: Sun Sep  6 11:15:53 IST 2026 =====
+Logging in as chakri94...
+Login successful (session cookie confirmed).
 
-INTERNAL_GITLAB="https://ideagit.sbi.co.in:10000"
-GITLAB_USER="chakri94"
-GITLAB_PASS='your_password_here'
+==> [11:15:53] fxs/fac-api
+    HTTP status: 301
+    FAILED — response: <html><body>You are being <a href="https://ideagit.sbi.co.in:10000/fxs/fac-api/-/mirror/update_now">redirected</a>.</body></html>
+-----------------------------------
+===== Run finished: Sun Sep  6 11:16:03 IST 2026 =====
+[osadmin@tss-ideasvnuat ~]$ >ideagit_ui_mirror_sync.sh
+[osadmin@tss-ideasvnuat ~]$ vi ideagit_ui_mirror_sync.sh
+[osadmin@tss-ideasvnuat ~]$ ./ideagit_ui_mirror_sync.sh
+===== Session-based mirror sync trigger run started: Sun Sep  6 11:18:03 IST 2026 =====
+Login successful (session cookie confirmed).
 
-INPUT_FILE="mirrors.csv"
-LOG_FILE="trigger_sync_$(date +%Y%m%d_%H%M%S).log"
-COOKIE_JAR=$(mktemp)
+==> [11:18:03] fxs/fac-api
+    HTTP status: 302
+    FAILED — response: <html><body>You are being <a href="https://ideagit.sbi.co.in:10000/fxs/fac-api/-/settings/repository#js-push-remote-settings">redirected</a>.</body></html>
+-----------------------------------
+===== Run finished: Sun Sep  6 11:18:14 IST 2026 =====
+[osadmin@tss-ideasvnuat ~]$ >ideagit_ui_mirror_sync.sh
+[osadmin@tss-ideasvnuat ~]$ vi ideagit_ui_mirror_sync.sh
+[osadmin@tss-ideasvnuat ~]$ ./ideagit_ui_mirror_sync.sh
+===== Session-based mirror sync trigger run started: Sun Sep  6 11:21:45 IST 2026 =====
+Login successful (session cookie confirmed).
 
-log() { echo -e "$1" | tee -a "$LOG_FILE"; }
-cleanup() { rm -f "$COOKIE_JAR" /tmp/login_resp.html /tmp/update_now_resp.json; }
-trap cleanup EXIT
-
-log "===== Session-based mirror sync trigger run started: $(date) ====="
-
-SIGNIN_PAGE=$(curl -k -s -c "$COOKIE_JAR" "${INTERNAL_GITLAB}/users/sign_in")
-AUTH_TOKEN=$(echo "$SIGNIN_PAGE" | grep -oP 'name="authenticity_token" value="\K[^"]+' | head -1)
-
-if [[ -z "$AUTH_TOKEN" ]]; then
-  log "FAILED — could not extract authenticity_token. Aborting."
-  exit 1
-fi
-
-curl -k -sL -b "$COOKIE_JAR" -c "$COOKIE_JAR" \
-  --data-urlencode "user[login]=$GITLAB_USER" \
-  --data-urlencode "user[password]=$GITLAB_PASS" \
-  --data-urlencode "authenticity_token=$AUTH_TOKEN" \
-  "${INTERNAL_GITLAB}/users/sign_in" -o /tmp/login_resp.html
-
-if ! grep -q "_gitlab_session" "$COOKIE_JAR"; then
-  log "FAILED — no session cookie found after login."
-  exit 1
-fi
-log "Login successful (session cookie confirmed)."
-log ""
-
-while IFS=, read -r internal_url org_url; do
-  [[ -z "$internal_url" || "$internal_url" == \#* ]] && continue
-  internal_url=$(echo "$internal_url" | xargs)
-
-  project_path=$(echo "$internal_url" | sed "s|${INTERNAL_GITLAB}/||" | sed 's|\.git$||')
-
-  log "==> [$(date +%H:%M:%S)] $project_path"
-
-  SETTINGS_PAGE=$(curl -k -s -b "$COOKIE_JAR" \
-       "${INTERNAL_GITLAB}/${project_path}/-/settings/repository")
-  CSRF_TOKEN=$(echo "$SETTINGS_PAGE" | grep -oP 'name="csrf-token" content="\K[^"]+' | head -1)
-
-  if [[ -z "$CSRF_TOKEN" ]]; then
-    log "    FAILED — could not extract CSRF token"
-    log "-----------------------------------"
-    sleep 10
-    continue
-  fi
-
-  HTTP_STATUS=$(curl -k -sL -b "$COOKIE_JAR" -o /tmp/update_now_resp.json -w "%{http_code}" \
-       --request POST \
-       -H "X-CSRF-Token: $CSRF_TOKEN" \
-       -H "X-Requested-With: XMLHttpRequest" \
-       "${INTERNAL_GITLAB}/${project_path}/-/mirror/update_now?sync_remote=true" || echo "000")
-
-  log "    HTTP status (final, after redirects): $HTTP_STATUS"
-  if [[ "$HTTP_STATUS" == "200" ]]; then
-    log "    OK — update now triggered"
-  else
-    log "    FAILED or ambiguous — check /tmp/update_now_resp.json manually"
-  fi
-  log "-----------------------------------"
-
-  sleep 10
-done < "$INPUT_FILE"
-
-log "===== Run finished: $(date) ====="
+==> [11:21:45] fxs/fac-api
+    HTTP status (final, after redirects): 404
+    FAILED or ambiguous — check /tmp/update_now_resp.json manually
+-----------------------------------
+===== Run finished: Sun Sep  6 11:21:55 IST 2026 =====
+[osadmin@tss-ideasvnuat ~]$ cat /tmp/update_now_resp.json
+cat: /tmp/update_now_resp.json: No such file or directory
