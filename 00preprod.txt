@@ -42,3 +42,7 @@ public class StaticDataDTO {
 
 LABEL VALUE MODULE
 JWT_TOKEN	f23dedadeb758b0e88f5	RE_RATEENGINE_API
+
+
+List<StaticDataDTO> staticDataDTOJWTEntry =  fixConfigRepository.findStaticDataEntry();
+        System.out.println("stentry"+staticDataDTOJWTEntry.stream().findFirst().orElse(null).getVALUE()); is coming null
