@@ -1,48 +1,31 @@
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
+@Configuration
+public class SecretKeyConfig {
 
-@Repository
-public class FIXConfigRepository {
+    @Bean(name = "jwtSecretKey")
+    public String jwtSecretKey(FIXConfigRepository fixConfigRepository) {
+        List<StaticDataDTO> entries = fixConfigRepository.findStaticDataEntry();
+        
+        return entries.stream()
+                .filter(dto -> "JWT_TOKEN".equalsIgnoreCase(dto.getLABEL()))
+                .map(StaticDataDTO::getVALUE)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("JWT_TOKEN missing from database"));
+    }
+}
+
+
+@Service
+public class JwtService {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    @Qualifier("jwtSecretKey")
+    private String secretKey;
 
-    public List<StaticDataDTO> findStaticDataEntry() {
-        String sql = "SELECT LABEL, VALUE, MODULE FROM RE_FIX_STATICDATA WHERE MODULE = 'RE_RATEENGINE_API'";
-
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new StaticDataDTO(
-                rs.getString("LABEL"),
-                rs.getString("VALUE"),
-                rs.getString("MODULE")
-        ));
+    public void generateToken() {
+        System.out.println("Using secret key directly: " + secretKey);
     }
 }
-
-
-
-import lombok.Getter;
-import lombok.Setter;
-@Getter
-@Setter
-public class StaticDataDTO {
-    private String LABEL;
-    private String VALUE;
-    private String MODULE;
-
-    // Constructors, Getters, and Setters
-    public StaticDataDTO() {}
-
-    public StaticDataDTO(String id, String name, String email) {
-    }
-}
-
-LABEL VALUE MODULE
-JWT_TOKEN	f23dedadeb758b0e88f5	RE_RATEENGINE_API
-
-
-List<StaticDataDTO> staticDataDTOJWTEntry =  fixConfigRepository.findStaticDataEntry();
-        System.out.println("stentry"+staticDataDTOJWTEntry.stream().findFirst().orElse(null).getVALUE()); is coming null
