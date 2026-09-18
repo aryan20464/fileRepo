@@ -1,158 +1,624 @@
-default:
-  tags:
-    - deploy_runner
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Server Inventory</title>
+<style>
+/* ============================================================
+   TOKENS
+   ============================================================ */
+:root{
+  --paper:#e9ebee;
+  --panel:#fcfcfd;
+  --panel-alt:#f3f5f7;
+  --ink:#17202b;
+  --ink-soft:#5a6675;
+  --ink-faint:#8b97a5;
+  --rule:#cdd3da;
+  --rule-soft:#dfe4e9;
+  --focus:#2f6fed;
 
-stages:
-  - build
-  - application-zipper
-  - deploy
+  --env-uat:#2f6fed;
+  --env-preprod:#c98a1b;
+  --env-pr:#1e7f5c;
+  --env-dr:#b4453c;
 
+  --ok:#1e7f5c;
+  --warn:#c98a1b;
+  --down:#b4453c;
 
-variables:
-  MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode"
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"Cascadia Mono",Consolas,"Liberation Mono",Menlo,monospace;
 
-build_job:
-  stage: build
-  image: artifactory.jfrog.sbi:443/dso-base-image/java-maven-images/rhel-jdk-17-maven3.8.5:0.0.1
-  before_script:
-    # ── JFrog setup ───────────────────────────────────────────────────────────
-    - jf config add --url="$JF_URL" --user="$JF_USER" --access-token="$JF_TOKEN" --interactive=false
-    - jf rt ping
+  --rail:264px;
+  --pad:24px;
+}
+:root[data-theme="dark"]{
+  --paper:#10151b;
+  --panel:#171e26;
+  --panel-alt:#1d252f;
+  --ink:#dde3ea;
+  --ink-soft:#8c99a8;
+  --ink-faint:#6b7887;
+  --rule:#28323d;
+  --rule-soft:#212a34;
+  --env-uat:#5b8ef5;
+  --env-preprod:#d9a33f;
+  --env-pr:#3a9e78;
+  --env-dr:#d0645a;
+  --ok:#3a9e78;--warn:#d9a33f;--down:#d0645a;
+}
+@media (prefers-color-scheme:dark){
+  :root[data-theme="auto"]{
+    --paper:#10151b;--panel:#171e26;--panel-alt:#1d252f;
+    --ink:#dde3ea;--ink-soft:#8c99a8;--ink-faint:#6b7887;
+    --rule:#28323d;--rule-soft:#212a34;
+    --env-uat:#5b8ef5;--env-preprod:#d9a33f;--env-pr:#3a9e78;--env-dr:#d0645a;
+    --ok:#3a9e78;--warn:#d9a33f;--down:#d0645a;
+  }
+}
 
-    # ── Download WDT ──────────────────────────────────────────────────────────
-    - jf rt dl "itfo-treasury-tss-idea-custom-maven-libs/weblogic-deploy/**" "./" --flat=false --recursive=true
-    - chmod +x ./weblogic-deploy/bin/*.sh
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font:400 15px/1.5 var(--sans);
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px}
 
-    # ── Confirm WDT version ───────────────────────────────────────────────────
-    - echo "=== WDT Version ===" && cat ./weblogic-deploy/VERSION.txt
+/* ============================================================
+   MASTHEAD
+   ============================================================ */
+.masthead{
+  display:flex;align-items:flex-end;gap:32px;flex-wrap:wrap;
+  padding:28px var(--pad) 18px;
+  border-bottom:1px solid var(--rule);
+  background:var(--panel);
+}
+.mast-title{margin:0;font-size:25px;font-weight:650;letter-spacing:-.022em;line-height:1.1}
+.mast-sub{margin:5px 0 0;color:var(--ink-soft);font-size:13.5px;max-width:58ch}
+.mast-tools{margin-left:auto;display:flex;align-items:center;gap:10px}
 
-    # ── Confirm Java ──────────────────────────────────────────────────────────
-    - java -version
-    - curl -ikv https://10.191.70.108:6001/console
-  script:    
-    - mvn clean package -U -P prod
-  artifacts:
-    paths:
-      - target/
-      - weblogic-deploy/
-    expire_in: 1 day
-  only:
-    - rfm-integration
+.search{position:relative;display:flex;align-items:center}
+.search input{
+  width:280px;max-width:52vw;
+  padding:8px 11px 8px 30px;
+  font:400 13.5px/1.2 var(--sans);
+  color:var(--ink);
+  background:var(--panel-alt);
+  border:1px solid var(--rule);
+  border-radius:3px;
+}
+.search input::placeholder{color:var(--ink-faint)}
+.search svg{position:absolute;left:9px;width:14px;height:14px;fill:none;stroke:var(--ink-faint);stroke-width:1.7;pointer-events:none}
 
-zip_job:
-  stage: application-zipper
-  image: artifactory.jfrog.sbi:443/itfo-ittss-idea-docker-local/linx-tools:zip
-  script:    
-    - ls -lrth
-    - mkdir -p wlsdeploy/applications
-    - cp target/RfmIndentsService.war wlsdeploy/applications/
-    - zip -r archive.zip wlsdeploy
-    - ls -lrth  
-  artifacts:
-    paths:
-      - archive.zip
-    expire_in: 1 day
-  only:
-    - rfm-integration
+.iconbtn{
+  display:grid;place-items:center;width:32px;height:32px;
+  background:var(--panel-alt);border:1px solid var(--rule);border-radius:3px;
+  color:var(--ink-soft);cursor:pointer;
+}
+.iconbtn:hover{color:var(--ink);border-color:var(--ink-faint)}
+.iconbtn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
 
-deploy_job:
-  stage: deploy
-  image: artifactory.jfrog.sbi:443/itfo-ittss-idea-docker-local/wls:14.1.1.0.0
-  variables:
-    APP_NAME: "RfmIndentsService"
-    TARGET_NAME: "IRM_SERVER_SWIFT"
-    WAR_INTERNAL_PATH: "wlsdeploy/applications/RfmIndentsService.war"
+/* ============================================================
+   SHELL
+   ============================================================ */
+.shell{display:grid;grid-template-columns:var(--rail) 1fr;align-items:start}
 
-  before_script:
-    # ── Locate ORACLE_HOME ────────────────────────────────────────────────────
-    - |
-      if [ -d "/u01/app/oracle/middleware/wlserver" ]; then
-        export ORACLE_HOME="/u01/app/oracle/middleware"
-      elif [ -d "/u01/oracle/wlserver" ]; then
-        export ORACLE_HOME="/u01/oracle"
-      else
-        echo "ERROR: Cannot locate ORACLE_HOME in WIT image"
-        find /u01 -name "wlst.sh" 2>/dev/null
-        exit 1
-      fi
-    - echo "ORACLE_HOME=${ORACLE_HOME}"
-    - ls ${ORACLE_HOME}/wlserver/common/bin/wlst.sh
+/* ---- Left rail: environment bands ---- */
+.rail{
+  position:sticky;top:0;
+  padding:18px 14px 28px;
+  border-right:1px solid var(--rule);
+  min-height:calc(100vh - 92px);
+}
+.rail-head{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:0 4px 10px;color:var(--ink-soft);font-size:12.5px;
+}
+.rail-head b{color:var(--ink);font-variant-numeric:tabular-nums;font-weight:600}
 
-    # ── Verify archive ────────────────────────────────────────────────────────
-    - echo "=== Archive contents ===" && unzip -l ./archive.zip
-    - |
-      if ! unzip -l ./archive.zip | grep -q "${WAR_INTERNAL_PATH}"; then
-        echo "ERROR: ${WAR_INTERNAL_PATH} not found inside archive.zip"
-        unzip -l ./archive.zip
-        exit 1
-      fi
-    - echo "=== Pre-deploy checks passed ==="
+.band{
+  position:relative;display:block;width:100%;text-align:left;
+  padding:11px 12px 12px 15px;margin-bottom:4px;
+  background:transparent;border:1px solid transparent;border-radius:3px;
+  cursor:pointer;color:inherit;font:inherit;
+}
+.band::before{
+  content:"";position:absolute;left:4px;top:11px;bottom:12px;width:3px;border-radius:2px;
+  background:var(--tick);
+}
+.band:hover{background:var(--panel-alt)}
+.band[aria-pressed="true"]{background:var(--panel);border-color:var(--rule);box-shadow:0 1px 0 var(--rule-soft)}
+.band-top{display:flex;align-items:baseline;gap:8px}
+.band-name{font-weight:600;letter-spacing:-.01em;font-size:14.5px}
+.band-count{margin-left:auto;font:500 12.5px var(--mono);color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.band-note{margin:2px 0 0;font-size:12px;color:var(--ink-faint)}
+.glyph{display:flex;flex-wrap:wrap;gap:2px;margin-top:8px}
+.glyph i{width:7px;height:7px;border-radius:1px;background:var(--tick);opacity:.9}
+.glyph i[data-state="down"]{background:transparent;box-shadow:inset 0 0 0 1px var(--tick);opacity:.55}
+.glyph i[data-state="maint"]{opacity:.35}
 
-    # ── Import WLS SSL certificate ────────────────────────────────────────────
-    - |
-      if [ -n "$WLS_ADMIN_CERT" ]; then
-        echo ">>> Importing WLS SSL certificate into truststore..."
-        echo "$WLS_ADMIN_CERT" > /tmp/wls-admin.crt
-        /u01/jdk/bin/keytool -import \
-          -alias wls-admin-cert \
-          -file /tmp/wls-admin.crt \
-          -keystore /u01/jdk/jre/lib/security/cacerts \
-          -storepass changeit \
-          -noprompt
-        echo ">>> Certificate imported successfully."
-      else
-        echo "ERROR: WLS_ADMIN_CERT variable not set"
-        exit 1
-      fi
+.rail-reset{
+  display:block;width:100%;margin-top:12px;padding:7px 12px;
+  background:transparent;border:1px dashed var(--rule);border-radius:3px;
+  color:var(--ink-soft);font:400 12.5px var(--sans);cursor:pointer;
+}
+.rail-reset:hover{color:var(--ink);border-color:var(--ink-faint)}
 
-    # ── Disable hostname verification via CONFIG_JVM_ARGS ─────────────────────
-    # CONFIG_JVM_ARGS is the variable WDT appends to its internal JVM call
-    # This is the correct way — JAVA_OPTIONS is NOT read by WDT/WLST
-    - export CONFIG_JVM_ARGS="-Dweblogic.security.SSL.ignoreHostnameVerification=true"
-    - echo "CONFIG_JVM_ARGS=${CONFIG_JVM_ARGS}"
+.legend{margin-top:22px;padding:0 4px;color:var(--ink-faint);font-size:11.5px;line-height:1.9}
+.legend span{display:flex;align-items:center;gap:7px}
+.legend .sw{width:7px;height:7px;border-radius:1px;background:currentColor}
+.legend .sw.hollow{background:transparent;box-shadow:inset 0 0 0 1px currentColor}
 
+/* ============================================================
+   TABLE
+   ============================================================ */
+.main{padding:18px var(--pad) 56px;min-width:0}
+.tablewrap{
+  background:var(--panel);
+  border:1px solid var(--rule);
+  border-radius:4px;
+  overflow:auto;
+}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+thead th{
+  position:sticky;top:0;z-index:2;
+  background:var(--panel-alt);
+  border-bottom:1px solid var(--rule);
+  padding:10px 14px;
+  text-align:left;font-weight:600;font-size:12.5px;color:var(--ink-soft);
+  white-space:nowrap;cursor:pointer;user-select:none;
+}
+thead th:hover{color:var(--ink)}
+thead th .arrow{opacity:0;margin-left:5px;font-size:10px}
+thead th[aria-sort] .arrow{opacity:.8}
+tbody td{padding:9px 14px;border-bottom:1px solid var(--rule-soft);vertical-align:middle;white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:var(--panel-alt)}
+tbody tr[data-env]{box-shadow:inset 3px 0 0 var(--tick)}
 
-  script:
-    # ── Generate model.yaml ───────────────────────────────────────────────────
-    - |
-      cat > model.yaml << EOF
-      appDeployments:
-        Application:
-          ${APP_NAME}:
-            SourcePath: '${WAR_INTERNAL_PATH}'
-            Target: '${TARGET_NAME}'
-            ModuleType: war
-            StagingMode: stage
-      EOF
-    - echo "=== model.yaml ===" && cat model.yaml
+.host{font:500 13px var(--mono);letter-spacing:-.01em}
+.role{display:block;margin-top:2px;font-size:11.5px;color:var(--ink-faint);letter-spacing:0}
 
-    # ── Execute WDT deployApps ────────────────────────────────────────────────
-    # NOTE: -verbose removed (not supported in WDT 4.4.5)
-    # NOTE: -admin_pass_env takes variable NAME without $ sign
-    # NOTE: -admin_user takes the value directly with $ sign
-    - |
-      ./weblogic-deploy/bin/deployApps.sh \
-        -oracle_home ${ORACLE_HOME} \
-        -model_file model.yaml \
-        -archive_file ./archive.zip \
-        -admin_url "$WLS_PROD_ADMIN_URL" \
-        -admin_user "$WLS_PROD_USER" \
-        -admin_pass_env WLS_PROD_PASSWORD \
-        -domain_type WLS \
-        -remote
+.ip{
+  font:400 13px var(--mono);font-variant-numeric:tabular-nums;
+  background:none;border:0;padding:0;color:inherit;cursor:pointer;
+  border-bottom:1px dotted var(--rule);
+}
+.ip:hover{border-bottom-color:var(--ink-soft)}
+.ip.copied{border-bottom-style:solid;border-bottom-color:var(--ok);color:var(--ok)}
 
-    # ── Exit code handling ────────────────────────────────────────────────────
-    - |
-      EXIT_CODE=$?
-      if [ $EXIT_CODE -eq 0 ]; then
-        echo ">>> Deployment successful."
-      elif [ $EXIT_CODE -eq 2 ]; then
-        echo ">>> Deployment succeeded with warnings."
-        exit 0
-      else
-        echo "ERROR: WDT deployApps failed with exit code: ${EXIT_CODE}"
-        exit 1
-      fi
+.vlan{font:400 13px var(--mono);color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.envtag{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:12.5px;color:var(--tick)}
+.envtag::before{content:"";width:6px;height:6px;border-radius:1px;background:currentColor}
 
-  only:
-    - rfm-integration
+.state{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-soft)}
+.state::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ok)}
+.state[data-state="down"]::before{background:var(--down)}
+.state[data-state="maint"]::before{background:var(--warn)}
+
+.empty{padding:44px 16px;text-align:center;color:var(--ink-soft);font-size:14px}
+.empty b{display:block;color:var(--ink);font-weight:600;margin-bottom:4px}
+
+.foot{
+  display:flex;gap:18px;flex-wrap:wrap;
+  margin-top:12px;padding:0 2px;
+  color:var(--ink-faint);font-size:12px;
+}
+.foot b{color:var(--ink-soft);font-weight:500;font-variant-numeric:tabular-nums}
+
+/* toast */
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);
+  padding:8px 14px;border-radius:3px;
+  background:var(--ink);color:var(--panel);
+  font:500 12.5px var(--sans);
+  opacity:0;pointer-events:none;transition:opacity .16s,transform .16s;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+
+/* ============================================================
+   ICONS & MOTION
+   ============================================================ */
+.tcell{display:inline-flex;align-items:center;gap:9px}
+.tcell svg{
+  width:15px;height:15px;flex:none;
+  fill:none;stroke:currentColor;stroke-width:1.45;
+  stroke-linecap:round;stroke-linejoin:round;
+  color:var(--ink-faint);
+  transition:color .18s ease,transform .18s ease;
+}
+tbody tr:hover .tcell svg{color:var(--tick);transform:translateY(-1px)}
+.tcell.os svg{stroke-width:1.3}
+
+/* state dots: motion only where something needs attention */
+.state[data-state="maint"]::before{animation:breathe 2.4s ease-in-out infinite}
+.state[data-state="down"]::before{animation:alarm 1.9s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.75)}}
+@keyframes alarm{
+  0%,70%,100%{box-shadow:0 0 0 0 rgba(180,69,60,0)}
+  35%{box-shadow:0 0 0 4px rgba(180,69,60,.22)}
+}
+
+/* one orchestrated page-load reveal on the environment glyphs */
+.glyph i{animation:pop .34s cubic-bezier(.2,.8,.3,1) backwards;animation-delay:var(--d,0ms)}
+@keyframes pop{from{transform:scale(.2)}to{transform:scale(1)}}
+
+/* rows settle in on load and on an environment change — not while typing */
+.stagger tr{animation:rowin .28s ease backwards;animation-delay:var(--d,0ms)}
+@keyframes rowin{from{opacity:0;transform:translateY(5px)}}
+
+.band[aria-pressed="true"]::before{animation:tick .4s ease}
+@keyframes tick{from{transform:scaleY(.2)}to{transform:scaleY(1)}}
+
+.ip.copied{animation:flash .5s ease}
+@keyframes flash{from{background:rgba(30,127,92,.16)}}
+
+@media (prefers-reduced-motion:reduce){
+  .glyph i,.stagger tr,.band::before,.ip.copied,
+  .state[data-state="maint"]::before,.state[data-state="down"]::before{animation:none}
+  .tcell svg{transition:none}
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:900px){
+  :root{--pad:16px}
+  .shell{grid-template-columns:1fr}
+  .rail{position:static;min-height:0;border-right:0;border-bottom:1px solid var(--rule);
+        display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:4px;padding:14px}
+  .rail-head,.legend{grid-column:1/-1}
+  .rail-reset{grid-column:1/-1}
+  .masthead{padding:20px var(--pad) 14px}
+  .mast-tools{width:100%;margin-left:0}
+  .search input{width:100%;max-width:none}
+  .search{flex:1}
+}
+@media print{
+  .rail,.mast-tools,.toast{display:none}
+  body{background:#fff}
+  .tablewrap{border:0}
+  tbody tr{box-shadow:none !important}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div>
+    <h1 class="mast-title">Server inventory</h1>
+    <p class="mast-sub">Hosts across UAT, pre-production, production and disaster recovery. Select an environment to filter; click any address to copy it.</p>
+  </div>
+  <div class="mast-tools">
+    <label class="search">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg>
+      <input id="q" type="search" placeholder="Host, address, VLAN, type…" autocomplete="off" aria-label="Filter servers">
+    </label>
+    <button class="iconbtn" id="theme" title="Switch between light and dark" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="rail" id="rail" aria-label="Environments">
+    <div class="rail-head"><span>Environments</span><b id="railTotal">0</b></div>
+    <!-- bands injected -->
+  </nav>
+
+  <main class="main">
+    <div class="tablewrap">
+      <table id="grid">
+        <thead>
+          <tr>
+            <th data-key="host" scope="col">Host<span class="arrow"></span></th>
+            <th data-key="ip" scope="col">Address<span class="arrow"></span></th>
+            <th data-key="env" scope="col">Environment<span class="arrow"></span></th>
+            <th data-key="vlan" scope="col">VLAN<span class="arrow"></span></th>
+            <th data-key="type" scope="col">Server type<span class="arrow"></span></th>
+            <th data-key="os" scope="col">Platform<span class="arrow"></span></th>
+            <th data-key="site" scope="col">Site<span class="arrow"></span></th>
+            <th data-key="state" scope="col">State<span class="arrow"></span></th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="empty" id="empty" hidden>
+        <b>No hosts match that filter</b>
+        Clear the search box or pick a different environment.
+      </div>
+    </div>
+    <p class="foot">
+      <span>Showing <b id="shown">0</b> of <b id="total">0</b> hosts</span>
+      <span>Source of truth: CMDB export <b id="asof">—</b></span>
+      <span>Raise corrections with the infrastructure team</span>
+    </p>
+  </main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============================================================
+   1. DATA — edit this block only.
+   state: "up" | "maint" | "down"
+   ============================================================ */
+const AS_OF = "18 Sep 2026";
+
+const ENVIRONMENTS = [
+  { id:"UAT",     label:"UAT",              note:"User acceptance",     colour:"var(--env-uat)"     },
+  { id:"PREPROD", label:"Pre-production",   note:"Release rehearsal",   colour:"var(--env-preprod)" },
+  { id:"PR",      label:"Production",       note:"Live, primary site",  colour:"var(--env-pr)"      },
+  { id:"DR",      label:"Disaster recovery",note:"Warm standby",        colour:"var(--env-dr)"      }
+];
+
+const SERVERS = [
+  // ---- UAT ----
+  { host:"uat-app-wls-01",  role:"RFM/FCN application",   ip:"10.42.16.11",  env:"UAT",     vlan:"416", type:"WebLogic",    os:"RHEL 8.9",  site:"DC-Belapur",  state:"up"    },
+  { host:"uat-app-wls-02",  role:"RFM/FCN application",   ip:"10.42.16.12",  env:"UAT",     vlan:"416", type:"WebLogic",    os:"RHEL 8.9",  site:"DC-Belapur",  state:"up"    },
+  { host:"uat-web-ngx-01",  role:"Static content, proxy", ip:"10.42.16.21",  env:"UAT",     vlan:"416", type:"nginx",       os:"RHEL 8.9",  site:"DC-Belapur",  state:"up"    },
+  { host:"uat-db-ora-01",   role:"Primary database",      ip:"10.42.17.31",  env:"UAT",     vlan:"417", type:"Oracle 19c",  os:"OEL 8.8",   site:"DC-Belapur",  state:"up"    },
+  { host:"uat-k8s-wrk-01",  role:"Worker node",           ip:"10.42.18.41",  env:"UAT",     vlan:"418", type:"Kubernetes",  os:"RHEL 8.9",  site:"DC-Belapur",  state:"maint" },
+  { host:"uat-cicd-run-01", role:"GitLab runner",         ip:"10.42.18.51",  env:"UAT",     vlan:"418", type:"GitLab",      os:"RHEL 8.9",  site:"DC-Belapur",  state:"up"    },
+
+  // ---- PREPROD ----
+  { host:"pp-app-wls-01",   role:"RFM/FCN application",   ip:"10.44.24.11",  env:"PREPROD", vlan:"424", type:"WebLogic",    os:"RHEL 8.9",  site:"DC-Belapur",  state:"up"    },
+  { host:"pp-app-wls-02",   role:"RFM/FCN application",   ip:"10.44.24.12",  env:"PREPROD", vlan:"424", type:"WebLogic",    os:"RHEL 8.9",  site:"DC-Belapur",  state:"up"    },
+  { host:"pp-app-tom-01",   role:"Services tier",         ip:"10.44.24.13",  env:"PREPROD", vlan:"424", type:"Tomcat",      os:"RHEL 8.9",  site:"DC-Belapur",  state:"up"    },
+  { host:"pp-web-ngx-01",   role:"Static content, proxy", ip:"10.44.24.21",  env:"PREPROD", vlan:"424", type:"nginx",       os:"RHEL 8.9",  site:"DC-Belapur",  state:"up"    },
+  { host:"pp-db-ora-01",    role:"Primary database",      ip:"10.44.25.31",  env:"PREPROD", vlan:"425", type:"Oracle 19c",  os:"OEL 8.8",   site:"DC-Belapur",  state:"up"    },
+  { host:"pp-k8s-mst-01",   role:"Control plane",         ip:"10.44.26.41",  env:"PREPROD", vlan:"426", type:"Kubernetes",  os:"RHEL 8.9",  site:"DC-Belapur",  state:"up"    },
+  { host:"pp-k8s-wrk-01",   role:"Worker node",           ip:"10.44.26.42",  env:"PREPROD", vlan:"426", type:"Kubernetes",  os:"RHEL 8.9",  site:"DC-Belapur",  state:"up"    },
+  { host:"pp-k8s-wrk-02",   role:"Worker node",           ip:"10.44.26.43",  env:"PREPROD", vlan:"426", type:"Kubernetes",  os:"RHEL 8.9",  site:"DC-Belapur",  state:"down"  },
+
+  // ---- PRODUCTION ----
+  { host:"pr-app-wls-01",   role:"RFM/FCN application",   ip:"10.50.32.11",  env:"PR",      vlan:"432", type:"WebLogic",    os:"RHEL 8.9",  site:"DC-Belapur",  state:"up"    },
+  { host:"pr-app-wls-02",   role:"RFM/FCN application",   ip:"10.50.32.12",  env:"PR",      vlan:"432", type:"WebLogic",    os:"RHEL 8.9",  site:"DC-Belapur",  state:"up"    },
+  { host:"pr-app-wls-03",   role:"RFM/FCN application",   ip:"10.50.32.13",  env:"PR",      vlan:"432", type:"WebLogic",    os:"RHEL 8.9",  site:"DC-Belapur",  state:"up"    },
+  { host:"pr-app-tom-01",   role:"Services tier",         ip:"10.50.32.14",  env:"PR",      vlan:"432", type:"Tomcat",      os:"RHEL 8.9",  site:"DC-Belapur",  state:"up"    },
+  { host:"pr-web-ngx-01",   role:"Edge, TLS termination", ip:"10.50.32.21",  env:"PR",      vlan:"432", type:"nginx",       os:"RHEL 8.9",  site:"DC-Belapur",  state:"up"    },
+  { host:"pr-web-ngx-02",   role:"Edge, TLS termination", ip:"10.50.32.22",  env:"PR",      vlan:"432", type:"nginx",       os:"RHEL 8.9",  site:"DC-Belapur",  state:"up"    },
+  { host:"pr-db-ora-01",    role:"Primary database",      ip:"10.50.33.31",  env:"PR",      vlan:"433", type:"Oracle 19c",  os:"OEL 8.8",   site:"DC-Belapur",  state:"up"    },
+  { host:"pr-db-ora-02",    role:"Standby database",      ip:"10.50.33.32",  env:"PR",      vlan:"433", type:"Oracle 19c",  os:"OEL 8.8",   site:"DC-Belapur",  state:"up"    },
+  { host:"pr-k8s-mst-01",   role:"Control plane",         ip:"10.50.34.41",  env:"PR",      vlan:"434", type:"Kubernetes",  os:"RHEL 8.9",  site:"DC-Belapur",  state:"up"    },
+  { host:"pr-k8s-wrk-01",   role:"Worker node",           ip:"10.50.34.42",  env:"PR",      vlan:"434", type:"Kubernetes",  os:"RHEL 8.9",  site:"DC-Belapur",  state:"up"    },
+  { host:"pr-k8s-wrk-02",   role:"Worker node",           ip:"10.50.34.43",  env:"PR",      vlan:"434", type:"Kubernetes",  os:"RHEL 8.9",  site:"DC-Belapur",  state:"up"    },
+  { host:"pr-art-jfr-01",   role:"Artifact repository",   ip:"10.50.35.51",  env:"PR",      vlan:"435", type:"Artifactory", os:"RHEL 8.9",  site:"DC-Belapur",  state:"up"    },
+
+  // ---- DR ----
+  { host:"dr-app-wls-01",   role:"RFM/FCN application",   ip:"10.60.48.11",  env:"DR",      vlan:"448", type:"WebLogic",    os:"RHEL 8.9",  site:"DR-Hyderabad", state:"up"    },
+  { host:"dr-app-wls-02",   role:"RFM/FCN application",   ip:"10.60.48.12",  env:"DR",      vlan:"448", type:"WebLogic",    os:"RHEL 8.9",  site:"DR-Hyderabad", state:"up"    },
+  { host:"dr-app-tom-01",   role:"Services tier",         ip:"10.60.48.13",  env:"DR",      vlan:"448", type:"Tomcat",      os:"RHEL 8.9",  site:"DR-Hyderabad", state:"maint" },
+  { host:"dr-web-ngx-01",   role:"Edge, TLS termination", ip:"10.60.48.21",  env:"DR",      vlan:"448", type:"nginx",       os:"RHEL 8.9",  site:"DR-Hyderabad", state:"up"    },
+  { host:"dr-db-ora-01",    role:"Standby database",      ip:"10.60.49.31",  env:"DR",      vlan:"449", type:"Oracle 19c",  os:"OEL 8.8",   site:"DR-Hyderabad", state:"up"    },
+  { host:"dr-k8s-mst-01",   role:"Control plane",         ip:"10.60.50.41",  env:"DR",      vlan:"450", type:"Kubernetes",  os:"RHEL 8.9",  site:"DR-Hyderabad", state:"up"    },
+  { host:"dr-k8s-wrk-01",   role:"Worker node",           ip:"10.60.50.42",  env:"DR",      vlan:"450", type:"Kubernetes",  os:"RHEL 8.9",  site:"DR-Hyderabad", state:"up"    }
+];
+
+/* ============================================================
+   2. RENDER
+   ============================================================ */
+const STATE_LABEL = { up:"Running", maint:"Maintenance", down:"Stopped" };
+const envById = Object.fromEntries(ENVIRONMENTS.map(e => [e.id, e]));
+
+/* ---- icon set: each glyph says what the box actually runs ---- */
+const SVG = (p, extra="") => `<svg viewBox="0 0 24 24" aria-hidden="true" ${extra}>${p}</svg>`;
+const ICONS = {
+  weblogic:   SVG(`<rect x="3" y="4" width="18" height="6" rx="1.6"/><rect x="3" y="14" width="18" height="6" rx="1.6"/><path d="M6.5 7h.01M6.5 17h.01"/>`),
+  tomcat:     SVG(`<rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="M8.5 10l3 2.5-3 2.5"/><path d="M13.5 15h3"/>`),
+  nginx:      SVG(`<path d="M3.5 12h5.5"/><path d="M9 12l5-5.5h6.5"/><path d="M9 12l5 5.5h6.5"/><circle cx="3.5" cy="12" r="1.3"/>`),
+  oracle:     SVG(`<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.66 3.13 3 7 3s7-1.34 7-3V6"/><path d="M5 12c0 1.66 3.13 3 7 3s7-1.34 7-3"/>`),
+  kubernetes: SVG(`<path d="M12 2.8l8 4.6v9.2l-8 4.6-8-4.6V7.4z"/><circle cx="12" cy="12" r="2.4"/><path d="M12 9.6V5.9M14.1 13.3l3.2 1.9M9.9 13.3l-3.2 1.9"/>`),
+  gitlab:     SVG(`<circle cx="7" cy="6" r="1.9"/><circle cx="7" cy="18" r="1.9"/><circle cx="17" cy="12" r="1.9"/><path d="M7 7.9v8.2"/><path d="M8.9 6H13a4 4 0 0 1 4 4"/>`),
+  artifact:   SVG(`<path d="M12 2.8l8 4.3v9.8l-8 4.3-8-4.3V7.1z"/><path d="M4 7.1l8 4.3 8-4.3M12 11.4V21.2"/>`),
+  box:        SVG(`<rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M3.5 10h17"/>`),
+  linux:      SVG(`<rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="M7 10l2.5 2L7 14"/><path d="M12.5 14.5h4.5"/>`),
+  chip:       SVG(`<rect x="6.5" y="6.5" width="11" height="11" rx="1.8"/><path d="M9.5 3v3.5M14.5 3v3.5M9.5 17.5V21M14.5 17.5V21M3 9.5h3.5M3 14.5h3.5M17.5 9.5H21M17.5 14.5H21"/>`)
+};
+function typeIcon(type){
+  const t = type.toLowerCase();
+  if (t.includes("weblogic"))   return ICONS.weblogic;
+  if (t.includes("tomcat"))     return ICONS.tomcat;
+  if (t.includes("nginx"))      return ICONS.nginx;
+  if (t.includes("oracle") || t.includes("postgres") || t.includes("db")) return ICONS.oracle;
+  if (t.includes("kube") || t.includes("k8s") || t.includes("ocp"))       return ICONS.kubernetes;
+  if (t.includes("gitlab") || t.includes("jenkins"))                      return ICONS.gitlab;
+  if (t.includes("artifact") || t.includes("nexus"))                      return ICONS.artifact;
+  return ICONS.box;
+}
+function osIcon(os){
+  const o = os.toLowerCase();
+  return (o.includes("rhel") || o.includes("oel") || o.includes("linux") || o.includes("ubuntu"))
+    ? ICONS.linux : ICONS.chip;
+}
+
+let filterEnv = null;
+let query = "";
+let sort = { key:"host", dir:1 };
+
+const $ = s => document.querySelector(s);
+const rowsEl = $("#rows"), emptyEl = $("#empty");
+
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+function buildRail(){
+  const rail = $("#rail");
+  ENVIRONMENTS.forEach(env => {
+    const hosts = SERVERS.filter(s => s.env === env.id);
+    const b = document.createElement("button");
+    b.className = "band";
+    b.type = "button";
+    b.style.setProperty("--tick", env.colour);
+    b.setAttribute("aria-pressed", "false");
+    b.dataset.env = env.id;
+    b.innerHTML =
+      `<span class="band-top"><span class="band-name">${esc(env.label)}</span>` +
+      `<span class="band-count">${hosts.length}</span></span>` +
+      `<span class="band-note">${esc(env.note)}</span>` +
+      `<span class="glyph">${hosts.map((h, i) => `<i data-state="${h.state}" style="--d:${120 + i * 26}ms"></i>`).join("")}</span>`;
+    b.addEventListener("click", () => {
+      filterEnv = (filterEnv === env.id) ? null : env.id;
+      syncRail(); render(true);
+    });
+    rail.appendChild(b);
+  });
+
+  const reset = document.createElement("button");
+  reset.className = "rail-reset";
+  reset.type = "button";
+  reset.textContent = "Show every environment";
+  reset.addEventListener("click", () => { filterEnv = null; syncRail(); render(true); });
+  rail.appendChild(reset);
+
+  const legend = document.createElement("div");
+  legend.className = "legend";
+  legend.innerHTML =
+    `<span><i class="sw"></i>Running</span>` +
+    `<span><i class="sw" style="opacity:.35"></i>Under maintenance</span>` +
+    `<span><i class="sw hollow"></i>Stopped</span>`;
+  rail.appendChild(legend);
+
+  $("#railTotal").textContent = SERVERS.length;
+}
+
+function syncRail(){
+  document.querySelectorAll(".band").forEach(b =>
+    b.setAttribute("aria-pressed", String(b.dataset.env === filterEnv)));
+}
+
+function visible(){
+  const q = query.trim().toLowerCase();
+  return SERVERS
+    .filter(s => !filterEnv || s.env === filterEnv)
+    .filter(s => !q || [s.host, s.role, s.ip, s.vlan, s.type, s.os, s.site, envById[s.env].label]
+      .join(" ").toLowerCase().includes(q))
+    .sort((a, b) => {
+      const k = sort.key;
+      let x = k === "env" ? envById[a.env].label : (a[k] ?? "");
+      let y = k === "env" ? envById[b.env].label : (b[k] ?? "");
+      if (k === "ip") { x = ipNum(a.ip); y = ipNum(b.ip); }
+      if (k === "vlan") { x = +a.vlan; y = +b.vlan; }
+      return (x > y ? 1 : x < y ? -1 : 0) * sort.dir;
+    });
+}
+function ipNum(ip){ return ip.split(".").reduce((n, o) => n * 256 + (+o || 0), 0); }
+
+function render(animate){
+  const list = visible();
+  rowsEl.classList.toggle("stagger", !!animate);
+  rowsEl.innerHTML = list.map((s, i) => {
+    const env = envById[s.env];
+    const d = Math.min(i, 16) * 20;
+    return `<tr data-env="${s.env}" style="--tick:${env.colour};--d:${d}ms">
+      <td><span class="host">${esc(s.host)}</span><span class="role">${esc(s.role)}</span></td>
+      <td><button class="ip" data-ip="${esc(s.ip)}" title="Copy address">${esc(s.ip)}</button></td>
+      <td><span class="envtag" style="--tick:${env.colour};color:${env.colour}">${esc(env.label)}</span></td>
+      <td><span class="vlan">${esc(s.vlan)}</span></td>
+      <td><span class="tcell">${typeIcon(s.type)}${esc(s.type)}</span></td>
+      <td><span class="tcell os">${osIcon(s.os)}${esc(s.os)}</span></td>
+      <td>${esc(s.site)}</td>
+      <td><span class="state" data-state="${s.state}">${STATE_LABEL[s.state]}</span></td>
+    </tr>`;
+  }).join("");
+
+  emptyEl.hidden = list.length > 0;
+  $("#shown").textContent = list.length;
+  $("#total").textContent = SERVERS.length;
+}
+
+/* ---- sorting ---- */
+document.querySelectorAll("thead th").forEach(th => {
+  th.addEventListener("click", () => {
+    const key = th.dataset.key;
+    sort = { key, dir: sort.key === key ? -sort.dir : 1 };
+    document.querySelectorAll("thead th").forEach(o => {
+      o.removeAttribute("aria-sort");
+      o.querySelector(".arrow").textContent = "";
+    });
+    th.setAttribute("aria-sort", sort.dir === 1 ? "ascending" : "descending");
+    th.querySelector(".arrow").textContent = sort.dir === 1 ? "▲" : "▼";
+    render();
+  });
+});
+
+/* ---- search ---- */
+$("#q").addEventListener("input", e => { query = e.target.value; render(); });
+document.addEventListener("keydown", e => {
+  if (e.key === "/" && document.activeElement !== $("#q")) { e.preventDefault(); $("#q").focus(); }
+  if (e.key === "Escape" && document.activeElement === $("#q")) { $("#q").value = ""; query = ""; render(); }
+});
+
+/* ---- copy address (works over plain HTTP, where the async clipboard API is blocked) ---- */
+rowsEl.addEventListener("click", e => {
+  const btn = e.target.closest(".ip");
+  if (!btn) return;
+  copy(btn.dataset.ip);
+  btn.classList.add("copied");
+  setTimeout(() => btn.classList.remove("copied"), 1100);
+  toast(btn.dataset.ip + " copied");
+});
+function copy(text){
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).catch(fallback);
+  } else { fallback(); }
+  function fallback(){
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.cssText = "position:fixed;top:-1000px;opacity:0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); } catch (_) {}
+    ta.remove();
+  }
+}
+let toastTimer;
+function toast(msg){
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 1400);
+}
+
+/* ---- theme ---- */
+$("#theme").addEventListener("click", () => {
+  const root = document.documentElement;
+  const dark = matchMedia("(prefers-color-scheme:dark)").matches;
+  const now = root.dataset.theme === "auto" ? (dark ? "light" : "dark")
+            : root.dataset.theme === "dark" ? "light" : "dark";
+  root.dataset.theme = now;
+});
+
+/* ---- go ---- */
+$("#asof").textContent = AS_OF;
+buildRail();
+render(true);
+countUp();
+
+/* counts tick up once, as the glyphs fill in */
+function countUp(){
+  if (matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+  document.querySelectorAll(".band-count, #railTotal").forEach(el => {
+    const target = +el.textContent;
+    if (!target) return;
+    const start = performance.now(), dur = 620;
+    el.textContent = "0";
+    (function step(now){
+      const p = Math.min((now - start) / dur, 1);
+      el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(step);
+    })(start);
+  });
+}
+</script>
+</body>
+</html>
