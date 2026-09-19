@@ -46,14 +46,27 @@ body{margin:0;background:var(--paper);color:var(--ink);font:400 15px/1.5 var(--s
    MASTHEAD
    ============================================================ */
 .masthead{display:flex;align-items:flex-end;gap:32px;flex-wrap:wrap;padding:28px var(--pad) 18px;border-bottom:1px solid var(--rule);background:var(--panel)}
-.mast-title{margin:0;font-size:25px;font-weight:650;letter-spacing:-.022em;line-height:1.1}
-.mast-sub{margin:5px 0 0;color:var(--ink-soft);font-size:13.5px;}
-.mast-tools{margin-left:auto;display:flex;align-items:center;gap:10px}
+.mast-title{margin:0;display:flex;align-items:center;gap:12px;font-size:25px;font-weight:650;letter-spacing:-.022em;line-height:1.1}
+.mast-sub{margin:5px 0 0;color:var(--ink-soft);font-size:13.5px}
+.mast-tools{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+
+.live-indicator{display:inline-flex;align-items:center;gap:6px;font:600 10.5px var(--mono);letter-spacing:.08em;color:var(--ok);border:1px solid var(--rule);border-radius:20px;padding:3px 9px 3px 7px}
+.live-indicator i{width:6px;height:6px;border-radius:50%;background:var(--ok);flex:none;animation:livepulse 1.6s ease-in-out infinite}
+@keyframes livepulse{0%,100%{box-shadow:0 0 0 0 rgba(30,127,92,.45)}70%{box-shadow:0 0 0 6px rgba(30,127,92,0)}}
+
+.filterbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-right:12px;border-right:1px solid var(--rule)}
+.filterbar select{padding:7px 9px;font:400 12.5px var(--sans);color:var(--ink);background:var(--panel-alt);border:1px solid var(--rule);border-radius:3px;cursor:pointer;max-width:150px}
+.filterbar select:hover{border-color:var(--ink-faint)}
+.filterbar select:disabled{opacity:.5;cursor:default}
+.clearbtn{padding:7px 12px;font:500 12.5px var(--sans);color:var(--ink-soft);background:transparent;border:1px dashed var(--rule);border-radius:3px;cursor:pointer;white-space:nowrap}
+.clearbtn:hover{color:var(--ink);border-color:var(--ink-faint)}
+
 .search{position:relative;display:flex;align-items:center}
-.search input{width:280px;max-width:52vw;padding:8px 11px 8px 30px;font:400 13.5px/1.2 var(--sans);color:var(--ink);background:var(--panel-alt);border:1px solid var(--rule);border-radius:3px}
+.search input{width:230px;max-width:42vw;padding:8px 11px 8px 30px;font:400 13.5px/1.2 var(--sans);color:var(--ink);background:var(--panel-alt);border:1px solid var(--rule);border-radius:3px}
 .search input::placeholder{color:var(--ink-faint)}
+.search input:disabled{opacity:.5}
 .search svg{position:absolute;left:9px;width:14px;height:14px;fill:none;stroke:var(--ink-faint);stroke-width:1.7;pointer-events:none}
-.iconbtn{display:grid;place-items:center;width:32px;height:32px;background:var(--panel-alt);border:1px solid var(--rule);border-radius:3px;color:var(--ink-soft);cursor:pointer}
+.iconbtn{display:grid;place-items:center;width:32px;height:32px;background:var(--panel-alt);border:1px solid var(--rule);border-radius:3px;color:var(--ink-soft);cursor:pointer;flex:none}
 .iconbtn:hover{color:var(--ink);border-color:var(--ink-faint)}
 .iconbtn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
 .iconbtn.spin svg{animation:spin .7s linear infinite}
@@ -64,9 +77,10 @@ body{margin:0;background:var(--paper);color:var(--ink);font:400 15px/1.5 var(--s
    ============================================================ */
 .shell{display:grid;grid-template-columns:var(--rail) 1fr;align-items:start}
 .rail{position:sticky;top:0;padding:18px 14px 28px;border-right:1px solid var(--rule);min-height:calc(100vh - 92px)}
-.rail-head{display:flex;justify-content:space-between;align-items:baseline;padding:0 4px 10px;color:var(--ink-soft);font-size:12.5px}
+.rail-section+.rail-section{margin-top:18px;padding-top:16px;border-top:1px solid var(--rule)}
+.rail-head{position:relative;display:flex;justify-content:space-between;align-items:baseline;padding:0 4px 10px;color:var(--ink-soft);font-size:12.5px}
 .rail-head b{color:var(--ink);font-variant-numeric:tabular-nums;font-weight:600}
-.author{position:absolute;font-size:10.5px;color:#c98a1b;letter-spacing:.01em;}
+.rail-head .author{position:absolute;right:4px;bottom:-14px;font-size:10px;color:var(--ink-faint);letter-spacing:.01em}
 .band{position:relative;display:block;width:100%;text-align:left;padding:11px 12px 12px 15px;margin-bottom:4px;background:transparent;border:1px solid transparent;border-radius:3px;cursor:pointer;color:inherit;font:inherit}
 .band::before{content:"";position:absolute;left:4px;top:11px;bottom:12px;width:3px;border-radius:2px;background:var(--tick)}
 .band:hover{background:var(--panel-alt)}
@@ -102,9 +116,8 @@ tbody tr:hover{background:var(--panel-alt)}
 tbody tr[data-env]{box-shadow:inset 3px 0 0 var(--tick)}
 tbody tr.appbreak td{border-top:1px solid var(--rule)}
 .app{font-weight:600;letter-spacing:-.01em}
-.app.repeat{color:transparent}
 .host{font:500 13px var(--mono);letter-spacing:-.01em}
-.role{display:block;margin-top:2px;font-size:11.5px;color:var(--ink-faint);letter-spacing:0}
+.role{color:var(--ink-soft)}
 .ip{font:400 13px var(--mono);font-variant-numeric:tabular-nums;background:none;border:0;padding:0;color:inherit;cursor:pointer;border-bottom:1px dotted var(--rule)}
 .ip:hover{border-bottom-color:var(--ink-soft)}
 .ip.copied{border-bottom-style:solid;border-bottom-color:var(--ok);color:var(--ok)}
@@ -123,6 +136,7 @@ tbody tr.appbreak td{border-top:1px solid var(--rule)}
 .foot b{color:var(--ink-soft);font-weight:500;font-variant-numeric:tabular-nums}
 .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);padding:8px 14px;border-radius:3px;background:var(--ink);color:var(--panel);font:500 12.5px var(--sans);opacity:0;pointer-events:none;transition:opacity .16s,transform .16s}
 .toast.show{opacity:1;transform:translate(-50%,0)}
+#asof{color:#d9a33f;font-size:12px}
 
 /* ============================================================
    ICONS & MOTION
@@ -131,10 +145,12 @@ tbody tr.appbreak td{border-top:1px solid var(--rule)}
 .tcell svg{width:15px;height:15px;flex:none;fill:none;stroke:currentColor;stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round;color:var(--ink-faint);transition:color .18s ease,transform .18s ease}
 tbody tr:hover .tcell svg{color:var(--tick);transform:translateY(-1px)}
 .tcell.os svg{stroke-width:1.3}
+
 .state[data-state="maint"]::before{animation:breathe 2.4s ease-in-out infinite}
 .state[data-state="down"]::before{animation:alarm 1.9s ease-in-out infinite}
 @keyframes breathe{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.75)}}
 @keyframes alarm{0%,70%,100%{box-shadow:0 0 0 0 rgba(180,69,60,0)}35%{box-shadow:0 0 0 4px rgba(180,69,60,.22)}}
+
 .glyph i{animation:pop .34s cubic-bezier(.2,.8,.3,1) backwards;animation-delay:var(--d,0ms)}
 @keyframes pop{from{transform:scale(.2)}to{transform:scale(1)}}
 .stagger tr{animation:rowin .28s ease backwards;animation-delay:var(--d,0ms)}
@@ -143,23 +159,61 @@ tbody tr:hover .tcell svg{color:var(--tick);transform:translateY(-1px)}
 @keyframes tick{from{transform:scaleY(.2)}to{transform:scaleY(1)}}
 .ip.copied{animation:flash .5s ease}
 @keyframes flash{from{background:rgba(30,127,92,.16)}}
+
+/* per-service ambient "alive" motion — small, distinct, always subtle */
+.led{animation:ledblink 1.6s ease-in-out infinite;animation-delay:var(--ad,0s)}
+.led:nth-of-type(2){animation-delay:calc(var(--ad,0s) + .8s)}
+@keyframes ledblink{0%,100%{opacity:1}50%{opacity:.25}}
+
+.flow{transform-box:fill-box;transform-origin:center;animation:flownudge 1.4s ease-in-out infinite;animation-delay:var(--ad,0s)}
+@keyframes flownudge{0%,100%{transform:translateX(0)}50%{transform:translateX(2px)}}
+
+.ping-dot{transform-box:fill-box;transform-origin:center;animation:pingdot 1.8s ease-in-out infinite;animation-delay:var(--ad,0s)}
+@keyframes pingdot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(1.9)}}
+
+.replic{stroke-dasharray:2.5 3;animation:replicflow 1.1s linear infinite;animation-delay:var(--ad,0s)}
+@keyframes replicflow{to{stroke-dashoffset:-11}}
+
+.hub-pulse{transform-box:fill-box;transform-origin:center;animation:hubpulse 2.3s ease-in-out infinite;animation-delay:var(--ad,0s)}
+@keyframes hubpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(1.35)}}
+
+.commit-pulse{transform-box:fill-box;transform-origin:center;animation:commitpulse 1.8s ease-in-out infinite;animation-delay:var(--ad,0s)}
+.commit-pulse:nth-of-type(2){animation-delay:calc(var(--ad,0s) + .3s)}
+.commit-pulse:nth-of-type(3){animation-delay:calc(var(--ad,0s) + .6s)}
+@keyframes commitpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(1.4)}}
+
+.box-bob{transform-box:fill-box;transform-origin:center;animation:boxbob 2.2s ease-in-out infinite;animation-delay:var(--ad,0s)}
+@keyframes boxbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.5px)}}
+
+.cursor-blink{animation:cursorblink 1.1s steps(1) infinite;animation-delay:var(--ad,0s)}
+@keyframes cursorblink{0%,49%{opacity:1}50%,100%{opacity:0}}
+
+.chip-pulse{transform-box:fill-box;transform-origin:center;animation:chippulse 2.4s ease-in-out infinite;animation-delay:var(--ad,0s)}
+@keyframes chippulse{0%,100%{opacity:1}50%{opacity:.55}}
+
 @media (prefers-reduced-motion:reduce){
-  .glyph i,.stagger tr,.band::before,.ip.copied,.iconbtn.spin svg,
-  .state[data-state="maint"]::before,.state[data-state="down"]::before{animation:none}
+  .glyph i,.stagger tr,.band::before,.ip.copied,.iconbtn.spin svg,.live-indicator i,
+  .state[data-state="maint"]::before,.state[data-state="down"]::before,
+  .led,.flow,.ping-dot,.replic,.hub-pulse,.commit-pulse,.box-bob,.cursor-blink,.chip-pulse{animation:none}
   .tcell svg,.toast{transition:none}
 }
-#asof{color: #d9a33f;font-size: 12px;}
+
 /* ============================================================
    RESPONSIVE / PRINT
    ============================================================ */
+@media (max-width:1050px){
+  .filterbar{border-right:0;padding-right:0}
+}
 @media (max-width:900px){
   :root{--pad:16px}
   .shell{grid-template-columns:1fr}
-  .rail{position:static;min-height:0;border-right:0;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:4px;padding:14px}
-  .rail-head,.legend,.rail-reset{grid-column:1/-1}
+  .rail{position:static;min-height:0;border-right:0;border-bottom:1px solid var(--rule);padding:14px}
+  .rail-section{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:4px}
+  .rail-head,.rail-reset{grid-column:1/-1}
+  .legend{grid-column:1/-1}
   .masthead{padding:20px var(--pad) 14px}
   .mast-tools{width:100%;margin-left:0}
-  .search{flex:1}
+  .filterbar,.search{flex:1 1 auto}
   .search input{width:100%;max-width:none}
 }
 @media print{
@@ -167,7 +221,6 @@ tbody tr:hover .tcell svg{color:var(--tick);transform:translateY(-1px)}
   body{background:#fff}
   .tablewrap{border:0}
   tbody tr{box-shadow:none !important}
-  .app.repeat{color:inherit}
 }
 </style>
 </head>
@@ -175,13 +228,19 @@ tbody tr:hover .tcell svg{color:var(--tick);transform:translateY(-1px)}
 
 <header class="masthead">
   <div>
-    <h1 class="mast-title">IDEA Server Inventory</h1>
+    <h1 class="mast-title">IDEA Server Inventory <span class="live-indicator"><i></i>LIVE</span></h1>
     <p class="mast-sub">Loaded live from <code id="srcname">servers.csv</code></p>
   </div>
   <div class="mast-tools">
+    <div class="filterbar">
+      <select id="fApp" aria-label="Filter by application" title="Filter by application" disabled><option value="">All apps</option></select>
+      <select id="fEnv" aria-label="Filter by environment" title="Filter by environment" disabled><option value="">All environments</option></select>
+      <select id="fType" aria-label="Filter by server type" title="Filter by server type" disabled><option value="">All server types</option></select>
+      <button class="clearbtn" id="fClear" type="button">Clear filters</button>
+    </div>
     <label class="search">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg>
-      <input id="q" type="search" placeholder="App, host, address, VLAN, type…" autocomplete="off" aria-label="Filter servers" disabled>
+      <input id="q" type="search" placeholder="App, host, address, VLAN…" autocomplete="off" aria-label="Free-text search" disabled>
     </label>
     <button class="iconbtn" id="reload" title="Reload the CSV" aria-label="Reload the CSV">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-1.6 5.6"/><path d="M20 5v6h-6"/></svg>
@@ -193,9 +252,7 @@ tbody tr:hover .tcell svg{color:var(--tick);transform:translateY(-1px)}
 </header>
 
 <div class="shell">
-  <nav class="rail" id="rail" aria-label="Environments">
-    <div class="rail-head"><span>Environments</span><b id="railTotal">—</b><span class="author">Author - Chakri</span></div>
-  </nav>
+  <nav class="rail" id="rail" aria-label="Environments and platforms"></nav>
 
   <main class="main">
     <div class="tablewrap">
@@ -230,12 +287,10 @@ tbody tr:hover .tcell svg{color:var(--tick);transform:translateY(-1px)}
 
 <script>
 /* ============================================================
-   CONFIG — the only thing you would normally change here
+   CONFIG
    ============================================================ */
-var CSV_FILE = "servers.csv";                 // relative to this page
-var ENV_ORDER = ["UAT","PREPROD","PR","DR"];  // rail order; anything else is appended
-
-// friendly labels and captions per environment code (optional)
+var CSV_FILE = "servers.csv";
+var ENV_ORDER = ["UAT","PREPROD","PR","DR"];
 var ENV_META = {
   UAT:     { label:"UAT",               note:"User acceptance"    },
   PREPROD: { label:"Pre-production",    note:"Release rehearsal"  },
@@ -244,7 +299,7 @@ var ENV_META = {
 };
 
 /* ============================================================
-   CSV PARSER — handles quotes, embedded commas, CRLF and Excel's BOM
+   CSV PARSER
    ============================================================ */
 function parseCSV(text){
   text = text.replace(/^\uFEFF/, "");
@@ -252,10 +307,8 @@ function parseCSV(text){
   for (; i < text.length; i++){
     c = text[i];
     if (inQ){
-      if (c === '"'){
-        if (text[i+1] === '"'){ field += '"'; i++; }
-        else inQ = false;
-      } else field += c;
+      if (c === '"'){ if (text[i+1] === '"'){ field += '"'; i++; } else inQ = false; }
+      else field += c;
     } else if (c === '"'){ inQ = true; }
     else if (c === ","){ row.push(field); field = ""; }
     else if (c === "\n"){ row.push(field); rows.push(row); row = []; field = ""; }
@@ -266,7 +319,6 @@ function parseCSV(text){
   return rows.filter(function(r){ return r.some(function(v){ return v.trim() !== ""; }); });
 }
 
-/* tolerant header mapping — column order in the CSV does not matter */
 var HEADER_ALIASES = {
   app:"app", application:"app", module:"app", project:"app",
   host:"host", hostname:"host", vm:"host", vmname:"host", server:"host", servername:"host",
@@ -280,14 +332,12 @@ var HEADER_ALIASES = {
   state:"state", status:"state"
 };
 function normHeader(h){ return String(h).toLowerCase().replace(/[^a-z]/g, ""); }
-
 function normState(v){
   var s = String(v || "").toLowerCase();
   if (/down|stop|off|halt|fail/.test(s)) return "down";
   if (/maint|patch|hold|planned/.test(s)) return "maint";
   return "up";
 }
-
 function toRecords(rows){
   var head = rows[0].map(normHeader).map(function(h){ return HEADER_ALIASES[h] || h; });
   return rows.slice(1).map(function(r){
@@ -308,20 +358,20 @@ function toRecords(rows){
 }
 
 /* ============================================================
-   ICONS
+   ICONS — each carries a small always-on cue so the board reads "live"
    ============================================================ */
 var SVG = function(p){ return '<svg viewBox="0 0 24 24" aria-hidden="true">' + p + '</svg>'; };
 var ICONS = {
-  weblogic:   SVG('<rect x="3" y="4" width="18" height="6" rx="1.6"/><rect x="3" y="14" width="18" height="6" rx="1.6"/><path d="M6.5 7h.01M6.5 17h.01"/>'),
-  tomcat:     SVG('<rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="M8.5 10l3 2.5-3 2.5"/><path d="M13.5 15h3"/>'),
-  nginx:      SVG('<path d="M3.5 12h5.5"/><path d="M9 12l5-5.5h6.5"/><path d="M9 12l5 5.5h6.5"/><circle cx="3.5" cy="12" r="1.3"/>'),
-  oracle:     SVG('<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.66 3.13 3 7 3s7-1.34 7-3V6"/><path d="M5 12c0 1.66 3.13 3 7 3s7-1.34 7-3"/>'),
-  kubernetes: SVG('<path d="M12 2.8l8 4.6v9.2l-8 4.6-8-4.6V7.4z"/><circle cx="12" cy="12" r="2.4"/><path d="M12 9.6V5.9M14.1 13.3l3.2 1.9M9.9 13.3l-3.2 1.9"/>'),
-  gitlab:     SVG('<circle cx="7" cy="6" r="1.9"/><circle cx="7" cy="18" r="1.9"/><circle cx="17" cy="12" r="1.9"/><path d="M7 7.9v8.2"/><path d="M8.9 6H13a4 4 0 0 1 4 4"/>'),
-  artifact:   SVG('<path d="M12 2.8l8 4.3v9.8l-8 4.3-8-4.3V7.1z"/><path d="M4 7.1l8 4.3 8-4.3M12 11.4V21.2"/>'),
+  weblogic:   SVG('<rect x="3" y="4" width="18" height="6" rx="1.6"/><rect x="3" y="14" width="18" height="6" rx="1.6"/><path class="led" d="M6.5 7h.01"/><path class="led" d="M6.5 17h.01"/>'),
+  tomcat:     SVG('<rect x="3" y="4.5" width="18" height="15" rx="2"/><path class="flow" d="M8.5 10l3 2.5-3 2.5"/><path d="M13.5 15h3"/>'),
+  nginx:      SVG('<path d="M3.5 12h5.5"/><path d="M9 12l5-5.5h6.5"/><path d="M9 12l5 5.5h6.5"/><circle class="ping-dot" cx="3.5" cy="12" r="1.3"/>'),
+  oracle:     SVG('<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.66 3.13 3 7 3s7-1.34 7-3V6"/><path class="replic" d="M5 12c0 1.66 3.13 3 7 3s7-1.34 7-3"/>'),
+  kubernetes: SVG('<path d="M12 2.8l8 4.6v9.2l-8 4.6-8-4.6V7.4z"/><circle class="hub-pulse" cx="12" cy="12" r="2.4"/><path d="M12 9.6V5.9M14.1 13.3l3.2 1.9M9.9 13.3l-3.2 1.9"/>'),
+  gitlab:     SVG('<circle class="commit-pulse" cx="7" cy="6" r="1.9"/><circle class="commit-pulse" cx="7" cy="18" r="1.9"/><circle class="commit-pulse" cx="17" cy="12" r="1.9"/><path d="M7 7.9v8.2"/><path d="M8.9 6H13a4 4 0 0 1 4 4"/>'),
+  artifact:   SVG('<path class="box-bob" d="M12 2.8l8 4.3v9.8l-8 4.3-8-4.3V7.1z"/><path d="M4 7.1l8 4.3 8-4.3M12 11.4V21.2"/>'),
   box:        SVG('<rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M3.5 10h17"/>'),
-  linux:      SVG('<rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="M7 10l2.5 2L7 14"/><path d="M12.5 14.5h4.5"/>'),
-  chip:       SVG('<rect x="6.5" y="6.5" width="11" height="11" rx="1.8"/><path d="M9.5 3v3.5M14.5 3v3.5M9.5 17.5V21M14.5 17.5V21M3 9.5h3.5M3 14.5h3.5M17.5 9.5H21M17.5 14.5H21"/>')
+  linux:      SVG('<rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="M7 10l2.5 2L7 14"/><path class="cursor-blink" d="M12.5 14.5h4.5"/>'),
+  chip:       SVG('<rect class="chip-pulse" x="6.5" y="6.5" width="11" height="11" rx="1.8"/><path d="M9.5 3v3.5M14.5 3v3.5M9.5 17.5V21M14.5 17.5V21M3 9.5h3.5M3 14.5h3.5M17.5 9.5H21M17.5 14.5H21"/>')
 };
 function typeIcon(t){
   t = String(t).toLowerCase();
@@ -342,15 +392,21 @@ function osIcon(o){
 /* ============================================================
    STATE
    ============================================================ */
-var SERVERS = [], ENVIRONMENTS = [], envById = {};
+var SERVERS = [], ENVIRONMENTS = [], PLATFORMS = [], envById = {};
 var STATE_LABEL = { up:"Running", maint:"Maintenance", down:"Stopped" };
-var filterEnv = null, query = "", sort = null;   // sort === null means the default app→role→ip order
+var filterEnv = null, filterApp = "", filterType = "", query = "", sort = null;
 
 function $(s){ return document.querySelector(s); }
 var rowsEl = $("#rows"), noticeEl = $("#notice");
 function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
 function ipNum(ip){ return String(ip).split(".").reduce(function(n,o){ return n*256 + (parseInt(o,10)||0); }, 0); }
 function cmp(a,b){ return a > b ? 1 : a < b ? -1 : 0; }
+
+function applyDefaultFilters(){
+  filterEnv = ENVIRONMENTS.length ? ENVIRONMENTS[0].id : null;
+  filterType = ""; filterApp = ""; query = "";
+  var qEl = $("#q"); if (qEl) qEl.value = "";
+}
 
 /* ============================================================
    LOAD
@@ -365,14 +421,8 @@ function load(){
       if (!res.ok) throw new Error("HTTP " + res.status + " " + res.statusText);
       var lm = res.headers.get("last-modified");
       $("#asof").textContent = lm ? "chakri - " + new Date(lm).toLocaleString('en-GB', {
-          timeZone: 'Asia/Kolkata', // Forces the +05:30 timezone
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: true // Enables AM/PM
+          timeZone:'Asia/Kolkata', year:'numeric', month:'2-digit', day:'2-digit',
+          hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true
       }).toUpperCase() : "unknown";
       return res.text();
     })
@@ -381,8 +431,11 @@ function load(){
       if (rows.length < 2) throw new Error("The file has a header but no data rows.");
       SERVERS = toRecords(rows);
       buildEnvironments();
-      filterEnv = ENVIRONMENTS.length ? ENVIRONMENTS[0].id : null;
+      buildPlatforms();
+      applyDefaultFilters();
       buildRail();
+      buildFilterBar();
+      syncRail(); syncFilterBar();
       $("#q").disabled = false;
       noticeEl.hidden = true;
       render(true);
@@ -397,8 +450,7 @@ function fail(err){
   noticeEl.hidden = false;
   var isFile = location.protocol === "file:";
   noticeEl.innerHTML =
-    "<b>Could not load the inventory</b>" +
-    esc(err.message) +
+    "<b>Could not load the inventory</b>" + esc(err.message) +
     "<span class='hint'>" +
     (isFile
       ? "You have opened this page from disk. Browsers block file reads over <code>file://</code> — serve it through nginx instead."
@@ -407,7 +459,7 @@ function fail(err){
 }
 
 /* ============================================================
-   RAIL
+   ENVIRONMENTS + PLATFORMS (kubernetes/* flavours)
    ============================================================ */
 function buildEnvironments(){
   var seen = [];
@@ -419,63 +471,141 @@ function buildEnvironments(){
   });
   ENVIRONMENTS = seen.map(function(code, i){
     var meta = ENV_META[code] || {};
-    return {
-      id: code,
-      label: meta.label || code,
-      note: meta.note || "",
-      colour: "var(--env-" + ((i % 6) + 1) + ")",
-      rank: i
-    };
+    return { id:code, label:meta.label || code, note:meta.note || "", colour:"var(--env-" + ((i % 6) + 1) + ")", rank:i };
   });
   envById = {};
   ENVIRONMENTS.forEach(function(e){ envById[e.id] = e; });
 }
 
+function buildPlatforms(){
+  var map = {};
+  SERVERS.forEach(function(s){
+    var m = /^kubernetes\/(.+)$/i.exec(s.type.trim());
+    if (!m) return;
+    var key = s.type.trim().toLowerCase();
+    if (!map[key]) map[key] = { key:key, label:m[1].trim(), hosts:[] };
+    map[key].hosts.push(s);
+  });
+  PLATFORMS = Object.keys(map).sort().map(function(k){ return map[k]; });
+}
+
+/* ============================================================
+   RAIL
+   ============================================================ */
+function makeBand(opts){
+  var b = document.createElement("button");
+  b.className = "band"; b.type = "button";
+  b.style.setProperty("--tick", opts.colour);
+  b.setAttribute("aria-pressed", "false");
+  if (opts.kind === "env") b.dataset.env = opts.value; else b.dataset.type = opts.value;
+  b.innerHTML =
+    "<span class='band-top'><span class='band-name'>" + esc(opts.label) + "</span>" +
+    "<span class='band-count'>" + opts.hosts.length + "</span></span>" +
+    (opts.note ? "<span class='band-note'>" + esc(opts.note) + "</span>" : "") +
+    "<span class='glyph'>" + opts.hosts.map(function(h, i){
+      return "<i data-state='" + h.state + "' style='--d:" + (120 + i * 26) + "ms'></i>";
+    }).join("") + "</span>";
+  b.addEventListener("click", function(){
+    if (opts.kind === "env") filterEnv = (filterEnv === opts.value) ? null : opts.value;
+    else filterType = (filterType === opts.value) ? "" : opts.value;
+    syncRail(); syncFilterBar(); render(true);
+  });
+  return b;
+}
+
 function buildRail(){
   var rail = $("#rail");
-  rail.innerHTML = "<div class='rail-head'><span>Environments</span><b id='railTotal'>" + SERVERS.length + "</b></div>";
+  rail.innerHTML = "";
 
+  var envSection = document.createElement("div");
+  envSection.className = "rail-section";
+  envSection.innerHTML = "<div class='rail-head'><span>Environments</span><b id='railTotal'>" + SERVERS.length + "</b><span class='author'>Author &middot; Chakri</span></div>";
+  rail.appendChild(envSection);
   ENVIRONMENTS.forEach(function(env){
     var hosts = SERVERS.filter(function(s){ return s.env === env.id; });
-    var b = document.createElement("button");
-    b.className = "band"; b.type = "button";
-    b.style.setProperty("--tick", env.colour);
-    b.setAttribute("aria-pressed", "false");
-    b.dataset.env = env.id;
-    b.innerHTML =
-      "<span class='band-top'><span class='band-name'>" + esc(env.label) + "</span>" +
-      "<span class='band-count'>" + hosts.length + "</span></span>" +
-      (env.note ? "<span class='band-note'>" + esc(env.note) + "</span>" : "") +
-      "<span class='glyph'>" + hosts.map(function(h, i){
-        return "<i data-state='" + h.state + "' style='--d:" + (120 + i * 26) + "ms'></i>";
-      }).join("") + "</span>";
-    b.addEventListener("click", function(){
-      filterEnv = (filterEnv === env.id) ? null : env.id;
-      syncRail(); render(true);
-    });
-    rail.appendChild(b);
+    envSection.appendChild(makeBand({ kind:"env", value:env.id, label:env.label, note:env.note, colour:env.colour, hosts:hosts }));
   });
+  var envReset = document.createElement("button");
+  envReset.className = "rail-reset"; envReset.type = "button";
+  envReset.textContent = "Show every environment";
+  envReset.addEventListener("click", function(){ filterEnv = null; syncRail(); syncFilterBar(); render(true); });
+  envSection.appendChild(envReset);
 
-  var reset = document.createElement("button");
-  reset.className = "rail-reset"; reset.type = "button";
-  reset.textContent = "Show every environment";
-  reset.addEventListener("click", function(){ filterEnv = null; syncRail(); render(true); });
-  rail.appendChild(reset);
+  if (PLATFORMS.length){
+    var platSection = document.createElement("div");
+    platSection.className = "rail-section";
+    var platTotal = PLATFORMS.reduce(function(n, p){ return n + p.hosts.length; }, 0);
+    platSection.innerHTML = "<div class='rail-head'><span>Platforms &middot; kubernetes/</span><b id='platformTotal'>" + platTotal + "</b></div>";
+    rail.appendChild(platSection);
+    PLATFORMS.forEach(function(p, i){
+      platSection.appendChild(makeBand({
+        kind:"type", value:p.key, label:p.label, note:"",
+        colour:"var(--env-" + (((ENVIRONMENTS.length + i) % 6) + 1) + ")", hosts:p.hosts
+      }));
+    });
+    var platReset = document.createElement("button");
+    platReset.className = "rail-reset"; platReset.type = "button";
+    platReset.textContent = "Show all platforms";
+    platReset.addEventListener("click", function(){ filterType = ""; syncRail(); syncFilterBar(); render(true); });
+    platSection.appendChild(platReset);
+  }
 
   var legend = document.createElement("div");
   legend.className = "legend";
   legend.innerHTML = "<span><i class='sw'></i>Running</span>" +
                      "<span><i class='sw' style='opacity:.35'></i>Under maintenance</span>" +
-                     "<span><i class='sw hollow'></i>Stopped</span>" +
-                     "<span><i class='sw hollow'></i>Stopped</span>" +
-                     "<span class='author'>Author - Chakri</span></div>";
+                     "<span><i class='sw hollow'></i>Stopped</span>";
   rail.appendChild(legend);
 }
+
 function syncRail(){
   Array.prototype.forEach.call(document.querySelectorAll(".band"), function(b){
-    b.setAttribute("aria-pressed", String(b.dataset.env === filterEnv));
+    if (b.dataset.env !== undefined) b.setAttribute("aria-pressed", String(b.dataset.env === filterEnv));
+    else b.setAttribute("aria-pressed", String(b.dataset.type === filterType));
   });
 }
+
+/* ============================================================
+   HEADER FILTER BAR
+   ============================================================ */
+function buildFilterBar(){
+  var apps = [];
+  SERVERS.forEach(function(s){ if (apps.indexOf(s.app) < 0) apps.push(s.app); });
+  apps.sort(function(a,b){ return a.localeCompare(b); });
+
+  var typeMap = {};
+  SERVERS.forEach(function(s){
+    var t = s.type.trim();
+    if (t && !(t.toLowerCase() in typeMap)) typeMap[t.toLowerCase()] = t;
+  });
+  var typeKeys = Object.keys(typeMap).sort(function(a,b){ return typeMap[a].localeCompare(typeMap[b]); });
+
+  var appSel = $("#fApp"), envSel = $("#fEnv"), typeSel = $("#fType");
+  appSel.innerHTML = "<option value=\"\">All apps</option>" +
+    apps.map(function(a){ return "<option value=\"" + esc(a) + "\">" + esc(a) + "</option>"; }).join("");
+  envSel.innerHTML = "<option value=\"\">All environments</option>" +
+    ENVIRONMENTS.map(function(e){ return "<option value=\"" + esc(e.id) + "\">" + esc(e.label) + "</option>"; }).join("");
+  typeSel.innerHTML = "<option value=\"\">All server types</option>" +
+    typeKeys.map(function(k){ return "<option value=\"" + esc(k) + "\">" + esc(typeMap[k]) + "</option>"; }).join("");
+
+  appSel.disabled = envSel.disabled = typeSel.disabled = false;
+
+  appSel.onchange = function(){ filterApp = appSel.value; render(true); };
+  envSel.onchange = function(){ filterEnv = envSel.value || null; syncRail(); render(true); };
+  typeSel.onchange = function(){ filterType = typeSel.value; syncRail(); render(true); };
+}
+
+function syncFilterBar(){
+  $("#fApp").value = filterApp || "";
+  $("#fEnv").value = filterEnv || "";
+  $("#fType").value = filterType || "";
+}
+
+$("#fClear").addEventListener("click", function(){
+  if (!SERVERS.length) return;
+  applyDefaultFilters();
+  syncRail(); syncFilterBar(); render(true);
+});
 
 /* ============================================================
    SORT + RENDER
@@ -490,13 +620,14 @@ function visible(){
   var q = query.trim().toLowerCase();
   var list = SERVERS.filter(function(s){
     if (filterEnv && s.env !== filterEnv) return false;
+    if (filterApp && s.app !== filterApp) return false;
+    if (filterType && s.type.trim().toLowerCase() !== filterType) return false;
     if (!q) return true;
     return [s.app, s.host, s.role, s.ip, s.vlan, s.type, s.os, s.site,
             (envById[s.env] || {}).label || s.env].join(" ").toLowerCase().indexOf(q) > -1;
   });
 
   if (!sort) return list.sort(defaultCmp);
-
   var k = sort.key, d = sort.dir;
   return list.sort(function(a, b){
     var x, y;
@@ -517,13 +648,14 @@ function render(animate){
   rowsEl.innerHTML = list.map(function(s, i){
     var env = envById[s.env] || { label:s.env, colour:"var(--ink-faint)" };
     var isNew = s.app !== lastApp;
-    var groupable = !sort;              // only draw the divider when the default app order is active
+    var groupable = !sort;
     lastApp = s.app;
-    return "<tr data-env='" + esc(s.env) + "' style='--tick:" + env.colour + ";--d:" + (Math.min(i,16)*20) + "ms'" +
+    var ad = (i % 5) * 0.22;
+    return "<tr data-env='" + esc(s.env) + "' style='--tick:" + env.colour + ";--d:" + (Math.min(i,16)*20) + "ms;--ad:" + ad + "s'" +
            (groupable && isNew && i > 0 ? " class='appbreak'" : "") + ">" +
       "<td><span class='app'>" + esc(s.app) + "</span></td>" +
       "<td><span class='host'>" + esc(s.host) + "</span></td>" +
-      "<td><span c;ass='role'>" + esc(s.role) + "</span></td>" +
+      "<td><span class='role'>" + esc(s.role) + "</span></td>" +
       "<td><button class='ip' data-ip='" + esc(s.ip) + "' title='Copy address'>" + esc(s.ip) + "</button></td>" +
       "<td><span class='envtag' style='color:" + env.colour + "'>" + esc(env.label) + "</span></td>" +
       "<td><span class='vlan'>" + esc(s.vlan) + "</span></td>" +
@@ -536,7 +668,7 @@ function render(animate){
 
   if (!list.length){
     noticeEl.hidden = false;
-    noticeEl.innerHTML = "<b>No hosts match that filter</b>Clear the search box or pick a different environment.";
+    noticeEl.innerHTML = "<b>No hosts match that filter</b>Clear the search box or pick a different filter.";
   } else {
     noticeEl.hidden = true;
   }
@@ -571,7 +703,7 @@ document.addEventListener("keydown", function(e){
   if (e.key === "Escape" && document.activeElement === $("#q")){ $("#q").value = ""; query = ""; render(); }
 });
 
-/* ---- copy address (works over plain HTTP, where the async clipboard API is blocked) ---- */
+/* ---- copy address ---- */
 rowsEl.addEventListener("click", function(e){
   var btn = e.target.closest ? e.target.closest(".ip") : null;
   if (!btn) return;
@@ -603,7 +735,7 @@ function toast(msg){
 /* ---- counts tick up once ---- */
 function countUp(){
   if (window.matchMedia && matchMedia("(prefers-reduced-motion:reduce)").matches) return;
-  Array.prototype.forEach.call(document.querySelectorAll(".band-count, #railTotal"), function(el){
+  Array.prototype.forEach.call(document.querySelectorAll(".band-count, #railTotal, #platformTotal"), function(el){
     var target = parseInt(el.textContent, 10);
     if (!target) return;
     var start = performance.now(), dur = 620;
@@ -627,7 +759,7 @@ $("#theme").addEventListener("click", function(){
 /* ---- go ---- */
 (function(){
   var override = new URLSearchParams(location.search).get("csv");
-  if (override && /^[\w.\-\/]+\.csv$/i.test(override)) CSV_FILE = override;   // ?csv=forex.csv
+  if (override && /^[\w.\-\/]+\.csv$/i.test(override)) CSV_FILE = override;
   $("#srcname").textContent = CSV_FILE;
   $("#reload").addEventListener("click", load);
   load();
