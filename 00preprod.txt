@@ -503,11 +503,11 @@ function render(animate){
   rowsEl.innerHTML = list.map(function(s, i){
     var env = envById[s.env] || { label:s.env, colour:"var(--ink-faint)" };
     var isNew = s.app !== lastApp;
-    var groupable = !sort;              // only group when the default app order is active
+    var groupable = !sort;              // only draw the divider when the default app order is active
     lastApp = s.app;
     return "<tr data-env='" + esc(s.env) + "' style='--tick:" + env.colour + ";--d:" + (Math.min(i,16)*20) + "ms'" +
            (groupable && isNew && i > 0 ? " class='appbreak'" : "") + ">" +
-      "<td><span class='app" + (groupable && !isNew ? " repeat" : "") + "'>" + esc(s.app) + "</span></td>" +
+      "<td><span class='app'>" + esc(s.app) + "</span></td>" +
       "<td><span class='host'>" + esc(s.host) + "</span>" +
           (s.role ? "<span class='role'>" + esc(s.role) + "</span>" : "") + "</td>" +
       "<td><button class='ip' data-ip='" + esc(s.ip) + "' title='Copy address'>" + esc(s.ip) + "</button></td>" +
