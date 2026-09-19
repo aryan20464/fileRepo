@@ -1,0 +1,35 @@
+App,Host,Role,Address,Environment,Server Type,VLAN,Platform,Site,State
+RFM/FCN Indents,uat-app-wls-01,Application tier,10.42.16.11,UAT,WebLogic,416,RHEL 8.9,DC-Belapur,Running
+RFM/FCN Indents,uat-app-wls-02,Application tier,10.42.16.12,UAT,WebLogic,416,RHEL 8.9,DC-Belapur,Running
+RFM/FCN Indents,uat-web-ngx-01,Edge and static content,10.42.16.21,UAT,nginx,416,RHEL 8.9,DC-Belapur,Running
+RFM/FCN Indents,uat-db-ora-01,Primary database,10.42.17.31,UAT,Oracle 19c,417,OEL 8.8,DC-Belapur,Running
+RFM/FCN Indents,pp-app-wls-01,Application tier,10.44.24.11,PREPROD,WebLogic,424,RHEL 8.9,DC-Belapur,Running
+RFM/FCN Indents,pp-app-wls-02,Application tier,10.44.24.12,PREPROD,WebLogic,424,RHEL 8.9,DC-Belapur,Running
+RFM/FCN Indents,pp-app-tom-01,Services tier,10.44.24.13,PREPROD,Tomcat,424,RHEL 8.9,DC-Belapur,Running
+RFM/FCN Indents,pp-web-ngx-01,Edge and static content,10.44.24.21,PREPROD,nginx,424,RHEL 8.9,DC-Belapur,Running
+RFM/FCN Indents,pp-db-ora-01,Primary database,10.44.25.31,PREPROD,Oracle 19c,425,OEL 8.8,DC-Belapur,Running
+RFM/FCN Indents,pr-app-wls-01,Application tier,10.50.32.11,PR,WebLogic,432,RHEL 8.9,DC-Belapur,Running
+RFM/FCN Indents,pr-app-wls-02,Application tier,10.50.32.12,PR,WebLogic,432,RHEL 8.9,DC-Belapur,Running
+RFM/FCN Indents,pr-app-wls-03,Application tier,10.50.32.13,PR,WebLogic,432,RHEL 8.9,DC-Belapur,Running
+RFM/FCN Indents,pr-app-tom-01,Services tier,10.50.32.14,PR,Tomcat,432,RHEL 8.9,DC-Belapur,Running
+RFM/FCN Indents,pr-web-ngx-01,Edge and TLS termination,10.50.32.21,PR,nginx,432,RHEL 8.9,DC-Belapur,Running
+RFM/FCN Indents,pr-web-ngx-02,Edge and TLS termination,10.50.32.22,PR,nginx,432,RHEL 8.9,DC-Belapur,Running
+RFM/FCN Indents,pr-db-ora-01,Primary database,10.50.33.31,PR,Oracle 19c,433,OEL 8.8,DC-Belapur,Running
+RFM/FCN Indents,pr-db-ora-02,Standby database,10.50.33.32,PR,Oracle 19c,433,OEL 8.8,DC-Belapur,Running
+RFM/FCN Indents,dr-app-wls-01,Application tier,10.60.48.11,DR,WebLogic,448,RHEL 8.9,DR-Hyderabad,Running
+RFM/FCN Indents,dr-app-wls-02,Application tier,10.60.48.12,DR,WebLogic,448,RHEL 8.9,DR-Hyderabad,Running
+RFM/FCN Indents,dr-app-tom-01,Services tier,10.60.48.13,DR,Tomcat,448,RHEL 8.9,DR-Hyderabad,Maintenance
+RFM/FCN Indents,dr-web-ngx-01,Edge and TLS termination,10.60.48.21,DR,nginx,448,RHEL 8.9,DR-Hyderabad,Running
+RFM/FCN Indents,dr-db-ora-01,Standby database,10.60.49.31,DR,Oracle 19c,449,OEL 8.8,DR-Hyderabad,Running
+Forex Platform,uat-k8s-wrk-01,Worker node,10.42.18.41,UAT,Kubernetes,418,RHEL 8.9,DC-Belapur,Maintenance
+Forex Platform,pp-k8s-mst-01,Control plane,10.44.26.41,PREPROD,Kubernetes,426,RHEL 8.9,DC-Belapur,Running
+Forex Platform,pp-k8s-wrk-01,Worker node,10.44.26.42,PREPROD,Kubernetes,426,RHEL 8.9,DC-Belapur,Running
+Forex Platform,pp-k8s-wrk-02,Worker node,10.44.26.43,PREPROD,Kubernetes,426,RHEL 8.9,DC-Belapur,Stopped
+Forex Platform,pr-k8s-mst-01,Control plane,10.50.34.41,PR,Kubernetes,434,RHEL 8.9,DC-Belapur,Running
+Forex Platform,pr-k8s-wrk-01,Worker node,10.50.34.42,PR,Kubernetes,434,RHEL 8.9,DC-Belapur,Running
+Forex Platform,pr-k8s-wrk-02,Worker node,10.50.34.43,PR,Kubernetes,434,RHEL 8.9,DC-Belapur,Running
+Forex Platform,dr-k8s-mst-01,Control plane,10.60.50.41,DR,Kubernetes,450,RHEL 8.9,DR-Hyderabad,Running
+Forex Platform,dr-k8s-wrk-01,Worker node,10.60.50.42,DR,Kubernetes,450,RHEL 8.9,DR-Hyderabad,Running
+Shared DevOps,uat-cicd-run-01,GitLab runner,10.42.18.51,UAT,GitLab,418,RHEL 8.9,DC-Belapur,Running
+Shared DevOps,pr-art-jfr-01,Artifact repository,10.50.35.51,PR,Artifactory,435,RHEL 8.9,DC-Belapur,Running
+Shared DevOps,pr-cicd-run-01,GitLab runner,10.50.35.52,PR,GitLab,435,RHEL 8.9,DC-Belapur,Running
