@@ -1,27 +1,637 @@
-.rail-head{
-  position:relative;
-  padding:0 4px 20px;              /* extra bottom room for the tag */
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Server Inventory</title>
+<style>
+/* ============================================================
+   TOKENS
+   ============================================================ */
+:root{
+  --paper:#e9ebee; --panel:#fcfcfd; --panel-alt:#f3f5f7;
+  --ink:#17202b; --ink-soft:#5a6675; --ink-faint:#8b97a5;
+  --rule:#cdd3da; --rule-soft:#dfe4e9; --focus:#2f6fed;
+  --env-1:#2f6fed; --env-2:#c98a1b; --env-3:#1e7f5c; --env-4:#b4453c;
+  --env-5:#6b4fbb; --env-6:#0f7d8c;
+  --ok:#1e7f5c; --warn:#c98a1b; --down:#b4453c;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"Cascadia Mono",Consolas,"Liberation Mono",Menlo,monospace;
+  --rail:264px; --pad:24px;
 }
-.rail-head .author{
-  position:absolute;
-  right:4px;
-  bottom:2px;
-  font-size:10.5px;
-  color:var(--ink-faint);
-  letter-spacing:.01em;
+:root[data-theme="dark"]{
+  --paper:#10151b; --panel:#171e26; --panel-alt:#1d252f;
+  --ink:#dde3ea; --ink-soft:#8c99a8; --ink-faint:#6b7887;
+  --rule:#28323d; --rule-soft:#212a34;
+  --env-1:#5b8ef5; --env-2:#d9a33f; --env-3:#3a9e78; --env-4:#d0645a;
+  --env-5:#9078d8; --env-6:#3fa3b3;
+  --ok:#3a9e78; --warn:#d9a33f; --down:#d0645a;
+}
+@media (prefers-color-scheme:dark){
+  :root[data-theme="auto"]{
+    --paper:#10151b; --panel:#171e26; --panel-alt:#1d252f;
+    --ink:#dde3ea; --ink-soft:#8c99a8; --ink-faint:#6b7887;
+    --rule:#28323d; --rule-soft:#212a34;
+    --env-1:#5b8ef5; --env-2:#d9a33f; --env-3:#3a9e78; --env-4:#d0645a;
+    --env-5:#9078d8; --env-6:#3fa3b3;
+    --ok:#3a9e78; --warn:#d9a33f; --down:#d0645a;
+  }
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 15px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px}
+
+/* ============================================================
+   MASTHEAD
+   ============================================================ */
+.masthead{display:flex;align-items:flex-end;gap:32px;flex-wrap:wrap;padding:28px var(--pad) 18px;border-bottom:1px solid var(--rule);background:var(--panel)}
+.mast-title{margin:0;font-size:25px;font-weight:650;letter-spacing:-.022em;line-height:1.1}
+.mast-sub{margin:5px 0 0;color:var(--ink-soft);font-size:13.5px;}
+.mast-tools{margin-left:auto;display:flex;align-items:center;gap:10px}
+.search{position:relative;display:flex;align-items:center}
+.search input{width:280px;max-width:52vw;padding:8px 11px 8px 30px;font:400 13.5px/1.2 var(--sans);color:var(--ink);background:var(--panel-alt);border:1px solid var(--rule);border-radius:3px}
+.search input::placeholder{color:var(--ink-faint)}
+.search svg{position:absolute;left:9px;width:14px;height:14px;fill:none;stroke:var(--ink-faint);stroke-width:1.7;pointer-events:none}
+.iconbtn{display:grid;place-items:center;width:32px;height:32px;background:var(--panel-alt);border:1px solid var(--rule);border-radius:3px;color:var(--ink-soft);cursor:pointer}
+.iconbtn:hover{color:var(--ink);border-color:var(--ink-faint)}
+.iconbtn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+.iconbtn.spin svg{animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ============================================================
+   SHELL
+   ============================================================ */
+.shell{display:grid;grid-template-columns:var(--rail) 1fr;align-items:start}
+.rail{position:sticky;top:0;padding:18px 14px 28px;border-right:1px solid var(--rule);min-height:calc(100vh - 92px)}
+.rail-head{display:flex;justify-content:space-between;align-items:baseline;padding:0 4px 10px;color:var(--ink-soft);font-size:12.5px}
+.rail-head b{color:var(--ink);font-variant-numeric:tabular-nums;font-weight:600}
+.author{position:absolute;font-size:10.5px;color:#c98a1b;letter-spacing:.01em;}
+.band{position:relative;display:block;width:100%;text-align:left;padding:11px 12px 12px 15px;margin-bottom:4px;background:transparent;border:1px solid transparent;border-radius:3px;cursor:pointer;color:inherit;font:inherit}
+.band::before{content:"";position:absolute;left:4px;top:11px;bottom:12px;width:3px;border-radius:2px;background:var(--tick)}
+.band:hover{background:var(--panel-alt)}
+.band[aria-pressed="true"]{background:var(--panel);border-color:var(--rule);box-shadow:0 1px 0 var(--rule-soft)}
+.band-top{display:flex;align-items:baseline;gap:8px}
+.band-name{font-weight:600;letter-spacing:-.01em;font-size:14.5px}
+.band-count{margin-left:auto;font:500 12.5px var(--mono);color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.band-note{margin:2px 0 0;font-size:12px;color:var(--ink-faint)}
+.glyph{display:flex;flex-wrap:wrap;gap:2px;margin-top:8px}
+.glyph i{width:7px;height:7px;border-radius:1px;background:var(--tick);opacity:.9}
+.glyph i[data-state="down"]{background:transparent;box-shadow:inset 0 0 0 1px var(--tick);opacity:.55}
+.glyph i[data-state="maint"]{opacity:.35}
+.rail-reset{display:block;width:100%;margin-top:12px;padding:7px 12px;background:transparent;border:1px dashed var(--rule);border-radius:3px;color:var(--ink-soft);font:400 12.5px var(--sans);cursor:pointer}
+.rail-reset:hover{color:var(--ink);border-color:var(--ink-faint)}
+.legend{margin-top:22px;padding:0 4px;color:var(--ink-faint);font-size:11.5px;line-height:1.9}
+.legend span{display:flex;align-items:center;gap:7px}
+.legend .sw{width:7px;height:7px;border-radius:1px;background:currentColor}
+.legend .sw.hollow{background:transparent;box-shadow:inset 0 0 0 1px currentColor}
+
+/* ============================================================
+   TABLE
+   ============================================================ */
+.main{padding:18px var(--pad) 56px;min-width:0}
+.tablewrap{background:var(--panel);border:1px solid var(--rule);border-radius:4px;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+thead th{position:sticky;top:0;z-index:2;background:var(--panel-alt);border-bottom:1px solid var(--rule);padding:10px 14px;text-align:left;font-weight:600;font-size:12.5px;color:var(--ink-soft);white-space:nowrap;cursor:pointer;user-select:none}
+thead th:hover{color:var(--ink)}
+thead th .arrow{opacity:0;margin-left:5px;font-size:10px}
+thead th[aria-sort] .arrow{opacity:.8}
+tbody td{padding:9px 14px;border-bottom:1px solid var(--rule-soft);vertical-align:middle;white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:var(--panel-alt)}
+tbody tr[data-env]{box-shadow:inset 3px 0 0 var(--tick)}
+tbody tr.appbreak td{border-top:1px solid var(--rule)}
+.app{font-weight:600;letter-spacing:-.01em}
+.app.repeat{color:transparent}
+.host{font:500 13px var(--mono);letter-spacing:-.01em}
+.role{display:block;margin-top:2px;font-size:11.5px;color:var(--ink-faint);letter-spacing:0}
+.ip{font:400 13px var(--mono);font-variant-numeric:tabular-nums;background:none;border:0;padding:0;color:inherit;cursor:pointer;border-bottom:1px dotted var(--rule)}
+.ip:hover{border-bottom-color:var(--ink-soft)}
+.ip.copied{border-bottom-style:solid;border-bottom-color:var(--ok);color:var(--ok)}
+.vlan{font:400 13px var(--mono);color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.envtag{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:12.5px}
+.envtag::before{content:"";width:6px;height:6px;border-radius:1px;background:currentColor}
+.state{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-soft)}
+.state::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ok)}
+.state[data-state="down"]::before{background:var(--down)}
+.state[data-state="maint"]::before{background:var(--warn)}
+.notice{padding:44px 16px;text-align:center;color:var(--ink-soft);font-size:14px}
+.notice b{display:block;color:var(--ink);font-weight:600;margin-bottom:6px;font-size:15px}
+.notice code{font:400 12.5px var(--mono);background:var(--panel-alt);border:1px solid var(--rule);border-radius:3px;padding:1px 5px}
+.notice .hint{display:block;margin-top:10px;font-size:12.5px;color:var(--ink-faint);line-height:1.8}
+.foot{display:flex;gap:18px;flex-wrap:wrap;margin-top:12px;padding:0 2px;color:var(--ink-faint);font-size:12px}
+.foot b{color:var(--ink-soft);font-weight:500;font-variant-numeric:tabular-nums}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);padding:8px 14px;border-radius:3px;background:var(--ink);color:var(--panel);font:500 12.5px var(--sans);opacity:0;pointer-events:none;transition:opacity .16s,transform .16s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ============================================================
+   ICONS & MOTION
+   ============================================================ */
+.tcell{display:inline-flex;align-items:center;gap:9px}
+.tcell svg{width:15px;height:15px;flex:none;fill:none;stroke:currentColor;stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round;color:var(--ink-faint);transition:color .18s ease,transform .18s ease}
+tbody tr:hover .tcell svg{color:var(--tick);transform:translateY(-1px)}
+.tcell.os svg{stroke-width:1.3}
+.state[data-state="maint"]::before{animation:breathe 2.4s ease-in-out infinite}
+.state[data-state="down"]::before{animation:alarm 1.9s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.75)}}
+@keyframes alarm{0%,70%,100%{box-shadow:0 0 0 0 rgba(180,69,60,0)}35%{box-shadow:0 0 0 4px rgba(180,69,60,.22)}}
+.glyph i{animation:pop .34s cubic-bezier(.2,.8,.3,1) backwards;animation-delay:var(--d,0ms)}
+@keyframes pop{from{transform:scale(.2)}to{transform:scale(1)}}
+.stagger tr{animation:rowin .28s ease backwards;animation-delay:var(--d,0ms)}
+@keyframes rowin{from{opacity:0;transform:translateY(5px)}}
+.band[aria-pressed="true"]::before{animation:tick .4s ease}
+@keyframes tick{from{transform:scaleY(.2)}to{transform:scaleY(1)}}
+.ip.copied{animation:flash .5s ease}
+@keyframes flash{from{background:rgba(30,127,92,.16)}}
+@media (prefers-reduced-motion:reduce){
+  .glyph i,.stagger tr,.band::before,.ip.copied,.iconbtn.spin svg,
+  .state[data-state="maint"]::before,.state[data-state="down"]::before{animation:none}
+  .tcell svg,.toast{transition:none}
+}
+#asof{color: #d9a33f;font-size: 12px;}
+/* ============================================================
+   RESPONSIVE / PRINT
+   ============================================================ */
+@media (max-width:900px){
+  :root{--pad:16px}
+  .shell{grid-template-columns:1fr}
+  .rail{position:static;min-height:0;border-right:0;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:4px;padding:14px}
+  .rail-head,.legend,.rail-reset{grid-column:1/-1}
+  .masthead{padding:20px var(--pad) 14px}
+  .mast-tools{width:100%;margin-left:0}
+  .search{flex:1}
+  .search input{width:100%;max-width:none}
+}
+@media print{
+  .rail,.mast-tools,.toast{display:none}
+  body{background:#fff}
+  .tablewrap{border:0}
+  tbody tr{box-shadow:none !important}
+  .app.repeat{color:inherit}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div>
+    <h1 class="mast-title">IDEA Server Inventory</h1>
+    <p class="mast-sub">Loaded live from <code id="srcname">servers.csv</code></p>
+  </div>
+  <div class="mast-tools">
+    <label class="search">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg>
+      <input id="q" type="search" placeholder="App, host, address, VLAN, type…" autocomplete="off" aria-label="Filter servers" disabled>
+    </label>
+    <button class="iconbtn" id="reload" title="Reload the CSV" aria-label="Reload the CSV">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-1.6 5.6"/><path d="M20 5v6h-6"/></svg>
+    </button>
+    <button class="iconbtn" id="theme" title="Switch between light and dark" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="rail" id="rail" aria-label="Environments">
+    <div class="rail-head"><span>Environments</span><b id="railTotal">—</b><span class="author">Author - Chakri</span></div>
+  </nav>
+
+  <main class="main">
+    <div class="tablewrap">
+      <table id="grid">
+        <thead>
+          <tr>
+            <th data-key="app" scope="col">App<span class="arrow"></span></th>
+            <th data-key="host" scope="col">Host<span class="arrow"></span></th>
+            <th data-key="role" scope="col">Type<span class="arrow"></span></th>
+            <th data-key="ip" scope="col">Address<span class="arrow"></span></th>
+            <th data-key="env" scope="col">Environment<span class="arrow"></span></th>
+            <th data-key="vlan" scope="col">VLAN<span class="arrow"></span></th>
+            <th data-key="type" scope="col">Server type<span class="arrow"></span></th>
+            <th data-key="os" scope="col">Platform<span class="arrow"></span></th>
+            <th data-key="site" scope="col">Site<span class="arrow"></span></th>
+            <th data-key="state" scope="col">State<span class="arrow"></span></th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="notice" id="notice"><b>Loading inventory…</b>Reading the CSV file.</div>
+    </div>
+    <p class="foot">
+      <span>Showing <b id="shown">0</b> of <b id="total">0</b> hosts</span>
+      <span>Sorted by app, then role, then address</span>
+      <span>Data file last modified <b id="asof">—</b></span>
+    </p>
+  </main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============================================================
+   CONFIG — the only thing you would normally change here
+   ============================================================ */
+var CSV_FILE = "servers.csv";                 // relative to this page
+var ENV_ORDER = ["UAT","PREPROD","PR","DR"];  // rail order; anything else is appended
+
+// friendly labels and captions per environment code (optional)
+var ENV_META = {
+  UAT:     { label:"UAT",               note:"User acceptance"    },
+  PREPROD: { label:"Pre-production",    note:"Release rehearsal"  },
+  PR:      { label:"Production",        note:"Live, primary site" },
+  DR:      { label:"Disaster recovery", note:"Warm standby"       }
+};
+
+/* ============================================================
+   CSV PARSER — handles quotes, embedded commas, CRLF and Excel's BOM
+   ============================================================ */
+function parseCSV(text){
+  text = text.replace(/^\uFEFF/, "");
+  var rows = [], row = [], field = "", inQ = false, i = 0, c;
+  for (; i < text.length; i++){
+    c = text[i];
+    if (inQ){
+      if (c === '"'){
+        if (text[i+1] === '"'){ field += '"'; i++; }
+        else inQ = false;
+      } else field += c;
+    } else if (c === '"'){ inQ = true; }
+    else if (c === ","){ row.push(field); field = ""; }
+    else if (c === "\n"){ row.push(field); rows.push(row); row = []; field = ""; }
+    else if (c === "\r"){ /* skip */ }
+    else field += c;
+  }
+  if (field.length || row.length){ row.push(field); rows.push(row); }
+  return rows.filter(function(r){ return r.some(function(v){ return v.trim() !== ""; }); });
+}
+
+/* tolerant header mapping — column order in the CSV does not matter */
+var HEADER_ALIASES = {
+  app:"app", application:"app", module:"app", project:"app",
+  host:"host", hostname:"host", vm:"host", vmname:"host", server:"host", servername:"host",
+  role:"role", purpose:"role", function:"role",
+  address:"ip", ip:"ip", ipaddress:"ip", ipaddr:"ip",
+  environment:"env", env:"env",
+  vlan:"vlan", vlanid:"vlan",
+  servertype:"type", type:"type",
+  platform:"os", os:"os", operatingsystem:"os",
+  site:"site", datacentre:"site", datacenter:"site", dc:"site", location:"site",
+  state:"state", status:"state"
+};
+function normHeader(h){ return String(h).toLowerCase().replace(/[^a-z]/g, ""); }
+
+function normState(v){
+  var s = String(v || "").toLowerCase();
+  if (/down|stop|off|halt|fail/.test(s)) return "down";
+  if (/maint|patch|hold|planned/.test(s)) return "maint";
+  return "up";
+}
+
+function toRecords(rows){
+  var head = rows[0].map(normHeader).map(function(h){ return HEADER_ALIASES[h] || h; });
+  return rows.slice(1).map(function(r){
+    var o = {};
+    head.forEach(function(k, i){ o[k] = (r[i] || "").trim(); });
+    o.app   = o.app   || "Unassigned";
+    o.host  = o.host  || "(unnamed)";
+    o.role  = o.role  || "";
+    o.ip    = o.ip    || "";
+    o.env   = (o.env  || "OTHER").toUpperCase();
+    o.vlan  = o.vlan  || "";
+    o.type  = o.type  || "";
+    o.os    = o.os    || "";
+    o.site  = o.site  || "";
+    o.state = normState(o.state);
+    return o;
+  });
+}
+
+/* ============================================================
+   ICONS
+   ============================================================ */
+var SVG = function(p){ return '<svg viewBox="0 0 24 24" aria-hidden="true">' + p + '</svg>'; };
+var ICONS = {
+  weblogic:   SVG('<rect x="3" y="4" width="18" height="6" rx="1.6"/><rect x="3" y="14" width="18" height="6" rx="1.6"/><path d="M6.5 7h.01M6.5 17h.01"/>'),
+  tomcat:     SVG('<rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="M8.5 10l3 2.5-3 2.5"/><path d="M13.5 15h3"/>'),
+  nginx:      SVG('<path d="M3.5 12h5.5"/><path d="M9 12l5-5.5h6.5"/><path d="M9 12l5 5.5h6.5"/><circle cx="3.5" cy="12" r="1.3"/>'),
+  oracle:     SVG('<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.66 3.13 3 7 3s7-1.34 7-3V6"/><path d="M5 12c0 1.66 3.13 3 7 3s7-1.34 7-3"/>'),
+  kubernetes: SVG('<path d="M12 2.8l8 4.6v9.2l-8 4.6-8-4.6V7.4z"/><circle cx="12" cy="12" r="2.4"/><path d="M12 9.6V5.9M14.1 13.3l3.2 1.9M9.9 13.3l-3.2 1.9"/>'),
+  gitlab:     SVG('<circle cx="7" cy="6" r="1.9"/><circle cx="7" cy="18" r="1.9"/><circle cx="17" cy="12" r="1.9"/><path d="M7 7.9v8.2"/><path d="M8.9 6H13a4 4 0 0 1 4 4"/>'),
+  artifact:   SVG('<path d="M12 2.8l8 4.3v9.8l-8 4.3-8-4.3V7.1z"/><path d="M4 7.1l8 4.3 8-4.3M12 11.4V21.2"/>'),
+  box:        SVG('<rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M3.5 10h17"/>'),
+  linux:      SVG('<rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="M7 10l2.5 2L7 14"/><path d="M12.5 14.5h4.5"/>'),
+  chip:       SVG('<rect x="6.5" y="6.5" width="11" height="11" rx="1.8"/><path d="M9.5 3v3.5M14.5 3v3.5M9.5 17.5V21M14.5 17.5V21M3 9.5h3.5M3 14.5h3.5M17.5 9.5H21M17.5 14.5H21"/>')
+};
+function typeIcon(t){
+  t = String(t).toLowerCase();
+  if (t.indexOf("weblogic") > -1) return ICONS.weblogic;
+  if (t.indexOf("tomcat") > -1 || t.indexOf("jboss") > -1 || t.indexOf("websphere") > -1) return ICONS.tomcat;
+  if (t.indexOf("nginx") > -1 || t.indexOf("apache") > -1 || t.indexOf("httpd") > -1) return ICONS.nginx;
+  if (t.indexOf("oracle") > -1 || t.indexOf("postgres") > -1 || t.indexOf("mysql") > -1 || t.indexOf("db") > -1) return ICONS.oracle;
+  if (t.indexOf("kube") > -1 || t.indexOf("k8s") > -1 || t.indexOf("ocp") > -1 || t.indexOf("openshift") > -1) return ICONS.kubernetes;
+  if (t.indexOf("gitlab") > -1 || t.indexOf("jenkins") > -1 || t.indexOf("runner") > -1) return ICONS.gitlab;
+  if (t.indexOf("artifact") > -1 || t.indexOf("nexus") > -1 || t.indexOf("jfrog") > -1) return ICONS.artifact;
+  return ICONS.box;
+}
+function osIcon(o){
+  o = String(o).toLowerCase();
+  return /rhel|oel|linux|ubuntu|centos|suse|debian/.test(o) ? ICONS.linux : ICONS.chip;
+}
+
+/* ============================================================
+   STATE
+   ============================================================ */
+var SERVERS = [], ENVIRONMENTS = [], envById = {};
+var STATE_LABEL = { up:"Running", maint:"Maintenance", down:"Stopped" };
+var filterEnv = null, query = "", sort = null;   // sort === null means the default app→role→ip order
+
+function $(s){ return document.querySelector(s); }
+var rowsEl = $("#rows"), noticeEl = $("#notice");
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+function ipNum(ip){ return String(ip).split(".").reduce(function(n,o){ return n*256 + (parseInt(o,10)||0); }, 0); }
+function cmp(a,b){ return a > b ? 1 : a < b ? -1 : 0; }
+
+/* ============================================================
+   LOAD
+   ============================================================ */
+function load(){
+  var btn = $("#reload");
+  btn.classList.add("spin");
+  var url = CSV_FILE + (CSV_FILE.indexOf("?") > -1 ? "&" : "?") + "t=" + Date.now();
+
+  fetch(url, { cache:"no-store" })
+    .then(function(res){
+      if (!res.ok) throw new Error("HTTP " + res.status + " " + res.statusText);
+      var lm = res.headers.get("last-modified");
+      $("#asof").textContent = lm ? "chakri - " + new Date(lm).toLocaleString('en-GB', {
+          timeZone: 'Asia/Kolkata', // Forces the +05:30 timezone
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: true // Enables AM/PM
+      }).toUpperCase() : "unknown";
+      return res.text();
+    })
+    .then(function(text){
+      var rows = parseCSV(text);
+      if (rows.length < 2) throw new Error("The file has a header but no data rows.");
+      SERVERS = toRecords(rows);
+      buildEnvironments();
+      filterEnv = ENVIRONMENTS.length ? ENVIRONMENTS[0].id : null;
+      buildRail();
+      $("#q").disabled = false;
+      noticeEl.hidden = true;
+      render(true);
+      countUp();
+    })
+    .catch(function(err){ fail(err); })
+    .then(function(){ btn.classList.remove("spin"); });
+}
+
+function fail(err){
+  rowsEl.innerHTML = "";
+  noticeEl.hidden = false;
+  var isFile = location.protocol === "file:";
+  noticeEl.innerHTML =
+    "<b>Could not load the inventory</b>" +
+    esc(err.message) +
+    "<span class='hint'>" +
+    (isFile
+      ? "You have opened this page from disk. Browsers block file reads over <code>file://</code> — serve it through nginx instead."
+      : "Check that <code>" + esc(CSV_FILE) + "</code> sits beside this page and that nginx can read it.") +
+    "</span>";
+}
+
+/* ============================================================
+   RAIL
+   ============================================================ */
+function buildEnvironments(){
+  var seen = [];
+  SERVERS.forEach(function(s){ if (seen.indexOf(s.env) < 0) seen.push(s.env); });
+  seen.sort(function(a,b){
+    var ia = ENV_ORDER.indexOf(a), ib = ENV_ORDER.indexOf(b);
+    if (ia < 0) ia = 99; if (ib < 0) ib = 99;
+    return ia - ib || cmp(a,b);
+  });
+  ENVIRONMENTS = seen.map(function(code, i){
+    var meta = ENV_META[code] || {};
+    return {
+      id: code,
+      label: meta.label || code,
+      note: meta.note || "",
+      colour: "var(--env-" + ((i % 6) + 1) + ")",
+      rank: i
+    };
+  });
+  envById = {};
+  ENVIRONMENTS.forEach(function(e){ envById[e.id] = e; });
 }
 
 function buildRail(){
   var rail = $("#rail");
-  rail.innerHTML = "<div class='rail-head'><span>Environments</span><b id='railTotal'>" + SERVERS.length + "</b>" +
-    "<span class='author'>Built by Chakri</span></div>";   // <-- added
-  ...
+  rail.innerHTML = "<div class='rail-head'><span>Environments</span><b id='railTotal'>" + SERVERS.length + "</b></div>";
 
+  ENVIRONMENTS.forEach(function(env){
+    var hosts = SERVERS.filter(function(s){ return s.env === env.id; });
+    var b = document.createElement("button");
+    b.className = "band"; b.type = "button";
+    b.style.setProperty("--tick", env.colour);
+    b.setAttribute("aria-pressed", "false");
+    b.dataset.env = env.id;
+    b.innerHTML =
+      "<span class='band-top'><span class='band-name'>" + esc(env.label) + "</span>" +
+      "<span class='band-count'>" + hosts.length + "</span></span>" +
+      (env.note ? "<span class='band-note'>" + esc(env.note) + "</span>" : "") +
+      "<span class='glyph'>" + hosts.map(function(h, i){
+        return "<i data-state='" + h.state + "' style='--d:" + (120 + i * 26) + "ms'></i>";
+      }).join("") + "</span>";
+    b.addEventListener("click", function(){
+      filterEnv = (filterEnv === env.id) ? null : env.id;
+      syncRail(); render(true);
+    });
+    rail.appendChild(b);
+  });
 
-<nav class="rail" id="rail" aria-label="Environments">
-  <div class="rail-head">
-    <span>Environments</span>
-    <b id="railTotal">—</b>
-    <span class="author">Built by Chakri</span>
-  </div>
-</nav>
+  var reset = document.createElement("button");
+  reset.className = "rail-reset"; reset.type = "button";
+  reset.textContent = "Show every environment";
+  reset.addEventListener("click", function(){ filterEnv = null; syncRail(); render(true); });
+  rail.appendChild(reset);
+
+  var legend = document.createElement("div");
+  legend.className = "legend";
+  legend.innerHTML = "<span><i class='sw'></i>Running</span>" +
+                     "<span><i class='sw' style='opacity:.35'></i>Under maintenance</span>" +
+                     "<span><i class='sw hollow'></i>Stopped</span>" +
+                     "<span><i class='sw hollow'></i>Stopped</span>" +
+                     "<span class='author'>Author - Chakri</span></div>";
+  rail.appendChild(legend);
+}
+function syncRail(){
+  Array.prototype.forEach.call(document.querySelectorAll(".band"), function(b){
+    b.setAttribute("aria-pressed", String(b.dataset.env === filterEnv));
+  });
+}
+
+/* ============================================================
+   SORT + RENDER
+   ============================================================ */
+function defaultCmp(a, b){
+  return cmp(a.app.toLowerCase(), b.app.toLowerCase())
+      || cmp(a.role.toLowerCase(), b.role.toLowerCase())
+      || cmp(ipNum(a.ip), ipNum(b.ip));
+}
+
+function visible(){
+  var q = query.trim().toLowerCase();
+  var list = SERVERS.filter(function(s){
+    if (filterEnv && s.env !== filterEnv) return false;
+    if (!q) return true;
+    return [s.app, s.host, s.role, s.ip, s.vlan, s.type, s.os, s.site,
+            (envById[s.env] || {}).label || s.env].join(" ").toLowerCase().indexOf(q) > -1;
+  });
+
+  if (!sort) return list.sort(defaultCmp);
+
+  var k = sort.key, d = sort.dir;
+  return list.sort(function(a, b){
+    var x, y;
+    if (k === "ip")        { x = ipNum(a.ip); y = ipNum(b.ip); }
+    else if (k === "vlan") { x = parseInt(a.vlan,10) || 0; y = parseInt(b.vlan,10) || 0; }
+    else if (k === "env")  { x = (envById[a.env]||{}).rank; y = (envById[b.env]||{}).rank; }
+    else if (k === "state"){ x = ["down","maint","up"].indexOf(a.state); y = ["down","maint","up"].indexOf(b.state); }
+    else                   { x = String(a[k]).toLowerCase(); y = String(b[k]).toLowerCase(); }
+    return cmp(x, y) * d || defaultCmp(a, b);
+  });
+}
+
+function render(animate){
+  var list = visible();
+  rowsEl.classList.toggle("stagger", !!animate);
+
+  var lastApp = null;
+  rowsEl.innerHTML = list.map(function(s, i){
+    var env = envById[s.env] || { label:s.env, colour:"var(--ink-faint)" };
+    var isNew = s.app !== lastApp;
+    var groupable = !sort;              // only draw the divider when the default app order is active
+    lastApp = s.app;
+    return "<tr data-env='" + esc(s.env) + "' style='--tick:" + env.colour + ";--d:" + (Math.min(i,16)*20) + "ms'" +
+           (groupable && isNew && i > 0 ? " class='appbreak'" : "") + ">" +
+      "<td><span class='app'>" + esc(s.app) + "</span></td>" +
+      "<td><span class='host'>" + esc(s.host) + "</span></td>" +
+      "<td><span c;ass='role'>" + esc(s.role) + "</span></td>" +
+      "<td><button class='ip' data-ip='" + esc(s.ip) + "' title='Copy address'>" + esc(s.ip) + "</button></td>" +
+      "<td><span class='envtag' style='color:" + env.colour + "'>" + esc(env.label) + "</span></td>" +
+      "<td><span class='vlan'>" + esc(s.vlan) + "</span></td>" +
+      "<td><span class='tcell'>" + typeIcon(s.type) + esc(s.type) + "</span></td>" +
+      "<td><span class='tcell os'>" + osIcon(s.os) + esc(s.os) + "</span></td>" +
+      "<td>" + esc(s.site) + "</td>" +
+      "<td><span class='state' data-state='" + s.state + "'>" + STATE_LABEL[s.state] + "</span></td>" +
+    "</tr>";
+  }).join("");
+
+  if (!list.length){
+    noticeEl.hidden = false;
+    noticeEl.innerHTML = "<b>No hosts match that filter</b>Clear the search box or pick a different environment.";
+  } else {
+    noticeEl.hidden = true;
+  }
+  $("#shown").textContent = list.length;
+  $("#total").textContent = SERVERS.length;
+}
+
+/* ---- header sorting; a third click returns to the default order ---- */
+Array.prototype.forEach.call(document.querySelectorAll("thead th"), function(th){
+  th.addEventListener("click", function(){
+    var key = th.dataset.key;
+    if (sort && sort.key === key && sort.dir === -1) sort = null;
+    else if (sort && sort.key === key) sort = { key:key, dir:-1 };
+    else sort = { key:key, dir:1 };
+
+    Array.prototype.forEach.call(document.querySelectorAll("thead th"), function(o){
+      o.removeAttribute("aria-sort");
+      o.querySelector(".arrow").textContent = "";
+    });
+    if (sort){
+      th.setAttribute("aria-sort", sort.dir === 1 ? "ascending" : "descending");
+      th.querySelector(".arrow").textContent = sort.dir === 1 ? "\u25B2" : "\u25BC";
+    }
+    render();
+  });
+});
+
+/* ---- search ---- */
+$("#q").addEventListener("input", function(e){ query = e.target.value; render(); });
+document.addEventListener("keydown", function(e){
+  if (e.key === "/" && document.activeElement !== $("#q") && !$("#q").disabled){ e.preventDefault(); $("#q").focus(); }
+  if (e.key === "Escape" && document.activeElement === $("#q")){ $("#q").value = ""; query = ""; render(); }
+});
+
+/* ---- copy address (works over plain HTTP, where the async clipboard API is blocked) ---- */
+rowsEl.addEventListener("click", function(e){
+  var btn = e.target.closest ? e.target.closest(".ip") : null;
+  if (!btn) return;
+  copy(btn.dataset.ip);
+  btn.classList.add("copied");
+  setTimeout(function(){ btn.classList.remove("copied"); }, 1100);
+  toast(btn.dataset.ip + " copied");
+});
+function copy(text){
+  function fallback(){
+    var ta = document.createElement("textarea");
+    ta.value = text; ta.setAttribute("readonly", "");
+    ta.style.cssText = "position:fixed;top:-1000px;opacity:0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); } catch (_){}
+    ta.parentNode.removeChild(ta);
+  }
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).catch(fallback);
+  else fallback();
+}
+var toastTimer;
+function toast(msg){
+  var t = $("#toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 1400);
+}
+
+/* ---- counts tick up once ---- */
+function countUp(){
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+  Array.prototype.forEach.call(document.querySelectorAll(".band-count, #railTotal"), function(el){
+    var target = parseInt(el.textContent, 10);
+    if (!target) return;
+    var start = performance.now(), dur = 620;
+    el.textContent = "0";
+    (function step(now){
+      var p = Math.min((now - start) / dur, 1);
+      el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(step);
+    })(start);
+  });
+}
+
+/* ---- theme ---- */
+$("#theme").addEventListener("click", function(){
+  var root = document.documentElement;
+  var dark = window.matchMedia && matchMedia("(prefers-color-scheme:dark)").matches;
+  root.dataset.theme = root.dataset.theme === "auto" ? (dark ? "light" : "dark")
+                     : root.dataset.theme === "dark" ? "light" : "dark";
+});
+
+/* ---- go ---- */
+(function(){
+  var override = new URLSearchParams(location.search).get("csv");
+  if (override && /^[\w.\-\/]+\.csv$/i.test(override)) CSV_FILE = override;   // ?csv=forex.csv
+  $("#srcname").textContent = CSV_FILE;
+  $("#reload").addEventListener("click", load);
+  load();
+})();
+</script>
+</body>
+</html>
