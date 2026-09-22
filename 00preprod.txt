@@ -1,185 +1,32 @@
-Name:         avi-k8s-config
-Namespace:    avi-system
-Labels:       app.kubernetes.io/managed-by=Helm
-Annotations:  meta.helm.sh/release-name: ako-1754498216
-              meta.helm.sh/release-namespace: avi-system
-
-Data
-====
-apiServerPort:
-----
-8080
-
-autoFQDN:
-----
-default
-
-bgpPeerLabels:
-----
-[]
-
-blockedNamespaceList:
-----
-[]
-
-cloudName:
-----
-H06-NP-TKG-OL-CLOUD
-
-clusterName:
-----
-h06vkspreprodrforexcls
-
-cniPlugin:
-----
-antrea
-
-controllerIP:
-----
-10.176.59.20
-
-controllerVersion:
-----
-22.1.6
-
-dedicatedTenantMode:
-----
-false
-
-defaultDomain:
-----
-
-
-defaultIngController:
-----
-true
-
-defaultLBController:
-----
-true
-
-deleteConfig:
-----
-false
-
-disableStaticRouteSync:
-----
-false
-
-enableEVH:
-----
-false
-
-enableEndpointSlice:
-----
-false
-
-enableEvents:
-----
-true
-
-enableMCI:
-----
-false
-
-enablePrometheus:
-----
-false
-
-enableRHI:
-----
-false
-
-fqdnReusePolicy:
-----
-InterNamespaceAllowed
-
-fullSyncFrequency:
-----
-1800
-
-ipFamily:
-----
-
-
-istioEnabled:
-----
-false
-
-layer7Only:
-----
-false
-
-logLevel:
-----
-WARN
-
-noPGForSNI:
-----
-false
-
-nodeNetworkList:
-----
-[]
-
-nsSyncLabelKey:
-----
-
-
-nsSyncLabelValue:
-----
-
-
-passthroughShardSize:
-----
-SMALL
-
-primaryInstance:
-----
-true
-
-serviceEngineGroupName:
-----
-H06-NP-VKS-SEG
-
-serviceType:
-----
-NodePortLocal
-
-servicesAPI:
-----
-true
-
-shardVSSize:
-----
-DEDICATED
-
-tenantName:
-----
-admin
-
-useDefaultSecretsOnly:
-----
-false
-
-vipNetworkList:
-----
-[{"cidr":"10.177.107.0/24","networkName":"H06-VKS-NP-VIP"}]
-
-vipPerNamespace:
-----
-false
-
-vpcMode:
-----
-false
-
-vrfName:
-----
-
-
-
-BinaryData
-====
-
-Events:  <none>
+kubectl get ingress forex-ing -n forex -o yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    ako.vmware.com/controller-cluster-uuid: cluster-13e84635-e75a-4134-b68f-cd2069bd5e88
+    ako.vmware.com/host-fqdn-vs-uuid-map: '{"preprodforex.com":"virtualservice-407b056c-0f96-4cc7-bc25-8d6a618ecd8a"}'
+    ako.vmware.com/tenant-name: admin
+  creationTimestamp: "2025-08-06T16:37:32Z"
+  generation: 4
+  name: forex-ing
+  namespace: forex
+  resourceVersion: "61000071"
+  uid: 78ad2db7-2288-4d66-8f60-ec4389b7e844
+spec:
+  ingressClassName: forex-ingcls
+  rules:
+  - host: preprodforex.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: rforex-ui-service
+            port:
+              number: 4200
+        path: /
+        pathType: ImplementationSpecific
+status:
+  loadBalancer:
+    ingress:
+    - hostname: preprodforex.com
+      ip: 10.177.107.78
