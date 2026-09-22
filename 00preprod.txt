@@ -1,32 +1,26 @@
-kubectl get ingress forex-ing -n forex -o yaml
-apiVersion: networking.k8s.io/v1
+Yes, AKO (Avi Kubernetes Operator) supports multi-port access via the same ingress VIP. In version 22.1.6 of the Avi Load Balancer Controller and its compatible AKO releases, this is handled naturally across both Layer 7 (Ingress) and Layer 4 (Services) depending on how your backend services and routing paths are mapped.How to Implement Multi-Port Routing1. Layer 7 Ingress (Host/Path-based Routing to Multi-Port Services)If you have a single backend application (a multi-port Service), you can map multiple incoming paths or rules on the same Ingress FQDN/VIP to route to different service ports.When configuring a multi-port service inside your Ingress manifest, you must use strings that match the exact port names defined in your Kubernetes Service rather than port numbers:yamlapiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  annotations:
-    ako.vmware.com/controller-cluster-uuid: cluster-13e84635-e75a-4134-b68f-cd2069bd5e88
-    ako.vmware.com/host-fqdn-vs-uuid-map: '{"preprodforex.com":"virtualservice-407b056c-0f96-4cc7-bc25-8d6a618ecd8a"}'
-    ako.vmware.com/tenant-name: admin
-  creationTimestamp: "2025-08-06T16:37:32Z"
-  generation: 4
-  name: forex-ing
-  namespace: forex
-  resourceVersion: "61000071"
-  uid: 78ad2db7-2288-4d66-8f60-ec4389b7e844
+  name: multi-port-ingress
+  namespace: default
 spec:
-  ingressClassName: forex-ingcls
+  ingressClassName: avi-ingress
   rules:
-  - host: preprodforex.com
+  - host: myapp.avi.internal
     http:
       paths:
-      - backend:
+      - path: /web
+        pathType: Prefix
+        backend:
           service:
-            name: rforex-ui-service
+            name: my-multi-port-service
             port:
-              number: 4200
-        path: /
-        pathType: ImplementationSpecific
-status:
-  loadBalancer:
-    ingress:
-    - hostname: preprodforex.com
-      ip: 10.177.107.78
+              name: web-port # Must match the Service's port name string
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: my-multi-port-service
+            port:
+              name: api-port # Must match the Service's port name string
+Use code with caution.2. Layer 4 Shared VIP (For LoadBalancer Services)If you are dealing with Layer 4 TCP/UDP workloads where multiple independent LoadBalancer services need to share the exact same Ingress VIP but listen on different ports, AKO handles this via the Shared VIP feature.To enable multiple L4 services to use the same VIP address:Ensure the services are deployed in the same Kubernetes namespace.Use AKO's annotation to pool the LoadBalancer traffic into a shared Avi virtual service instance.
