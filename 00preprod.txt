@@ -1,1 +1,22 @@
-kubectl get deploy -n avi-system -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.template.spec.containers[0].image}{"\n"}{end}'
+kubectl get aviinfrasetting forex-infra -A -o yaml
+apiVersion: ako.vmware.com/v1beta1
+kind: AviInfraSetting
+metadata:
+  creationTimestamp: "2025-08-06T16:37:32Z"
+  generation: 1
+  name: forex-infra
+  resourceVersion: "11777"
+  uid: 3a859c1c-29e3-4c35-b200-4b092bbcb426
+spec:
+  l7Settings:
+    shardSize: DEDICATED
+  network:
+    enableRhi: false
+    vipNetworks:
+    - cidr: 10.177.107.0/24
+      networkName: H06-VKS-NP-VIP
+  seGroup:
+    name: H06-NP-VKS-SEG
+status:
+  error: ""
+  status: Accepted
