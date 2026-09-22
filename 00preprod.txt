@@ -1,50 +1,185 @@
-C:\Users\atck>kubectl get hr -A -o yaml
-apiVersion: v1
-items:
-- apiVersion: ako.vmware.com/v1beta1
-  kind: HostRule
-  metadata:
-    creationTimestamp: "2025-08-06T16:37:32Z"
-    generation: 2
-    name: forex-hr
-    namespace: forex
-    resourceVersion: "57277726"
-    uid: f67f8189-0b29-405c-b9c5-152508f58ef0
-  spec:
-    virtualhost:
-      enableVirtualHost: true
-      fqdn: preprodforex.com
-      fqdnType: Exact
-      tls:
-        sslKeyCertificate:
-          name: pp-rforex
-          type: ref
-        sslProfile: avi-ssl-profile
-        termination: edge
-  status:
-    error: ""
-    status: Accepted
-kind: List
-metadata:
-  resourceVersion: ""
+Name:         avi-k8s-config
+Namespace:    avi-system
+Labels:       app.kubernetes.io/managed-by=Helm
+Annotations:  meta.helm.sh/release-name: ako-1754498216
+              meta.helm.sh/release-namespace: avi-system
 
-C:\Users\atck>kubectl get ingress -A
-NAMESPACE   NAME        CLASS          HOSTS                   ADDRESS         PORTS   AGE
-forex       forex-ing   forex-ingcls   preprodforex.com   <ingress-ip>   80      411d
+Data
+====
+apiServerPort:
+----
+8080
 
-C:\Users\atck>kubectl describe ingress forex-ing -n forex
-Name:             forex-ing
-Labels:           <none>
-Namespace:        forex
-Address:          <ingress-ip>
-Ingress Class:    forex-ingcls
-Default backend:  <default>
-Rules:
-  Host                   Path  Backends
-  ----                   ----  --------
-  preprodforex.com
-                         /   rforex-ui-service:4200 (192.168.4.27:4200)
-Annotations:             ako.vmware.com/controller-cluster-uuid: cluster-13e84635-e75a-4134-b68f-cd2069bd5e88
-                         ako.vmware.com/host-fqdn-vs-uuid-map: {"preprodforex.com":"virtualservice-407b056c-0f96-4cc7-bc25-8d6a618ecd8a"}
-                         ako.vmware.com/tenant-name: admin
-Events:                  <none>
+autoFQDN:
+----
+default
+
+bgpPeerLabels:
+----
+[]
+
+blockedNamespaceList:
+----
+[]
+
+cloudName:
+----
+H06-NP-TKG-OL-CLOUD
+
+clusterName:
+----
+h06vkspreprodrforexcls
+
+cniPlugin:
+----
+antrea
+
+controllerIP:
+----
+10.176.59.20
+
+controllerVersion:
+----
+22.1.6
+
+dedicatedTenantMode:
+----
+false
+
+defaultDomain:
+----
+
+
+defaultIngController:
+----
+true
+
+defaultLBController:
+----
+true
+
+deleteConfig:
+----
+false
+
+disableStaticRouteSync:
+----
+false
+
+enableEVH:
+----
+false
+
+enableEndpointSlice:
+----
+false
+
+enableEvents:
+----
+true
+
+enableMCI:
+----
+false
+
+enablePrometheus:
+----
+false
+
+enableRHI:
+----
+false
+
+fqdnReusePolicy:
+----
+InterNamespaceAllowed
+
+fullSyncFrequency:
+----
+1800
+
+ipFamily:
+----
+
+
+istioEnabled:
+----
+false
+
+layer7Only:
+----
+false
+
+logLevel:
+----
+WARN
+
+noPGForSNI:
+----
+false
+
+nodeNetworkList:
+----
+[]
+
+nsSyncLabelKey:
+----
+
+
+nsSyncLabelValue:
+----
+
+
+passthroughShardSize:
+----
+SMALL
+
+primaryInstance:
+----
+true
+
+serviceEngineGroupName:
+----
+H06-NP-VKS-SEG
+
+serviceType:
+----
+NodePortLocal
+
+servicesAPI:
+----
+true
+
+shardVSSize:
+----
+DEDICATED
+
+tenantName:
+----
+admin
+
+useDefaultSecretsOnly:
+----
+false
+
+vipNetworkList:
+----
+[{"cidr":"10.177.107.0/24","networkName":"H06-VKS-NP-VIP"}]
+
+vipPerNamespace:
+----
+false
+
+vpcMode:
+----
+false
+
+vrfName:
+----
+
+
+
+BinaryData
+====
+
+Events:  <none>
