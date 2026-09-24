@@ -1,65 +1,29 @@
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: alloy
-  namespace: engine-monitor
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: alloy
-  namespace: engine-monitor
+  namespace: engine
 rules:
-- apiGroups: [""]
-  resources: ["pods","pods/log"]
-  verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources:
+      - pods
+      - pods/log
+    verbs:
+      - get
+      - list
+      - watch
+
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: alloy
-  namespace: engine-monitor
+  namespace: engine
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: alloy
 subjects:
-- kind: ServiceAccount
-  name: alloy
-  namespace: engine-monitor
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: alloy
-  namespace: engine-monitor
-  labels:
-    app: alloy
-spec:
-  selector:
-    app: alloy
-  ports:
-  - name: http
-    port: 12345
-    targetPort: 12345
-    protocol: TCP
-  type: ClusterIP
-
-\"\" in the namespace \"engine\"" logger="UnhandledError" reflector="pkg/mod/k8s.io/client-go@v0.35.4/tools/cache/reflector.go:289" type="*v1.Pod"
-ts=2026-09-24T06:31:02.325447315Z level=info msg="Using pod service account via in-cluster config" component_path=/ component_id=loki.source.kubernetes.pod_logs
-ts=2026-09-24T06:31:02.325693832Z level=info msg="tailer running" component_path=/ component_id=loki.source.kubernetes.pod_logs target=engine-monitor/grafana-77f849bcd6-pcp2z:grafana
-ts=2026-09-24T06:31:02.32569295Z level=info msg="tailer running" component_path=/ component_id=loki.source.kubernetes.pod_logs target=engine-monitor/alloy-zd55b:alloy
-ts=2026-09-24T06:31:02.334348917Z level=info msg="opened log stream" component_path=/ component_id=loki.source.kubernetes.pod_logs target=engine-monitor/grafana-77f849bcd6-pcp2z:grafana start_time=0001-01-01T00:00:00.000Z
-ts=2026-09-24T06:31:02.334805454Z level=info msg="opened log stream" component_path=/ component_id=loki.source.kubernetes.pod_logs target=engine-monitor/alloy-zd55b:alloy start_time=0001-01-01T00:00:00.000Z
-E0924 06:31:05.386905       1 reflector.go:204] "Failed to watch" err="failed to list *v1.Pod: pods is forbidden: User \"system:serviceaccount:engine-monitor:alloy\" cannot list resource \"pods\" in API group \"\" in the namespace \"engine\"" logger="UnhandledError" reflector="pkg/mod/k8s.io/client-go@v0.35.4/tools/cache/reflector.go:289" type="*v1.Pod"
-E0924 06:31:06.419108       1 reflector.go:204] "Failed to watch" err="failed to list *v1.Pod: pods is forbidden: User \"system:serviceaccount:engine-monitor:alloy\" cannot list resource \"pods\" in API group \"\" in the namespace \"engine\"" logger="UnhandledError" reflector="pkg/mod/k8s.io/client-go@v0.35.4/tools/cache/reflector.go:289" type="*v1.Pod"
-ts=2026-09-24T06:31:12.326114449Z level=info msg="tailer running" component_path=/ component_id=loki.source.kubernetes.pod_logs target=engine-monitor/kube-state-metrics-85754bf4d6-9hvcl:kube-state-metrics
-ts=2026-09-24T06:31:12.332707135Z level=info msg="opened log stream" component_path=/ component_id=loki.source.kubernetes.pod_logs target=engine-monitor/kube-state-metrics-85754bf4d6-9hvcl:kube-state-metrics start_time=0001-01-01T00:00:00.000Z
-E0924 06:31:12.990432       1 reflector.go:204] "Failed to watch" err="failed to list *v1.Pod: pods is forbidden: User \"system:serviceaccount:engine-monitor:alloy\" cannot list resource \"pods\" in API group \"\" in the namespace \"engine\"" logger="UnhandledError" reflector="pkg/mod/k8s.io/client-go@v0.35.4/tools/cache/reflector.go:289" type="*v1.Pod"
-E0924 06:31:15.687726       1 reflector.go:204] "Failed to watch" err="failed to list *v1.Pod: pods is forbidden: User \"system:serviceaccount:engine-monitor:alloy\" cannot list resource \"pods\" in API group \"\" in the namespace \"engine\"" logger="UnhandledError" reflector="pkg/mod/k8s.io/client-go@v0.35.4/tools/cache/reflector.go:289" type="*v1.Pod"
-E0924 06:31:27.854148       1 reflector.go:204] "Failed to watch" err="failed to list *v1.Pod: pods is forbidden: User \"system:serviceaccount:engine-monitor:alloy\" cannot list resource \"pods\" in API group \"\" in the namespace \"engine\"" logger="UnhandledError" reflector="pkg/mod/k8s.io/client-go@v0.35.4/tools/cache/reflector.go:289" type="*v1.Pod"
-ts=2026-09-24T06:31:37.325517849Z level=info msg="tailer running" component_path=/ component_id=loki.source.kubernetes.pod_logs target=engine-monitor/node-exporter-bzv24:node-exporter
-ts=2026-09-24T06:31:37.33263755Z level=info msg="opened log stream" component_path=/ component_id=loki.source.kubernetes.pod_logs target=engine-monitor/node-exporter-bzv24:node-exporter start_time=0001-01-01T00:00:00.000Z
-E0924 06:31:41.095880       1 reflector.go:204] "Failed to watch" err="failed to list *v1.Pod: pods is forbidden: User \"system:serviceaccount:engine-monitor:alloy\" cannot list resource \"pods\" in API group \"\" in the namespace \"engine\"" logger="UnhandledError" reflector="pkg/mod/k8s.io/client-go@v0.35.4/tools/cache/reflector.go:289" type="*v1.Pod"
-E0924 06:32:16.105716       1 reflector.go:204] "Failed to watch" err="failed to list *v1.Pod: pods is forbidden: User \"system:serviceaccount:engine-monitor:alloy\" cannot list resource \"pods\" in API group \"\" in the namespace \"engine\"" logger="UnhandledError" reflector="pkg/mod/k8s.io/client-go@v0.35.4/tools/cache/reflector.go:289" type="*v1.Pod"
-
+  - kind: ServiceAccount
+    name: alloy
+    namespace: engine-monitor
