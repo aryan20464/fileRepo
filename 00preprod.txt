@@ -1,29 +1,14 @@
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: alloy
-  namespace: engine
-rules:
-  - apiGroups: [""]
-    resources:
-      - pods
-      - pods/log
-    verbs:
-      - get
-      - list
-      - watch
+D:\idea-sts-projects\rate-engine\rengine-vks\grafana-stack\alloy>kubectl apply -f alloy-misc.yaml
+serviceaccount/alloy unchanged
+role.rbac.authorization.k8s.io/alloy unchanged
+rolebinding.rbac.authorization.k8s.io/alloy unchanged
+service/alloy unchanged
+rolebinding.rbac.authorization.k8s.io/alloy created
+Error from server (NotFound): error when creating "alloy-misc.yaml": the server could not find the requested resource
 
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: alloy
-  namespace: engine
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: alloy
-subjects:
-  - kind: ServiceAccount
-    name: alloy
-    namespace: engine-monitor
+
+E0924 06:47:15.795406       1 reflector.go:204] "Failed to watch" err="failed to list *v1.Pod: pods is forbidden: User \"system:serviceaccount:engine-monitor:alloy\" cannot list resource \"pods\" in API group \"\" in the namespace \"engine\"" logger="UnhandledError" reflector="pkg/mod/k8s.io/client-go@v0.35.4/tools/cache/reflector.go:289" type="*v1.Pod"
+E0924 06:47:38.069324       1 reflector.go:204] "Failed to watch" err="failed to list *v1.Pod: pods is forbidden: User \"system:serviceaccount:engine-monitor:alloy\" cannot list resource \"pods\" in API group \"\" in the namespace \"engine\"" logger="UnhandledError" reflector="pkg/mod/k8s.io/client-go@v0.35.4/tools/cache/reflector.go:289" type="*v1.Pod"
+E0924 06:47:54.824800       1 reflector.go:204] "Failed to watch" err="failed to list *v1.Pod: pods is forbidden: User \"system:serviceaccount:engine-monitor:alloy\" cannot list resource \"pods\" in API group \"\" in the namespace \"engine\"" logger="UnhandledError" reflector="pkg/mod/k8s.io/client-go@v0.35.4/tools/cache/reflector.go:289" type="*v1.Pod"
+E0924 06:48:22.153821       1 reflector.go:204] "Failed to watch" err="failed to list *v1.Pod: pods is forbidden: User \"system:serviceaccount:engine-monitor:alloy\" cannot list resource \"pods\" in API group \"\" in the namespace \"engine\": RBAC: role.rbac.authorization.k8s.io \"alloy\" not found" logger="UnhandledError" reflector="pkg/mod/k8s.io/client-go@v0.35.4/tools/cache/reflector.go:289" type="*v1.Pod"
+E0924 06:48:40.434561       1 reflector.go:204] "Failed to watch" err="failed to list *v1.Pod: pods is forbidden: User \"system:serviceaccount:engine-monitor:alloy\" cannot list resource \"pods\" in API group \"\" in the namespace \"engine\": RBAC: role.rbac.authorization.k8s.io \"alloy\" not found" logger="UnhandledError" reflector="pkg/mod/k8s.io/client-go@v0.35.4/tools/cache/reflector.go:289" type="*v1.Pod"
