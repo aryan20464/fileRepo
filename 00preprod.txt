@@ -45,3 +45,26 @@ spec:
     - port: 8086
       targetPort: 8086
       targetPort: 8086
+
+
+C:\Users\1064695>kubectl get ingress -A
+NAMESPACE   NAME             CLASS                     HOSTS            ADDRESS          PORTS   AGE
+engine      rateengine-ing   rateengine-ingressclass   rateengine.sbi   10.190.240.174   80      24d
+
+C:\Users\1064695>kubectl describe ingress rateengine-ing -n engine
+Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+Name:             rateengine-ing
+Labels:           <none>
+Namespace:        engine
+Address:          10.190.240.174
+Ingress Class:    rateengine-ingressclass
+Default backend:  <default>
+Rules:
+  Host            Path  Backends
+  ----            ----  --------
+  rateengine.sbi
+                  /   rateengine-ui-service:4200 (192.168.2.11:4200)
+Annotations:      ako.vmware.com/controller-cluster-uuid: cluster-8560b44c-0124-4bf5-9e66-d34a45190280
+                  ako.vmware.com/host-fqdn-vs-uuid-map: {"rateengine.sbi":"virtualservice-e5c5bc20-8af4-4632-8e77-6b6c2c4b5ceb"}
+                  ako.vmware.com/tenant-name: admin
+Events:           <none>
