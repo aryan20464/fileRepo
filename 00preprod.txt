@@ -1,20 +1,23 @@
+keytool -importkeystore -srckeystore rateengine.jks -destkeystore rateengine.p12 -deststoretype PKCS12
+openssl pkcs12 -in rateengine.p12 -clcerts -nokeys -out leaf.crt
+openssl pkcs12 -in rateengine.p12 -cacerts -nokeys -out chain.crt
+openssl pkcs12 -in rateengine.p12 -nocerts -nodes -out tls.key
+cat leaf.crt chain.crt > tls.crt      # server cert first, then intermediates
+chmod 600 tls.key
 
-#user  nobody;
-worker_processes  1;
 
-#error_log  logs/error.log;
-#error_log  logs/error.log  notice;
-#error_log  logs/error.log  info;
+
+kubectl create secret tls rateengine-tls -n engine --cert=tls.crt --key=tls.key
+kubectl create configmap rateengine-ui-nginx -n engine --from-file=nginx.conf=nginx.conf
+
+
 
 pid        /tmp/nginx.pid;
+worker_processes  1;
 
-
-events {
-    worker_connections  1024;
-}
+events { worker_connections  1024; }
 
 http {
-
     map $http_x_forwarded_proto $real_proto {
         default $http_x_forwarded_proto;
         ''      $scheme;
@@ -26,42 +29,41 @@ http {
     log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
                       '$status $body_bytes_sent "$http_referer" '
                       '"$http_user_agent" "$http_x_forwarded_for"';
-    
 
     access_log  /var/log/nginx/access.log  main;
     error_log   /var/log/nginx/error.log   debug;
 
     sendfile        on;
-    #tcp_nopush     on;
-
-    #keepalive_timeout  0;
     keepalive_timeout  180;
 
-    #gzip  on;
-	
-
     server {
-        listen       4200;
-        listen  [::]:4200;
-        #server_name  localhost;
-        server_name _;
+        listen       4200 ssl;
+        listen  [::]:4200 ssl;
+        server_name  _;
         server_tokens off;
         client_max_body_size 50M;
 
-       location / {
-        root   /usr/share/nginx/html;
-        index  index.html index.htm;
-        try_files $uri $uri/ /index.html; # changed usually good for SPA
+        ssl_certificate           /etc/nginx/tls/tls.crt;
+        ssl_certificate_key       /etc/nginx/tls/tls.key;
+        ssl_protocols             TLSv1.2 TLSv1.3;
+        ssl_ciphers               ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384;
+        ssl_prefer_server_ciphers on;
+        ssl_session_cache         shared:SSL:10m;
+        ssl_session_timeout       10m;
+        ssl_session_tickets       off;
+
+        location / {
+            root   /usr/share/nginx/html;
+            index  index.html index.htm;
+            try_files $uri $uri/ /index.html;
         }
 
         error_page   500 502 503 504  /50x.html;
-        location = /50x.html {
-            root   /usr/share/nginx/html;
-        }
+        location = /50x.html { root /usr/share/nginx/html; }
 
         location /rateengine-ui/ {
-             alias /usr/share/nginx/html/rateengine-ui/browser/;
-             try_files $uri$args $uri$args/ /rateengine-ui/index.html;
+            alias /usr/share/nginx/html/rateengine-ui/browser/;
+            try_files $uri$args $uri$args/ /rateengine-ui/index.html;
         }
 
         location /middlewareRateEngine {
@@ -71,20 +73,13 @@ http {
             proxy_set_header X-Forwarded-Proto  $real_proto;
             proxy_set_header X-Forwarded-Host   $http_x_forwarded_host;
             proxy_set_header X-Forwarded-Port   $http_x_forwarded_port;
-            #proxy_set_header X-Forwarded-Proto $scheme; this is configuration used in UAT server instead of real_proto here
-            # for websocket - chakri - 27082026
-            #-------For websocket live config-----------#
-            proxy_http_version 1.1; #nginx is defaulting to 1.0
+            proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
             proxy_set_header Connection "upgrade";
-            #-------For websocket live config-----------#
             proxy_pass http://rate-engine-service:8085/rate-engine;
         }
-        
-        location /grafana/ {
 
-            set_real_ip_from 0.0.0.0/0;
-            real_ip_header X-Forwarded-For;
+        location /grafana/ {
             allow 10.30.130.0/24;
             allow 10.30.129.0/24;
             deny all;
@@ -95,108 +90,45 @@ http {
             proxy_set_header X-Forwarded-Proto  $real_proto;
             proxy_set_header X-Forwarded-Host   $http_x_forwarded_host;
             proxy_set_header X-Forwarded-Port   $http_x_forwarded_port;
-
-            #-------For websocket live config-----------#
-            proxy_http_version 1.1; #nginx is defaulting to 1.0
+            proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
             proxy_set_header Connection "upgrade";
-            #-------For websocket live config-----------#
-
-            proxy_pass http://grafana.engine-monitor.svc.cluster.local:3000;                        
-
+            proxy_pass http://grafana.engine-monitor.svc.cluster.local:3000;
         }
-        
     }
 }
 
 
-kubectl get svc rateengine-ui-lb -n engine -o yaml
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    ako.vmware.com/enable-shared-vip: shared-vip-key-1
-    ako.vmware.com/load-balancer-ip: 10.190.240.174
-    nodeportlocal.antrea.io/enabled: "true"
-  creationTimestamp: "2026-09-28T10:23:44Z"
-  name: rateengine-ui-lb
-  namespace: engine
-  resourceVersion: "8039670"
-  uid: 192ca651-70cc-478b-ba77-dacb19e9d644
-spec:
-  allocateLoadBalancerNodePorts: true
-  clusterIP: 10.99.4.186
-  clusterIPs:
-  - 10.99.4.186
-  externalTrafficPolicy: Cluster
-  internalTrafficPolicy: Cluster
-  ipFamilies:
-  - IPv4
-  ipFamilyPolicy: SingleStack
-  loadBalancerClass: ako.vmware.com/avi-lb
-  loadBalancerIP: 10.190.240.174
-  ports:
-  - name: https
-    nodePort: 32708
-    port: 443
-    protocol: TCP
-    targetPort: 4200
-  selector:
-    app: rateengine-ui
-  sessionAffinity: None
-  type: LoadBalancer
-status:
-  loadBalancer:
-    ingress:
-    - ip: 10.190.240.174
-      ipMode: VIP
 
 
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: rateengine-ui
-  namespace: engine
-  labels:
-    app: rateengine-ui
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: rateengine-ui
-  template:
-    metadata:
-      labels:
-        app: rateengine-ui
-    spec:
-      # Pod-level security context to run as a non-root user and set seccomp profile
       securityContext:
         runAsNonRoot: true
         runAsUser: 101
+        fsGroup: 101
         seccompProfile:
           type: RuntimeDefault
       containers:
         - name: rateengine-ui
-          image: rateengine-ui:2.2-monitor-ns #2.1-with-app-config
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 4200 # Unprivileged NGINX runs on port 8080         
-          # Container-level security context
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: rateengine-ui-service
-  namespace: engine
-spec:
-  selector:
-    app: rateengine-ui
-  type: ClusterIP
-  ports:
-    - port: 4200
-      targetPort: 4200
+          # ...existing fields...
+          volumeMounts:
+            - {name: nginx-conf, mountPath: /etc/nginx/nginx.conf, subPath: nginx.conf, readOnly: true}
+            - {name: tls, mountPath: /etc/nginx/tls, readOnly: true}
+      volumes:
+        - name: nginx-conf
+          configMap: {name: rateengine-ui-nginx}
+        - name: tls
+          secret: {secretName: rateengine-tls, defaultMode: 0440}
+
+
+
+
+
+
+
+
+kubectl logs deploy/rateengine-ui -n engine --tail=20
+curl -vk https://10.190.240.174
+openssl s_client -connect 10.190.240.174:443 -servername rateengine.com </dev/null | openssl x509 -noout -subject -dates
+
+
+
