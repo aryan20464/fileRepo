@@ -110,4 +110,46 @@ http {
 }
 
 
+kubectl get svc rateengine-ui-lb -n engine -o yaml
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    ako.vmware.com/enable-shared-vip: shared-vip-key-1
+    ako.vmware.com/load-balancer-ip: 10.190.240.174
+    nodeportlocal.antrea.io/enabled: "true"
+  creationTimestamp: "2026-09-28T10:23:44Z"
+  name: rateengine-ui-lb
+  namespace: engine
+  resourceVersion: "8039670"
+  uid: 192ca651-70cc-478b-ba77-dacb19e9d644
+spec:
+  allocateLoadBalancerNodePorts: true
+  clusterIP: 10.99.4.186
+  clusterIPs:
+  - 10.99.4.186
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  loadBalancerClass: ako.vmware.com/avi-lb
+  loadBalancerIP: 10.190.240.174
+  ports:
+  - name: https
+    nodePort: 32708
+    port: 443
+    protocol: TCP
+    targetPort: 4200
+  selector:
+    app: rateengine-ui
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+    - ip: 10.190.240.174
+      ipMode: VIP
+
+
 
