@@ -1,3 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rateengine-ui
+  namespace: engine
+  labels:
+    app: rateengine-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rateengine-ui
+  template:
+    metadata:
+      labels:
+        app: rateengine-ui
+    spec:
+      # Pod-level security context to run as a non-root user and set seccomp profile
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: rateengine-ui
+          image: h05vksharbor.corp.ad.sbi/itss/rateengine-ui:2.2-monitor-ns #2.1-with-app-config
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4200 # Unprivileged NGINX runs on port 8080         
+          # Container-level security context
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rateengine-ui-service
+  namespace: engine
+spec:
+  selector:
+    app: rateengine-ui
+  type: ClusterIP
+  ports:
+    - port: 4200
+      targetPort: 4200
+
+
 keytool -importkeystore -srckeystore rateengine.jks -destkeystore rateengine.p12 -deststoretype PKCS12
 openssl pkcs12 -in rateengine.p12 -clcerts -nokeys -out leaf.crt
 openssl pkcs12 -in rateengine.p12 -cacerts -nokeys -out chain.crt
