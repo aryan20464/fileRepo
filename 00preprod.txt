@@ -1,3 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rateengine-ui
+  namespace: engine
+  labels:
+    app: rateengine-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rateengine-ui
+  template:
+    metadata:
+      labels:
+        app: rateengine-ui
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        fsGroup: 101                 # lets UID 101 read the key from the Secret volume
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: rateengine-ui
+          image: h05vksharbor.corp.ad.com/itss/rateengine-ui:2.2-monitor-ns
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4200
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
+            - name: tls
+              mountPath: /etc/nginx/tls
+              readOnly: true
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: rateengine-ui-nginx
+        - name: tls
+          secret:
+            secretName: rateengine-tls
+            defaultMode: 0440
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rateengine-ui-service
+  namespace: engine
+spec:
+  selector:
+    app: rateengine-ui
+  type: ClusterIP
+  ports:
+    - port: 4200
+      targetPort: 4200
+
+
 # Use only NGINX, no Node or NPM involved
 #FROM h06vksharbor.corp.ad.sbi/itss/nginx:latest
 FROM h06vksharbor.corp.ad.sbi/itss/nginx:1.29.5-fips
