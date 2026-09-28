@@ -1,70 +1,38 @@
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: rate-engine-fixccilfeed
-  namespace: engine
-  labels:
-    app: rate-engine-fixccilfeed
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: rate-engine-fixccilfeed
-  template:
-    metadata:
-      labels:
-        app: rate-engine-fixccilfeed
-    spec:
-      containers:
-        - name: rate-engine-fixccilfeed
-          image: a2p05vksharbor.corp.ad.sbi/itss/rateengine-fixccilfeed:1.0
-          ports:
-            - containerPort: 8086
-          imagePullPolicy: Always
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            runAsNonRoot: true
-            runAsUser: 1001
-            seccompProfile:
-              type: RuntimeDefault
----
 apiVersion: v1
 kind: Service
 metadata:
-  name: rate-engine-fixccilfeed-service
+  name: rate-engine-fixccilfeed-lb
   namespace: engine
+  annotations:
+    ako.vmware.com/enable-shared-vip: "rateengine-shared-vip"
+    ako.vmware.com/l4rule: "engine/ccil-l4rule"
+    aviinfrasetting.ako.vmware.com/name: "<name from rateengine-ingressclass parameters>"   # omit if the IngressClass has none
 spec:
+  type: LoadBalancer
+  loadBalancerIP: 10.190.240.174
   selector:
     app: rate-engine-fixccilfeed
-  type: ClusterIP
   ports:
-    - port: 8086
-      targetPort: 8086
-      targetPort: 8086
+    - name: ccil
+      port: 40000
+      targetPort: 40000
+      protocol: TCP
 
 
-C:\Users\1064695>kubectl get ingress -A
-NAMESPACE   NAME             CLASS                     HOSTS            ADDRESS          PORTS   AGE
-engine      rateengine-ing   rateengine-ingressclass   rateengine.sbi   10.190.240.174   80      24d
 
-C:\Users\1064695>kubectl describe ingress rateengine-ing -n engine
-Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
-Name:             rateengine-ing
-Labels:           <none>
-Namespace:        engine
-Address:          10.190.240.174
-Ingress Class:    rateengine-ingressclass
-Default backend:  <default>
-Rules:
-  Host            Path  Backends
-  ----            ----  --------
-  rateengine.sbi
-                  /   rateengine-ui-service:4200 (192.168.2.11:4200)
-Annotations:      ako.vmware.com/controller-cluster-uuid: cluster-8560b44c-0124-4bf5-9e66-d34a45190280
-                  ako.vmware.com/host-fqdn-vs-uuid-map: {"rateengine.sbi":"virtualservice-e5c5bc20-8af4-4632-8e77-6b6c2c4b5ceb"}
-                  ako.vmware.com/tenant-name: admin
-Events:           <none>
+apiVersion: ako.vmware.com/v1alpha2
+kind: L4Rule
+metadata:
+  name: ccil-l4rule
+  namespace: engine
+spec:
+  loadBalancerIP: 10.190.240.174
+  listenerProperties:
+    - port: 40000
+      protocol: TCP
+      enableSsl: false
+  backendProperties:
+    - port: 40000
+      protocol: TCP
+      healthMonitorRefs:
+        - System-TCP
