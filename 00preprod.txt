@@ -1,44 +1,113 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: rateengine-fixccilfeed-lb
-  namespace: engine
-  annotations:
-    ako.vmware.com/enable-shared-vip: "rateengine-shared-vip"
-spec:
-  type: LoadBalancer
-  loadBalancerClass: ako.vmware.com/avi-lb
-  loadBalancerIP: 10.190.240.174
-  selector:
-    app: rateengine-fixccilfeed
-  ports:
-    - {name: ccil, port: 40000, targetPort: 40000, protocol: TCP}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: rateengine-ui-lb
-  namespace: engine
-  annotations:
-    ako.vmware.com/enable-shared-vip: "rateengine-shared-vip"
-spec:
-  type: LoadBalancer
-  loadBalancerClass: ako.vmware.com/avi-lb
-  loadBalancerIP: 10.190.240.174
-  selector:
-    app: <UI pod label>
-  ports:
-    - {name: https, port: 443, targetPort: 4200, protocol: TCP}
+
+#user  nobody;
+worker_processes  1;
+
+#error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+
+pid        /tmp/nginx.pid;
 
 
-
-
-
-server {
-    listen 4200 ssl;
-    server_name rateengine.com;
-    ssl_certificate     /etc/nginx/tls/tls.crt;
-    ssl_certificate_key /etc/nginx/tls/tls.key;
-    ssl_protocols TLSv1.2 TLSv1.3;
-    # ...your existing root / location / try_files blocks unchanged...
+events {
+    worker_connections  1024;
 }
+
+http {
+
+    map $http_x_forwarded_proto $real_proto {
+        default $http_x_forwarded_proto;
+        ''      $scheme;
+    }
+
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+    
+
+    access_log  /var/log/nginx/access.log  main;
+    error_log   /var/log/nginx/error.log   debug;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    #keepalive_timeout  0;
+    keepalive_timeout  180;
+
+    #gzip  on;
+	
+
+    server {
+        listen       4200;
+        listen  [::]:4200;
+        #server_name  localhost;
+        server_name _;
+        server_tokens off;
+        client_max_body_size 50M;
+
+       location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+        try_files $uri $uri/ /index.html; # changed usually good for SPA
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+
+        location /rateengine-ui/ {
+             alias /usr/share/nginx/html/rateengine-ui/browser/;
+             try_files $uri$args $uri$args/ /rateengine-ui/index.html;
+        }
+
+        location /middlewareRateEngine {
+            proxy_set_header Host               $http_host;
+            proxy_set_header X-Real-IP          $remote_addr;
+            proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto  $real_proto;
+            proxy_set_header X-Forwarded-Host   $http_x_forwarded_host;
+            proxy_set_header X-Forwarded-Port   $http_x_forwarded_port;
+            #proxy_set_header X-Forwarded-Proto $scheme; this is configuration used in UAT server instead of real_proto here
+            # for websocket - chakri - 27082026
+            #-------For websocket live config-----------#
+            proxy_http_version 1.1; #nginx is defaulting to 1.0
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            #-------For websocket live config-----------#
+            proxy_pass http://rate-engine-service:8085/rate-engine;
+        }
+        
+        location /grafana/ {
+
+            set_real_ip_from 0.0.0.0/0;
+            real_ip_header X-Forwarded-For;
+            allow 10.30.130.0/24;
+            allow 10.30.129.0/24;
+            deny all;
+
+            proxy_set_header Host               $http_host;
+            proxy_set_header X-Real-IP          $remote_addr;
+            proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto  $real_proto;
+            proxy_set_header X-Forwarded-Host   $http_x_forwarded_host;
+            proxy_set_header X-Forwarded-Port   $http_x_forwarded_port;
+
+            #-------For websocket live config-----------#
+            proxy_http_version 1.1; #nginx is defaulting to 1.0
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            #-------For websocket live config-----------#
+
+            proxy_pass http://grafana.engine-monitor.svc.cluster.local:3000;                        
+
+        }
+        
+    }
+}
+
+
+
