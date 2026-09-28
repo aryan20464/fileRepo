@@ -1,59 +1,44 @@
-kubectl get cm avi-k8s-config -n avi-system -o yaml
 apiVersion: v1
-data:
-  apiServerPort: "8080"
-  autoFQDN: default
-  bgpPeerLabels: '[]'
-  blockedNamespaceList: '[]'
-  cloudName: A2P05-PD-VKS-CLOUD
-  clusterName: a2p05vksrateenginecls
-  cniPlugin: antrea
-  controllerIP: 10.192.215.144
-  controllerVersion: 30.2.5
-  dedicatedTenantMode: "false"
-  defaultDomain: ""
-  defaultIngController: "true"
-  defaultLBController: "true"
-  deleteConfig: "false"
-  disableStaticRouteSync: "false"
-  enableEVH: "false"
-  enableEndpointSlice: "false"
-  enableEvents: "true"
-  enableMCI: "false"
-  enablePrometheus: "false"
-  enableRHI: "false"
-  fqdnReusePolicy: InterNamespaceAllowed
-  fullSyncFrequency: "1800"
-  ipFamily: ""
-  istioEnabled: "false"
-  layer7Only: "false"
-  logLevel: WARN
-  noPGForSNI: "false"
-  nodeNetworkList: '[]'
-  nsSyncLabelKey: ""
-  nsSyncLabelValue: ""
-  nsxtT1LR: /infra/tier-1s/t1_84ec7156-95da-4832-b357-235f35de85d6_rtr
-  passthroughShardSize: SMALL
-  primaryInstance: "true"
-  serviceEngineGroupName: A2P05-PD-APPS-SEG
-  serviceType: NodePortLocal
-  servicesAPI: "true"
-  shardVSSize: DEDICATED
-  tenantName: admin
-  useDefaultSecretsOnly: "false"
-  vipNetworkList: '[{"cidr":"10.190.240.128/25","networkName":"A2P05-APPS-PD-VIP"}]'
-  vipPerNamespace: "false"
-  vpcMode: "false"
-  vrfName: ""
-kind: ConfigMap
+kind: Service
 metadata:
+  name: rateengine-fixccilfeed-lb
+  namespace: engine
   annotations:
-    meta.helm.sh/release-name: ako-helm-1788441084
-    meta.helm.sh/release-namespace: avi-system
-  creationTimestamp: "2026-09-03T13:11:25Z"
-  labels:
-    app.kubernetes.io/managed-by: Helm
-  name: avi-k8s-config
-  namespace: avi-system
-  resourceVersion: "320798"
-  uid: 7ece9122-1bbd-4d2f-9691-db2cf00ea999
+    ako.vmware.com/enable-shared-vip: "rateengine-shared-vip"
+spec:
+  type: LoadBalancer
+  loadBalancerClass: ako.vmware.com/avi-lb
+  loadBalancerIP: 10.190.240.174
+  selector:
+    app: rateengine-fixccilfeed
+  ports:
+    - {name: ccil, port: 40000, targetPort: 40000, protocol: TCP}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rateengine-ui-lb
+  namespace: engine
+  annotations:
+    ako.vmware.com/enable-shared-vip: "rateengine-shared-vip"
+spec:
+  type: LoadBalancer
+  loadBalancerClass: ako.vmware.com/avi-lb
+  loadBalancerIP: 10.190.240.174
+  selector:
+    app: <UI pod label>
+  ports:
+    - {name: https, port: 443, targetPort: 4200, protocol: TCP}
+
+
+
+
+
+server {
+    listen 4200 ssl;
+    server_name rateengine.com;
+    ssl_certificate     /etc/nginx/tls/tls.crt;
+    ssl_certificate_key /etc/nginx/tls/tls.key;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    # ...your existing root / location / try_files blocks unchanged...
+}
