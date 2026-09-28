@@ -1,38 +1,10 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: rate-engine-fixccilfeed-lb
-  namespace: engine
-  annotations:
-    ako.vmware.com/enable-shared-vip: "rateengine-shared-vip"
-    ako.vmware.com/l4rule: "engine/ccil-l4rule"
-    aviinfrasetting.ako.vmware.com/name: "<name from rateengine-ingressclass parameters>"   # omit if the IngressClass has none
-spec:
-  type: LoadBalancer
-  loadBalancerIP: 10.190.240.174
-  selector:
-    app: rate-engine-fixccilfeed
-  ports:
-    - name: ccil
-      port: 40000
-      targetPort: 40000
-      protocol: TCP
-
-
-
-apiVersion: ako.vmware.com/v1alpha2
-kind: L4Rule
-metadata:
-  name: ccil-l4rule
-  namespace: engine
-spec:
-  loadBalancerIP: 10.190.240.174
-  listenerProperties:
-    - port: 40000
-      protocol: TCP
-      enableSsl: false
-  backendProperties:
-    - port: 40000
-      protocol: TCP
-      healthMonitorRefs:
-        - System-TCP
+kubectl describe ingressclass rateengine-ing -n engine
+Name:         rateengine-ingressclass
+Labels:       <none>
+Annotations:  <none>
+Controller:   ako.vmware.com/avi-lb
+Parameters:
+  APIGroup:  ako.vmware.com
+  Kind:      AviInfraSetting
+  Name:      rateengine-aviinfra
+Events:      <none>
