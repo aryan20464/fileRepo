@@ -1,92 +1,47 @@
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: alloy
-  namespace: engine-monitor
 ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: alloy
-  namespace: engine-monitor
-rules:
-- apiGroups: [""]
-  resources: ["pods","pods/log"]
-  verbs: ["get", "list", "watch"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: alloy
-  namespace: engine-monitor
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: alloy
-subjects:
-- kind: ServiceAccount
-  name: alloy
-  namespace: engine-monitor
+  name: rate-engine-fixccilfeed
+  namespace: engine
+  labels:
+    app: rate-engine-fixccilfeed
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rate-engine-fixccilfeed
+  template:
+    metadata:
+      labels:
+        app: rate-engine-fixccilfeed
+    spec:
+      containers:
+        - name: rate-engine-fixccilfeed
+          image: a2p05vksharbor.corp.ad.sbi/itss/rateengine-fixccilfeed:1.0
+          ports:
+            - containerPort: 8086
+          imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            runAsUser: 1001
+            seccompProfile:
+              type: RuntimeDefault
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: alloy
-  namespace: engine-monitor
-  labels:
-    app: alloy
+  name: rate-engine-fixccilfeed-service
+  namespace: engine
 spec:
   selector:
-    app: alloy
-  ports:
-  - name: http
-    port: 12345
-    targetPort: 12345
-    protocol: TCP
+    app: rate-engine-fixccilfeed
   type: ClusterIP
----
-apiVersion: rbac.authorization.k8s.io/ # for creating a role in engine namespace for alloy
-kind: Role
-metadata:
-  name: alloy
-  namespace: engine
-rules:
-  - apiGroups: [""]
-    resources:
-      - pods
-      - pods/log
-    verbs:
-      - get
-      - list
-      - watch
-
----
-apiVersion: rbac.authorization.k8s.io/v1 # Bind the above role to below serviceaccount of alloy in engine monitor
-kind: RoleBinding
-metadata:
-  name: alloy
-  namespace: engine
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: alloy
-subjects:
-  - kind: ServiceAccount
-    name: alloy
-    namespace: engine-monitor
-
-
-D:\idea-sts-projects\rate-engine\rengine-vks\grafana-stack\alloy>kubectl apply -f alloy-misc.yaml
-serviceaccount/alloy unchanged
-role.rbac.authorization.k8s.io/alloy unchanged
-rolebinding.rbac.authorization.k8s.io/alloy unchanged
-service/alloy unchanged
-rolebinding.rbac.authorization.k8s.io/alloy created
-Error from server (NotFound): error when creating "alloy-misc.yaml": the server could not find the requested resource
-
-
-E0924 06:47:15.795406       1 reflector.go:204] "Failed to watch" err="failed to list *v1.Pod: pods is forbidden: User \"system:serviceaccount:engine-monitor:alloy\" cannot list resource \"pods\" in API group \"\" in the namespace \"engine\"" logger="UnhandledError" reflector="pkg/mod/k8s.io/client-go@v0.35.4/tools/cache/reflector.go:289" type="*v1.Pod"
-E0924 06:47:38.069324       1 reflector.go:204] "Failed to watch" err="failed to list *v1.Pod: pods is forbidden: User \"system:serviceaccount:engine-monitor:alloy\" cannot list resource \"pods\" in API group \"\" in the namespace \"engine\"" logger="UnhandledError" reflector="pkg/mod/k8s.io/client-go@v0.35.4/tools/cache/reflector.go:289" type="*v1.Pod"
-E0924 06:47:54.824800       1 reflector.go:204] "Failed to watch" err="failed to list *v1.Pod: pods is forbidden: User \"system:serviceaccount:engine-monitor:alloy\" cannot list resource \"pods\" in API group \"\" in the namespace \"engine\"" logger="UnhandledError" reflector="pkg/mod/k8s.io/client-go@v0.35.4/tools/cache/reflector.go:289" type="*v1.Pod"
-E0924 06:48:22.153821       1 reflector.go:204] "Failed to watch" err="failed to list *v1.Pod: pods is forbidden: User \"system:serviceaccount:engine-monitor:alloy\" cannot list resource \"pods\" in API group \"\" in the namespace \"engine\": RBAC: role.rbac.authorization.k8s.io \"alloy\" not found" logger="UnhandledError" reflector="pkg/mod/k8s.io/client-go@v0.35.4/tools/cache/reflector.go:289" type="*v1.Pod"
-E0924 06:48:40.434561       1 reflector.go:204] "Failed to watch" err="failed to list *v1.Pod: pods is forbidden: User \"system:serviceaccount:engine-monitor:alloy\" cannot list resource \"pods\" in API group \"\" in the namespace \"engine\": RBAC: role.rbac.authorization.k8s.io \"alloy\" not found" logger="UnhandledError" reflector="pkg/mod/k8s.io/client-go@v0.35.4/tools/cache/reflector.go:289" type="*v1.Pod"
+  ports:
+    - port: 8086
+      targetPort: 8086
+      targetPort: 8086
