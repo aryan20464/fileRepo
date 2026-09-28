@@ -1,37 +1,27 @@
-apiVersion: ako.vmware.com/v1alpha2
-kind: L4Rule
-metadata:
-  name: ccil-l4rule
-  namespace: engine
-spec:
-  loadBalancerIP: 10.190.240.174
-  listenerProperties:
-    - port: 40000
-      protocol: TCP
-      enableSsl: false
-  backendProperties:
-    - port: 40000
-      protocol: TCP
-      healthMonitorRefs:
-        - System-TCP
+026-09-28T04:41:28.123Z        WARN    cache/controller_obj_cache.go:2988      DNSProperty Get uri /api/ipamdnsproviderprofiledomainlist?cloud_uuid=cloud-8108322a-0cdd-4b7a-ad00-bfd004877995 returned err msg: AviGet retried 3 times, aborting
+2026-09-28T04:41:28.123Z        WARN    cache/controller_obj_cache.go:2932      Cloud: A2P05-PD-VKS-CLOUD does not have a dns provider configured
+2026-09-28T04:56:25.485Z        WARN    nodes/avi_model_l4_translator.go:378    key: SharedVipService/engine/rate-engine-fixccilfeed-lb, msg: no servers for port: 40000 (ccil)
+2026-09-28T04:56:25.485Z        WARN    nodes/avi_model_l4_translator.go:378    key: SharedVipService/engine/rate-engine-fixccilfeed-lb, msg: no servers for port: 40000 (ccil)
+2026-09-28T04:56:25.495Z        WARN    nodes/avi_model_l4_translator.go:378    key: SharedVipService/engine/rate-engine-fixccilfeed-lb, msg: no servers for port: 40000 (ccil)
+2026-09-28T04:56:25.495Z        WARN    nodes/avi_model_l4_translator.go:378    key: SharedVipService/engine/rate-engine-fixccilfeed-lb, msg: no servers for port: 40000 (ccil)
+E0928 04:56:25.798201       1 avisession.go:910] CheckControllerStatus is disabled for this session, not going to retry.
+2026-09-28T04:56:25.798Z        WARN    rest/rest_operation.go:307      key: admin/a2p05vksrateenginecls--engine-rateengine-shared-vip, msg: RestOp method POST path /api/vsvip tenant admin Obj {"cloud_ref":"/api/cloud?name=A2P05-PD-VKS-CLOUD","east_west_placement":false,"markers":[{"key":"clustername","values":["a2p05vksrateenginecls"]}],"name":"a2p05vksrateenginecls--engine-rateengine-shared-vip","tenant_ref":"/api/tenant/?name=admin","tier1_lr":"/infra/tier-1s/t1_84ec7156-95da-4832-b357-235f35de85d6_rtr","vip":[{"auto_allocate_ip":true,"ip_address":{"addr":"10.190.240.174","type":"V4"},"ipam_network_subnet":{"network_ref":"/api/network/?name=A2P05-APPS-PD-VIP","subnet":{"ip_addr":{"addr":"10.190.240.128","type":"V4"},"mask":25}},"vip_id":"0"}],"vsvip_cloud_config_cksum":"1196475939"} returned err {} with response null
+2026-09-28T04:56:25.798Z        WARN    rest/rest_operation.go:313      key: admin/a2p05vksrateenginecls--engine-rateengine-shared-vip, msg: Error in rest operation is not of type AviError, err: Rest request error, returning to caller, *errors.errorString
+2026-09-28T04:56:25.798Z        WARN    rest/dequeue_nodes.go:302       key: admin/a2p05vksrateenginecls--engine-rateengine-shared-vip, msg: got error while executing rest request: Error during POST: Rest request error, returning to caller, adding to slow retry queue
+2026-09-28T04:56:25.843Z        WARN    rest/rest_operation.go:307      key: admin/a2p05vksrateenginecls--engine-rateengine-shared-vip, msg: RestOp method POST path /api/vsvip tenant admin Obj {"cloud_ref":"/api/cloud?name=A2P05-PD-VKS-CLOUD","east_west_placement":false,"markers":[{"key":"clustername","values":["a2p05vksrateenginecls"]}],"name":"a2p05vksrateenginecls--engine-rateengine-shared-vip","tenant_ref":"/api/tenant/?name=admin","tier1_lr":"/infra/tier-1s/t1_84ec7156-95da-4832-b357-235f35de85d6_rtr","vip":[{"auto_allocate_ip":true,"ip_address":{"addr":"10.190.240.174","type":"V4"},"ipam_network_subnet":{"network_ref":"/api/network/?name=A2P05-APPS-PD-VIP","subnet":{"ip_addr":{"addr":"10.190.240.128","type":"V4"},"mask":25}},"vip_id":"0"}],"vsvip_cloud_config_cksum":"1196475939"} returned err {"code":0,"message":"map[error:VsVip a2p05vksrateenginecls--engine-rateengine-shared-vip has overlapping IPs with other VIPs in the system]","Verb":"POST","Url":"https://10.192.215.144//api/vsvip","HttpStatusCode":400} with response null
+2026-09-28T04:56:25.843Z        WARN    rest/dequeue_nodes.go:657       key: admin/a2p05vksrateenginecls--engine-rateengine-shared-vip, msg: there was an error sending the macro Error during POST: Encountered an error on POST request to URL https://10.192.215.144//api/vsvip: HTTP code: 400; error from Controller: map[error:VsVip a2p05vksrateenginecls--engine-rateengine-shared-vip has overlapping IPs with other VIPs in the system]
+2026-09-28T04:56:25.843Z        WARN    rest/dequeue_nodes.go:695       key: admin/a2p05vksrateenginecls--engine-rateengine-shared-vip, msg: Retrieved key for Retry:a2p05vksrateenginecls--engine-rateengine-shared-vip, object: a2p05vksrateenginecls--engine-rateengine-shared-vip
+2026-09-28T04:56:25.843Z        WARN    rest/dequeue_nodes.go:695       key: admin/a2p05vksrateenginecls--engine-rateengine-shared-vip, msg: Retrieved key for Retry:a2p05vksrateenginecls--engine-rateengine-shared-vip, object: a2p05vksrateenginecls--engine-rateengine-shared-vip
+2026-09-28T04:56:25.843Z        WARN    rest/dequeue_nodes.go:695       key: admin/a2p05vksrateenginecls--engine-rateengine-shared-vip, msg: Retrieved key for Retry:a2p05vksrateenginecls--engine-rateengine-shared-vip, object: a2p05vksrateenginecls--engine-rate-engine-fixccilfeed-lb-rateengine-shared-vip-TCP-40000
+2026-09-28T04:56:25.843Z        WARN    rest/dequeue_nodes.go:695       key: admin/a2p05vksrateenginecls--engine-rateengine-shared-vip, msg: Retrieved key for Retry:a2p05vksrateenginecls--engine-rateengine-shared-vip, object: a2p05vksrateenginecls--engine-rateengine-shared-vip
+2026-09-28T04:56:25.843Z        WARN    rest/dequeue_nodes.go:895       key: admin/a2p05vksrateenginecls--engine-rateengine-shared-vip, msg: problem in processing request for: VsVip
+2026-09-28T04:56:57.907Z        WARN    nodes/dequeue_ingestion.go:918  key: L4LBService/engine/external-tcp-service, msg: could not retrieve the object for service: service "external-tcp-service" not found
+2026-09-28T04:57:19.441Z        WARN    rest/rest_operation.go:307      key: admin/a2p05vksrateenginecls--engine-rateengine-shared-vip, msg: RestOp method POST path /api/vsvip tenant admin Obj {"cloud_ref":"/api/cloud?name=A2P05-PD-VKS-CLOUD","east_west_placement":false,"markers":[{"key":"clustername","values":["a2p05vksrateenginecls"]}],"name":"a2p05vksrateenginecls--engine-rateengine-shared-vip","tenant_ref":"/api/tenant/?name=admin","tier1_lr":"/infra/tier-1s/t1_84ec7156-95da-4832-b357-235f35de85d6_rtr","vip":[{"auto_allocate_ip":true,"ip_address":{"addr":"10.190.240.174","type":"V4"},"ipam_network_subnet":{"network_ref":"/api/network/?name=A2P05-APPS-PD-VIP","subnet":{"ip_addr":{"addr":"10.190.240.128","type":"V4"},"mask":25}},"vip_id":"0"}],"vsvip_cloud_config_cksum":"1196475939"} returned err {"code":0,"message":"map[error:VsVip a2p05vksrateenginecls--engine-rateengine-shared-vip has overlapping IPs with other VIPs in the system]","Verb":"POST","Url":"https://10.192.215.144//api/vsvip","HttpStatusCode":400} with response null
+2026-09-28T04:57:19.441Z        WARN    rest/dequeue_nodes.go:657       key: admin/a2p05vksrateenginecls--engine-rateengine-shared-vip, msg: there was an error sending the macro Error during POST: Encountered an error on POST request to URL https://10.192.215.144//api/vsvip: HTTP code: 400; error from Controller: map[error:VsVip a2p05vksrateenginecls--engine-rateengine-shared-vip has overlapping IPs with other VIPs in the system]
+2026-09-28T04:57:19.441Z        WARN    rest/dequeue_nodes.go:695       key: admin/a2p05vksrateenginecls--engine-rateengine-shared-vip, msg: Retrieved key for Retry:a2p05vksrateenginecls--engine-rateengine-shared-vip, object: a2p05vksrateenginecls--engine-rateengine-shared-vip
+2026-09-28T04:57:19.441Z        WARN    rest/dequeue_nodes.go:695       key: admin/a2p05vksrateenginecls--engine-rateengine-shared-vip, msg: Retrieved key for Retry:a2p05vksrateenginecls--engine-rateengine-shared-vip, object: a2p05vksrateenginecls--engine-rateengine-shared-vip
+2026-09-28T04:57:19.441Z        WARN    rest/dequeue_nodes.go:695       key: admin/a2p05vksrateenginecls--engine-rateengine-shared-vip, msg: Retrieved key for Retry:a2p05vksrateenginecls--engine-rateengine-shared-vip, object: a2p05vksrateenginecls--engine-rate-engine-fixccilfeed-lb-rateengine-shared-vip-TCP-40000
+2026-09-28T04:57:19.441Z        WARN    rest/dequeue_nodes.go:695       key: admin/a2p05vksrateenginecls--engine-rateengine-shared-vip, msg: Retrieved key for Retry:a2p05vksrateenginecls--engine-rateengine-shared-vip, object: a2p05vksrateenginecls--engine-rateengine-shared-vip
+2026-09-28T04:57:19.441Z        WARN    rest/dequeue_nodes.go:895       key: admin/a2p05vksrateenginecls--engine-rateengine-shared-vip, msg: problem in processing request for: VsVip
 
 
-apiVersion: v1
-kind: Service
-metadata:
-  name: rate-engine-fixccilfeed-lb
-  namespace: engine
-  annotations:
-    ako.vmware.com/enable-shared-vip: "rateengine-shared-vip"
-    ako.vmware.com/l4rule: "engine/ccil-l4rule"
-    aviinfrasetting.ako.vmware.com/name: "rateengine-aviinfra"
-spec:
-  type: LoadBalancer
-  loadBalancerIP: 10.190.240.174
-  selector:
-    app: rate-engine-fixccilfeed
-  ports:
-    - name: ccil
-      port: 40000
-      targetPort: 40000
-      protocol: TCP
