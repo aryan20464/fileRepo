@@ -1,47 +1,242 @@
+# app-scaler-rbac.yaml  (apply once per namespace, kept separate from the deployment files)
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: app-scaler-sa
+  namespace: <namespace>
 ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: app-scaler-role
+  namespace: <namespace>
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    resourceNames: ["<app-name-1>", "<app-name-2>"]
+    verbs: ["get"]
+  - apiGroups: ["apps"]
+    resources: ["deployments/scale"]
+    resourceNames: ["<app-name-1>", "<app-name-2>"]
+    verbs: ["get", "patch", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: app-scaler-rb
+  namespace: <namespace>
+subjects:
+  - kind: ServiceAccount
+    name: app-scaler-sa
+    namespace: <namespace>
+roleRef:
+  kind: Role
+  name: app-scaler-role
+  apiGroup: rbac.authorization.k8s.io
+
+
+
+
+# <app-name>-deploy.yaml
+# Variables substituted by the pipeline (envsubst):
+#   ${APP_NAME} ${NAMESPACE} ${IMAGE_TAG} ${REGISTRY} ${REPLICAS} ${KUBECTL_IMAGE}
+# Command:  envsubst < <app-name>-deploy.yaml | kubectl apply -f -
+# Prerequisite: app-scaler-rbac.yaml (SA/Role/RoleBinding) applied separately.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rate-engine-fixccilfeed
-  namespace: engine
+  name: ${APP_NAME}
+  namespace: ${NAMESPACE}
   labels:
-    app: rate-engine-fixccilfeed
+    app: ${APP_NAME}
 spec:
-  replicas: 1
+  # replicas intentionally omitted: owned by the scheduler CronJobs below
+  revisionHistoryLimit: 3
   selector:
     matchLabels:
-      app: rate-engine-fixccilfeed
+      app: ${APP_NAME}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   template:
     metadata:
       labels:
-        app: rate-engine-fixccilfeed
+        app: ${APP_NAME}
     spec:
+      terminationGracePeriodSeconds: 45
       containers:
-        - name: rate-engine-fixccilfeed
-          image: registry.com/itss/rateengine-fixccilfeed:1.0
+        - name: ${APP_NAME}
+          image: ${REGISTRY}/${APP_NAME}:${IMAGE_TAG}
+          imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8086
-            - containerPort: 40000
-          imagePullPolicy: Always
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            runAsNonRoot: true
-            runAsUser: 1001
-            seccompProfile:
-              type: RuntimeDefault
+            - containerPort: 8080
+          env:
+            - name: SERVER_SHUTDOWN
+              value: "graceful"
+            - name: SPRING_LIFECYCLE_TIMEOUT_PER_SHUTDOWN_PHASE
+              value: "30s"
+          startupProbe:
+            httpGet: { path: /actuator/health/readiness, port: 8080 }
+            periodSeconds: 5
+            failureThreshold: 36
+          readinessProbe:
+            httpGet: { path: /actuator/health/readiness, port: 8080 }
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: { path: /actuator/health/liveness, port: 8080 }
+            periodSeconds: 15
+          resources:
+            requests: { cpu: 250m, memory: 512Mi }
+            limits:   { cpu: "1",  memory: 1Gi }
 ---
-apiVersion: v1
-kind: Service
+# START 08:30 IST
+apiVersion: batch/v1
+kind: CronJob
 metadata:
-  name: rate-engine-fixccilfeed-service
-  namespace: engine
+  name: ${APP_NAME}-start-0830
+  namespace: ${NAMESPACE}
 spec:
-  selector:
-    app: rate-engine-fixccilfeed
-  type: ClusterIP
-  ports:
-    - port: 8086
-      targetPort: 8086
+  schedule: "30 8 * * *"
+  timeZone: "Asia/Kolkata"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 600
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 120
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          serviceAccountName: app-scaler-sa
+          restartPolicy: OnFailure
+          containers:
+            - name: scaler
+              image: ${KUBECTL_IMAGE}
+              command: ["/bin/sh", "-c"]
+              args: ["kubectl scale deployment/${APP_NAME} -n ${NAMESPACE} --replicas=${REPLICAS}"]
+              resources:
+                requests: { cpu: 10m, memory: 32Mi }
+                limits:   { cpu: 100m, memory: 64Mi }
+              securityContext:
+                allowPrivilegeEscalation: false
+                runAsNonRoot: true
+                runAsUser: 1001
+                readOnlyRootFilesystem: true
+                capabilities: { drop: ["ALL"] }
+---
+# STOP 16:00 IST
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ${APP_NAME}-stop-1600
+  namespace: ${NAMESPACE}
+spec:
+  schedule: "0 16 * * *"
+  timeZone: "Asia/Kolkata"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 600
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 120
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          serviceAccountName: app-scaler-sa
+          restartPolicy: OnFailure
+          containers:
+            - name: scaler
+              image: ${KUBECTL_IMAGE}
+              command: ["/bin/sh", "-c"]
+              args: ["kubectl scale deployment/${APP_NAME} -n ${NAMESPACE} --replicas=0"]
+              resources:
+                requests: { cpu: 10m, memory: 32Mi }
+                limits:   { cpu: 100m, memory: 64Mi }
+              securityContext:
+                allowPrivilegeEscalation: false
+                runAsNonRoot: true
+                runAsUser: 1001
+                readOnlyRootFilesystem: true
+                capabilities: { drop: ["ALL"] }
+---
+# START 19:00 IST
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ${APP_NAME}-start-1900
+  namespace: ${NAMESPACE}
+spec:
+  schedule: "0 19 * * *"
+  timeZone: "Asia/Kolkata"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 600
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 120
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          serviceAccountName: app-scaler-sa
+          restartPolicy: OnFailure
+          containers:
+            - name: scaler
+              image: ${KUBECTL_IMAGE}
+              command: ["/bin/sh", "-c"]
+              args: ["kubectl scale deployment/${APP_NAME} -n ${NAMESPACE} --replicas=${REPLICAS}"]
+              resources:
+                requests: { cpu: 10m, memory: 32Mi }
+                limits:   { cpu: 100m, memory: 64Mi }
+              securityContext:
+                allowPrivilegeEscalation: false
+                runAsNonRoot: true
+                runAsUser: 1001
+                readOnlyRootFilesystem: true
+                capabilities: { drop: ["ALL"] }
+---
+# STOP 19:30 IST
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ${APP_NAME}-stop-1930
+  namespace: ${NAMESPACE}
+spec:
+  schedule: "30 19 * * *"
+  timeZone: "Asia/Kolkata"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 600
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 120
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          serviceAccountName: app-scaler-sa
+          restartPolicy: OnFailure
+          containers:
+            - name: scaler
+              image: ${KUBECTL_IMAGE}
+              command: ["/bin/sh", "-c"]
+              args: ["kubectl scale deployment/${APP_NAME} -n ${NAMESPACE} --replicas=0"]
+              resources:
+                requests: { cpu: 10m, memory: 32Mi }
+                limits:   { cpu: 100m, memory: 64Mi }
+              securityContext:
+                allowPrivilegeEscalation: false
+                runAsNonRoot: true
+                runAsUser: 1001
+                readOnlyRootFilesystem: true
+                capabilities: { drop: ["ALL"] }
+
+
