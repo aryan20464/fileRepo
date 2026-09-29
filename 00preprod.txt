@@ -1,3 +1,5 @@
+
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -275,3 +277,15 @@ roleRef:
   kind: Role
   name: app-scaler-role
   apiGroup: rbac.authorization.k8s.io
+
+
+
+
+
+
+
+WARNING: This version information is deprecated and will be replaced with the output from kubectl version --short.  Use --output=yaml|json to get the full version.
+Client Version: version.Info{Major:"1", Minor:"27", GitVersion:"v1.27.2", GitCommit:"7f6f68fdabc4df88cfea2dcf9a19b2b830f1e647", GitTreeState:"clean", BuildDate:"2023-05-17T14:20:07Z", GoVersion:"go1.20.4", Compiler:"gc", Platform:"windows/amd64"}
+Kustomize Version: v5.0.1
+Server Version: version.Info{Major:"1", Minor:"33", GitVersion:"v1.33.6+vmware.1-fips", GitCommit:"b043a29eab048fd45de465fba955a5c7b9ffe66f", GitTreeState:"clean", BuildDate:"2025-11-15T13:55:43Z", GoVersion:"go1.24.9 X:boringcrypto", Compiler:"gc", Platform:"linux/amd64"}
+WARNING: version difference between client (1.27) and server (1.33) exceeds the supported minor version skew of +/-1
