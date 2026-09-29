@@ -235,3 +235,43 @@ roleRef:
   kind: Role
   name: app-scaler-role
   apiGroup: rbac.authorization.k8s.io
+
+
+
+
+
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: app-scaler-sa
+  namespace: engine
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: app-scaler-role
+  namespace: engine
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    resourceNames: ["rate-engine-fixccilfeed", "rate-engine-fix360t"]
+    verbs: ["get"]
+  - apiGroups: ["apps"]
+    resources: ["deployments/scale"]
+    resourceNames: ["rate-engine-fixccilfeed", "rate-engine-fix360t"]
+    verbs: ["get", "patch", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: app-scaler-rb
+  namespace: engine
+subjects:
+  - kind: ServiceAccount
+    name: app-scaler-sa
+    namespace: engine
+roleRef:
+  kind: Role
+  name: app-scaler-role
+  apiGroup: rbac.authorization.k8s.io
