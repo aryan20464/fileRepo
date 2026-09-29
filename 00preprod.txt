@@ -1,102 +1,56 @@
-# app-scaler-rbac.yaml  (apply once per namespace, kept separate from the deployment files)
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: app-scaler-sa
-  namespace: <namespace>
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: app-scaler-role
-  namespace: <namespace>
-rules:
-  - apiGroups: ["apps"]
-    resources: ["deployments"]
-    resourceNames: ["<app-name-1>", "<app-name-2>"]
-    verbs: ["get"]
-  - apiGroups: ["apps"]
-    resources: ["deployments/scale"]
-    resourceNames: ["<app-name-1>", "<app-name-2>"]
-    verbs: ["get", "patch", "update"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: app-scaler-rb
-  namespace: <namespace>
-subjects:
-  - kind: ServiceAccount
-    name: app-scaler-sa
-    namespace: <namespace>
-roleRef:
-  kind: Role
-  name: app-scaler-role
-  apiGroup: rbac.authorization.k8s.io
-
-
-
-
-# <app-name>-deploy.yaml
-# Variables substituted by the pipeline (envsubst):
-#   ${APP_NAME} ${NAMESPACE} ${IMAGE_TAG} ${REGISTRY} ${REPLICAS} ${KUBECTL_IMAGE}
-# Command:  envsubst < <app-name>-deploy.yaml | kubectl apply -f -
-# Prerequisite: app-scaler-rbac.yaml (SA/Role/RoleBinding) applied separately.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ${APP_NAME}
-  namespace: ${NAMESPACE}
+  name: rate-engine-fixccilfeed
+  namespace: engine
   labels:
-    app: ${APP_NAME}
+    app: rate-engine-fixccilfeed
 spec:
-  # replicas intentionally omitted: owned by the scheduler CronJobs below
-  revisionHistoryLimit: 3
+  replicas: 1
   selector:
     matchLabels:
-      app: ${APP_NAME}
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
+      app: rate-engine-fixccilfeed
   template:
     metadata:
       labels:
-        app: ${APP_NAME}
+        app: rate-engine-fixccilfeed
     spec:
-      terminationGracePeriodSeconds: 45
       containers:
-        - name: ${APP_NAME}
-          image: ${REGISTRY}/${APP_NAME}:${IMAGE_TAG}
-          imagePullPolicy: IfNotPresent
+        - name: rate-engine-fixccilfeed
+          image: registry.com/itss/rateengine-fixccilfeed:1.0
           ports:
-            - containerPort: 8080
-          env:
-            - name: SERVER_SHUTDOWN
-              value: "graceful"
-            - name: SPRING_LIFECYCLE_TIMEOUT_PER_SHUTDOWN_PHASE
-              value: "30s"
-          startupProbe:
-            httpGet: { path: /actuator/health/readiness, port: 8080 }
-            periodSeconds: 5
-            failureThreshold: 36
-          readinessProbe:
-            httpGet: { path: /actuator/health/readiness, port: 8080 }
-            periodSeconds: 10
-          livenessProbe:
-            httpGet: { path: /actuator/health/liveness, port: 8080 }
-            periodSeconds: 15
-          resources:
-            requests: { cpu: 250m, memory: 512Mi }
-            limits:   { cpu: "1",  memory: 1Gi }
+            - containerPort: 8086
+            - containerPort: 40000
+          imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            runAsUser: 1001
+            seccompProfile:
+              type: RuntimeDefault
 ---
-# START 08:30 IST
+apiVersion: v1
+kind: Service
+metadata:
+  name: rate-engine-fixccilfeed-service
+  namespace: engine
+spec:
+  selector:
+    app: rate-engine-fixccilfeed
+  type: ClusterIP
+  ports:
+    - port: 8086
+      targetPort: 8086
+---
+# START at 08:30 AM IST
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: ${APP_NAME}-start-0830
-  namespace: ${NAMESPACE}
+  name: rate-engine-fixccilfeed-start-0830
+  namespace: engine
 spec:
   schedule: "30 8 * * *"
   timeZone: "Asia/Kolkata"
@@ -107,7 +61,6 @@ spec:
   jobTemplate:
     spec:
       backoffLimit: 2
-      activeDeadlineSeconds: 120
       ttlSecondsAfterFinished: 3600
       template:
         spec:
@@ -115,25 +68,27 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: scaler
-              image: ${KUBECTL_IMAGE}
+              image: registry.com/itss/kubectl:1.29
+              imagePullPolicy: IfNotPresent
               command: ["/bin/sh", "-c"]
-              args: ["kubectl scale deployment/${APP_NAME} -n ${NAMESPACE} --replicas=${REPLICAS}"]
-              resources:
-                requests: { cpu: 10m, memory: 32Mi }
-                limits:   { cpu: 100m, memory: 64Mi }
+              args:
+                - kubectl scale deployment/rate-engine-fixccilfeed -n engine --replicas=1
               securityContext:
                 allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
                 runAsNonRoot: true
                 runAsUser: 1001
-                readOnlyRootFilesystem: true
-                capabilities: { drop: ["ALL"] }
+                seccompProfile:
+                  type: RuntimeDefault
 ---
-# STOP 16:00 IST
+# STOP at 04:00 PM IST
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: ${APP_NAME}-stop-1600
-  namespace: ${NAMESPACE}
+  name: rate-engine-fixccilfeed-stop-1600
+  namespace: engine
 spec:
   schedule: "0 16 * * *"
   timeZone: "Asia/Kolkata"
@@ -144,7 +99,6 @@ spec:
   jobTemplate:
     spec:
       backoffLimit: 2
-      activeDeadlineSeconds: 120
       ttlSecondsAfterFinished: 3600
       template:
         spec:
@@ -152,25 +106,27 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: scaler
-              image: ${KUBECTL_IMAGE}
+              image: registry.com/itss/kubectl:1.29
+              imagePullPolicy: IfNotPresent
               command: ["/bin/sh", "-c"]
-              args: ["kubectl scale deployment/${APP_NAME} -n ${NAMESPACE} --replicas=0"]
-              resources:
-                requests: { cpu: 10m, memory: 32Mi }
-                limits:   { cpu: 100m, memory: 64Mi }
+              args:
+                - kubectl scale deployment/rate-engine-fixccilfeed -n engine --replicas=0
               securityContext:
                 allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
                 runAsNonRoot: true
                 runAsUser: 1001
-                readOnlyRootFilesystem: true
-                capabilities: { drop: ["ALL"] }
+                seccompProfile:
+                  type: RuntimeDefault
 ---
-# START 19:00 IST
+# START at 07:00 PM IST
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: ${APP_NAME}-start-1900
-  namespace: ${NAMESPACE}
+  name: rate-engine-fixccilfeed-start-1900
+  namespace: engine
 spec:
   schedule: "0 19 * * *"
   timeZone: "Asia/Kolkata"
@@ -181,7 +137,6 @@ spec:
   jobTemplate:
     spec:
       backoffLimit: 2
-      activeDeadlineSeconds: 120
       ttlSecondsAfterFinished: 3600
       template:
         spec:
@@ -189,25 +144,27 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: scaler
-              image: ${KUBECTL_IMAGE}
+              image: registry.com/itss/kubectl:1.29
+              imagePullPolicy: IfNotPresent
               command: ["/bin/sh", "-c"]
-              args: ["kubectl scale deployment/${APP_NAME} -n ${NAMESPACE} --replicas=${REPLICAS}"]
-              resources:
-                requests: { cpu: 10m, memory: 32Mi }
-                limits:   { cpu: 100m, memory: 64Mi }
+              args:
+                - kubectl scale deployment/rate-engine-fixccilfeed -n engine --replicas=1
               securityContext:
                 allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
                 runAsNonRoot: true
                 runAsUser: 1001
-                readOnlyRootFilesystem: true
-                capabilities: { drop: ["ALL"] }
+                seccompProfile:
+                  type: RuntimeDefault
 ---
-# STOP 19:30 IST
+# STOP at 07:30 PM IST
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: ${APP_NAME}-stop-1930
-  namespace: ${NAMESPACE}
+  name: rate-engine-fixccilfeed-stop-1930
+  namespace: engine
 spec:
   schedule: "30 19 * * *"
   timeZone: "Asia/Kolkata"
@@ -218,7 +175,6 @@ spec:
   jobTemplate:
     spec:
       backoffLimit: 2
-      activeDeadlineSeconds: 120
       ttlSecondsAfterFinished: 3600
       template:
         spec:
@@ -226,17 +182,56 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: scaler
-              image: ${KUBECTL_IMAGE}
+              image: registry.com/itss/kubectl:1.29
+              imagePullPolicy: IfNotPresent
               command: ["/bin/sh", "-c"]
-              args: ["kubectl scale deployment/${APP_NAME} -n ${NAMESPACE} --replicas=0"]
-              resources:
-                requests: { cpu: 10m, memory: 32Mi }
-                limits:   { cpu: 100m, memory: 64Mi }
+              args:
+                - kubectl scale deployment/rate-engine-fixccilfeed -n engine --replicas=0
               securityContext:
                 allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
                 runAsNonRoot: true
                 runAsUser: 1001
-                readOnlyRootFilesystem: true
-                capabilities: { drop: ["ALL"] }
+                seccompProfile:
+                  type: RuntimeDefault
 
 
+
+
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: app-scaler-sa
+  namespace: engine
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: app-scaler-role
+  namespace: engine
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    resourceNames: ["rate-engine-fixccilfeed"]
+    verbs: ["get"]
+  - apiGroups: ["apps"]
+    resources: ["deployments/scale"]
+    resourceNames: ["rate-engine-fixccilfeed"]
+    verbs: ["get", "patch", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: app-scaler-rb
+  namespace: engine
+subjects:
+  - kind: ServiceAccount
+    name: app-scaler-sa
+    namespace: engine
+roleRef:
+  kind: Role
+  name: app-scaler-role
+  apiGroup: rbac.authorization.k8s.io
