@@ -1,45 +1,311 @@
-apiVersion: v1
-kind: ServiceAccount
+# Requires: scheduler-holidays ConfigMap (already applied) and the updated app-scaler-rbac.yaml
+#
+# BEFORE APPLYING, change these 4 values in BOTH jobs:
+#   SMTP_HOST, SMTP_PORT, MAIL_FROM, MAIL_TO
+#
+# START 08:30 AM IST, Mon-Fri, skipped on holidays.
+# Scales up, follows the pod logs for 60 seconds, then emails the logs as HTML.
+apiVersion: batch/v1
+kind: CronJob
 metadata:
-  name: app-scaler-sa
+  name: rate-engine-fixccilfeed-start-0830
   namespace: engine
+spec:
+  schedule: "30 8 * * 1-5"
+  timeZone: "Asia/Kolkata"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 600
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 900
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          serviceAccountName: app-scaler-sa
+          restartPolicy: Never
+          containers:
+            - name: scaler
+              image: registry.com/itss/kubectl:1.33.4
+              imagePullPolicy: IfNotPresent
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  APP=rate-engine-fixccilfeed
+                  NS=engine
+                  SMTP_HOST=smtp.example.bank.in
+                  SMTP_PORT=25
+                  MAIL_FROM=k8s-scheduler@example.bank.in
+                  MAIL_TO=team@example.bank.in
+                  WORK=/work
+
+                  ist_now() {
+                    date -u -d "@$(( $(date -u +%s) + 19800 ))" "+%d-%b-%Y %H:%M:%S IST" 2>/dev/null || date -u "+%d-%b-%Y %H:%M:%S UTC"
+                  }
+
+                  esc() { sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g'; }
+
+                  # send_mail <subject> <colour> <headline> <body-html-file>
+                  send_mail() {
+                    {
+                      printf 'From: %s\n' "${MAIL_FROM}"
+                      printf 'To: %s\n' "${MAIL_TO}"
+                      printf 'Subject: %s\n' "$1"
+                      printf 'MIME-Version: 1.0\n'
+                      printf 'Content-Type: text/html; charset=UTF-8\n\n'
+                      printf '<html><body style="font-family:Arial,sans-serif;font-size:13px">\n'
+                      printf '<h3 style="color:%s">%s</h3>\n' "$2" "$3"
+                      cat "$4"
+                      printf '</body></html>\n'
+                    } | awk '{ printf "%s\r\n", $0 }' > "${WORK}/mail.eml"
+                    curl --silent --show-error \
+                      --url "smtp://${SMTP_HOST}:${SMTP_PORT}" \
+                      --mail-from "${MAIL_FROM}" \
+                      --mail-rcpt "${MAIL_TO}" \
+                      --upload-file "${WORK}/mail.eml"
+                  }
+
+                  TODAY=$(TZ=Asia/Kolkata date +%Y-%m-%d)
+                  if [ -f /config/holidays.txt ] && grep -q "^${TODAY}" /config/holidays.txt; then
+                    echo "${TODAY} is listed as a holiday. Skipping start (no mail)."
+                    exit 0
+                  fi
+
+                  READY_NOW=$(kubectl get deployment/${APP} -n ${NS} -o jsonpath='{.status.readyReplicas}')
+                  if [ "${READY_NOW:-0}" -ge 1 ]; then
+                    echo "${APP} is already running. Nothing to do (no mail)."
+                    exit 0
+                  fi
+
+                  echo "Scaling ${APP} to 1"
+                  kubectl scale deployment/${APP} -n ${NS} --replicas=1 || exit 1
+                  TRIGGERED_AT=$(ist_now)
+
+                  # 1) wait for the pod object to be created
+                  POD=""
+                  for i in $(seq 1 30); do
+                    POD=$(kubectl get pods -n ${NS} -l app=${APP} --sort-by=.metadata.creationTimestamp -o jsonpath='{.items[-1:].metadata.name}' 2>/dev/null)
+                    [ -n "${POD}" ] && break
+                    sleep 2
+                  done
+
+                  PHASE="NotCreated"
+                  READY="false"
+                  RESTARTS="0"
+
+                  if [ -z "${POD}" ]; then
+                    POD="none"
+                    echo "No pod was created within 60 seconds. Check the Deployment and ReplicaSet events." > "${WORK}/${POD}.log"
+                  else
+                    # 2) wait (up to 120s) for the container to be running
+                    for i in $(seq 1 60); do
+                      PHASE=$(kubectl get pod ${POD} -n ${NS} -o jsonpath='{.status.phase}' 2>/dev/null)
+                      [ "${PHASE}" = "Running" ] && break
+                      sleep 2
+                    done
+
+                    if [ "${PHASE}" = "Running" ]; then
+                      # 3) watch the logs for one minute
+                      echo "Pod ${POD} is running. Following logs for 60 seconds..."
+                      timeout 60 kubectl logs -f ${POD} -n ${NS} > "${WORK}/${POD}.log" 2>&1
+                      READY=$(kubectl get pod ${POD} -n ${NS} -o jsonpath='{.status.containerStatuses[0].ready}')
+                      RESTARTS=$(kubectl get pod ${POD} -n ${NS} -o jsonpath='{.status.containerStatuses[0].restartCount}')
+                    else
+                      # pod never reached Running (for example ImagePullBackOff): send describe/events instead
+                      kubectl describe pod ${POD} -n ${NS} 2>&1 | tail -n 40 > "${WORK}/${POD}.log"
+                    fi
+                  fi
+
+                  if [ "${PHASE}" = "Running" ] && [ "${READY}" = "true" ] && [ "${RESTARTS:-0}" = "0" ]; then
+                    RESULT="SUCCESS"
+                    COLOUR="#1a7f37"
+                    HEADLINE="${APP} STARTED successfully"
+                  else
+                    RESULT="FAILED"
+                    COLOUR="#c62828"
+                    HEADLINE="${APP} did NOT start cleanly"
+                  fi
+
+                  {
+                    echo "<table cellpadding=\"4\">"
+                    echo "<tr><td><b>Application</b></td><td>${APP}</td></tr>"
+                    echo "<tr><td><b>Namespace</b></td><td>${NS}</td></tr>"
+                    echo "<tr><td><b>Action</b></td><td>Scale up to 1 replica</td></tr>"
+                    echo "<tr><td><b>Triggered at</b></td><td>${TRIGGERED_AT}</td></tr>"
+                    echo "<tr><td><b>Pod</b></td><td>${POD}</td></tr>"
+                    echo "<tr><td><b>Phase / Ready / Restarts</b></td><td>${PHASE} / ${READY} / ${RESTARTS}</td></tr>"
+                    echo "</table>"
+                    echo "<h4>Pod logs (first 60 seconds, last 300 lines)</h4>"
+                    echo "<pre style=\"background:#f4f4f4;padding:8px;white-space:pre-wrap\">"
+                    tail -n 300 "${WORK}/${POD}.log" | esc
+                    echo "</pre>"
+                  } > "${WORK}/body.html"
+
+                  send_mail "[${RESULT}] ${APP} start - $(ist_now)" "${COLOUR}" "${HEADLINE}" "${WORK}/body.html"
+                  MAIL_RC=$?
+                  [ "${MAIL_RC}" -ne 0 ] && echo "WARNING: mail could not be sent (curl exit ${MAIL_RC})"
+                  [ "${RESULT}" = "SUCCESS" ] || exit 1
+                  exit ${MAIL_RC}
+              volumeMounts:
+                - name: holidays
+                  mountPath: /config
+                  readOnly: true
+                - name: work
+                  mountPath: /work
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+                runAsNonRoot: true
+                runAsUser: 1001
+                seccompProfile:
+                  type: RuntimeDefault
+          volumes:
+            - name: holidays
+              configMap:
+                name: scheduler-holidays
+                optional: true
+            - name: work
+              emptyDir: {}
 ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+# STOP 04:00 PM IST, Mon-Fri.
+# Starts following the pod logs BEFORE scaling down (logs are lost once the pod is deleted),
+# scales to 0, waits until the pod is gone, then emails the captured logs as HTML.
+apiVersion: batch/v1
+kind: CronJob
 metadata:
-  name: app-scaler-role
+  name: rate-engine-fixccilfeed-stop-1600
   namespace: engine
-rules:
-  - apiGroups: ["apps"]
-    resources: ["deployments"]
-    resourceNames: ["rate-engine-fixccilfeed", "rate-engine-fix360t"]
-    verbs: ["get"]
-  - apiGroups: ["apps"]
-    resources: ["deployments/scale"]
-    resourceNames: ["rate-engine-fixccilfeed", "rate-engine-fix360t"]
-    verbs: ["get", "patch", "update"]
-  # Needed for log capture and waiting for pods to start/stop.
-  # Pod names are dynamic, so these cannot be limited with resourceNames.
-  - apiGroups: [""]
-    resources: ["pods"]
-    verbs: ["get", "list", "watch"]
-  - apiGroups: [""]
-    resources: ["pods/log"]
-    verbs: ["get"]
-  - apiGroups: [""]
-    resources: ["events"]
-    verbs: ["get", "list"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: app-scaler-rb
-  namespace: engine
-subjects:
-  - kind: ServiceAccount
-    name: app-scaler-sa
-    namespace: engine
-roleRef:
-  kind: Role
-  name: app-scaler-role
-  apiGroup: rbac.authorization.k8s.io
+spec:
+  schedule: "0 16 * * 1-5"
+  timeZone: "Asia/Kolkata"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 600
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 900
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          serviceAccountName: app-scaler-sa
+          restartPolicy: Never
+          containers:
+            - name: scaler
+              image: registry.com/itss/kubectl:1.33.4
+              imagePullPolicy: IfNotPresent
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  APP=rate-engine-fixccilfeed
+                  NS=engine
+                  SMTP_HOST=smtp.example.bank.in
+                  SMTP_PORT=25
+                  MAIL_FROM=k8s-scheduler@example.bank.in
+                  MAIL_TO=team@example.bank.in
+                  WORK=/work
+
+                  ist_now() {
+                    date -u -d "@$(( $(date -u +%s) + 19800 ))" "+%d-%b-%Y %H:%M:%S IST" 2>/dev/null || date -u "+%d-%b-%Y %H:%M:%S UTC"
+                  }
+
+                  esc() { sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g'; }
+
+                  # send_mail <subject> <colour> <headline> <body-html-file>
+                  send_mail() {
+                    {
+                      printf 'From: %s\n' "${MAIL_FROM}"
+                      printf 'To: %s\n' "${MAIL_TO}"
+                      printf 'Subject: %s\n' "$1"
+                      printf 'MIME-Version: 1.0\n'
+                      printf 'Content-Type: text/html; charset=UTF-8\n\n'
+                      printf '<html><body style="font-family:Arial,sans-serif;font-size:13px">\n'
+                      printf '<h3 style="color:%s">%s</h3>\n' "$2" "$3"
+                      cat "$4"
+                      printf '</body></html>\n'
+                    } | awk '{ printf "%s\r\n", $0 }' > "${WORK}/mail.eml"
+                    curl --silent --show-error \
+                      --url "smtp://${SMTP_HOST}:${SMTP_PORT}" \
+                      --mail-from "${MAIL_FROM}" \
+                      --mail-rcpt "${MAIL_TO}" \
+                      --upload-file "${WORK}/mail.eml"
+                  }
+
+                  PODS=$(kubectl get pods -n ${NS} -l app=${APP} -o jsonpath='{.items[*].metadata.name}')
+                  if [ -z "${PODS}" ]; then
+                    echo "No pods found for ${APP}. Already stopped (no mail)."
+                    exit 0
+                  fi
+
+                  # 1) start following logs of every pod BEFORE scaling down
+                  PIDS=""
+                  for P in ${PODS}; do
+                    kubectl logs -f ${P} -n ${NS} > "${WORK}/${P}.log" 2>&1 &
+                    PIDS="${PIDS} $!"
+                  done
+                  sleep 2
+
+                  # 2) scale down
+                  echo "Scaling ${APP} to 0"
+                  kubectl scale deployment/${APP} -n ${NS} --replicas=0 || { kill ${PIDS} 2>/dev/null; exit 1; }
+                  TRIGGERED_AT=$(ist_now)
+
+                  # 3) wait until the pods are gone (up to 180s), let the log streams flush, then stop them
+                  kubectl wait --for=delete pod -l app=${APP} -n ${NS} --timeout=180s
+                  STOPPED_AT=$(ist_now)
+                  sleep 3
+                  kill ${PIDS} 2>/dev/null
+
+                  REMAINING=$(kubectl get pods -n ${NS} -l app=${APP} --no-headers 2>/dev/null | wc -l | tr -d ' ')
+                  if [ "${REMAINING}" -eq 0 ]; then
+                    RESULT="SUCCESS"
+                    COLOUR="#1a7f37"
+                    HEADLINE="${APP} STOPPED successfully"
+                  else
+                    RESULT="FAILED"
+                    COLOUR="#c62828"
+                    HEADLINE="${APP} still has ${REMAINING} pod(s) after 180 seconds"
+                  fi
+
+                  {
+                    echo "<table cellpadding=\"4\">"
+                    echo "<tr><td><b>Application</b></td><td>${APP}</td></tr>"
+                    echo "<tr><td><b>Namespace</b></td><td>${NS}</td></tr>"
+                    echo "<tr><td><b>Action</b></td><td>Scale down to 0 replicas</td></tr>"
+                    echo "<tr><td><b>Triggered at</b></td><td>${TRIGGERED_AT}</td></tr>"
+                    echo "<tr><td><b>Pods gone at</b></td><td>${STOPPED_AT}</td></tr>"
+                    echo "<tr><td><b>Pods stopped</b></td><td>${PODS}</td></tr>"
+                    echo "</table>"
+                    for P in ${PODS}; do
+                      echo "<h4>Pod ${P} - logs until shutdown (last 300 lines)</h4>"
+                      echo "<pre style=\"background:#f4f4f4;padding:8px;white-space:pre-wrap\">"
+                      tail -n 300 "${WORK}/${P}.log" | esc
+                      echo "</pre>"
+                    done
+                  } > "${WORK}/body.html"
+
+                  send_mail "[${RESULT}] ${APP} stop - $(ist_now)" "${COLOUR}" "${HEADLINE}" "${WORK}/body.html"
+                  MAIL_RC=$?
+                  [ "${MAIL_RC}" -ne 0 ] && echo "WARNING: mail could not be sent (curl exit ${MAIL_RC})"
+                  [ "${RESULT}" = "SUCCESS" ] || exit 1
+                  exit ${MAIL_RC}
+              volumeMounts:
+                - name: work
+                  mountPath: /work
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+                runAsNonRoot: true
+                runAsUser: 1001
+                seccompProfile:
+                  type: RuntimeDefault
+          volumes:
+            - name: work
+              emptyDir: {}
