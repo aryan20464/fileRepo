@@ -1,46 +1,67 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: holiday-config
+  name: scheduler-holidays
+  namespace: engine
 data:
+  # One holiday per line: YYYY-MM-DD (optional text after the date is ignored).
+  # Lines starting with # are comments. Replace the sample dates below with your own list.
   holidays.txt: |
-    2026-01-01
-    2026-04-30
-    2026-05-01
-    2026-09-02
-
-
-
-
-
+    2026-10-02 Gandhi Jayanti
+    2026-12-25 Christmas
+    2027-01-26 Republic Day
+---
+# START at 08:30 AM IST, Monday-Friday, skipped on dates listed in scheduler-holidays
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: my-holiday-aware-job
+  name: rate-engine-fixccilfeed-start-0830
+  namespace: engine
 spec:
-  schedule: "0 9 * * 1-5" 
+  schedule: "30 8 * * 1-5"
+  timeZone: "Asia/Kolkata"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 600
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
   jobTemplate:
     spec:
+      backoffLimit: 2
+      ttlSecondsAfterFinished: 3600
       template:
         spec:
-          volumes:
-          - name: holiday-volume
-            configMap:
-              name: holiday-config
-          containers:
-          - name: worker
-            image: python:3.9-slim
-            volumeMounts:
-            - name: holiday-volume
-              mountPath: /etc/holidays
-            command: ["/bin/sh", "-c"]
-            args:
-            - |
-              CURRENT_DATE=$(date +%Y-%m-%d)
-              if grep -q "$CURRENT_DATE" /etc/holidays/holidays.txt; then
-                echo "Skipping execution: $CURRENT_DATE is a listed holiday."
-                exit 0
-              fi
-              echo "Proceeding with job execution..."
-              python /app/main.py
+          serviceAccountName: app-scaler-sa
           restartPolicy: OnFailure
+          containers:
+            - name: scaler
+              image: registry.com/itss/kubectl:1.33.4
+              imagePullPolicy: IfNotPresent
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  TODAY=$(TZ=Asia/Kolkata date +%Y-%m-%d)
+                  echo "Date (IST): ${TODAY}"
+                  if [ -f /config/holidays.txt ] && grep -q "^${TODAY}" /config/holidays.txt; then
+                    echo "${TODAY} is listed as a holiday. Skipping start."
+                    exit 0
+                  fi
+                  echo "Not a holiday. Scaling rate-engine-fixccilfeed to 1."
+                  kubectl scale deployment/rate-engine-fixccilfeed -n engine --replicas=1
+              volumeMounts:
+                - name: holidays
+                  mountPath: /config
+                  readOnly: true
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+                runAsNonRoot: true
+                runAsUser: 1001
+                seccompProfile:
+                  type: RuntimeDefault
+          volumes:
+            - name: holidays
+              configMap:
+                name: scheduler-holidays
+                optional: true
