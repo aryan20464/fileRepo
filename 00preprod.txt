@@ -1,3 +1,73 @@
-kubectl auth can-i get deployments.apps/rateengine-fixccilfeed -n engine --as=system:serviceaccount:engine:app-scaler-sa
-kubectl auth can-i patch deployments.apps/rateengine-fixccilfeed --subresource=scale -n engine --as=system:serviceaccount:engine:app-scaler-sa
-kubectl auth can-i list pods -n engine --as=system:serviceaccount:engine:app-scaler-sa
+>kubectl get role app-scaler-role -n engine -o yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"Role","metadata":{"annotations":{},"name":"app-scaler-role","namespace":""engine""},"rules":[{"apiGroups":["apps"],"resourceNames":["rateengine-fixccilfeed"],"resources":["deployments"],"verbs":["get"]},{"apiGroups":["apps"],"resourceNames":["rateengine-fixccilfeed"],"resources":["deployments/scale"],"verbs":["get","patch","update"]},{"apiGroups":[""],"resources":["pods"],"verbs":["get","list","watch"]},{"apiGroups":[""],"resources":["pods/log"],"verbs":["get"]},{"apiGroups":[""],"resources":["events"],"verbs":["get","list"]}]}
+  creationTimestamp: "2026-10-01T05:01:20Z"
+  name: app-scaler-role
+  namespace: engine
+  resourceVersion: "136528781"
+  uid: d615ddf7-2904-45b0-b2cb-eea60dd86354
+rules:
+- apiGroups:
+  - apps
+  resourceNames:
+  - rateengine-fixccilfeed
+  resources:
+  - deployments
+  verbs:
+  - get
+- apiGroups:
+  - apps
+  resourceNames:
+  - rateengine-fixccilfeed
+  resources:
+  - deployments/scale
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods/log
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - get
+  - list
+
+>kubectl get rolebinding app-scaler-rb -n engine -o yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"RoleBinding","metadata":{"annotations":{},"name":"app-scaler-rb","namespace":"engine"},"roleRef":{"apiGroup":"rbac.authorization.k8s.io","kind":"Role","name":"app-scaler-role"},"subjects":[{"kind":"ServiceAccount","name":"app-scaler-sa","namespace":"engine"}]}
+  creationTimestamp: "2026-10-01T05:01:20Z"
+  name: app-scaler-rb
+  namespace: engine
+  resourceVersion: "136528782"
+  uid: fde04927-847f-45d3-9fd1-a9cd9e46a99d
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: app-scaler-role
+subjects:
+- kind: ServiceAccount
+  name: app-scaler-sa
+  namespace: engine
