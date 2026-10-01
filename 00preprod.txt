@@ -1,291 +1,46 @@
-
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: rate-engine-fixccilfeed
-  namespace: engine
-  labels:
-    app: rate-engine-fixccilfeed
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: rate-engine-fixccilfeed
-  template:
-    metadata:
-      labels:
-        app: rate-engine-fixccilfeed
-    spec:
-      containers:
-        - name: rate-engine-fixccilfeed
-          image: registry.com/itss/rateengine-fixccilfeed:1.0
-          ports:
-            - containerPort: 8086
-            - containerPort: 40000
-          imagePullPolicy: Always
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            runAsNonRoot: true
-            runAsUser: 1001
-            seccompProfile:
-              type: RuntimeDefault
----
 apiVersion: v1
-kind: Service
+kind: ConfigMap
 metadata:
-  name: rate-engine-fixccilfeed-service
-  namespace: engine
-spec:
-  selector:
-    app: rate-engine-fixccilfeed
-  type: ClusterIP
-  ports:
-    - port: 8086
-      targetPort: 8086
----
-# START at 08:30 AM IST
+  name: holiday-config
+data:
+  holidays.txt: |
+    2026-01-01
+    2026-04-30
+    2026-05-01
+    2026-09-02
+
+
+
+
+
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: rate-engine-fixccilfeed-start-0830
-  namespace: engine
+  name: my-holiday-aware-job
 spec:
-  schedule: "30 8 * * *"
-  timeZone: "Asia/Kolkata"
-  concurrencyPolicy: Forbid
-  startingDeadlineSeconds: 600
-  successfulJobsHistoryLimit: 2
-  failedJobsHistoryLimit: 3
+  schedule: "0 9 * * 1-5" 
   jobTemplate:
     spec:
-      backoffLimit: 2
-      ttlSecondsAfterFinished: 3600
       template:
         spec:
-          serviceAccountName: app-scaler-sa
-          restartPolicy: OnFailure
+          volumes:
+          - name: holiday-volume
+            configMap:
+              name: holiday-config
           containers:
-            - name: scaler
-              image: registry.com/itss/kubectl:1.29
-              imagePullPolicy: IfNotPresent
-              command: ["/bin/sh", "-c"]
-              args:
-                - kubectl scale deployment/rate-engine-fixccilfeed -n engine --replicas=1
-              securityContext:
-                allowPrivilegeEscalation: false
-                capabilities:
-                  drop:
-                    - ALL
-                runAsNonRoot: true
-                runAsUser: 1001
-                seccompProfile:
-                  type: RuntimeDefault
----
-# STOP at 04:00 PM IST
-apiVersion: batch/v1
-kind: CronJob
-metadata:
-  name: rate-engine-fixccilfeed-stop-1600
-  namespace: engine
-spec:
-  schedule: "0 16 * * *"
-  timeZone: "Asia/Kolkata"
-  concurrencyPolicy: Forbid
-  startingDeadlineSeconds: 600
-  successfulJobsHistoryLimit: 2
-  failedJobsHistoryLimit: 3
-  jobTemplate:
-    spec:
-      backoffLimit: 2
-      ttlSecondsAfterFinished: 3600
-      template:
-        spec:
-          serviceAccountName: app-scaler-sa
+          - name: worker
+            image: python:3.9-slim
+            volumeMounts:
+            - name: holiday-volume
+              mountPath: /etc/holidays
+            command: ["/bin/sh", "-c"]
+            args:
+            - |
+              CURRENT_DATE=$(date +%Y-%m-%d)
+              if grep -q "$CURRENT_DATE" /etc/holidays/holidays.txt; then
+                echo "Skipping execution: $CURRENT_DATE is a listed holiday."
+                exit 0
+              fi
+              echo "Proceeding with job execution..."
+              python /app/main.py
           restartPolicy: OnFailure
-          containers:
-            - name: scaler
-              image: registry.com/itss/kubectl:1.29
-              imagePullPolicy: IfNotPresent
-              command: ["/bin/sh", "-c"]
-              args:
-                - kubectl scale deployment/rate-engine-fixccilfeed -n engine --replicas=0
-              securityContext:
-                allowPrivilegeEscalation: false
-                capabilities:
-                  drop:
-                    - ALL
-                runAsNonRoot: true
-                runAsUser: 1001
-                seccompProfile:
-                  type: RuntimeDefault
----
-# START at 07:00 PM IST
-apiVersion: batch/v1
-kind: CronJob
-metadata:
-  name: rate-engine-fixccilfeed-start-1900
-  namespace: engine
-spec:
-  schedule: "0 19 * * *"
-  timeZone: "Asia/Kolkata"
-  concurrencyPolicy: Forbid
-  startingDeadlineSeconds: 600
-  successfulJobsHistoryLimit: 2
-  failedJobsHistoryLimit: 3
-  jobTemplate:
-    spec:
-      backoffLimit: 2
-      ttlSecondsAfterFinished: 3600
-      template:
-        spec:
-          serviceAccountName: app-scaler-sa
-          restartPolicy: OnFailure
-          containers:
-            - name: scaler
-              image: registry.com/itss/kubectl:1.29
-              imagePullPolicy: IfNotPresent
-              command: ["/bin/sh", "-c"]
-              args:
-                - kubectl scale deployment/rate-engine-fixccilfeed -n engine --replicas=1
-              securityContext:
-                allowPrivilegeEscalation: false
-                capabilities:
-                  drop:
-                    - ALL
-                runAsNonRoot: true
-                runAsUser: 1001
-                seccompProfile:
-                  type: RuntimeDefault
----
-# STOP at 07:30 PM IST
-apiVersion: batch/v1
-kind: CronJob
-metadata:
-  name: rate-engine-fixccilfeed-stop-1930
-  namespace: engine
-spec:
-  schedule: "30 19 * * *"
-  timeZone: "Asia/Kolkata"
-  concurrencyPolicy: Forbid
-  startingDeadlineSeconds: 600
-  successfulJobsHistoryLimit: 2
-  failedJobsHistoryLimit: 3
-  jobTemplate:
-    spec:
-      backoffLimit: 2
-      ttlSecondsAfterFinished: 3600
-      template:
-        spec:
-          serviceAccountName: app-scaler-sa
-          restartPolicy: OnFailure
-          containers:
-            - name: scaler
-              image: registry.com/itss/kubectl:1.29
-              imagePullPolicy: IfNotPresent
-              command: ["/bin/sh", "-c"]
-              args:
-                - kubectl scale deployment/rate-engine-fixccilfeed -n engine --replicas=0
-              securityContext:
-                allowPrivilegeEscalation: false
-                capabilities:
-                  drop:
-                    - ALL
-                runAsNonRoot: true
-                runAsUser: 1001
-                seccompProfile:
-                  type: RuntimeDefault
-
-
-
-
-
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: app-scaler-sa
-  namespace: engine
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: app-scaler-role
-  namespace: engine
-rules:
-  - apiGroups: ["apps"]
-    resources: ["deployments"]
-    resourceNames: ["rate-engine-fixccilfeed"]
-    verbs: ["get"]
-  - apiGroups: ["apps"]
-    resources: ["deployments/scale"]
-    resourceNames: ["rate-engine-fixccilfeed"]
-    verbs: ["get", "patch", "update"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: app-scaler-rb
-  namespace: engine
-subjects:
-  - kind: ServiceAccount
-    name: app-scaler-sa
-    namespace: engine
-roleRef:
-  kind: Role
-  name: app-scaler-role
-  apiGroup: rbac.authorization.k8s.io
-
-
-
-
-
-
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: app-scaler-sa
-  namespace: engine
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: app-scaler-role
-  namespace: engine
-rules:
-  - apiGroups: ["apps"]
-    resources: ["deployments"]
-    resourceNames: ["rate-engine-fixccilfeed", "rate-engine-fix360t"]
-    verbs: ["get"]
-  - apiGroups: ["apps"]
-    resources: ["deployments/scale"]
-    resourceNames: ["rate-engine-fixccilfeed", "rate-engine-fix360t"]
-    verbs: ["get", "patch", "update"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: app-scaler-rb
-  namespace: engine
-subjects:
-  - kind: ServiceAccount
-    name: app-scaler-sa
-    namespace: engine
-roleRef:
-  kind: Role
-  name: app-scaler-role
-  apiGroup: rbac.authorization.k8s.io
-
-
-
-
-
-
-
-WARNING: This version information is deprecated and will be replaced with the output from kubectl version --short.  Use --output=yaml|json to get the full version.
-Client Version: version.Info{Major:"1", Minor:"27", GitVersion:"v1.27.2", GitCommit:"7f6f68fdabc4df88cfea2dcf9a19b2b830f1e647", GitTreeState:"clean", BuildDate:"2023-05-17T14:20:07Z", GoVersion:"go1.20.4", Compiler:"gc", Platform:"windows/amd64"}
-Kustomize Version: v5.0.1
-Server Version: version.Info{Major:"1", Minor:"33", GitVersion:"v1.33.6+vmware.1-fips", GitCommit:"b043a29eab048fd45de465fba955a5c7b9ffe66f", GitTreeState:"clean", BuildDate:"2025-11-15T13:55:43Z", GoVersion:"go1.24.9 X:boringcrypto", Compiler:"gc", Platform:"linux/amd64"}
-WARNING: version difference between client (1.27) and server (1.33) exceeds the supported minor version skew of +/-1
