@@ -1,54 +1,45 @@
-# START at 08:30 AM IST, Monday-Friday, skipped on dates listed in scheduler-holidays
-apiVersion: batch/v1
-kind: CronJob
+apiVersion: v1
+kind: ServiceAccount
 metadata:
-  name: indent-cronjob-start
-  namespace: forex
-spec:
-  schedule: "45 10 * * 1-5"
-  timeZone: "Asia/Kolkata"
-  concurrencyPolicy: Forbid
-  startingDeadlineSeconds: 600
-  successfulJobsHistoryLimit: 2
-  failedJobsHistoryLimit: 3
-  jobTemplate:
-    spec:
-      backoffLimit: 2
-      ttlSecondsAfterFinished: 3600
-      template:
-        spec:
-          serviceAccountName: app-scaler-sa
-          restartPolicy: OnFailure
-          containers:
-            - name: scaler
-              image: h06vksharbor.corp.ad.sbi/itss/kubectl:1.33.4
-              imagePullPolicy: IfNotPresent
-              command: ["/bin/sh", "-c"]
-              args:
-                - |
-                  TODAY=$(TZ=Asia/Kolkata date +%Y-%m-%d)
-                  echo "Date (IST): ${TODAY}"
-                  if [ -f /config/holidays.txt ] && grep -q "^${TODAY}" /config/holidays.txt; then
-                    echo "${TODAY} is listed as a holiday. Skipping start."
-                    exit 0
-                  fi
-                  echo "Not a holiday. Scaling rforex-indents to 1."
-                  kubectl scale deployment/rforex-indents -n forex --replicas=1
-              volumeMounts:
-                - name: holidays
-                  mountPath: /config
-                  readOnly: true
-              securityContext:
-                allowPrivilegeEscalation: false
-                capabilities:
-                  drop:
-                    - ALL
-                runAsNonRoot: true
-                runAsUser: 1001
-                seccompProfile:
-                  type: RuntimeDefault
-          volumes:
-            - name: holidays
-              configMap:
-                name: scheduler-holidays
-                optional: true
+  name: app-scaler-sa
+  namespace: engine
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: app-scaler-role
+  namespace: engine
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    resourceNames: ["rate-engine-fixccilfeed", "rate-engine-fix360t"]
+    verbs: ["get"]
+  - apiGroups: ["apps"]
+    resources: ["deployments/scale"]
+    resourceNames: ["rate-engine-fixccilfeed", "rate-engine-fix360t"]
+    verbs: ["get", "patch", "update"]
+  # Needed for log capture and waiting for pods to start/stop.
+  # Pod names are dynamic, so these cannot be limited with resourceNames.
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["pods/log"]
+    verbs: ["get"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: app-scaler-rb
+  namespace: engine
+subjects:
+  - kind: ServiceAccount
+    name: app-scaler-sa
+    namespace: engine
+roleRef:
+  kind: Role
+  name: app-scaler-role
+  apiGroup: rbac.authorization.k8s.io
