@@ -1,24 +1,11 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: scheduler-holidays
-  namespace: engine
-data:
-  # One holiday per line: YYYY-MM-DD (optional text after the date is ignored).
-  # Lines starting with # are comments. Replace the sample dates below with your own list.
-  holidays.txt: |
-    2026-10-02 Gandhi Jayanti
-    2026-12-25 Christmas
-    2027-01-26 Republic Day
----
 # START at 08:30 AM IST, Monday-Friday, skipped on dates listed in scheduler-holidays
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: rate-engine-fixccilfeed-start-0830
-  namespace: engine
+  name: indent-cronjob-start
+  namespace: forex
 spec:
-  schedule: "30 8 * * 1-5"
+  schedule: "45 10 * * 1-5"
   timeZone: "Asia/Kolkata"
   concurrencyPolicy: Forbid
   startingDeadlineSeconds: 600
@@ -34,7 +21,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: scaler
-              image: registry.com/itss/kubectl:1.33.4
+              image: h06vksharbor.corp.ad.sbi/itss/kubectl:1.33.4
               imagePullPolicy: IfNotPresent
               command: ["/bin/sh", "-c"]
               args:
@@ -45,8 +32,8 @@ spec:
                     echo "${TODAY} is listed as a holiday. Skipping start."
                     exit 0
                   fi
-                  echo "Not a holiday. Scaling rate-engine-fixccilfeed to 1."
-                  kubectl scale deployment/rate-engine-fixccilfeed -n engine --replicas=1
+                  echo "Not a holiday. Scaling rforex-indents to 1."
+                  kubectl scale deployment/rforex-indents -n forex --replicas=1
               volumeMounts:
                 - name: holidays
                   mountPath: /config
