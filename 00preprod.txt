@@ -1,6 +1,374 @@
-{
-    "mailRecipients" : "test.com",
-    "mailSubject" : "RATE-ENGINE APPLICATION STATUS",
-    "mailContent": "<html><body>This presents the status of rate engine application status everytime a cron job runs</body></html>",
-    "sourceSystem": "ONE"
-}
+# Shared by all scheduler CronJobs in namespace engine.
+# Apply this BEFORE the CronJobs:  kubectl apply -f scheduler-mail-templates.yaml
+# Editing any key takes effect on the next job run (no CronJob change needed).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scheduler-mail
+  namespace: engine
+data:
+  # ---- Outer mail layout. Placeholders: @@COLOUR@@ @@HEADLINE@@ @@DETAILS@@ @@LOGS@@ ----
+  mail.html: |
+    <html>
+    <body style="font-family:Arial,sans-serif;font-size:13px">
+    <h3 style="color:@@COLOUR@@">@@HEADLINE@@</h3>
+    <table cellpadding="4">
+    @@DETAILS@@
+    </table>
+    @@LOGS@@
+    <p style="color:#888888;font-size:11px">Automated message from the Kubernetes scheduler. Please do not reply.</p>
+    </body>
+    </html>
+
+  # ---- One row of the details table. Placeholders: @@LABEL@@ @@VALUE@@ ----
+  row.html: |
+    <tr><td><b>@@LABEL@@</b></td><td>@@VALUE@@</td></tr>
+
+  # ---- One log block per pod. Placeholders: @@TITLE@@ @@LOGTEXT@@ ----
+  log-section.html: |
+    <h4>@@TITLE@@</h4>
+    <pre style="background:#f4f4f4;padding:8px;white-space:pre-wrap">
+    @@LOGTEXT@@
+    </pre>
+
+  # ---- Template engine: replaces @@NAME@@ with the value of env var T_NAME.
+  # A placeholder alone on a line is replaced by the contents of the file named in T_NAME_FILE.
+  render.awk: |
+    function dump(f,   l) {
+      while ((getline l < f) > 0) print l
+      close(f)
+    }
+    {
+      line = $0
+      if (match(line, /^[ \t]*@@[A-Z_]+@@[ \t]*$/)) {
+        n = line
+        gsub(/[ \t@]/, "", n)
+        f = ENVIRON["T_" n "_FILE"]
+        if (f != "") { dump(f); next }
+      }
+      out = ""
+      while ((s = index(line, "@@")) > 0) {
+        rest = substr(line, s + 2)
+        e = index(rest, "@@")
+        if (e == 0) break
+        name = substr(rest, 1, e - 1)
+        out = out substr(line, 1, s - 1) ENVIRON["T_" name]
+        line = substr(rest, e + 2)
+      }
+      print out line
+    }
+
+  # ---- Helper functions sourced by the CronJobs (". /templates/lib.sh").
+  # Caller must set: TPL WORK MAIL_API_URL MAIL_TO SOURCE_SYSTEM
+  # Optional: CA_CERT (path to a CA bundle if the mail API uses an internal CA)
+  lib.sh: |
+    ist_now() {
+      date -u -d "@$(( $(date -u +%s) + 19800 ))" "+%d-%b-%Y %H:%M:%S IST" 2>/dev/null || date -u "+%d-%b-%Y %H:%M:%S UTC"
+    }
+
+    esc() { sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g'; }
+
+    : > "${WORK}/details.html"
+    : > "${WORK}/logs.html"
+
+    # add_row <label> <value>
+    add_row() {
+      _v=$(printf '%s' "$2" | esc)
+      env T_LABEL="$1" T_VALUE="${_v}" awk -f "${TPL}/render.awk" "${TPL}/row.html" >> "${WORK}/details.html"
+    }
+
+    # add_log <title> <logfile>   (keeps the last 300 lines)
+    add_log() {
+      tail -n 300 "$2" | esc > "${WORK}/logtext.txt"
+      env T_TITLE="$1" T_LOGTEXT_FILE="${WORK}/logtext.txt" awk -f "${TPL}/render.awk" "${TPL}/log-section.html" >> "${WORK}/logs.html"
+    }
+
+    # json_escape: reads stdin, prints it as the inside of a JSON string
+    json_escape() {
+      tr -d '\r' | tr '\t' ' ' | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' | awk 'NR>1{printf "\\n"} {printf "%s", $0}'
+    }
+
+    # send_mail <subject> <colour> <headline>
+    # POSTs {mailRecipients, mailSubject, mailContent, sourceSystem} to MAIL_API_URL
+    send_mail() {
+      _html=$(env T_COLOUR="$2" T_HEADLINE="$3" T_DETAILS_FILE="${WORK}/details.html" T_LOGS_FILE="${WORK}/logs.html" \
+        awk -f "${TPL}/render.awk" "${TPL}/mail.html")
+      _subject=$(printf '%s' "$1" | json_escape)
+      _content=$(printf '%s' "${_html}" | json_escape)
+      printf '{"mailRecipients":"%s","mailSubject":"%s","mailContent":"%s","sourceSystem":"%s"}' \
+        "${MAIL_TO}" "${_subject}" "${_content}" "${SOURCE_SYSTEM}" > "${WORK}/mail.json"
+      _code=$(curl --silent --show-error --max-time 30 ${CA_CERT:+--cacert ${CA_CERT}} \
+        --output "${WORK}/mail-response.txt" --write-out '%{http_code}' \
+        -X POST "${MAIL_API_URL}" \
+        -H 'Content-Type: application/json' \
+        --data-binary @"${WORK}/mail.json")
+      echo "Mail API responded HTTP ${_code}: $(head -c 500 "${WORK}/mail-response.txt" 2>/dev/null)"
+      case "${_code}" in 2*) return 0 ;; *) return 1 ;; esac
+    }
+
+
+
+
+
+# Requires (apply first):
+#   1. scheduler-holidays ConfigMap         (already applied)
+#   2. scheduler-mail-templates.yaml        (HTML templates + helper functions)
+#   3. app-scaler-rbac.yaml                 (updated: pod, log and event read access)
+#
+# BEFORE APPLYING, change these 4 values in BOTH jobs:
+#   MAIL_TO  (and MAIL_API_URL / SOURCE_SYSTEM if they differ)
+#
+# START 08:30 AM IST, Mon-Fri, skipped on holidays.
+# Scales up, follows the pod logs for 60 seconds to judge the result, then emails the status (via the mail API).
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: rate-engine-fixccilfeed-start-0830
+  namespace: engine
+spec:
+  schedule: "30 8 * * 1-5"
+  timeZone: "Asia/Kolkata"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 600
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 900
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          serviceAccountName: app-scaler-sa
+          restartPolicy: Never
+          containers:
+            - name: scaler
+              image: registry.com/itss/kubectl:1.33.4
+              imagePullPolicy: IfNotPresent
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  APP=rate-engine-fixccilfeed
+                  NS=engine
+                  MAIL_API_URL=https://emaillist.com/sendMail
+                  MAIL_TO=test@example.com
+                  SOURCE_SYSTEM=ONE
+                  TPL=/templates
+                  WORK=/work
+                  . ${TPL}/lib.sh
+
+                  TODAY=$(TZ=Asia/Kolkata date +%Y-%m-%d)
+                  if [ -f /config/holidays.txt ] && grep -q "^${TODAY}" /config/holidays.txt; then
+                    echo "${TODAY} is listed as a holiday. Skipping start (no mail)."
+                    exit 0
+                  fi
+
+                  READY_NOW=$(kubectl get deployment/${APP} -n ${NS} -o jsonpath='{.status.readyReplicas}')
+                  if [ "${READY_NOW:-0}" -ge 1 ]; then
+                    echo "${APP} is already running. Nothing to do (no mail)."
+                    exit 0
+                  fi
+
+                  echo "Scaling ${APP} to 1"
+                  kubectl scale deployment/${APP} -n ${NS} --replicas=1 || exit 1
+                  TRIGGERED_AT=$(ist_now)
+
+                  # 1) wait for the pod object to be created
+                  POD=""
+                  for i in $(seq 1 30); do
+                    POD=$(kubectl get pods -n ${NS} -l app=${APP} --sort-by=.metadata.creationTimestamp -o jsonpath='{.items[-1:].metadata.name}' 2>/dev/null)
+                    [ -n "${POD}" ] && break
+                    sleep 2
+                  done
+
+                  PHASE="NotCreated"
+                  READY="false"
+                  RESTARTS="0"
+
+                  if [ -z "${POD}" ]; then
+                    POD="none"
+                    echo "No pod was created within 60 seconds. Check the Deployment and ReplicaSet events." > "${WORK}/${POD}.log"
+                  else
+                    # 2) wait (up to 120s) for the container to be running
+                    for i in $(seq 1 60); do
+                      PHASE=$(kubectl get pod ${POD} -n ${NS} -o jsonpath='{.status.phase}' 2>/dev/null)
+                      [ "${PHASE}" = "Running" ] && break
+                      sleep 2
+                    done
+
+                    if [ "${PHASE}" = "Running" ]; then
+                      # 3) watch the logs for one minute
+                      echo "Pod ${POD} is running. Following logs for 60 seconds..."
+                      timeout 60 kubectl logs -f ${POD} -n ${NS} > "${WORK}/${POD}.log" 2>&1
+                      READY=$(kubectl get pod ${POD} -n ${NS} -o jsonpath='{.status.containerStatuses[0].ready}')
+                      RESTARTS=$(kubectl get pod ${POD} -n ${NS} -o jsonpath='{.status.containerStatuses[0].restartCount}')
+                    else
+                      # pod never reached Running (for example ImagePullBackOff): send describe/events instead
+                      kubectl describe pod ${POD} -n ${NS} 2>&1 | tail -n 40 > "${WORK}/${POD}.log"
+                    fi
+                  fi
+
+                  if [ "${PHASE}" = "Running" ] && [ "${READY}" = "true" ] && [ "${RESTARTS:-0}" = "0" ]; then
+                    RESULT="SUCCESS"
+                    COLOUR="#1a7f37"
+                    HEADLINE="${APP} STARTED successfully"
+                  else
+                    RESULT="FAILED"
+                    COLOUR="#c62828"
+                    HEADLINE="${APP} did NOT start cleanly"
+                  fi
+
+                  add_row "Application" "${APP}"
+                  add_row "Namespace" "${NS}"
+                  add_row "Action" "Scale up to 1 replica"
+                  add_row "Triggered at" "${TRIGGERED_AT}"
+                  add_row "Pod" "${POD}"
+                  add_row "Phase / Ready / Restarts" "${PHASE} / ${READY} / ${RESTARTS}"
+                  # Status-only mail for now. Logs are still captured in ${WORK}; enable when attachment support is added:
+                  # add_log "Pod logs (first 60 seconds, last 300 lines)" "${WORK}/${POD}.log"
+
+                  send_mail "[${RESULT}] ${APP} start - $(ist_now)" "${COLOUR}" "${HEADLINE}"
+                  MAIL_RC=$?
+                  [ "${MAIL_RC}" -ne 0 ] && echo "WARNING: mail could not be sent (curl exit ${MAIL_RC})"
+                  [ "${RESULT}" = "SUCCESS" ] || exit 1
+                  exit ${MAIL_RC}
+              volumeMounts:
+                - name: holidays
+                  mountPath: /config
+                  readOnly: true
+                - name: templates
+                  mountPath: /templates
+                  readOnly: true
+                - name: work
+                  mountPath: /work
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+                runAsNonRoot: true
+                runAsUser: 1001
+                seccompProfile:
+                  type: RuntimeDefault
+          volumes:
+            - name: holidays
+              configMap:
+                name: scheduler-holidays
+                optional: true
+            - name: templates
+              configMap:
+                name: scheduler-mail
+            - name: work
+              emptyDir: {}
+---
+# STOP 04:00 PM IST, Mon-Fri.
+# Starts following the pod logs BEFORE scaling down (logs are lost once the pod is deleted),
+# scales to 0, waits until the pod is gone, then emails the status (via the mail API).
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: rate-engine-fixccilfeed-stop-1600
+  namespace: engine
+spec:
+  schedule: "0 16 * * 1-5"
+  timeZone: "Asia/Kolkata"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 600
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 900
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          serviceAccountName: app-scaler-sa
+          restartPolicy: Never
+          containers:
+            - name: scaler
+              image: registry.com/itss/kubectl:1.33.4
+              imagePullPolicy: IfNotPresent
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  APP=rate-engine-fixccilfeed
+                  NS=engine
+                  MAIL_API_URL=https://emaillist.com/sendMail
+                  MAIL_TO=test@example.com
+                  SOURCE_SYSTEM=ONE
+                  TPL=/templates
+                  WORK=/work
+                  . ${TPL}/lib.sh
+
+                  PODS=$(kubectl get pods -n ${NS} -l app=${APP} -o jsonpath='{.items[*].metadata.name}')
+                  if [ -z "${PODS}" ]; then
+                    echo "No pods found for ${APP}. Already stopped (no mail)."
+                    exit 0
+                  fi
+
+                  # 1) start following logs of every pod BEFORE scaling down
+                  PIDS=""
+                  for P in ${PODS}; do
+                    kubectl logs -f ${P} -n ${NS} > "${WORK}/${P}.log" 2>&1 &
+                    PIDS="${PIDS} $!"
+                  done
+                  sleep 2
+
+                  # 2) scale down
+                  echo "Scaling ${APP} to 0"
+                  kubectl scale deployment/${APP} -n ${NS} --replicas=0 || { kill ${PIDS} 2>/dev/null; exit 1; }
+                  TRIGGERED_AT=$(ist_now)
+
+                  # 3) wait until the pods are gone (up to 180s), let the log streams flush, then stop them
+                  kubectl wait --for=delete pod -l app=${APP} -n ${NS} --timeout=180s
+                  STOPPED_AT=$(ist_now)
+                  sleep 3
+                  kill ${PIDS} 2>/dev/null
+
+                  REMAINING=$(kubectl get pods -n ${NS} -l app=${APP} --no-headers 2>/dev/null | wc -l | tr -d ' ')
+                  if [ "${REMAINING}" -eq 0 ]; then
+                    RESULT="SUCCESS"
+                    COLOUR="#1a7f37"
+                    HEADLINE="${APP} STOPPED successfully"
+                  else
+                    RESULT="FAILED"
+                    COLOUR="#c62828"
+                    HEADLINE="${APP} still has ${REMAINING} pod(s) after 180 seconds"
+                  fi
+
+                  add_row "Application" "${APP}"
+                  add_row "Namespace" "${NS}"
+                  add_row "Action" "Scale down to 0 replicas"
+                  add_row "Triggered at" "${TRIGGERED_AT}"
+                  add_row "Pods gone at" "${STOPPED_AT}"
+                  add_row "Pods stopped" "${PODS}"
+                  # Status-only mail for now. Logs are still captured in ${WORK}; enable when attachment support is added:
+                  # for P in ${PODS}; do add_log "Pod ${P} - logs until shutdown (last 300 lines)" "${WORK}/${P}.log"; done
+
+                  send_mail "[${RESULT}] ${APP} stop - $(ist_now)" "${COLOUR}" "${HEADLINE}"
+                  MAIL_RC=$?
+                  [ "${MAIL_RC}" -ne 0 ] && echo "WARNING: mail could not be sent (curl exit ${MAIL_RC})"
+                  [ "${RESULT}" = "SUCCESS" ] || exit 1
+                  exit ${MAIL_RC}
+              volumeMounts:
+                - name: templates
+                  mountPath: /templates
+                  readOnly: true
+                - name: work
+                  mountPath: /work
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+                runAsNonRoot: true
+                runAsUser: 1001
+                seccompProfile:
+                  type: RuntimeDefault
+          volumes:
+            - name: templates
+              configMap:
+                name: scheduler-mail
+            - name: work
+              emptyDir: {}
