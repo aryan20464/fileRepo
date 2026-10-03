@@ -1,100 +1,69 @@
-#!/bin/sh
-# log2png.sh - render the tail of a text log file as a PNG image.
-#
-# Usage: log2png.sh <input.log> <output.png> [title] [max_lines] [max_cols]
-#   title      first line printed on the image (default: file name)
-#   max_lines  keep only the last N lines        (default: 120)
-#   max_cols   cut lines longer than N characters (default: 160)
-#
-# Needs: ImageMagick (magick or convert) and a DejaVu Sans Mono font.
-# Override the font with:  FONT=/path/to/font.ttf log2png.sh ...
-
-IN="$1"
-OUT="$2"
-TITLE="${3:-$(basename "$1")}"
-MAX_LINES="${4:-120}"
-MAX_COLS="${5:-160}"
-
-[ -f "${IN}" ] && [ -n "${OUT}" ] || { echo "usage: $0 <input.log> <output.png> [title] [max_lines] [max_cols]" >&2; exit 2; }
-
-IM=$(command -v magick || command -v convert) || { echo "ERROR: ImageMagick (magick/convert) not found" >&2; exit 1; }
-
-if [ -z "${FONT}" ]; then
-  for f in /usr/share/fonts/dejavu/DejaVuSansMono.ttf \
-           /usr/share/fonts/TTF/DejaVuSansMono.ttf \
-           /usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf; do
-    [ -f "$f" ] && FONT="$f" && break
-  done
-fi
-[ -f "${FONT}" ] || { echo "ERROR: monospace font not found (set FONT=/path/to/font.ttf)" >&2; exit 1; }
-
-TMP="${OUT}.txt"
-{
-  echo "${TITLE}"
-  echo "------------------------------------------------------------"
-  if [ -s "${IN}" ]; then
-    tail -n "${MAX_LINES}" "${IN}" | tr -d '\r' | tr '\t' ' ' | cut -c1-"${MAX_COLS}"
-  else
-    echo "(no log lines captured)"
-  fi
-# ImageMagick label: treats \ and % as escapes, so double them to print the text literally
-} | sed -e 's/\\/\\\\/g' -e 's/%/%%/g' > "${TMP}"
-
-# label: sizes the canvas to fit the text automatically; the title line guarantees the text never starts with "@"
-"${IM}" -background '#f4f4f4' -fill '#1e1e1e' -font "${FONT}" -pointsize 13 \
-  label:"$(cat "${TMP}")" \
-  -bordercolor '#f4f4f4' -border 14 \
-  -colors 64 -depth 8 "${OUT}" || { echo "ERROR: image conversion failed" >&2; rm -f "${TMP}"; exit 1; }
-
-rm -f "${TMP}"
-echo "Created ${OUT} ($(wc -c < "${OUT}") bytes)"
-
-
-
-
-
-
-
-# One-off test pod: runs log2png.sh against the live app logs using the new image.
-# 1) kubectl create configmap log2png-script -n engine --from-file=log2png.sh
-# 2) kubectl apply -f test-log2png-pod.yaml
-# 3) kubectl wait --for=condition=Ready pod/log2png-test -n engine --timeout=120s
-# 4) kubectl exec -n engine log2png-test -- sh -c '
-#      kubectl logs deploy/rateengine-fixccilfeed -n engine --tail=200 > /work/app.log;
-#      sh /scripts/log2png.sh /work/app.log /work/app.png "rateengine-fixccilfeed test" && ls -l /work'
-# 5) kubectl cp engine/log2png-test:/work/app.png ./app.png
-# 6) kubectl delete pod log2png-test -n engine
 apiVersion: v1
-kind: Pod
+kind: ConfigMap
 metadata:
-  name: log2png-test
+  name: scheduler-holidays
+  namespace: engine
+data:
+  # One holiday per line: YYYY-MM-DD (any text after the date is ignored as we are comparing the line start with current date in our cron job; so format can be delimitted with space or comma or pipe but date format should be YYYY-MM-DD).
+  holidays.txt: |
+    2026-10-02 Gandhi Jayanti
+    2026-12-25 Christmas
+    2027-01-26 Republic Day
+
+
+
+
+# START at 08:30 AM IST, Monday-Friday, skipped on dates listed in scheduler-holidays
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: indent-cronjob-start
   namespace: engine
 spec:
-  serviceAccountName: app-scaler-sa
-  restartPolicy: Never
-  containers:
-    - name: test
-      image: registry.com/itss/kubectl-imgtools:1.33.4
-      imagePullPolicy: IfNotPresent
-      command: ["/bin/sh", "-c", "sleep 1800"]
-      volumeMounts:
-        - name: script
-          mountPath: /scripts
-          readOnly: true
-        - name: work
-          mountPath: /work
-      securityContext:
-        allowPrivilegeEscalation: false
-        capabilities:
-          drop:
-            - ALL
-        runAsNonRoot: true
-        runAsUser: 1001
-        seccompProfile:
-          type: RuntimeDefault
-  volumes:
-    - name: script
-      configMap:
-        name: log2png-script
-    - name: work
-      emptyDir: {}
+  schedule: "45 10 * * 1-5"
+  timeZone: "Asia/Kolkata"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 600
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          serviceAccountName: app-scaler-sa
+          restartPolicy: OnFailure
+          containers:
+            - name: scaler
+              image: kubectl:1.33.4
+              imagePullPolicy: IfNotPresent
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  TODAY=$(TZ=Asia/Kolkata date +%Y-%m-%d)
+                  echo "Date (IST): ${TODAY}"
+                  if [ -f /config/holidays.txt ] && grep -q "^${TODAY}" /config/holidays.txt; then
+                    echo "${TODAY} is listed as a holiday. Skipping start."
+                    exit 0
+                  fi
+                  echo "Not a holiday. Scaling rengine-indents to 1."
+                  kubectl scale deployment/rengine-indents -n engine --replicas=1
+              volumeMounts:
+                - name: holidays
+                  mountPath: /config
+                  readOnly: true
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+                runAsNonRoot: true
+                runAsUser: 1001
+                seccompProfile:
+                  type: RuntimeDefault
+          volumes:
+            - name: holidays
+              configMap:
+                name: scheduler-holidays
+                optional: true
