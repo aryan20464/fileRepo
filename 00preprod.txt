@@ -1,69 +1,16 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: scheduler-holidays
-  namespace: engine
-data:
-  # One holiday per line: YYYY-MM-DD (any text after the date is ignored as we are comparing the line start with current date in our cron job; so format can be delimitted with space or comma or pipe but date format should be YYYY-MM-DD).
-  holidays.txt: |
-    2026-10-02 Gandhi Jayanti
-    2026-12-25 Christmas
-    2027-01-26 Republic Day
-
-
-
-
-# START at 08:30 AM IST, Monday-Friday, skipped on dates listed in scheduler-holidays
-apiVersion: batch/v1
-kind: CronJob
-metadata:
-  name: indent-cronjob-start
-  namespace: engine
-spec:
-  schedule: "45 10 * * 1-5"
-  timeZone: "Asia/Kolkata"
-  concurrencyPolicy: Forbid
-  startingDeadlineSeconds: 600
-  successfulJobsHistoryLimit: 2
-  failedJobsHistoryLimit: 3
-  jobTemplate:
-    spec:
-      backoffLimit: 2
-      ttlSecondsAfterFinished: 3600
-      template:
-        spec:
-          serviceAccountName: app-scaler-sa
-          restartPolicy: OnFailure
-          containers:
-            - name: scaler
-              image: kubectl:1.33.4
-              imagePullPolicy: IfNotPresent
-              command: ["/bin/sh", "-c"]
-              args:
-                - |
-                  TODAY=$(TZ=Asia/Kolkata date +%Y-%m-%d)
-                  echo "Date (IST): ${TODAY}"
-                  if [ -f /config/holidays.txt ] && grep -q "^${TODAY}" /config/holidays.txt; then
-                    echo "${TODAY} is listed as a holiday. Skipping start."
-                    exit 0
-                  fi
-                  echo "Not a holiday. Scaling rengine-indents to 1."
-                  kubectl scale deployment/rengine-indents -n engine --replicas=1
-              volumeMounts:
-                - name: holidays
-                  mountPath: /config
-                  readOnly: true
-              securityContext:
-                allowPrivilegeEscalation: false
-                capabilities:
-                  drop:
-                    - ALL
-                runAsNonRoot: true
-                runAsUser: 1001
-                seccompProfile:
-                  type: RuntimeDefault
-          volumes:
-            - name: holidays
-              configMap:
-                name: scheduler-holidays
-                optional: true
+Name:	
+it-infra-platformengineering-itpe1-avs-helm
+Package Type:	
+Helm
+Repository Path:	
+it-infra-platformengineering-itpe1-avs-helm/
+File URL:	
+https://artifactory.jfrog.com/artifactory/it-infra-platformengineering-itpe1-avs-helm/
+Repository Layout:	
+simple-default
+Description:	
+ 
+Created:	
+28-09-26 22:06:49 IST
+Artifact Count / Size:	
+2 / 101.53 KB
