@@ -1,3 +1,6 @@
-curl -sk -u "tsspradmin:sdf" https://tssrfxpr.in/v2/repository/tsspradmin/malware-scanner-bundle/tags/list
+for img in "repo-a:v1.0" "repo-b:latest"; do echo -n "$img "; regctl image digest "your-quay-domain.internal:8443/your-namespace/$img" --host reg="your-quay-domain.internal:8443",user="YOUR_USERNAME",pass="YOUR_PASSWORD",tls=insecure 2>/dev/null || echo "FAILED"; done > images_with_shas.txt
 
-{"error": "Invalid bearer token format"}
+
+
+
+while read -r img; do echo -n "$img "; regctl image digest "$img" --host reg="your-quay-domain.internal:8443",user="YOUR_USERNAME",pass="YOUR_PASSWORD",tls=insecure 2>/dev/null || echo "FAILED"; done < images.txt > images_with_shas.txt
