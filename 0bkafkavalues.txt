@@ -1,286 +1,392 @@
-keytool -importcert -alias kafka-cluster-ca \
-  -file cluster-ca.crt \
-  -keystore cluster-ca.jks \
-  -storepass changeit -noprompt
+pgrade complete! If your GitLab server is misbehaving try running
+  sudo gitlab-ctl restart
+before anything else.
+If you need to roll back to the previous version you can use the database
+backup made during the upgrade (scroll up for the filename).
+
+
+  Verifying        : gitlab-ce-16.11.10-ce.0.el8.x86_64                                                                                                                                                                                  1/2
+  Verifying        : gitlab-ce-16.8.1-ce.0.el8.x86_64                                                                                                                                                                                    2/2
+Installed products updated.
+
+Upgraded:
+  gitlab-ce-16.11.10-ce.0.el8.x86_64
+
+Complete!
 
 
 
-spring:
-  kafka:
-    bootstrap-servers: my-cluster-kafka-bootstrap-rforex-kafka.apps.tssrfxuat.sbi.co.in:443
-    consumer:
-      group-id: I_SWIFT_FCRA_IDEA_1          # renamed to match Spring Boot convention
-      auto-offset-reset: earliest           # or 'latest' as per your requirement
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-    properties:
-      security.protocol: SASL_SSL           # Critical: SASL over SSL (TLS)
-      sasl.mechanism: SCRAM-SHA-512         # Matches your cluster auth
-      sasl.jaas.config: org.apache.kafka.common.security.scram.ScramLoginModule required username="external-native-user" password="<your-user-password>";
-      ssl.truststore.location: classpath:kafka/cluster-ca.jks   # Path inside your app container
-      ssl.truststore.password: changeit     # Or your actual password
-      ssl.truststore.type: JKS
-    # Optional but recommended for better error handling
-    client-id: fcraswiftprocessor-1
+[root@tss-ideasvnuat gitlab-rpm]# gitlab-ctl status
+run: gitaly: (pid 2853616) 343s; run: log: (pid 2762) 1393525s
+run: gitlab-kas: (pid 2853678) 313s; run: log: (pid 2760) 1393525s
+run: gitlab-workhorse: (pid 2853600) 344s; run: log: (pid 2754) 1393525s
+run: logrotate: (pid 2853690) 312s; run: log: (pid 2755) 1393525s
+run: postgresql: (pid 2853432) 397s; run: log: (pid 2759) 1393525s
+run: puma: (pid 2853697) 312s; run: log: (pid 2752) 1393525s
+run: sidekiq: (pid 2853702) 311s; run: log: (pid 2753) 1393525s
+[root@tss-ideasvnuat gitlab-rpm]# gitlab-rake gitlab-check SANITIZE=true
+rake aborted!
+Don't know how to build task 'gitlab-check' (See the list of available tasks with `rake --tasks`)
+Did you mean?  gitlab:check
+/opt/gitlab/embedded/bin/bundle:25:in `load'
+/opt/gitlab/embedded/bin/bundle:25:in `<main>'
+(See full trace by running task with --trace)
+[root@tss-ideasvnuat gitlab-rpm]# gitlab-rake gitlab:check SANITIZE=true
+Checking GitLab subtasks ...
+
+Checking GitLab Shell ...
+
+GitLab Shell: ... GitLab Shell version >= 14.35.0 ? ... OK (14.35.0)
+Running /opt/gitlab/embedded/service/gitlab-shell/bin/check
+Internal API available: OK
+Redis available via internal API: OK
+gitlab-shell self-check successful
+
+Checking GitLab Shell ... Finished
+
+Checking Gitaly ...
+
+Gitaly: ... default ... OK
+
+Checking Gitaly ... Finished
+
+Checking Sidekiq ...
+
+Sidekiq: ... Running? ... yes
+Number of Sidekiq processes (cluster/worker) ... 1/1
+
+Checking Sidekiq ... Finished
+
+Checking Incoming Email ...
+
+Incoming Email: ... Reply by email is disabled in config/gitlab.yml
+
+Checking Incoming Email ... Finished
+
+Checking LDAP ...
+
+LDAP: ... LDAP is disabled in config/gitlab.yml
+
+Checking LDAP ... Finished
+
+Checking GitLab App ...
+
+Database config exists? ... yes
+Tables are truncated? ... skipped
+All migrations up? ... yes
+Database contains orphaned GroupMembers? ... no
+GitLab config exists? ... yes
+GitLab config up to date? ... yes
+Cable config exists? ... yes
+Resque config exists? ... yes
+Log directory writable? ... yes
+Tmp directory writable? ... yes
+Uploads directory exists? ... yes
+Uploads directory has correct permissions? ... yes
+Uploads directory tmp has correct permissions? ... yes
+Systemd unit files or init script exist? ... skipped (omnibus-gitlab has neither init script nor systemd units)
+Systemd unit files or init script up-to-date? ... skipped (omnibus-gitlab has neither init script nor systemd units)
+Projects have namespace: ...
+5/1 ... yes
+5/2 ... yes
+9/3 ... yes
+9/4 ... yes
+9/5 ... yes
+9/6 ... yes
+9/7 ... yes
+9/8 ... yes
+9/9 ... yes
+9/10 ... yes
+9/11 ... yes
+9/12 ... yes
+10/14 ... yes
+10/15 ... yes
+10/16 ... yes
+10/17 ... yes
+43/18 ... yes
+43/19 ... yes
+43/20 ... yes
+43/21 ... yes
+43/22 ... yes
+9/24 ... yes
+43/25 ... yes
+43/26 ... yes
+43/27 ... yes
+43/28 ... yes
+43/29 ... yes
+43/30 ... yes
+43/31 ... yes
+43/32 ... yes
+43/33 ... yes
+43/34 ... yes
+43/35 ... yes
+43/36 ... yes
+43/37 ... yes
+43/38 ... yes
+43/39 ... yes
+43/40 ... yes
+9/41 ... yes
+43/42 ... yes
+43/43 ... yes
+9/44 ... yes
+9/45 ... yes
+10/46 ... yes
+9/47 ... yes
+9/48 ... yes
+9/49 ... yes
+27/50 ... yes
+8/51 ... yes
+27/52 ... yes
+8/53 ... yes
+27/54 ... yes
+27/56 ... yes
+27/57 ... yes
+26/58 ... yes
+43/59 ... yes
+43/60 ... yes
+8/61 ... yes
+27/62 ... yes
+27/63 ... yes
+96/64 ... yes
+29/65 ... yes
+9/66 ... yes
+8/67 ... yes
+97/68 ... yes
+97/69 ... yes
+97/70 ... yes
+97/71 ... yes
+97/72 ... yes
+97/73 ... yes
+97/74 ... yes
+97/75 ... yes
+27/78 ... yes
+9/79 ... yes
+43/80 ... yes
+123/82 ... yes
+123/83 ... yes
+123/84 ... yes
+43/85 ... yes
+27/88 ... yes
+9/89 ... yes
+10/90 ... yes
+10/92 ... yes
+10/93 ... yes
+123/94 ... yes
+9/95 ... yes
+43/96 ... yes
+43/97 ... yes
+43/98 ... yes
+43/99 ... yes
+27/101 ... yes
+27/102 ... yes
+27/103 ... yes
+27/104 ... yes
+9/105 ... yes
+134/106 ... yes
+134/110 ... yes
+43/112 ... yes
+10/113 ... yes
+43/114 ... yes
+9/115 ... yes
+9/116 ... yes
+10/117 ... yes
+123/118 ... yes
+27/119 ... yes
+10/120 ... yes
+27/121 ... yes
+26/124 ... yes
+9/125 ... yes
+150/127 ... yes
+181/130 ... yes
+8/132 ... yes
+97/133 ... yes
+165/134 ... yes
+189/135 ... yes
+189/136 ... yes
+43/137 ... yes
+27/138 ... yes
+26/139 ... yes
+27/140 ... yes
+9/142 ... yes
+9/143 ... yes
+196/144 ... yes
+219/145 ... yes
+27/146 ... yes
+196/151 ... yes
+175/152 ... yes
+196/153 ... yes
+196/154 ... yes
+196/156 ... yes
+43/157 ... yes
+196/158 ... yes
+196/159 ... yes
+196/160 ... yes
+9/161 ... yes
+10/162 ... yes
+26/163 ... yes
+26/164 ... yes
+43/165 ... yes
+43/166 ... yes
+27/168 ... yes
+10/170 ... yes
+123/171 ... yes
+43/172 ... yes
+196/173 ... yes
+196/174 ... yes
+43/175 ... yes
+27/176 ... yes
+205/177 ... yes
+196/178 ... yes
+43/179 ... yes
+111/180 ... yes
+111/181 ... yes
+111/182 ... yes
+111/183 ... yes
+111/184 ... yes
+196/185 ... yes
+9/186 ... yes
+271/187 ... yes
+9/188 ... yes
+196/190 ... yes
+289/192 ... yes
+282/193 ... yes
+282/194 ... yes
+282/195 ... yes
+282/196 ... yes
+282/197 ... yes
+282/198 ... yes
+43/199 ... yes
+43/200 ... yes
+9/201 ... yes
+295/202 ... yes
+111/203 ... yes
+111/204 ... yes
+196/205 ... yes
+289/206 ... yes
+196/207 ... yes
+196/208 ... yes
+196/209 ... yes
+43/210 ... yes
+43/211 ... yes
+289/212 ... yes
+27/213 ... yes
+314/215 ... yes
+264/216 ... yes
+196/217 ... yes
+27/218 ... yes
+314/219 ... yes
+111/220 ... yes
+196/221 ... yes
+9/222 ... yes
+43/223 ... yes
+196/224 ... yes
+27/225 ... yes
+27/226 ... yes
+27/227 ... yes
+27/228 ... yes
+9/229 ... yes
+314/230 ... yes
+314/231 ... yes
+196/232 ... yes
+9/233 ... yes
+219/234 ... yes
+219/235 ... yes
+219/236 ... yes
+43/237 ... yes
+196/238 ... yes
+43/239 ... yes
+9/240 ... yes
+196/244 ... yes
+343/246 ... yes
+343/247 ... yes
+343/248 ... yes
+343/249 ... yes
+343/250 ... yes
+343/251 ... yes
+343/252 ... yes
+343/253 ... yes
+196/254 ... yes
+9/256 ... yes
+196/257 ... yes
+343/258 ... yes
+9/260 ... yes
+9/261 ... yes
+365/262 ... yes
+343/263 ... yes
+43/264 ... yes
+9/265 ... yes
+9/266 ... yes
+43/267 ... yes
+196/268 ... yes
+196/270 ... yes
+10/271 ... yes
+274/272 ... yes
+27/275 ... yes
+27/276 ... yes
+274/277 ... yes
+27/278 ... yes
+43/279 ... yes
+27/280 ... yes
+196/281 ... yes
+111/283 ... yes
+27/284 ... yes
+196/285 ... yes
+43/286 ... yes
+393/290 ... yes
+393/291 ... yes
+196/292 ... yes
+27/293 ... yes
+43/294 ... yes
+26/295 ... yes
+26/296 ... yes
+27/297 ... yes
+Redis version >= 6.2.14? ... yes
+Ruby version >= 3.0.6 ? ... yes (3.1.4)
+Git user has default SSH configuration? ... yes
+Active users: ... 66
+Is authorized keys file accessible? ... yes
+GitLab configured to store new projects in hashed storage? ... yes
+All projects are in hashed storage? ... yes
+
+Checking GitLab App ... Finished
 
 
+Checking GitLab subtasks ... Finished
 
+[root@tss-ideasvnuat gitlab-rpm]# gitlab-rake gitlab:env:info
 
-spring:
-  application:
-    name: FCRASwiftProcessor
-  datasource:
-    url: jdbc:oracle:thin:@10.191.216.61:1522:IDEACMM
-    username: rforex
-    password: rforex123
-    driver-class-name: oracle.jdbc.OracleDriver
-  jpa:
-    hibernate:
-      ddl-auto: none
-    show-sql: false
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.OracleDialect
-  kafka:
-    bootstrap-servers: 10.191.158.42:9196
-    consumer:
-      bootstrap.servers: 10.191.158.42:9196
-      groupid: I_SWIFT_FCRA_IDEA_1
-      auto-offset-reset: latest
-      key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-    properties: 
-      security.protocol: SASL_PLAINTEXT
-      sasl.mechanism: PLAIN
-      ssl.truststore.location: /weblogic/KafkaSetup/certs/kafkatruststorecert.jks
-      ssl.truststore.password: changeit
-      ssl.truststore.type: JKS
-      sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="idea" password="idea-forex";
+System information
+System:
+Current User:   git
+Using RVM:      no
+Ruby Version:   3.1.4p223
+Gem Version:    3.5.7
+Bundler Version:2.5.8
+Rake Version:   13.0.6
+Redis Version:  7.0.15
+Sidekiq Version:7.1.6
+Go Version:     unknown
 
-shceduler:
-  rateCategory:
-    cron: 0 0/10 * * * *
-    atLeast: PT09M59S
-    atMost: PT10M00S
-  activeRate:
-    cron: 0 0 0/2 * * *
-    atLeast: PT01H59M59S
-    atMost: PT02H00M00S
+GitLab information
+Version:        16.11.10
+Revision:       47403677d65
+Directory:      /opt/gitlab/embedded/service/gitlab-rails
+DB Adapter:     PostgreSQL
+DB Version:     14.11
+URL:            https://ideagit.sbi.co.in:10000
+HTTP Clone URL: https://ideagit.sbi.co.in:10000/some-group/some-project.git
+SSH Clone URL:  git@ideagit.sbi.co.in:some-group/some-project.git
+Using LDAP:     no
+Using Omniauth: yes
+Omniauth Providers:
 
-module:
-  id: 6
+GitLab Shell
+Version:        14.35.0
+Repository storages:
+- default:      unix:/var/opt/gitlab/gitaly/gitaly.socket
+GitLab Shell path:              /opt/gitlab/embedded/service/gitlab-shell
 
-topics:
-  source: sbi.fcra.test.topic
-  validation: sbi.ittss.fcra.mx.validations
-  acknowledgement: sbi.ittss.fcra.ack.csig
-  rateCategory: sbi.ittss.fcra.mx.derived.rate.category
-rateCategory:
-  groupId: I_SWIFT_FCRA_RATE_CATEGORY_1
-server:
-  port: 8086
-
-logging:
-  folder: /weblogic/app_logs/rforex/
-  file:
-    name: ${logging.folder}fcraswiftprocessor.log
-    max-size: 100MB
-    total-size-cap: 100MB
-    max-history: 30
-  level:
-    root: INFO
-    com.sbi.fcra.mx.parser: INFO
-  pattern:
-    rolling-file-name: ${logging.folder}fcraswiftprocessor-%d{yyyy-MM-dd}.%i.log
-    dateformat: yyyy-MM-dd HH:mm:ss XXX
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Here is the updated and corrected version of the "Connecting from External Clients (Native Protocol)" section, fully adapted to your actual OpenShift Routes and cluster details (as of December 31, 2025).
-Connecting from External Clients (Native Protocol)
-You now have full external access via OpenShift Routes with TLS passthrough. Clients connect using the native Kafka TCP binary protocol (exactly like in a traditional non-OpenShift environment).
-Bootstrap server (use this in all clients):
-textmy-cluster-kafka-bootstrap-rforex-kafka.apps.tssrfxuat.sbi.co.in:443
-Cluster CA certificate (required for TLS trust):
-Bashoc get secret my-cluster-cluster-ca-cert -n rforex-kafka \
-  -o jsonpath='{.data.ca\.crt}' | base64 -d > cluster-ca.crt
-Recommended KafkaUser for external native clients (create if not already done):
-YAMLapiVersion: kafka.strimzi.io/v1beta2
-kind: KafkaUser
-metadata:
-  name: external-native-user
-  namespace: rforex-kafka
-  labels:
-    strimzi.io/cluster: my-cluster
-spec:
-  authentication:
-    type: scram-sha-512
-  authorization:
-    type: simple
-    acls:
-      - resource:
-          type: topic
-          name: "*"
-          patternType: literal
-        operations:
-          - Read
-          - Write
-          - Describe
-          - DescribeConfigs
-      - resource:
-          type: group
-          name: "*"
-          patternType: literal
-        operations:
-          - Read
-          - Describe
-Apply: oc apply -f external-native-user.yaml
-Get password:
-Bashoc get secret external-native-user -n rforex-kafka \
-  -o jsonpath='{.data.password}' | base64 -d
-Client Configuration Examples
-Python (kafka-python or confluent-kafka)
-Pythonfrom kafka import KafkaProducer, KafkaConsumer
-
-# Common settings
-bootstrap = 'my-cluster-kafka-bootstrap-rforex-kafka.apps.tssrfxuat.sbi.co.in:443'
-username = 'external-native-user'
-password = '<password-from-secret>'
-ca_cert = 'cluster-ca.crt'  # Path to downloaded CA file
-
-# Producer
-producer = KafkaProducer(
-    bootstrap_servers=bootstrap,
-    security_protocol='SASL_SSL',
-    sasl_mechanism='SCRAM-SHA-512',
-    sasl_plain_username=username,
-    sasl_plain_password=password,
-    ssl_cafile=ca_cert
-)
-
-producer.send('your-topic-name', value=b'Hello from native external client!')
-producer.flush()
-
-# Consumer
-consumer = KafkaConsumer(
-    'your-topic-name',
-    group_id='external-consumer-group',
-    bootstrap_servers=bootstrap,
-    security_protocol='SASL_SSL',
-    sasl_mechanism='SCRAM-SHA-512',
-    sasl_plain_username=username,
-    sasl_plain_password=password,
-    ssl_cafile=ca_cert,
-    auto_offset_reset='earliest'
-)
-
-for message in consumer:
-    print(message.value)
-Java (Apache Kafka Clients)
-Javaimport org.apache.kafka.clients.producer.*;
-import org.apache.kafka.clients.consumer.*;
-import java.util.Properties;
-import java.util.Collections;
-
-Properties props = new Properties();
-props.put("bootstrap.servers", "my-cluster-kafka-bootstrap-rforex-kafka.apps.tssrfxuat.sbi.co.in:443");
-props.put("security.protocol", "SASL_SSL");
-props.put("sasl.mechanism", "SCRAM-SHA-512");
-props.put("sasl.jaas.config",
-    "org.apache.kafka.common.security.scram.ScramLoginModule required " +
-    "username=\"external-native-user\" " +
-    "password=\"<password-from-secret>\";");
-props.put("ssl.truststore.location", "/path/to/truststore.jks");  // Import cluster-ca.crt into JKS
-props.put("ssl.truststore.password", "changeit");
-
-// Producer example
-KafkaProducer<String, String> producer = new KafkaProducer<>(props);
-producer.send(new ProducerRecord<>("your-topic-name", "key", "value"));
-producer.close();
-
-// Consumer example
-props.put("group.id", "external-java-group");
-KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
-consumer.subscribe(Collections.singletonList("your-topic-name"));
-while (true) {
-    ConsumerRecords<String, String> records = consumer.poll(java.time.Duration.ofMillis(100));
-    for (ConsumerRecord<String, String> record : records)
-        System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
-}
-Command-line test with kcat (formerly kafkacat)
-Bashkcat -b my-cluster-kafka-bootstrap-rforex-kafka.apps.tssrfxuat.sbi.co.in:443 \
-  -X security.protocol=SASL_SSL \
-  -X sasl.mechanism=SCRAM-SHA-512 \
-  -X sasl.username=external-native-user \
-  -X sasl.password=<password> \
-  -X ssl.ca.location=cluster-ca.crt \
-  -t your-topic-name -C -q
-This setup gives you full native Kafka performance (binary protocol, batching, compression, low latency) while running securely on OpenShift. Clients connect exactly as they would in a traditional bare-metal/VM deployment — just using the Route hostnames and port 443.
-
-
-
-
-curl -X POST https://<your-bridge-route-host>/topics/<your-topic-name>/records \
-  -H "Content-Type: application/vnd.kafka.json.v2+json" \
-  -d '{
-    "records": [
-      {
-        "key": "key-1",              # Optional: string, base64, or omit
-        "value": {"message": "Hello from HTTP!"},
-        "partition": 0               # Optional: specify partition
-      },
-      {
-        "value": "Simple string message without key"
-      }
-    ]
-  }'
-
-HOST="https://my-bridge-route-rforex-kafka.apps.your-cluster.com"
-TOPIC="my-topic"
-GROUP="my-consumer-group"
-
-# 1. Create consumer
-curl -X POST $HOST/consumers/$GROUP \
-  -H "Content-Type: application/vnd.kafka.v2+json" \
-  -d '{"name": "my-instance", "format": "json", "auto.offset.reset": "earliest"}'
-
-# 2. Subscribe
-curl -X POST $HOST/consumers/$GROUP/instances/my-instance/subscription \
-  -H "Content-Type: application/vnd.kafka.v2+json" \
-  -d '{"topics": ["'$TOPIC'"]}'
-
-# 3. Poll (run multiple times)
-curl -X GET $HOST/consumers/$GROUP/instances/my-instance/records \
-  -H "Accept: application/vnd.kafka.json.v2+json"
-
-# 4. Delete when finished
-curl -X DELETE $HOST/consumers/$GROUP/instances/my-instance
+Gitaly
+- default Address:      unix:/var/opt/gitlab/gitaly/gitaly.socket
+- default Version:      16.11.10
+- default Git Version:  2.43.5

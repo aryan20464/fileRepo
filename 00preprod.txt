@@ -1,1 +1,3 @@
-ror: git push: exit status 1, stderr: "remote: GitLab: File name SBI.ITTSS.API/Certificates/tap_privatekey.pem was prohibited by the pattern \"\\\\.(pem|key)$\".\nTo https://gitlab.sbi/it-tss/itrp/backend/itrp-app.git\n ! [remote rejected] main -> main (pre-receive hook declined)\nerror: failed to push some refs to 'https://gitlab.sbi/it-tss/itrp/backend/itrp-app.git'\n"
+curl -sk -u "tsspradmin:sdf" https://tssrfxpr.in/v2/repository/tsspradmin/malware-scanner-bundle/tags/list
+
+{"error": "Invalid bearer token format"}
