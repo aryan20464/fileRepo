@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Server Inventory</title>
+<title>IDEA Server Inventory | Interactive Infrastructure Atlas</title>
 <style>
 /* ============================================================
    TOKENS
@@ -224,6 +224,46 @@ tbody tr:hover .tcell svg{color:var(--tick);transform:translateY(-1px)}
   .tablewrap{border:0}
   tbody tr{box-shadow:none !important}
 }
+
+/* ============================================================
+   VISUAL ENHANCEMENTS — infrastructure glow, KPI strip, focus cues
+   ============================================================ */
+:root{--glow-blue:rgba(67,139,255,.28);--glow-cyan:rgba(34,211,238,.22);--glow-green:rgba(52,211,153,.22);--glow-amber:rgba(251,191,36,.22)}
+.masthead{background:radial-gradient(ellipse at 12% -35%,rgba(47,111,237,.12),transparent 48%),var(--panel)}
+.mast-title{letter-spacing:-.035em}
+.tablewrap{border-radius:12px;box-shadow:0 10px 32px rgba(10,25,45,.055);}
+thead th{padding-top:13px;padding-bottom:13px;letter-spacing:.025em;text-transform:uppercase;font-size:10.5px;}
+tbody td{padding-top:12px;padding-bottom:12px;}
+tbody tr{transition:background .18s ease,box-shadow .18s ease}
+tbody tr:hover{background:linear-gradient(90deg,rgba(47,111,237,.075),var(--panel-alt));}
+.tcell{gap:10px;}
+.tcell svg{width:19px;height:19px;padding:2px;overflow:visible;border-radius:6px;color:var(--icon-color,var(--ink-soft));filter:drop-shadow(0 0 4px var(--icon-glow,var(--glow-blue)));transition:color .2s ease,transform .2s ease,filter .2s ease;}
+.tcell:hover svg,tbody tr:hover .tcell svg{color:var(--icon-color,var(--env-1));transform:translateY(-2px) scale(1.12);filter:drop-shadow(0 0 4px var(--icon-glow,var(--glow-blue))) drop-shadow(0 0 9px var(--icon-glow,var(--glow-blue)));}
+.tcell[data-tech="kubernetes"]{--icon-color:#3979e8;--icon-glow:rgba(57,121,232,.65)}
+.tcell[data-tech="openshift"]{--icon-color:#e84b4b;--icon-glow:rgba(232,75,75,.55)}
+.tcell[data-tech="nginx"]{--icon-color:#16a66a;--icon-glow:rgba(22,166,106,.55)}
+.tcell[data-tech="oracle"]{--icon-color:#ef5350;--icon-glow:rgba(239,83,80,.55)}
+.tcell[data-tech="database"]{--icon-color:#b66bdb;--icon-glow:rgba(182,107,219,.55)}
+.tcell[data-tech="gitlab"]{--icon-color:#f97316;--icon-glow:rgba(249,115,22,.55)}
+.tcell[data-tech="tomcat"]{--icon-color:#e5a323;--icon-glow:rgba(229,163,35,.55)}
+.tcell[data-tech="linux"]{--icon-color:#38bdf8;--icon-glow:rgba(56,189,248,.5)}
+.tcell[data-tech="windows"]{--icon-color:#3b82f6;--icon-glow:rgba(59,130,246,.55)}
+.tcell .tech-label{border-bottom:1px dotted transparent;transition:border-color .18s ease}
+.tcell:hover .tech-label{border-color:var(--icon-color,var(--ink-faint))}
+.kpi-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 16px;}
+.kpi{position:relative;overflow:hidden;min-width:0;padding:15px 17px;border:1px solid var(--rule);border-radius:12px;background:linear-gradient(135deg,var(--panel),var(--panel-alt));box-shadow:0 5px 18px rgba(10,25,45,.035);}
+.kpi::after{content:"";position:absolute;width:86px;height:86px;right:-25px;top:-35px;border-radius:50%;background:var(--kpi-glow,rgba(47,111,237,.12));filter:blur(2px);pointer-events:none}
+.kpi-label{position:relative;z-index:1;color:var(--ink-soft);font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase}
+.kpi-value{position:relative;z-index:1;margin-top:4px;font:650 27px/1.15 var(--mono);letter-spacing:-.05em;font-variant-numeric:tabular-nums}
+.kpi-hint{position:relative;z-index:1;margin-top:4px;color:var(--ink-faint);font-size:11px}
+.kpi.total{--kpi-glow:rgba(47,111,237,.18)} .kpi.running{--kpi-glow:rgba(30,180,120,.18)} .kpi.maint{--kpi-glow:rgba(220,160,40,.2)} .kpi.stopped{--kpi-glow:rgba(220,70,70,.18)}
+.kpi.running .kpi-value{color:var(--ok)} .kpi.maint .kpi-value{color:var(--warn)} .kpi.stopped .kpi-value{color:var(--down)}
+.kpi[role="button"]{cursor:pointer;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.kpi[role="button"]:hover{transform:translateY(-2px);border-color:var(--focus);box-shadow:0 8px 22px rgba(47,111,237,.11)}
+.kpi[aria-pressed="true"]{border-color:var(--focus);box-shadow:0 0 0 2px var(--glow-blue)}
+@media(max-width:760px){.kpi-strip{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.kpi{padding:12px}.kpi-value{font-size:23px}}
+@media(prefers-reduced-motion:reduce){.tcell svg,tbody tr,.kpi{transition:none}.kpi[role="button"]:hover{transform:none}}
+
 </style>
 </head>
 <body>
@@ -257,6 +297,12 @@ tbody tr:hover .tcell svg{color:var(--tick);transform:translateY(-1px)}
   <nav class="rail" id="rail" aria-label="Environments and platforms"></nav>
 
   <main class="main">
+    <section class="kpi-strip" aria-label="Inventory summary">
+      <div class="kpi total"><div class="kpi-label">Total hosts</div><div class="kpi-value" id="kpiTotal">—</div><div class="kpi-hint">Loaded inventory</div></div>
+      <div class="kpi running" role="button" tabindex="0" aria-pressed="false" data-state-filter="up" title="Filter to running hosts"><div class="kpi-label">Running</div><div class="kpi-value" id="kpiUp">—</div><div class="kpi-hint">Click to filter</div></div>
+      <div class="kpi maint" role="button" tabindex="0" aria-pressed="false" data-state-filter="maint" title="Filter to maintenance hosts"><div class="kpi-label">Maintenance</div><div class="kpi-value" id="kpiMaint">—</div><div class="kpi-hint">Click to filter</div></div>
+      <div class="kpi stopped" role="button" tabindex="0" aria-pressed="false" data-state-filter="down" title="Filter to stopped hosts"><div class="kpi-label">Stopped</div><div class="kpi-value" id="kpiDown">—</div><div class="kpi-hint">Click to filter</div></div>
+    </section>
     <div class="tablewrap">
       <table id="grid">
         <thead>
@@ -368,6 +414,7 @@ var ICONS = {
   tomcat:     SVG('<rect x="3" y="4.5" width="18" height="15" rx="2"/><path class="flow" d="M8.5 10l3 2.5-3 2.5"/><path d="M13.5 15h3"/>'),
   nginx:      SVG('<path d="M3.5 12h5.5"/><path d="M9 12l5-5.5h6.5"/><path d="M9 12l5 5.5h6.5"/><circle class="ping-dot" cx="3.5" cy="12" r="1.3"/>'),
   oracle:     SVG('<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.66 3.13 3 7 3s7-1.34 7-3V6"/><path class="replic" d="M5 12c0 1.66 3.13 3 7 3s7-1.34 7-3"/>'),
+  openshift:  SVG('<path d="M12 3.2a8.8 8.8 0 1 0 8.8 8.8"/><path d="M12 7a5 5 0 1 0 5 5"/><path d="M12 10.3a1.7 1.7 0 1 0 1.7 1.7"/><path d="M17.5 3.5l3 0 0 3"/>'),
   kubernetes: SVG('<path d="M12 2.8l8 4.6v9.2l-8 4.6-8-4.6V7.4z"/><circle class="hub-pulse" cx="12" cy="12" r="2.4"/><path d="M12 9.6V5.9M14.1 13.3l3.2 1.9M9.9 13.3l-3.2 1.9"/>'),
   gitlab:     SVG('<circle class="commit-pulse" cx="7" cy="6" r="1.9"/><circle class="commit-pulse" cx="7" cy="18" r="1.9"/><circle class="commit-pulse" cx="17" cy="12" r="1.9"/><path d="M7 7.9v8.2"/><path d="M8.9 6H13a4 4 0 0 1 4 4"/>'),
   artifact:   SVG('<path class="box-bob" d="M12 2.8l8 4.3v9.8l-8 4.3-8-4.3V7.1z"/><path d="M4 7.1l8 4.3 8-4.3M12 11.4V21.2"/>'),
@@ -375,28 +422,41 @@ var ICONS = {
   linux:      SVG('<rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="M7 10l2.5 2L7 14"/><path class="cursor-blink" d="M12.5 14.5h4.5"/>'),
   chip:       SVG('<rect class="chip-pulse" x="6.5" y="6.5" width="11" height="11" rx="1.8"/><path d="M9.5 3v3.5M14.5 3v3.5M9.5 17.5V21M14.5 17.5V21M3 9.5h3.5M3 14.5h3.5M17.5 9.5H21M17.5 14.5H21"/>')
 };
+function techKey(t){
+  t = String(t || "").toLowerCase();
+  if (/openshift|\bocp\b/.test(t)) return "openshift";
+  if (/kubernetes|\bk8s\b|\bkube\b/.test(t)) return "kubernetes";
+  if (/nginx|apache|httpd|load.?balanc|ingress/.test(t)) return "nginx";
+  if (/oracle/.test(t)) return "oracle";
+  if (/postgres|mysql|mariadb|sql server|database|\bdb\b/.test(t)) return "database";
+  if (/weblogic|tomcat|jboss|websphere/.test(t)) return /tomcat|jboss|websphere/.test(t) ? "tomcat" : "weblogic";
+  if (/gitlab|jenkins|runner|ci\/cd/.test(t)) return "gitlab";
+  if (/artifact|nexus|jfrog/.test(t)) return "artifact";
+  return "box";
+}
 function typeIcon(t){
-  t = String(t).toLowerCase();
-  if (t.indexOf("weblogic") > -1) return ICONS.weblogic;
-  if (t.indexOf("tomcat") > -1 || t.indexOf("jboss") > -1 || t.indexOf("websphere") > -1) return ICONS.tomcat;
-  if (t.indexOf("nginx") > -1 || t.indexOf("apache") > -1 || t.indexOf("httpd") > -1) return ICONS.nginx;
-  if (t.indexOf("oracle") > -1 || t.indexOf("postgres") > -1 || t.indexOf("mysql") > -1 || t.indexOf("db") > -1) return ICONS.oracle;
-  if (t.indexOf("kube") > -1 || t.indexOf("k8s") > -1 || t.indexOf("ocp") > -1 || t.indexOf("openshift") > -1) return ICONS.kubernetes;
-  if (t.indexOf("gitlab") > -1 || t.indexOf("jenkins") > -1 || t.indexOf("runner") > -1) return ICONS.gitlab;
-  if (t.indexOf("artifact") > -1 || t.indexOf("nexus") > -1 || t.indexOf("jfrog") > -1) return ICONS.artifact;
-  return ICONS.box;
+  var k = techKey(t), icon = k === "openshift" ? ICONS.openshift :
+    k === "kubernetes" ? ICONS.kubernetes : k === "nginx" ? ICONS.nginx :
+    k === "oracle" || k === "database" ? ICONS.oracle : k === "tomcat" ? ICONS.tomcat :
+    k === "weblogic" ? ICONS.weblogic : k === "gitlab" ? ICONS.gitlab :
+    k === "artifact" ? ICONS.artifact : ICONS.box;
+  return {key:k, svg:icon};
 }
-function osIcon(o){
-  o = String(o).toLowerCase();
-  return /rhel|oel|linux|ubuntu|centos|suse|debian/.test(o) ? ICONS.linux : ICONS.chip;
+function osKey(o){
+  o = String(o || "").toLowerCase();
+  if (/windows/.test(o)) return "windows";
+  if (/rhel|oel|linux|ubuntu|centos|suse|debian|rocky|alma/.test(o)) return "linux";
+  return "chip";
 }
+function osIcon(o){ return osKey(o) === "linux" ? ICONS.linux : ICONS.chip; }
+
 
 /* ============================================================
    STATE
    ============================================================ */
 var SERVERS = [], ENVIRONMENTS = [], PLATFORMS = [], envById = {};
 var STATE_LABEL = { up:"Running", maint:"Maintenance", down:"Stopped" };
-var filterEnv = null, filterApp = "", filterType = "", query = "", sort = null;
+var filterEnv = null, filterApp = "", filterType = "", query = "", sort = null, stateFilter = "";
 
 function $(s){ return document.querySelector(s); }
 var rowsEl = $("#rows"), noticeEl = $("#notice");
@@ -406,7 +466,7 @@ function cmp(a,b){ return a > b ? 1 : a < b ? -1 : 0; }
 
 function applyDefaultFilters(){
   filterEnv = ENVIRONMENTS.length ? ENVIRONMENTS[0].id : null;
-  filterType = ""; filterApp = ""; query = "";
+  filterType = ""; filterApp = ""; query = ""; stateFilter = "";
   var qEl = $("#q"); if (qEl) qEl.value = "";
 }
 
@@ -624,6 +684,7 @@ function visible(){
     if (filterEnv && s.env !== filterEnv) return false;
     if (filterApp && s.app !== filterApp) return false;
     if (filterType && s.type.trim().toLowerCase() !== filterType) return false;
+    if (stateFilter && s.state !== stateFilter) return false;
     if (!q) return true;
     return [s.app, s.host, s.role, s.ip, s.vlan, s.type, s.os, s.site,
             (envById[s.env] || {}).label || s.env].join(" ").toLowerCase().indexOf(q) > -1;
@@ -662,8 +723,8 @@ function render(animate){
       "<td><span class='envtag' style='color:" + env.colour + "'>" + esc(env.label) + "</span></td>" +
       // "<td><span class='vlan'>" + esc(s.vlan) + "</span></td>" +
       "<td><button class='vlan' data-vlan='" + esc(s.vlan) + "' title='Copy VLAN'>" + esc(s.vlan) + "</button></td>" +
-      "<td><span class='tcell'>" + typeIcon(s.type) + esc(s.type) + "</span></td>" +
-      "<td><span class='tcell os'>" + osIcon(s.os) + esc(s.os) + "</span></td>" +
+      "<td><span class='tcell' data-tech='" + typeIcon(s.type).key + "' title='Detected category: " + esc(typeIcon(s.type).key) + "'>" + typeIcon(s.type).svg + "<span class='tech-label'>" + esc(s.type || "Unspecified") + "</span></span></td>" +
+      "<td><span class='tcell os' data-tech='" + osKey(s.os) + "' title='Platform: " + esc(s.os || "Unspecified") + "'>" + osIcon(s.os) + "<span class='tech-label'>" + esc(s.os || "Unspecified") + "</span></span></td>" +
       "<td>" + esc(s.site) + "</td>" +
       "<td><span class='state' data-state='" + s.state + "'>" + STATE_LABEL[s.state] + "</span></td>" +
     "</tr>";
@@ -677,6 +738,13 @@ function render(animate){
   }
   $("#shown").textContent = list.length;
   $("#total").textContent = SERVERS.length;
+  $("#kpiTotal").textContent = SERVERS.length;
+  $("#kpiUp").textContent = SERVERS.filter(function(x){return x.state === "up";}).length;
+  $("#kpiMaint").textContent = SERVERS.filter(function(x){return x.state === "maint";}).length;
+  $("#kpiDown").textContent = SERVERS.filter(function(x){return x.state === "down";}).length;
+  Array.prototype.forEach.call(document.querySelectorAll("[data-state-filter]"),function(card){
+    card.setAttribute("aria-pressed",String(stateFilter === card.dataset.stateFilter));
+  });
 }
 
 /* ---- header sorting; a third click returns to the default order ---- */
@@ -773,7 +841,13 @@ $("#theme").addEventListener("click", function(){
   if (override && /^[\w.\-\/]+\.csv$/i.test(override)) CSV_FILE = override;
   $("#srcname").textContent = CSV_FILE;
   $("#reload").addEventListener("click", load);
-  load();
+  Array.prototype.forEach.call(document.querySelectorAll("[data-state-filter]"),function(card){
+  function activate(){ stateFilter = stateFilter === card.dataset.stateFilter ? "" : card.dataset.stateFilter; render(true); }
+  card.addEventListener("click",activate);
+  card.addEventListener("keydown",function(e){if(e.key === "Enter" || e.key === " "){e.preventDefault();activate();}});
+});
+
+load();
 })();
 </script>
 </body>
