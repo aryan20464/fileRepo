@@ -1,37 +1,13 @@
-FROM cgr.dev/chainguard/nginx:latest
-
-ENV TZ=Asia/Calcutta
-
-# Switch to root to configure timezone, custom files, and permissions
-USER root
-
-# Install tzdata first since Chainguard images don't include it by default
-# Then set up the timezone files correctly
-RUN apk add --no-cache tzdata && \
-    cp /usr/share/zoneinfo/$TZ /etc/localtime && \
-    echo $TZ > /etc/timezone && \
-    apk del tzdata
-
-# Remove default site configs and copy your custom NGINX configuration
-RUN rm -f /etc/nginx/conf.d/default.conf
-COPY nginx preprod.conf /etc/nginx/nginx.conf
-
-# Clean default HTML files and copy your built Angular application
-RUN rm -rf /usr/share/nginx/html/*
-COPY index.html /usr/share/nginx/html/
-COPY 50x.html /usr/share/nginx/html/
-COPY dist/ /usr/share/nginx/html/
-
-# Ensure all NGINX paths are writable by the unprivileged user (UID 65532)
-RUN chown -R 65532:65532 /usr/share/nginx/html \
-    && chown -R 65532:65532 /etc/nginx \
-    && chown -R 65532:65532 /var/cache/nginx \
-    && chown -R 65532:65532 /var/log/nginx \
-    && chown -R 65532:65532 /var/run
-
-# Drop privileges back to the default non-root user
-USER 65532
-
-EXPOSE 4200
-
-CMD ["nginx", "-g", "daemon off;"]
+[2/9] RUN apk add --no-cache tzdata &&     cp /usr/share/zoneinfo/Asia/Calcutta /etc/localtime &&     echo Asia/Calcutta > /etc/timezone &&     apk del tzdata:
+0.166 runc run failed: unable to start container process: exec: "/bin/sh": stat /bin/sh: no such file or directory
+------
+Dockerfile-preprod:11
+--------------------
+  10 |     # Then set up the timezone files correctly
+  11 | >>> RUN apk add --no-cache tzdata && \
+  12 | >>>     cp /usr/share/zoneinfo/$TZ /etc/localtime && \
+  13 | >>>     echo $TZ > /etc/timezone && \
+  14 | >>>     apk del tzdata
+  15 |     
+--------------------
+ERROR: failed to solve: process "/bin/sh -c apk add --no-cache tzdata &&     cp /usr/share/zoneinfo/$TZ /etc/localtime &&     echo $TZ > /etc/timezone &&     apk del tzdata" did not complete successfully: exit code: 1
