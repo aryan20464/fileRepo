@@ -1,33 +1,9 @@
-ENV TZ=Asia/Calcutta
-USER root
-#RUN cp /usr/share/zoneinfo/$TZ /etc/localtime
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-# Start as root to fix permissions
-
-
-# Remove default site config and add your own (optional)
-RUN rm /etc/nginx/conf.d/nginx.default.conf
-COPY nginx-preprod.conf /etc/nginx/nginx.conf
-
-# Remove default site html and add your own to know the nginx is working in case u r using multiple projects (optional)
-RUN rm /usr/share/nginx/html/index.html
-COPY index.html /usr/share/nginx/html/
-COPY 50x.html /usr/share/nginx/html/
-
-# Copy the already-built Angular app into the image
-COPY dist/ /usr/share/nginx/html/
-
-# Set proper ownership to nginx user (UID nginx)
-RUN mkdir -p /var/lib/nginx/logs /var/run && \
-    chown -R 65532:65532 /usr/share/nginx/html && \
-    chown -R 65532:65532 /etc/nginx && \
-    chown -R 65532:65532 /var/lib/nginx && \    
-    chown -R 65532:65532 /var/log/nginx && \
-    chown -R 65532:65532 /var/run
-
-# Drop to non-root user
-USER 65532
-
-EXPOSE 4200
-
-CMD ["-c", "/etc/nginx/nginx.conf", "-g", "daemon off;"]
+# Create log directory and log files
+RUN mkdir -p /var/lib/nginx/logs /tmp && \
+    touch /var/lib/nginx/logs/access.log && \
+    touch /var/lib/nginx/logs/error.log && \
+    chown -R 65532:65532 /var/lib/nginx && \
+    chmod 755 /var/lib/nginx/logs && \
+    chmod 644 /var/lib/nginx/logs/access.log && \
+    chmod 644 /var/lib/nginx/logs/error.log && \
+    chown -R 65532:65532 /usr/share/nginx/html
