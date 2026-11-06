@@ -1,42 +1,37 @@
-# Stage 1: Use the development variant to handle configurations and timezone building
-FROM cgr.dev/chainguard/nginx:latest-dev AS builder
-
-USER root
-
+# Use only NGINX, no Node or NPM involved
+FROM cgr.dev/chainguard/nginx:latest-dev
 ENV TZ=Asia/Calcutta
+USER root
+#RUN cp /usr/share/zoneinfo/$TZ /etc/localtime
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+# Start as root to fix permissions
 
-# Install tzdata, compile the zoneinfo settings, and structure the folders
-RUN apk add --no-cache tzdata && \
-    mkdir -p /etc/nginx/conf.d /usr/share/nginx/html /var/cache/nginx /var/log/nginx /var/run && \
-    cp /usr/share/zoneinfo/$TZ /etc/localtime && \
-    echo $TZ > /etc/timezone
 
-# Clean and prepare static directory contents
-RUN rm -rf /usr/share/nginx/html/*
+# Remove default site config and add your own (optional)
+RUN rm /etc/nginx/conf.d/nginx.default.conf
+COPY nginx-preprod.conf /etc/nginx/nginx.conf
+
+# Remove default site html and add your own to know the nginx is working in case u r using multiple projects (optional)
+RUN rm /usr/share/nginx/html/index.html
 COPY index.html /usr/share/nginx/html/
 COPY 50x.html /usr/share/nginx/html/
+
+# Copy the already-built Angular app into the image
 COPY dist/ /usr/share/nginx/html/
-COPY nginx preprod.conf /etc/nginx/nginx.conf
 
-# Enforce secure ownership rules matching Chainguard's runtime UID (65532)
-RUN chown -R 65532:65532 /usr/share/nginx/html \
-    && chown -R 65532:65532 /etc/nginx \
-    && chown -R 65532:65532 /var/cache/nginx \
-    && chown -R 65532:65532 /var/log/nginx \
-    && chown -R 65532:65532 /var/run
+# Set proper ownership to nginx user (UID 65532)
+RUN chown -R 65532:65532 /usr/share/nginx/html && \
+    chown -R 65532:65532 /etc/nginx && \
+    chown -R 65532:65532 /var/log/nginx
 
+# Drop to non-root user
+USER 65532
 
-# Stage 2: Final pristine distroless production image (No shell, no package managers)
-FROM cgr.dev/chainguard/nginx:latest
-
-# Bring in the fully structured configurations and compiled time configurations from the builder stage
-COPY --from=builder /etc/localtime /etc/localtime
-COPY --from=builder /etc/timezone /etc/timezone
-COPY --from=builder /etc/nginx/ /etc/nginx/
-COPY --from=builder /usr/share/nginx/html/ /usr/share/nginx/html/
-
-# Expose NGINX custom application port 
 EXPOSE 4200
 
-# Chainguard NGINX default entrypoint handles the process internally
 CMD ["-c", "/etc/nginx/nginx.conf", "-g", "daemon off;"]
+
+
+nginx: [alert] could not open error log file: open() "/var/lib/nginx/logs/error.log" failed (13: Permission denied)
+2026/11/06 09:55:13 [warn] 1#1: the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /etc/nginx/nginx.conf:1
+2026/11/06 09:55:13 [emerg] 1#1: open() "/var/lib/nginx/logs/error.log" failed (13: Permission denied)
