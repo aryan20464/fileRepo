@@ -1,9 +1,29 @@
-# Create log directory and log files
-RUN mkdir -p /var/lib/nginx/logs /tmp && \
-    touch /var/lib/nginx/logs/access.log && \
-    touch /var/lib/nginx/logs/error.log && \
-    chown -R 65532:65532 /var/lib/nginx && \
-    chmod 755 /var/lib/nginx/logs && \
-    chmod 644 /var/lib/nginx/logs/access.log && \
-    chmod 644 /var/lib/nginx/logs/error.log && \
-    chown -R 65532:65532 /usr/share/nginx/html
+
+FROM cgr.dev/chainguard/nginx:latest-dev
+
+ENV TZ=Asia/Calcutta
+
+USER root
+
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone
+
+RUN rm -f /etc/nginx/conf.d/nginx.default.conf
+
+COPY nginx-preprod.conf /etc/nginx/nginx.conf
+
+COPY index.html /usr/share/nginx/html/
+COPY 50x.html /usr/share/nginx/html/
+COPY dist/ /usr/share/nginx/html/
+
+RUN chown -R 65532:65532 /usr/share/nginx/html && \
+    chown -R 65532:65532 /var/log/nginx && \
+    chmod 755 /var/log/nginx && \
+    chmod 644 /var/log/nginx/access.log && \
+    chmod 644 /var/log/nginx/error.log
+
+USER 65532
+
+EXPOSE 4200
+
+CMD ["-c", "/etc/nginx/nginx.conf", "-e", "/dev/stderr", "-g", "daemon off;"]
