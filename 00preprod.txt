@@ -1,13 +1,42 @@
-[2/9] RUN apk add --no-cache tzdata &&     cp /usr/share/zoneinfo/Asia/Calcutta /etc/localtime &&     echo Asia/Calcutta > /etc/timezone &&     apk del tzdata:
-0.166 runc run failed: unable to start container process: exec: "/bin/sh": stat /bin/sh: no such file or directory
-------
-Dockerfile-preprod:11
---------------------
-  10 |     # Then set up the timezone files correctly
-  11 | >>> RUN apk add --no-cache tzdata && \
-  12 | >>>     cp /usr/share/zoneinfo/$TZ /etc/localtime && \
-  13 | >>>     echo $TZ > /etc/timezone && \
-  14 | >>>     apk del tzdata
-  15 |     
---------------------
-ERROR: failed to solve: process "/bin/sh -c apk add --no-cache tzdata &&     cp /usr/share/zoneinfo/$TZ /etc/localtime &&     echo $TZ > /etc/timezone &&     apk del tzdata" did not complete successfully: exit code: 1
+# Stage 1: Use the development variant to handle configurations and timezone building
+FROM cgr.dev/chainguard/nginx:latest-dev AS builder
+
+USER root
+
+ENV TZ=Asia/Calcutta
+
+# Install tzdata, compile the zoneinfo settings, and structure the folders
+RUN apk add --no-cache tzdata && \
+    mkdir -p /etc/nginx/conf.d /usr/share/nginx/html /var/cache/nginx /var/log/nginx /var/run && \
+    cp /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone
+
+# Clean and prepare static directory contents
+RUN rm -rf /usr/share/nginx/html/*
+COPY index.html /usr/share/nginx/html/
+COPY 50x.html /usr/share/nginx/html/
+COPY dist/ /usr/share/nginx/html/
+COPY nginx preprod.conf /etc/nginx/nginx.conf
+
+# Enforce secure ownership rules matching Chainguard's runtime UID (65532)
+RUN chown -R 65532:65532 /usr/share/nginx/html \
+    && chown -R 65532:65532 /etc/nginx \
+    && chown -R 65532:65532 /var/cache/nginx \
+    && chown -R 65532:65532 /var/log/nginx \
+    && chown -R 65532:65532 /var/run
+
+
+# Stage 2: Final pristine distroless production image (No shell, no package managers)
+FROM cgr.dev/chainguard/nginx:latest
+
+# Bring in the fully structured configurations and compiled time configurations from the builder stage
+COPY --from=builder /etc/localtime /etc/localtime
+COPY --from=builder /etc/timezone /etc/timezone
+COPY --from=builder /etc/nginx/ /etc/nginx/
+COPY --from=builder /usr/share/nginx/html/ /usr/share/nginx/html/
+
+# Expose NGINX custom application port 
+EXPOSE 4200
+
+# Chainguard NGINX default entrypoint handles the process internally
+CMD ["-c", "/etc/nginx/nginx.conf", "-g", "daemon off;"]
