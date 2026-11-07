@@ -1,84 +1,196 @@
-variables:
-  MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode"
-  BUILD_NAME: "$CI_PROJECT_NAME" 
-  BUILD_NUMBER: "$CI_PIPELINE_ID"
-  JFROG_CLI_HOME_DIR: "${CI_PROJECT_DIR}/.jfrog"
-  JFROG_CLI_TEMP_DIR: "${CI_PROJECT_DIR}/.jfrog-tmp"
-  JF_BUILD_NAME: "$CI_PROJECT_NAME" #"$CI_PROJECT_PATH_SLUG"
-  JF_PROJECT: "itfo"
-        # ENVIRONMENT: "${CI_ENVIRONMENT_NAME}"
-  JF_BUILD_NUMBER: "${CI_COMMIT_REF_SLUG}-${CI_PIPELINE_ID}"
- 
+# Use the hardened JRE image
+FROM cgr.dev/chainguard/jre:latest
+ENV TZ=Asia/Calcutta
+USER root
+
+# 1. Create App Logs folder, no user switching is needed as it runs default as "nonroot" user
+WORKDIR /app/logs
+
+# 2. Copy files and set ownership for the 'itss' user
+COPY --chown=65532:65532 src/main/resources/preprod/fxs-idea-preprod.crt /app/fxs-idea-preprod.crt
+COPY --chown=65532:65532 src/main/resources/preprod/fxs-idea-uat.crt /app/fxs-idea-uat.crt
+COPY --chown=65532:65532 src/main/resources/preprod/rforex-vks-preprod.crt /app/rforex-vks-preprod.crt
+COPY --chown=65532:65532 src/main/resources/preprod/NBC_CBS_SSO_PublicKey-UAT.cer /app/NBC_CBS_SSO_PublicKey.cer
+COPY --chown=65532:65532 target/rforexinterfaceservice-0.0.1-SNAPSHOT.war /app/rforexinterfaceservice.war
+COPY --chown=65532:65532 --chmod=2775 pom.xml /app/logs/pom.xml
 
 
-build_job:
-  stage: build
-  script:
-    - mvn clean package -U
-  artifacts:
-    paths:
-      - target/
-    expire_in: 1 day
+# 3. Import certificates into the Java truststore
+RUN ["keytool", "-importcert", "-trustcacerts", "-cacerts", "-storepass", "changeit", "-noprompt", "-alias", "fxs-certs-preprod", "-file", "/app/fxs-idea-preprod.crt"]
+RUN ["keytool", "-importcert", "-trustcacerts", "-cacerts", "-storepass", "changeit", "-noprompt", "-alias", "fxs-certs-uat", "-file", "/app/fxs-idea-uat.crt"]
+RUN ["keytool", "-importcert", "-trustcacerts", "-cacerts", "-storepass", "changeit", "-noprompt", "-alias", "rfx-certs", "-file", "/app/rforex-vks-preprod.crt"]
+RUN ["keytool", "-importcert", "-trustcacerts", "-cacerts", "-storepass", "changeit", "-noprompt", "-alias", "cbs-sso-certs", "-file", "/app/NBC_CBS_SSO_PublicKey.cer"]
 
+# 4. Run as nonroot user
+WORKDIR /app
 
-fortify_scan_job:
-  stage: fortify_scan
-  image: artifactory.jfrog.sbi:443/dso-base-image/ubi9/ubi9-java21-fortify-24.4:2.0
-  allow_failure: true
-  variables:
-    MAVEN_OPTS: "-Xmx4g -Xms2g -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
-    MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DskipTests"
-  before_script:
-    - keytool -import -alias jfrog-artifactory -file "$ARTIFACTORY_CERT" -keystore /home/default/custom-truststore.jks -storepass changeit -noprompt
-    - export MAVEN_OPTS="-Djavax.net.ssl.trustStore=/home/default/custom-truststore.jks -Djavax.net.ssl.trustStorePassword=changeit"
-  script:
-   - sourceanalyzer -clean -b $CI_PROJECT_PATH_SLUG
-   - sourceanalyzer -b $CI_PROJECT_PATH_SLUG mvn $MAVEN_CLI_OPTS clean compile -U -DskipTests=true -Dfortify.sca.exclude=target
-   - sourceanalyzer -b $CI_PROJECT_PATH_SLUG -scan -Xmx8G -f ${CI_PROJECT_PATH_SLUG}.fpr
-  #  - sourceanalyzer -b $CI_PROJECT_PATH_SLUG -scan -filter $CI_PROJECT_DIR/filter.txt -Xmx8G -f ${CI_PROJECT_PATH_SLUG}.fpr
-   - BIRTReportGenerator -template "Developer Workbook" -source ${CI_PROJECT_PATH_SLUG}.fpr -format pdf -output ${CI_PROJECT_PATH_SLUG}_report.pdf
-   # 1. Query the .fpr file
-   - FPRUtility -information -search -query "[fortify priority order]:critical OR [fortify priority order]:high" -project ${CI_PROJECT_PATH_SLUG}.fpr > sca_gate.txt
-   - cat sca_gate.txt
-   # 2. Extract the integer count (suppressing the raw cat output)
-   - ISSUES=$(grep -i "matched search query" sca_gate.txt | awk '{print $1}') 
-   # 3. Print color-coded visual summary block and exit 
-   - |
-     if [ -n "$ISSUES" ] && [ "$ISSUES" -gt 0 ]; then
-       echo -e "\e[31m=========================================\e[0m"
-       echo -e "\e[31m✖ QUALITY GATE FAILED\e[0m"
-       echo -e "\e[31mTotal High/Critical Vulnerabilities: $ISSUES\e[0m" 
-       echo -e "\e[31m=========================================\e[0m"
+USER 65532
 
-       curl --insecure --request POST \
-          --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
-          --header "Content-Type: application/x-www-form-urlencoded" \
-          --data-urlencode "title=Fortify Quality Gate Failed - ${CI_PROJECT_NAME}" \
-              --data-urlencode "description=Assigned To: ${GITLAB_USER_NAME}
-      Project: ${CI_PROJECT_NAME}
-      Repository: ${CI_PROJECT_PATH}
-      Branch: ${CI_COMMIT_REF_NAME}
-      Pipeline URL: ${CI_PIPELINE_URL}
-      Triggered By: ${GITLAB_USER_NAME}
-      High/Critical Vulnerabilities: ${ISSUES}
-       Please fix the Fortify vulnerabilities and rerun the pipeline." \
-          --data "assignee_ids[]=${GITLAB_USER_ID}" \
-          --data "labels=fortify,security,quality-gate" \
-          --silent \
-          "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/issues" | grep -o '"web_url":"[^"]*issues/[^"]*"' | head -1 | sed 's/"web_url":"//;s/"//'
+EXPOSE 5207
 
-        echo "GitLab issue created and assigned to ${GITLAB_USER_NAME}"
-       exit 1;
+ENTRYPOINT ["java","-jar","/app/rforexinterfaceservice.war"]
 
-     else
-       echo -e "\e[32m=========================================\e[0m"
-       echo -e "\e[32m✔ QUALITY GATE PASSED\e[0m"
-       echo -e "\e[32mTotal High/Critical Vulnerabilities: 0\e[0m"
-       echo -e "\e[32m=========================================\e[0m"
-     fi
-  artifacts:
-    paths:
-     - ${CI_PROJECT_PATH_SLUG}_report.pdf
-     - ${CI_PROJECT_PATH_SLUG}.fpr
-    expire_in: 1 day
-    when: always
+2026-11-07 15:17:54 15:17:54,790 |-ERROR in ch.qos.logback.core.rolling.RollingFileAppender[FILE] - openFile(/app/logs/rforexinterfaceservice.log,true) call failed. java.io.FileNotFoundException: /app/logs/rforexinterfaceservice.log (Permission denied)
+2026-11-07 15:17:54 at java.io.FileNotFoundException: /app/logs/rforexinterfaceservice.log (Permission denied)
+2026-11-07 15:17:54 at at java.base/java.io.FileOutputStream.open0(Native Method)
+2026-11-07 15:17:54 at at java.base/java.io.FileOutputStream.open(Unknown Source)
+2026-11-07 15:17:54 at at java.base/java.io.FileOutputStream.<init>(Unknown Source)
+2026-11-07 15:17:54 at at ch.qos.logback.core.recovery.ResilientFileOutputStream.<init>(ResilientFileOutputStream.java:26)
+2026-11-07 15:17:54 at at ch.qos.logback.core.FileAppender.openFile(FileAppender.java:165)
+2026-11-07 15:17:54 at at ch.qos.logback.core.FileAppender.start(FileAppender.java:120)
+2026-11-07 15:17:54 at at ch.qos.logback.core.rolling.RollingFileAppender.start(RollingFileAppender.java:104)
+2026-11-07 15:17:54 at at org.springframework.boot.logging.logback.LogbackConfigurator.start(LogbackConfigurator.java:111)
+2026-11-07 15:17:54 at at org.springframework.boot.logging.logback.LogbackConfigurator.appender(LogbackConfigurator.java:74)
+2026-11-07 15:17:54 at at org.springframework.boot.logging.logback.DefaultLogbackConfiguration.fileAppender(DefaultLogbackConfiguration.java:147)
+2026-11-07 15:17:54 at at org.springframework.boot.logging.logback.DefaultLogbackConfiguration.apply(DefaultLogbackConfiguration.java:88)
+2026-11-07 15:17:54 at at org.springframework.boot.logging.logback.LogbackLoggingSystem.lambda$loadDefaults$1(LogbackLoggingSystem.java:241)
+2026-11-07 15:17:54 at at org.springframework.boot.logging.logback.LogbackLoggingSystem.withLoggingSuppressed(LogbackLoggingSystem.java:481)
+2026-11-07 15:17:54 at at org.springframework.boot.logging.logback.LogbackLoggingSystem.loadDefaults(LogbackLoggingSystem.java:230)
+2026-11-07 15:17:54 at at org.springframework.boot.logging.AbstractLoggingSystem.initializeWithConventions(AbstractLoggingSystem.java:84)
+2026-11-07 15:17:54 at at org.springframework.boot.logging.AbstractLoggingSystem.initialize(AbstractLoggingSystem.java:61)
+2026-11-07 15:17:54 at at org.springframework.boot.logging.logback.LogbackLoggingSystem.initialize(LogbackLoggingSystem.java:195)
+2026-11-07 15:17:54 at at org.springframework.boot.context.logging.LoggingApplicationListener.initializeSystem(LoggingApplicationListener.java:332)
+2026-11-07 15:17:54 at at org.springframework.boot.context.logging.LoggingApplicationListener.initialize(LoggingApplicationListener.java:298)
+2026-11-07 15:17:54 at at org.springframework.boot.context.logging.LoggingApplicationListener.onApplicationEnvironmentPreparedEvent(LoggingApplicationListener.java:246)
+2026-11-07 15:17:54 at at org.springframework.boot.context.logging.LoggingApplicationListener.onApplicationEvent(LoggingApplicationListener.java:223)
+2026-11-07 15:17:54 at at org.springframework.context.event.SimpleApplicationEventMulticaster.doInvokeListener(SimpleApplicationEventMulticaster.java:185)
+2026-11-07 15:17:54 at at org.springframework.context.event.SimpleApplicationEventMulticaster.invokeListener(SimpleApplicationEventMulticaster.java:178)
+2026-11-07 15:17:54 at at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:156)
+2026-11-07 15:17:54 at at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:138)
+2026-11-07 15:17:54 at at org.springframework.boot.context.event.EventPublishingRunListener.multicastInitialEvent(EventPublishingRunListener.java:136)
+2026-11-07 15:17:54 at at org.springframework.boot.context.event.EventPublishingRunListener.environmentPrepared(EventPublishingRunListener.java:81)
+2026-11-07 15:17:54 at at org.springframework.boot.SpringApplicationRunListeners.lambda$environmentPrepared$2(SpringApplicationRunListeners.java:64)
+2026-11-07 15:17:54 at at java.base/java.util.ImmutableCollections$List12.forEach(Unknown Source)
+2026-11-07 15:17:54 at at org.springframework.boot.SpringApplicationRunListeners.doWithListeners(SpringApplicationRunListeners.java:118)
+2026-11-07 15:17:54 at at org.springframework.boot.SpringApplicationRunListeners.doWithListeners(SpringApplicationRunListeners.java:112)
+2026-11-07 15:17:54 at at org.springframework.boot.SpringApplicationRunListeners.environmentPrepared(SpringApplicationRunListeners.java:63)
+2026-11-07 15:17:54 at at org.springframework.boot.SpringApplication.prepareEnvironment(SpringApplication.java:353)
+2026-11-07 15:17:54 at at org.springframework.boot.SpringApplication.run(SpringApplication.java:313)
+2026-11-07 15:17:54 at at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+2026-11-07 15:17:54 at at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+2026-11-07 15:17:54 at at com.idea.rforexinterfaceservice.RforexinterfaceserviceApplication.main(RforexinterfaceserviceApplication.java:17)
+2026-11-07 15:17:54 at at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+2026-11-07 15:17:54 at at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+2026-11-07 15:17:54 at at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:106)
+2026-11-07 15:17:54 at at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:64)
+2026-11-07 15:17:54 at at org.springframework.boot.loader.launch.WarLauncher.main(WarLauncher.java:53)
+2026-11-07 15:17:54 
+2026-11-07 15:17:54   .   ____          _            __ _ _
+2026-11-07 15:17:54  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+2026-11-07 15:17:54 ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+2026-11-07 15:17:54  \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+2026-11-07 15:17:54   '  |____| .__|_| |_|_| |_\__, | / / / /
+2026-11-07 15:17:54  =========|_|==============|___/=/_/_/_/
+2026-11-07 15:17:54 
+2026-11-07 15:17:54  :: Spring Boot ::               (v3.5.16)
+2026-11-07 15:17:54 
+2026-11-07 15:17:54 2026-11-07 15:17:54 +0530 [] [] INFO  1 --- [           main] c.i.r.RforexinterfaceserviceApplication  : Starting RforexinterfaceserviceApplication v0.0.1-SNAPSHOT using Java 27.0.1.0.3 with PID 1 (/app/rforexinterfaceservice.war started by java in /app)
+2026-11-07 15:17:54 2026-11-07 15:17:54 +0530 [] [] INFO  1 --- [           main] c.i.r.RforexinterfaceserviceApplication  : The following 1 profile is active: "preprod"
+2026-11-07 15:17:55 2026-11-07 15:17:55 +0530 [] [] INFO  1 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-07 15:17:55 2026-11-07 15:17:55 +0530 [] [] INFO  1 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 56 ms. Found 6 JPA repository interfaces.
+2026-11-07 15:17:56 2026-11-07 15:17:56 +0530 [] [] INFO  1 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 5207 (http)
+2026-11-07 15:17:56 2026-11-07 15:17:56 +0530 [] [] INFO  1 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-11-07 15:17:56 2026-11-07 15:17:56 +0530 [] [] INFO  1 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.25]
+2026-11-07 15:17:56 2026-11-07 15:17:56 +0530 [] [] INFO  1 --- [           main] o.a.c.c.C.[.[.[/rforex/blotterservice]   : Initializing Spring embedded WebApplicationContext
+2026-11-07 15:17:56 2026-11-07 15:17:56 +0530 [] [] INFO  1 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1620 ms
+2026-11-07 15:17:56 2026-11-07 15:17:56 +0530 [] [] INFO  1 --- [           main] com.zaxxer.hikari.HikariDataSource       : rforex-blotter-service-cp - Starting...
+2026-11-07 15:17:57 2026-11-07 15:17:57 +0530 [] [] INFO  1 --- [           main] com.zaxxer.hikari.pool.HikariPool        : rforex-blotter-service-cp - Added connection oracle.jdbc.driver.T4CConnection@37e55819
+2026-11-07 15:17:57 2026-11-07 15:17:57 +0530 [] [] INFO  1 --- [           main] com.zaxxer.hikari.HikariDataSource       : rforex-blotter-service-cp - Start completed.
+2026-11-07 15:17:54 15:17:54,901 |-WARN in ch.qos.logback.core.rolling.RollingFileAppender[FILE] - Attempted to append to non started appender [FILE].
+2026-11-07 15:17:54 15:17:54,903 |-WARN in ch.qos.logback.core.rolling.RollingFileAppender[FILE] - Attempted to append to non started appender [FILE].
+2026-11-07 15:17:57 2026-11-07 15:17:57 +0530 [] [] INFO  1 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-11-07 15:17:57 2026-11-07 15:17:57 +0530 [] [] INFO  1 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.53.Final
+2026-11-07 15:17:58 2026-11-07 15:17:58 +0530 [] [] INFO  1 --- [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-11-07 15:17:58 2026-11-07 15:17:58 +0530 [] [] INFO  1 --- [           main] o.h.e.boot.internal.EnversServiceImpl    : Envers integration enabled? : true
+2026-11-07 15:17:58 2026-11-07 15:17:58 +0530 [] [] INFO  1 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-07 15:17:58 2026-11-07 15:17:58 +0530 [] [] WARN  1 --- [           main] org.hibernate.orm.deprecation            : HHH90000025: OracleDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-11-07 15:17:59 2026-11-07 15:17:59 +0530 [] [] INFO  1 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+2026-11-07 15:17:59 Database JDBC URL [Connecting through datasource 'HikariDataSource (rforex-blotter-service-cp)']
+2026-11-07 15:17:59 Database driver: undefined/unknown
+2026-11-07 15:17:59 Database version: 19.33
+2026-11-07 15:17:59 Autocommit mode: undefined/unknown
+2026-11-07 15:17:59 Isolation level: undefined/unknown
+2026-11-07 15:17:59 Minimum pool size: undefined/unknown
+2026-11-07 15:17:59 Maximum pool size: undefined/unknown
+2026-11-07 15:17:59 2026-11-07 15:17:59 +0530 [] [] INFO  1 --- [           main] o.h.e.c.i.m.AuditMetadataGenerator       : Adding properties for entity: com.idea.rforexinterfaceservice.models.OBPlacements
+2026-11-07 15:18:00 2026-11-07 15:18:00 +0530 [] [] INFO  1 --- [           main] o.h.m.i.EntityInstantiatorPojoStandard   : HHH000182: No default (no-argument) constructor for class: com.idea.rforexjwtcommonlib.models.LoggedUser (class must be instantiated by Interceptor)
+2026-11-07 15:18:00 2026-11-07 15:18:00 +0530 [] [] INFO  1 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-07 15:18:00 2026-11-07 15:18:00 +0530 [] [] INFO  1 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-07 15:18:00 2026-11-07 15:18:00 +0530 [] [] INFO  1 --- [           main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-11-07 15:18:00 2026-11-07 15:18:00 +0530 [] [] WARN  1 --- [           main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'logger': Invocation of init method failed
+2026-11-07 15:18:00 2026-11-07 15:18:00 +0530 [] [] INFO  1 --- [           main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-11-07 15:18:00 2026-11-07 15:18:00 +0530 [] [] INFO  1 --- [           main] com.zaxxer.hikari.HikariDataSource       : rforex-blotter-service-cp - Shutdown initiated...
+2026-11-07 15:18:01 2026-11-07 15:18:01 +0530 [] [] INFO  1 --- [           main] com.zaxxer.hikari.HikariDataSource       : rforex-blotter-service-cp - Shutdown completed.
+2026-11-07 15:18:01 2026-11-07 15:18:01 +0530 [] [] INFO  1 --- [           main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2026-11-07 15:18:01 2026-11-07 15:18:01 +0530 [] [] WARN  1 --- [           main] o.a.c.loader.WebappClassLoaderBase       : The web application [rforex#blotterservice] appears to have started a thread named [oracle.jdbc.diagnostics.Diagnostic.CLOCK] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+2026-11-07 15:18:01  java.base/java.lang.Object.wait0(Native Method)
+2026-11-07 15:18:01  java.base/java.lang.Object.wait(Unknown Source)
+2026-11-07 15:18:01  java.base/java.util.TimerThread.mainLoop(Unknown Source)
+2026-11-07 15:18:01  java.base/java.util.TimerThread.run(Unknown Source)
+2026-11-07 15:18:01 2026-11-07 15:18:01 +0530 [] [] WARN  1 --- [           main] o.a.c.loader.WebappClassLoaderBase       : The web application [rforex#blotterservice] appears to have started a thread named [oracle.jdbc.driver.BlockSource.ThreadedCachingBlockSource.BlockReleaser] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+2026-11-07 15:18:01  java.base/jdk.internal.misc.Unsafe.park(Native Method)
+2026-11-07 15:18:01  java.base/java.util.concurrent.locks.LockSupport.parkNanos(Unknown Source)
+2026-11-07 15:18:01  java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(Unknown Source)
+2026-11-07 15:18:01  oracle.jdbc.internal.Monitor$WaitableMonitor.monitorWait(Monitor.java:325)
+2026-11-07 15:18:01  oracle.jdbc.internal.Monitor$WaitableMonitor.monitorWait(Monitor.java:307)
+2026-11-07 15:18:01  oracle.jdbc.driver.BlockSource$ThreadedCachingBlockSource$BlockReleaser.run(BlockSource.java:347)
+2026-11-07 15:18:01 2026-11-07 15:18:01 +0530 [] [] WARN  1 --- [           main] o.a.c.loader.WebappClassLoaderBase       : The web application [rforex#blotterservice] appears to have started a thread named [InterruptTimer] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+2026-11-07 15:18:01  java.base/java.lang.Object.wait0(Native Method)
+2026-11-07 15:18:01  java.base/java.lang.Object.wait(Unknown Source)
+2026-11-07 15:18:01  java.base/java.util.TimerThread.mainLoop(Unknown Source)
+2026-11-07 15:18:01  java.base/java.util.TimerThread.run(Unknown Source)
+2026-11-07 15:18:01 2026-11-07 15:18:01 +0530 [] [] WARN  1 --- [           main] o.a.c.loader.WebappClassLoaderBase       : The web application [rforex#blotterservice] appears to have started a thread named [OJDBC-WORKER-THREAD-1] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+2026-11-07 15:18:01  java.base/jdk.internal.misc.Unsafe.park(Native Method)
+2026-11-07 15:18:01  java.base/java.util.concurrent.locks.LockSupport.parkNanos(Unknown Source)
+2026-11-07 15:18:01  java.base/java.util.concurrent.LinkedTransferQueue$DualNode.await(Unknown Source)
+2026-11-07 15:18:01  java.base/java.util.concurrent.SynchronousQueue$Transferer.xferLifo(Unknown Source)
+2026-11-07 15:18:01  java.base/java.util.concurrent.SynchronousQueue.xfer(Unknown Source)
+2026-11-07 15:18:01  java.base/java.util.concurrent.SynchronousQueue.poll(Unknown Source)
+2026-11-07 15:18:01  java.base/java.util.concurrent.ThreadPoolExecutor.getTask(Unknown Source)
+2026-11-07 15:18:01  java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+2026-11-07 15:18:01  java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+2026-11-07 15:18:01  java.base/java.lang.Thread.run(Unknown Source)
+2026-11-07 15:18:01 2026-11-07 15:18:01 +0530 [] [] WARN  1 --- [           main] o.a.c.loader.WebappClassLoaderBase       : You need to add "--add-opens=java.base/java.lang=ALL-UNNAMED" to the JVM command line arguments to enable ThreadLocal memory leak detection. Alternatively, you can suppress this warning by disabling ThreadLocal memory leak detection.
+2026-11-07 15:18:01 2026-11-07 15:18:01 +0530 [] [] WARN  1 --- [           main] o.a.c.loader.WebappClassLoaderBase       : You need to add "--add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED" to the JVM command line arguments to enable RMI Target memory leak detection. Alternatively, you can suppress this warning by disabling RMI Target memory leak detection.
+2026-11-07 15:18:01 2026-11-07 15:18:01 +0530 [] [] INFO  1 --- [           main] .s.b.a.l.ConditionEvaluationReportLogger : 
+2026-11-07 15:18:01 
+2026-11-07 15:18:01 Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-11-07 15:18:01 2026-11-07 15:18:01 +0530 [] [] ERROR 1 --- [           main] o.s.boot.SpringApplication               : Application run failed
+2026-11-07 15:18:01 org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'logger': Invocation of init method failed
+2026-11-07 15:18:01 at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:222)
+2026-11-07 15:18:01 at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:429)
+2026-11-07 15:18:01 at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1816)
+2026-11-07 15:18:01 at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:607)
+2026-11-07 15:18:01 at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529)
+2026-11-07 15:18:01 at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339)
+2026-11-07 15:18:01 at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373)
+2026-11-07 15:18:01 at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337)
+2026-11-07 15:18:01 at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+2026-11-07 15:18:01 at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1235)
+2026-11-07 15:18:01 at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1201)
+2026-11-07 15:18:01 at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1130)
+2026-11-07 15:18:01 at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:991)
+2026-11-07 15:18:01 at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:628)
+2026-11-07 15:18:01 at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+2026-11-07 15:18:01 at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+2026-11-07 15:18:01 at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+2026-11-07 15:18:01 at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+2026-11-07 15:18:01 at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+2026-11-07 15:18:01 at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+2026-11-07 15:18:01 at com.idea.rforexinterfaceservice.RforexinterfaceserviceApplication.main(RforexinterfaceserviceApplication.java:17)
+2026-11-07 15:18:01 at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+2026-11-07 15:18:01 at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+2026-11-07 15:18:01 at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:106)
+2026-11-07 15:18:01 at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:64)
+2026-11-07 15:18:01 at org.springframework.boot.loader.launch.WarLauncher.main(WarLauncher.java:53)
+2026-11-07 15:18:01 Caused by: java.lang.RuntimeException: Exception Occurred
+2026-11-07 15:18:01 at com.idea.rforexinterfaceservice.component.Logger.initialize(Logger.java:91)
+2026-11-07 15:18:01 at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+2026-11-07 15:18:01 at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+2026-11-07 15:18:01 at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMethod.invoke(InitDestroyAnnotationBeanPostProcessor.java:457)
+2026-11-07 15:18:01 at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:401)
+2026-11-07 15:18:01 at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:219)
+2026-11-07 15:18:01 ... 25 common frames omitted
+2026-11-07 15:18:01 Caused by: java.lang.RuntimeException: Could not create directory
+2026-11-07 15:18:01 at com.idea.rforexinterfaceservice.component.Logger.initialize(Logger.java:88)
+2026-11-07 15:18:01 ... 30 common frames omitted
