@@ -1,89 +1,17 @@
+ => ERROR [ 2/13] RUN mkdir -p /app/logs     && chown -R 65532:65532 /app     && chmod 755 /app     && chmod 775 /app/logs                                                                                                     0.3s
+------
+ > [ 2/13] RUN mkdir -p /app/logs     && chown -R 65532:65532 /app     && chmod 755 /app     && chmod 775 /app/logs:
+0.287 runc run failed: unable to start container process: exec: "/bin/sh": stat /bin/sh: no such file or directory
+------
+Dockerfile-blotter-preprod-jre:16
+--------------------
+  15 |     # Create application directories and assign ownership
+  16 | >>> RUN mkdir -p /app/logs \
+  17 | >>>     && chown -R 65532:65532 /app \
+  18 | >>>     && chmod 755 /app \
+  19 | >>>     && chmod 775 /app/logs
+  20 |     
+--------------------
+ERROR: failed to solve: process "/bin/sh -c mkdir -p /app/logs     && chown -R 65532:65532 /app     && chmod 755 /app     && chmod 775 /app/logs" did not complete successfully: exit code: 1
 
-# ============================================================
-# Base image: Chainguard minimal JRE
-# ============================================================
-FROM cgr.dev/chainguard/jre:latest
-
-ENV TZ=Asia/Calcutta
-
-# ============================================================
-# 1. Prepare filesystem permissions
-# ============================================================
-# Temporarily switch to root during image construction
-USER 0
-
-# Create application directories and assign ownership
-RUN mkdir -p /app/logs \
-    && chown -R 65532:65532 /app \
-    && chmod 755 /app \
-    && chmod 775 /app/logs
-
-WORKDIR /app
-
-# ============================================================
-# 2. Copy application certificates
-# ============================================================
-COPY --chown=65532:65532 \
-    src/main/resources/preprod/fxs-idea-preprod.crt \
-    /app/fxs-idea-preprod.crt
-
-COPY --chown=65532:65532 \
-    src/main/resources/preprod/fxs-idea-uat.crt \
-    /app/fxs-idea-uat.crt
-
-COPY --chown=65532:65532 \
-    src/main/resources/preprod/rforex-vks-preprod.crt \
-    /app/rforex-vks-preprod.crt
-
-COPY --chown=65532:65532 \
-    src/main/resources/preprod/NBC_CBS_SSO_PublicKey-UAT.cer \
-    /app/NBC_CBS_SSO_PublicKey.cer
-
-# ============================================================
-# 3. Copy Spring Boot WAR
-# ============================================================
-COPY --chown=65532:65532 \
-    target/rforexinterfaceservice-0.0.1-SNAPSHOT.war \
-    /app/rforexinterfaceservice.war
-
-# ============================================================
-# 4. Import certificates into Java truststore
-# ============================================================
-RUN keytool -importcert -trustcacerts -cacerts \
-    -storepass changeit -noprompt \
-    -alias fxs-certs-preprod \
-    -file /app/fxs-idea-preprod.crt
-
-RUN keytool -importcert -trustcacerts -cacerts \
-    -storepass changeit -noprompt \
-    -alias fxs-certs-uat \
-    -file /app/fxs-idea-uat.crt
-
-RUN keytool -importcert -trustcacerts -cacerts \
-    -storepass changeit -noprompt \
-    -alias rfx-certs \
-    -file /app/rforex-vks-preprod.crt
-
-RUN keytool -importcert -trustcacerts -cacerts \
-    -storepass changeit -noprompt \
-    -alias cbs-sso-certs \
-    -file /app/NBC_CBS_SSO_PublicKey.cer
-
-# ============================================================
-# 5. Final filesystem permissions
-# ============================================================
-RUN chown -R 65532:65532 /app \
-    && chmod 775 /app/logs
-
-# ============================================================
-# 6. Non-root execution
-# ============================================================
-USER 65532
-
-# Application port
-EXPOSE 5207
-
-# ============================================================
-# 7. Start Spring Boot application
-# ============================================================
-ENTRYPOINT ["java", "-jar", "/app/rforexinterfaceservice.war"]
+D:\idea-sts-projects\rforex\rforexinterfaceservice>
