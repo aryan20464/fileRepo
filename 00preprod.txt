@@ -1,6 +1,6 @@
 
 # ============================================================
-# STAGE 1: Prepare writable directories using BusyBox
+# STAGE 1: Prepare application directories
 # ============================================================
 FROM busybox:1.37 AS filesystem
 
@@ -11,7 +11,32 @@ RUN mkdir -p /app/logs \
 
 
 # ============================================================
-# STAGE 2: Production image using Chainguard JRE
+# STAGE 2: Prepare Java truststore
+# ============================================================
+FROM cgr.dev/chainguard/jre:latest AS cert-builder
+
+USER 0
+
+WORKDIR /app
+
+# Copy certificates
+COPY src/main/resources/preprod/fxs-idea-preprod.crt /app/fxs-idea-preprod.crt
+COPY src/main/resources/preprod/fxs-idea-uat.crt /app/fxs-idea-uat.crt
+COPY src/main/resources/preprod/rforex-vks-preprod.crt /app/rforex-vks-preprod.crt
+COPY src/main/resources/preprod/NBC_CBS_SSO_PublicKey-UAT.cer /app/NBC_CBS_SSO_PublicKey.cer
+
+# Create a separate truststore rather than modifying system cacerts
+RUN ["keytool", "-importcert", "-file", "/app/fxs-idea-preprod.crt", "-alias", "fxs-certs-preprod", "-keystore", "/app/custom-cacerts", "-storepass", "changeit", "-noprompt"]
+
+RUN ["keytool", "-importcert", "-file", "/app/fxs-idea-uat.crt", "-alias", "fxs-certs-uat", "-keystore", "/app/custom-cacerts", "-storepass", "changeit", "-noprompt"]
+
+RUN ["keytool", "-importcert", "-file", "/app/rforex-vks-preprod.crt", "-alias", "rfx-certs", "-keystore", "/app/custom-cacerts", "-storepass", "changeit", "-noprompt"]
+
+RUN ["keytool", "-importcert", "-file", "/app/NBC_CBS_SSO_PublicKey.cer", "-alias", "cbs-sso-certs", "-keystore", "/app/custom-cacerts", "-storepass", "changeit", "-noprompt"]
+
+
+# ============================================================
+# STAGE 3: Final production image
 # ============================================================
 FROM cgr.dev/chainguard/jre:latest
 
@@ -19,41 +44,19 @@ ENV TZ=Asia/Calcutta
 
 WORKDIR /app
 
-# ============================================================
-# Copy prepared directory with ownership preserved
-# ============================================================
+# Copy prepared writable directory
 COPY --from=filesystem --chown=65532:65532 /app /app
 
-# ============================================================
-# Copy application certificates
-# ============================================================
-COPY --chown=65532:65532 src/main/resources/preprod/fxs-idea-preprod.crt /app/fxs-idea-preprod.crt
+# Copy custom Java truststore
+COPY --from=cert-builder --chown=65532:65532 /app/custom-cacerts /app/custom-cacerts
 
-COPY --chown=65532:65532 src/main/resources/preprod/fxs-idea-uat.crt /app/fxs-idea-uat.crt
-
-COPY --chown=65532:65532 src/main/resources/preprod/rforex-vks-preprod.crt /app/rforex-vks-preprod.crt
-
-COPY --chown=65532:65532 src/main/resources/preprod/NBC_CBS_SSO_PublicKey-UAT.cer /app/NBC_CBS_SSO_PublicKey.cer
-
-# ============================================================
-# Copy Spring Boot WAR
-# ============================================================
+# Copy WAR
 COPY --chown=65532:65532 target/rforexinterfaceservice-0.0.1-SNAPSHOT.war /app/rforexinterfaceservice.war
 
-# ============================================================
-# Import certificates into Java truststore
-# ============================================================
-RUN ["keytool", "-importcert", "-trustcacerts", "-cacerts", "-storepass", "changeit", "-noprompt", "-alias", "fxs-certs-preprod", "-file", "/app/fxs-idea-preprod.crt"]
+# Use custom truststore
+ENV JAVA_TOOL_OPTIONS="-Djavax.net.ssl.trustStore=/app/custom-cacerts -Djavax.net.ssl.trustStorePassword=changeit"
 
-RUN ["keytool", "-importcert", "-trustcacerts", "-cacerts", "-storepass", "changeit", "-noprompt", "-alias", "fxs-certs-uat", "-file", "/app/fxs-idea-uat.crt"]
-
-RUN ["keytool", "-importcert", "-trustcacerts", "-cacerts", "-storepass", "changeit", "-noprompt", "-alias", "rfx-certs", "-file", "/app/rforex-vks-preprod.crt"]
-
-RUN ["keytool", "-importcert", "-trustcacerts", "-cacerts", "-storepass", "changeit", "-noprompt", "-alias", "cbs-sso-certs", "-file", "/app/NBC_CBS_SSO_PublicKey.cer"]
-
-# ============================================================
-# Run as non-root user
-# ============================================================
+# Run as non-root
 USER 65532
 
 EXPOSE 5207
