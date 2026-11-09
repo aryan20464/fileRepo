@@ -1,78 +1,66 @@
-2026-11-09 12:16:11 +05:30  WARN 1 --- [CbsSsoProj] [           main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'cryptoController': Invocation of init method failed
-2026-11-09 12:16:11 +05:30  INFO 1 --- [CbsSsoProj] [           main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
-2026-11-09 12:16:11 +05:30  INFO 1 --- [CbsSsoProj] [           main] com.zaxxer.hikari.HikariDataSource       : rforex-crypto-service-cp - Shutdown initiated...
-2026-11-09 12:16:11 +05:30  INFO 1 --- [CbsSsoProj] [           main] com.zaxxer.hikari.HikariDataSource       : rforex-crypto-service-cp - Shutdown completed.
-2026-11-09 12:16:11 +05:30  INFO 1 --- [CbsSsoProj] [           main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
-2026-11-09 12:16:11 +05:30  WARN 1 --- [CbsSsoProj] [           main] o.a.c.loader.WebappClassLoaderBase       : The web application [rforex#rforexcryptoservice] appears to have started a thread named [oracle.jdbc.diagnostics.Diagnostic.CLOCK] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
- java.base/java.lang.Object.wait0(Native Method)
- java.base/java.lang.Object.wait(Unknown Source)
- java.base/java.util.TimerThread.mainLoop(Unknown Source)
- java.base/java.util.TimerThread.run(Unknown Source)
-2026-11-09 12:16:11 +05:30  WARN 1 --- [CbsSsoProj] [           main] o.a.c.loader.WebappClassLoaderBase       : The web application [rforex#rforexcryptoservice] appears to have started a thread named [oracle.jdbc.driver.BlockSource.ThreadedCachingBlockSource.BlockReleaser] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
- java.base/jdk.internal.misc.Unsafe.park(Native Method)
- java.base/java.util.concurrent.locks.LockSupport.parkNanos(Unknown Source)
- java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(Unknown Source)
- oracle.jdbc.internal.Monitor$WaitableMonitor.monitorWait(Monitor.java:325)
- oracle.jdbc.internal.Monitor$WaitableMonitor.monitorWait(Monitor.java:307)
- oracle.jdbc.driver.BlockSource$ThreadedCachingBlockSource$BlockReleaser.run(BlockSource.java:347)
-2026-11-09 12:16:11 +05:30  WARN 1 --- [CbsSsoProj] [           main] o.a.c.loader.WebappClassLoaderBase       : The web application [rforex#rforexcryptoservice] appears to have started a thread named [InterruptTimer] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
- java.base/java.lang.Object.wait0(Native Method)
- java.base/java.lang.Object.wait(Unknown Source)
- java.base/java.util.TimerThread.mainLoop(Unknown Source)
- java.base/java.util.TimerThread.run(Unknown Source)
-2026-11-09 12:16:11 +05:30  WARN 1 --- [CbsSsoProj] [           main] o.a.c.loader.WebappClassLoaderBase       : The web application [rforex#rforexcryptoservice] appears to have started a thread named [OJDBC-WORKER-THREAD-1] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
- java.base/jdk.internal.misc.Unsafe.park(Native Method)
- java.base/java.util.concurrent.locks.LockSupport.parkNanos(Unknown Source)
- java.base/java.util.concurrent.LinkedTransferQueue$DualNode.await(Unknown Source)
- java.base/java.util.concurrent.SynchronousQueue$Transferer.xferLifo(Unknown Source)
- java.base/java.util.concurrent.SynchronousQueue.xfer(Unknown Source)
- java.base/java.util.concurrent.SynchronousQueue.poll(Unknown Source)
- java.base/java.util.concurrent.ThreadPoolExecutor.getTask(Unknown Source)
- java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
- java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
- java.base/java.lang.Thread.run(Unknown Source)
-2026-11-09 12:16:11 +05:30  INFO 1 --- [CbsSsoProj] [           main] .s.b.a.l.ConditionEvaluationReportLogger :
+# Use the hardened JRE image
+# ============================================================
+# Base image: Create the directory structure using busybox image
+# ============================================================
+FROM h06vksharbor.corp.ad.sbi/itss/busybox:1.37 AS filesystem
 
-Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-2026-11-09 12:16:11 +05:30 ERROR 1 --- [CbsSsoProj] [           main] o.s.boot.SpringApplication               : Application run failed
+RUN mkdir -p /app/logs \
+    && mkdir -p /app/rforexkeys \
+    && chown -R 65532:65532 /app \
+    && chmod 755 /app \
+    && chmod 775 /app/logs \
+    && chmod 775 /app/rforexkeys
 
-org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'cryptoController': Invocation of init method failed
-        at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:222) ~[spring-beans-6.2.18.jar!/:6.2.18]
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:429) ~[spring-beans-6.2.18.jar!/:6.2.18]
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1818) ~[spring-beans-6.2.18.jar!/:6.2.18]
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:607) ~[spring-beans-6.2.18.jar!/:6.2.18]
-        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.18.jar!/:6.2.18]
-        at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.18.jar!/:6.2.18]
-        at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.18.jar!/:6.2.18]
-        at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.18.jar!/:6.2.18]
-        at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.18.jar!/:6.2.18]
-        at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1228) ~[spring-beans-6.2.18.jar!/:6.2.18]
-        at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1194) ~[spring-beans-6.2.18.jar!/:6.2.18]
-        at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1130) ~[spring-beans-6.2.18.jar!/:6.2.18]
-        at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:991) ~[spring-context-6.2.18.jar!/:6.2.18]
-        at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:628) ~[spring-context-6.2.18.jar!/:6.2.18]
-        at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.5.14.jar!/:3.5.14]
-        at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752) ~[spring-boot-3.5.14.jar!/:3.5.14]
-        at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) ~[spring-boot-3.5.14.jar!/:3.5.14]
-        at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) ~[spring-boot-3.5.14.jar!/:3.5.14]
-        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361) ~[spring-boot-3.5.14.jar!/:3.5.14]
-        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350) ~[spring-boot-3.5.14.jar!/:3.5.14]
-        at com.idea.rforexcryptoservice.RforexCryptoServiceApplication.main(RforexCryptoServiceApplication.java:17) ~[!/:0.0.1-SNAPSHOT]
-        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source) ~[na:na]
-        at java.base/java.lang.reflect.Method.invoke(Unknown Source) ~[na:na]
-        at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:106) ~[rforexcryptoservice.war:0.0.1-SNAPSHOT]
-        at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:64) ~[rforexcryptoservice.war:0.0.1-SNAPSHOT]
-        at org.springframework.boot.loader.launch.WarLauncher.main(WarLauncher.java:53) ~[rforexcryptoservice.war:0.0.1-SNAPSHOT]
-Caused by: java.io.FileNotFoundException: /app/rforexkeys/cbssso/cbskeystore.jks (No such file or directory)
-        at java.base/java.io.FileInputStream.open0(Native Method) ~[na:na]
-        at java.base/java.io.FileInputStream.open(Unknown Source) ~[na:na]
-        at java.base/java.io.FileInputStream.<init>(Unknown Source) ~[na:na]
-        at java.base/java.io.FileInputStream.<init>(Unknown Source) ~[na:na]
-        at com.idea.rforexcryptoservice.controller.CryptoController.loadPrivateKey(CryptoController.java:153) ~[!/:0.0.1-SNAPSHOT]
-        at com.idea.rforexcryptoservice.controller.CryptoController.initKeys(CryptoController.java:95) ~[!/:0.0.1-SNAPSHOT]
-        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source) ~[na:na]
-        at java.base/java.lang.reflect.Method.invoke(Unknown Source) ~[na:na]
-        at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMethod.invoke(InitDestroyAnnotationBeanPostProcessor.java:457) ~[spring-beans-6.2.18.jar!/:6.2.18]
-        at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:401) ~[spring-beans-6.2.18.jar!/:6.2.18]
-        at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:219) ~[spring-beans-6.2.18.jar!/:6.2.18]
-        ... 25 common frames omitted
+# ============================================================
+# STAGE 2: Prepare Java truststore
+# ============================================================
+FROM h06vksharbor.corp.ad.sbi/itss/chainguard-jre AS cert-builder
+
+USER 0
+
+WORKDIR /app
+
+# Copy certificates
+COPY src/main/resources/preprod/fxs-idea-preprod.crt /app/fxs-idea-preprod.crt
+COPY src/main/resources/preprod/fxs-idea-uat.crt /app/fxs-idea-uat.crt
+COPY src/main/resources/preprod/rforex-vks-preprod.crt /app/rforex-vks-preprod.crt
+COPY src/main/resources/preprod/NBC_CBS_SSO_PublicKey-UAT.cer /app/NBC_CBS_SSO_PublicKey.cer
+COPY src/main/rforexkeys/ /app/rforexkeys/
+
+# Create a separate truststore rather than modifying system cacerts
+RUN ["keytool", "-importcert", "-file", "/app/fxs-idea-preprod.crt", "-alias", "fxs-certs-preprod", "-keystore", "/app/custom-cacerts", "-storepass", "changeit", "-noprompt"]
+
+RUN ["keytool", "-importcert", "-file", "/app/fxs-idea-uat.crt", "-alias", "fxs-certs-uat", "-keystore", "/app/custom-cacerts", "-storepass", "changeit", "-noprompt"]
+
+RUN ["keytool", "-importcert", "-file", "/app/rforex-vks-preprod.crt", "-alias", "rfx-certs", "-keystore", "/app/custom-cacerts", "-storepass", "changeit", "-noprompt"]
+
+RUN ["keytool", "-importcert", "-file", "/app/NBC_CBS_SSO_PublicKey.cer", "-alias", "cbs-sso-certs", "-keystore", "/app/custom-cacerts", "-storepass", "changeit", "-noprompt"]
+
+
+# ============================================================
+# STAGE 3: Final production image
+# ============================================================
+FROM h06vksharbor.corp.ad.sbi/itss/chainguard-jre:latest
+
+ENV TZ=Asia/Calcutta
+
+WORKDIR /app
+
+# Copy prepared writable directory
+COPY --from=filesystem --chown=65532:65532 /app /app
+
+# Copy custom Java truststore
+COPY --from=cert-builder --chown=65532:65532 /app/custom-cacerts /app/custom-cacerts
+
+# Copy WAR
+COPY --chown=65532:65532 target/rforexcryptoservice-0.0.1-SNAPSHOT.war /app/rforexcryptoservice.war
+
+# Use custom truststore
+ENV JAVA_TOOL_OPTIONS="-Djavax.net.ssl.trustStore=/app/custom-cacerts -Djavax.net.ssl.trustStorePassword=changeit"
+
+# Run as non-root
+USER 65532
+
+EXPOSE 8085
+
+ENTRYPOINT ["java","-jar","/app/rforexcryptoservice.war"]
