@@ -1,31 +1,154 @@
-# ============================================================
-# STAGE 3: Final production image
-# ============================================================
-FROM h06vksharbor.corp.ad.sbi/itss/chainguard-jre:latest
+CVE-2026-65182
+Critical
+bitnami:
+9.1
+ghsa:
+9.1
+redhat:
+8.2
+fixed
+org.apache.tomcat.embed:tomcat-embed-core
+10.1.55
+ 11.0.25, 10.1.58, 9.0.121
+No
 
-ENV TZ=Asia/Calcutta
+CVE-2026-65905
+Critical
+bitnami:
+9.8
+ghsa:
+9.8
+redhat:
+4.8
+fixed
+org.apache.tomcat.embed:tomcat-embed-core
+10.1.55
+ 11.0.25, 10.1.58, 9.0.121
+No
 
-WORKDIR /app
+CVE-2026-68525
+Critical
+bitnami:
+9.1
+ghsa:
+9.1
+redhat:
+6.5
+fixed
+org.apache.tomcat.embed:tomcat-embed-core
+10.1.55
+ 11.0.25, 10.1.58, 9.0.121
+No
 
-# 1. Copy prepared writable directory structures (creates empty /app/rforexkeys)
-COPY --from=filesystem --chown=65532:65532 /app /app
+CVE-2025-12183
+High
+ghsa:
+redhat:
+6.5
+fixed
+org.lz4:lz4-java
+1.8.0
+ 1.8.1
+No
 
-# 2. FIX: Copy the keys from the cert-builder stage into the final image
-# This maps the content into /app/rforexkeys/cbssso/ as required by your app log
-COPY --from=cert-builder --chown=65532:65532 /app/rforexkeys/ /app/rforexkeys/cbssso/
+CVE-2025-66566
+High
+ghsa:
+redhat:
+7.5
+affected
+org.lz4:lz4-java
+1.8.0
+No
 
-# 3. Copy custom Java truststore
-COPY --from=cert-builder --chown=65532:65532 /app/custom-cacerts /app/custom-cacerts
+CVE-2026-35554
+High
+ghsa:
+8.7
+redhat:
+6.8
+fixed
+org.apache.kafka:kafka-clients
+4.0.0
+ 3.9.2, 4.0.2, 4.1.2
+No
 
-# 4. Copy WAR
-COPY --chown=65532:65532 target/rforexcryptoservice-0.0.1-SNAPSHOT.war /app/rforexcryptoservice.war
+CVE-2025-48924
+Medium
+ghsa:
+6.5
+redhat:
+3.7
+fixed
+org.apache.commons:commons-lang3
+3.17.0
+ 3.18.0
+No
 
-# Use custom truststore
-ENV JAVA_TOOL_OPTIONS="-Djavax.net.ssl.trustStore=/app/custom-cacerts -Djavax.net.ssl.trustStorePassword=changeit"
+CVE-2026-33558
+Medium
+bitnami:
+5.3
+ghsa:
+5.3
+fixed
+org.apache.kafka:kafka-clients
+4.0.0
+ 3.9.2, 4.0.1
+No
 
-# Run as non-root
-USER 65532
+CVE-2026-49844
+Medium
+ghsa:
+nvd:
+5.9
+redhat:
+5.9
+fixed
+org.apache.logging.log4j:log4j-api
+2.24.3
+ 2.25.5, 2.26.1
+No
 
-EXPOSE 8085
+CVE-2026-54515
+Medium
+ghsa:
+5.3
+redhat:
+5.3
+fixed
+com.fasterxml.jackson.core:jackson-databind
+2.21.4
+ 3.1.4, 2.18.9, 2.21.5, 2.22.1
+No
 
-ENTRYPOINT ["java","-jar","/app/rforexcryptoservice.war"]
+CVE-2026-59889
+Medium
+ghsa:
+6.5
+redhat:
+6.5
+fixed
+com.fasterxml.jackson.core:jackson-databind
+2.21.4
+ 2.21.5, 2.18.9, 2.22.1
+No
+
+GHSA-mhm7-754m-9p8w
+Medium
+ghsa:
+6.5
+fixed
+com.fasterxml.jackson.core:jackson-databind
+2.21.4
+ 2.18.9, 2.21.5
+No
+
+CVE-2026-59949
+Medium
+ghsa:
+6.5
+affected
+org.lz4:lz4-java
+1.8.0
+No
