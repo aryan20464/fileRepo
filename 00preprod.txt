@@ -1,42 +1,3 @@
-# Use the hardened JRE image
-# ============================================================
-# Base image: Create the directory structure using busybox image
-# ============================================================
-FROM h06vksharbor.corp.ad.sbi/itss/busybox:1.37 AS filesystem
-
-RUN mkdir -p /app/logs \
-    && mkdir -p /app/rforexkeys \
-    && chown -R 65532:65532 /app \
-    && chmod 755 /app \
-    && chmod 775 /app/logs \
-    && chmod 775 /app/rforexkeys
-
-# ============================================================
-# STAGE 2: Prepare Java truststore
-# ============================================================
-FROM h06vksharbor.corp.ad.sbi/itss/chainguard-jre AS cert-builder
-
-USER 0
-
-WORKDIR /app
-
-# Copy certificates
-COPY src/main/resources/preprod/fxs-idea-preprod.crt /app/fxs-idea-preprod.crt
-COPY src/main/resources/preprod/fxs-idea-uat.crt /app/fxs-idea-uat.crt
-COPY src/main/resources/preprod/rforex-vks-preprod.crt /app/rforex-vks-preprod.crt
-COPY src/main/resources/preprod/NBC_CBS_SSO_PublicKey-UAT.cer /app/NBC_CBS_SSO_PublicKey.cer
-COPY src/main/rforexkeys/ /app/rforexkeys/
-
-# Create a separate truststore rather than modifying system cacerts
-RUN ["keytool", "-importcert", "-file", "/app/fxs-idea-preprod.crt", "-alias", "fxs-certs-preprod", "-keystore", "/app/custom-cacerts", "-storepass", "changeit", "-noprompt"]
-
-RUN ["keytool", "-importcert", "-file", "/app/fxs-idea-uat.crt", "-alias", "fxs-certs-uat", "-keystore", "/app/custom-cacerts", "-storepass", "changeit", "-noprompt"]
-
-RUN ["keytool", "-importcert", "-file", "/app/rforex-vks-preprod.crt", "-alias", "rfx-certs", "-keystore", "/app/custom-cacerts", "-storepass", "changeit", "-noprompt"]
-
-RUN ["keytool", "-importcert", "-file", "/app/NBC_CBS_SSO_PublicKey.cer", "-alias", "cbs-sso-certs", "-keystore", "/app/custom-cacerts", "-storepass", "changeit", "-noprompt"]
-
-
 # ============================================================
 # STAGE 3: Final production image
 # ============================================================
@@ -46,13 +7,17 @@ ENV TZ=Asia/Calcutta
 
 WORKDIR /app
 
-# Copy prepared writable directory
+# 1. Copy prepared writable directory structures (creates empty /app/rforexkeys)
 COPY --from=filesystem --chown=65532:65532 /app /app
 
-# Copy custom Java truststore
+# 2. FIX: Copy the keys from the cert-builder stage into the final image
+# This maps the content into /app/rforexkeys/cbssso/ as required by your app log
+COPY --from=cert-builder --chown=65532:65532 /app/rforexkeys/ /app/rforexkeys/cbssso/
+
+# 3. Copy custom Java truststore
 COPY --from=cert-builder --chown=65532:65532 /app/custom-cacerts /app/custom-cacerts
 
-# Copy WAR
+# 4. Copy WAR
 COPY --chown=65532:65532 target/rforexcryptoservice-0.0.1-SNAPSHOT.war /app/rforexcryptoservice.war
 
 # Use custom truststore
