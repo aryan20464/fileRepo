@@ -1,230 +1,78 @@
+2026-11-09 12:16:11 +05:30  WARN 1 --- [CbsSsoProj] [           main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'cryptoController': Invocation of init method failed
+2026-11-09 12:16:11 +05:30  INFO 1 --- [CbsSsoProj] [           main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-11-09 12:16:11 +05:30  INFO 1 --- [CbsSsoProj] [           main] com.zaxxer.hikari.HikariDataSource       : rforex-crypto-service-cp - Shutdown initiated...
+2026-11-09 12:16:11 +05:30  INFO 1 --- [CbsSsoProj] [           main] com.zaxxer.hikari.HikariDataSource       : rforex-crypto-service-cp - Shutdown completed.
+2026-11-09 12:16:11 +05:30  INFO 1 --- [CbsSsoProj] [           main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2026-11-09 12:16:11 +05:30  WARN 1 --- [CbsSsoProj] [           main] o.a.c.loader.WebappClassLoaderBase       : The web application [rforex#rforexcryptoservice] appears to have started a thread named [oracle.jdbc.diagnostics.Diagnostic.CLOCK] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.base/java.lang.Object.wait0(Native Method)
+ java.base/java.lang.Object.wait(Unknown Source)
+ java.base/java.util.TimerThread.mainLoop(Unknown Source)
+ java.base/java.util.TimerThread.run(Unknown Source)
+2026-11-09 12:16:11 +05:30  WARN 1 --- [CbsSsoProj] [           main] o.a.c.loader.WebappClassLoaderBase       : The web application [rforex#rforexcryptoservice] appears to have started a thread named [oracle.jdbc.driver.BlockSource.ThreadedCachingBlockSource.BlockReleaser] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.base/jdk.internal.misc.Unsafe.park(Native Method)
+ java.base/java.util.concurrent.locks.LockSupport.parkNanos(Unknown Source)
+ java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(Unknown Source)
+ oracle.jdbc.internal.Monitor$WaitableMonitor.monitorWait(Monitor.java:325)
+ oracle.jdbc.internal.Monitor$WaitableMonitor.monitorWait(Monitor.java:307)
+ oracle.jdbc.driver.BlockSource$ThreadedCachingBlockSource$BlockReleaser.run(BlockSource.java:347)
+2026-11-09 12:16:11 +05:30  WARN 1 --- [CbsSsoProj] [           main] o.a.c.loader.WebappClassLoaderBase       : The web application [rforex#rforexcryptoservice] appears to have started a thread named [InterruptTimer] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.base/java.lang.Object.wait0(Native Method)
+ java.base/java.lang.Object.wait(Unknown Source)
+ java.base/java.util.TimerThread.mainLoop(Unknown Source)
+ java.base/java.util.TimerThread.run(Unknown Source)
+2026-11-09 12:16:11 +05:30  WARN 1 --- [CbsSsoProj] [           main] o.a.c.loader.WebappClassLoaderBase       : The web application [rforex#rforexcryptoservice] appears to have started a thread named [OJDBC-WORKER-THREAD-1] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.base/jdk.internal.misc.Unsafe.park(Native Method)
+ java.base/java.util.concurrent.locks.LockSupport.parkNanos(Unknown Source)
+ java.base/java.util.concurrent.LinkedTransferQueue$DualNode.await(Unknown Source)
+ java.base/java.util.concurrent.SynchronousQueue$Transferer.xferLifo(Unknown Source)
+ java.base/java.util.concurrent.SynchronousQueue.xfer(Unknown Source)
+ java.base/java.util.concurrent.SynchronousQueue.poll(Unknown Source)
+ java.base/java.util.concurrent.ThreadPoolExecutor.getTask(Unknown Source)
+ java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+ java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+ java.base/java.lang.Thread.run(Unknown Source)
+2026-11-09 12:16:11 +05:30  INFO 1 --- [CbsSsoProj] [           main] .s.b.a.l.ConditionEvaluationReportLogger :
 
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-11-09 12:16:11 +05:30 ERROR 1 --- [CbsSsoProj] [           main] o.s.boot.SpringApplication               : Application run failed
 
-    <modelVersion>4.0.0</modelVersion>
-
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.16</version>
-        <relativePath/>
-    </parent>
-
-    <groupId>com.sbi.idea.rforexhub.fcra</groupId>
-    <artifactId>IdeaRforexHubFcra</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>IdeaRforexHubFcra</name>
-    <packaging>war</packaging>
-    <description>FCRA Module in RForexhub Project</description>
-
-    <properties>
-        <java.version>21</java.version>
-
-        <!-- Kafka security remediation -->
-        <kafka.version>3.9.2</kafka.version>
-
-        <!-- Existing dependency overrides -->
-        <tomcat.version>11.0.25</tomcat.version>
-        <netty.version>4.1.137.Final</netty.version>
-        <log4j2.version>2.26.1</log4j2.version>
-        <commons-lang3.version>3.18.0</commons-lang3.version>
-
-        <!-- Jackson security remediation -->
-        <jackson-bom.version>2.21.5</jackson-bom.version>
-
-        <!-- LZ4 security remediation -->
-        <lz4.version>1.11.1</lz4.version>
-    </properties>
-
-    <dependencies>
-
-        <!-- Spring Boot JPA -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-
-        <!-- Spring Boot Web -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <!-- Validation -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
-        </dependency>
-
-        <!-- Oracle JDBC -->
-        <dependency>
-            <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>ojdbc11</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-        <!-- Testing -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Apache Commons -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-
-        <!-- Thymeleaf -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-
-        <!-- Lombok -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Gson -->
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.11.0</version>
-        </dependency>
-
-        <!-- ModelMapper -->
-        <dependency>
-            <groupId>org.modelmapper</groupId>
-            <artifactId>modelmapper</artifactId>
-            <version>3.2.3</version>
-        </dependency>
-
-        <!-- JSON -->
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20240303</version>
-        </dependency>
-
-        <!-- Jackson Databind - managed by Jackson BOM 2.21.5 -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-
-        <!-- Jackson Java Time - managed by Jackson BOM 2.21.5 -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-
-        <!-- WebSocket -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-websocket</artifactId>
-        </dependency>
-
-        <!-- Internal JWT Security Library -->
-        <dependency>
-            <groupId>com.idea</groupId>
-            <artifactId>rforex-jwt-security-lib</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-
-        <!-- OpenHTMLToPDF Core -->
-        <dependency>
-            <groupId>com.openhtmltopdf</groupId>
-            <artifactId>openhtmltopdf-core</artifactId>
-            <version>1.0.10</version>
-        </dependency>
-
-        <!-- OpenHTMLToPDF PDFBox -->
-        <dependency>
-            <groupId>com.openhtmltopdf</groupId>
-            <artifactId>openhtmltopdf-pdfbox</artifactId>
-            <version>1.0.10</version>
-        </dependency>
-
-        <!-- Mail -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-mail</artifactId>
-        </dependency>
-
-        <!-- Spring Kafka with vulnerable LZ4 dependency excluded -->
-        <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.lz4</groupId>
-                    <artifactId>lz4-java</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <!-- Secure LZ4 replacement -->
-        <dependency>
-            <groupId>at.yawk.lz4</groupId>
-            <artifactId>lz4-java</artifactId>
-            <version>${lz4.version}</version>
-        </dependency>
-
-        <!-- Springdoc OpenAPI -->
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.3.0</version>
-        </dependency>
-
-    </dependencies>
-
-    <build>
-        <plugins>
-
-            <!-- Spring Boot Maven Plugin -->
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-
-            <!-- Maven Compiler Plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
-            </plugin>
-
-        </plugins>
-    </build>
-
-</project>
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'cryptoController': Invocation of init method failed
+        at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:222) ~[spring-beans-6.2.18.jar!/:6.2.18]
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:429) ~[spring-beans-6.2.18.jar!/:6.2.18]
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1818) ~[spring-beans-6.2.18.jar!/:6.2.18]
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:607) ~[spring-beans-6.2.18.jar!/:6.2.18]
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.18.jar!/:6.2.18]
+        at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.18.jar!/:6.2.18]
+        at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.18.jar!/:6.2.18]
+        at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.18.jar!/:6.2.18]
+        at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.18.jar!/:6.2.18]
+        at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1228) ~[spring-beans-6.2.18.jar!/:6.2.18]
+        at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1194) ~[spring-beans-6.2.18.jar!/:6.2.18]
+        at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1130) ~[spring-beans-6.2.18.jar!/:6.2.18]
+        at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:991) ~[spring-context-6.2.18.jar!/:6.2.18]
+        at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:628) ~[spring-context-6.2.18.jar!/:6.2.18]
+        at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.5.14.jar!/:3.5.14]
+        at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752) ~[spring-boot-3.5.14.jar!/:3.5.14]
+        at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) ~[spring-boot-3.5.14.jar!/:3.5.14]
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) ~[spring-boot-3.5.14.jar!/:3.5.14]
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361) ~[spring-boot-3.5.14.jar!/:3.5.14]
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350) ~[spring-boot-3.5.14.jar!/:3.5.14]
+        at com.idea.rforexcryptoservice.RforexCryptoServiceApplication.main(RforexCryptoServiceApplication.java:17) ~[!/:0.0.1-SNAPSHOT]
+        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source) ~[na:na]
+        at java.base/java.lang.reflect.Method.invoke(Unknown Source) ~[na:na]
+        at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:106) ~[rforexcryptoservice.war:0.0.1-SNAPSHOT]
+        at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:64) ~[rforexcryptoservice.war:0.0.1-SNAPSHOT]
+        at org.springframework.boot.loader.launch.WarLauncher.main(WarLauncher.java:53) ~[rforexcryptoservice.war:0.0.1-SNAPSHOT]
+Caused by: java.io.FileNotFoundException: /app/rforexkeys/cbssso/cbskeystore.jks (No such file or directory)
+        at java.base/java.io.FileInputStream.open0(Native Method) ~[na:na]
+        at java.base/java.io.FileInputStream.open(Unknown Source) ~[na:na]
+        at java.base/java.io.FileInputStream.<init>(Unknown Source) ~[na:na]
+        at java.base/java.io.FileInputStream.<init>(Unknown Source) ~[na:na]
+        at com.idea.rforexcryptoservice.controller.CryptoController.loadPrivateKey(CryptoController.java:153) ~[!/:0.0.1-SNAPSHOT]
+        at com.idea.rforexcryptoservice.controller.CryptoController.initKeys(CryptoController.java:95) ~[!/:0.0.1-SNAPSHOT]
+        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source) ~[na:na]
+        at java.base/java.lang.reflect.Method.invoke(Unknown Source) ~[na:na]
+        at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMethod.invoke(InitDestroyAnnotationBeanPostProcessor.java:457) ~[spring-beans-6.2.18.jar!/:6.2.18]
+        at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:401) ~[spring-beans-6.2.18.jar!/:6.2.18]
+        at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:219) ~[spring-beans-6.2.18.jar!/:6.2.18]
+        ... 25 common frames omitted
