@@ -1,7 +1,9 @@
-warning: podman-4.9.4-38.module_el8.10.0+4327+ab8e4068.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID ced7258b: NOKEY
+warning: containers-common-1-82.module_el8.10.0+4120+03ad4b47.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID ced7258b: NOKEY
 error: Failed dependencies:
-        containers-common >= 2:1-27 is needed by podman-4:4.9.4-38.module_el8.10.0+4327+ab8e4068.x86_64
-        fuse-overlayfs is needed by podman-4:4.9.4-38.module_el8.10.0+4327+ab8e4068.x86_64
-        podman-catatonit >= 4:4.9.4-38.module_el8.10.0+4327+ab8e4068 is needed by podman-4:4.9.4-38.module_el8.10.0+4327+ab8e4068.x86_64
-        runc >= 1.0.0-57 is needed by podman-4:4.9.4-38.module_el8.10.0+4327+ab8e4068.x86_64
-        slirp4netns >= 0.4.0-1 is needed by podman-4:4.9.4-38.module_el8.10.0+4327+ab8e4068.x86_64
+        fuse3 is needed by fuse-overlayfs-1.13-1.module_el8.10.0+4120+03ad4b47.x86_64
+        libfuse3.so.3()(64bit) is needed by fuse-overlayfs-1.13-1.module_el8.10.0+4120+03ad4b47.x86_64
+        libfuse3.so.3(FUSE_3.0)(64bit) is needed by fuse-overlayfs-1.13-1.module_el8.10.0+4120+03ad4b47.x86_64
+        libfuse3.so.3(FUSE_3.2)(64bit) is needed by fuse-overlayfs-1.13-1.module_el8.10.0+4120+03ad4b47.x86_64
+        libslirp.so.0()(64bit) is needed by slirp4netns-1.2.3-1.module_el8.10.0+4120+03ad4b47.x86_64
+        libslirp.so.0(SLIRP_4.0)(64bit) is needed by slirp4netns-1.2.3-1.module_el8.10.0+4120+03ad4b47.x86_64
+        libslirp.so.0(SLIRP_4.1)(64bit) is needed by slirp4netns-1.2.3-1.module_el8.10.0+4120+03ad4b47.x86_64
