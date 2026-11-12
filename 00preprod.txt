@@ -1,22 +1,6 @@
- rpm -Uvh *.rpm
+rpm -Uvh *.rpm
 warning: containers-common-1-82.module_el8.10.0+4120+03ad4b47.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID ced7258b: NOKEY
-error: Failed dependencies:
-        libslirp(x86-64) = 4.4.0-2.module_el8.10.0+4120+03ad4b47 is needed by libslirp-devel-4.4.0-2.module_el8.10.0+4120+03ad4b47.x86_64
-        libslirp.so.0()(64bit) is needed by libslirp-devel-4.4.0-2.module_el8.10.0+4120+03ad4b47.x86_64
-        pkgconfig(glib-2.0) is needed by libslirp-devel-4.4.0-2.module_el8.10.0+4120+03ad4b47.x86_64
-        libslirp.so.0()(64bit) is needed by slirp4netns-1.2.3-1.module_el8.10.0+4120+03ad4b47.x86_64
-        libslirp.so.0(SLIRP_4.0)(64bit) is needed by slirp4netns-1.2.3-1.module_el8.10.0+4120+03ad4b47.x86_64
-        libslirp.so.0(SLIRP_4.1)(64bit) is needed by slirp4netns-1.2.3-1.module_el8.10.0+4120+03ad4b47.x86_64
-[root@tss-ideasvnuat podman]# ll
-total 24160
--rw-r-----. 1 root root   150131 Nov 12 16:00 containers-common-1-82.module_el8.10.0+4120+03ad4b47.x86_64.rpm
--rw-r-----. 1 root root    54944 Nov 12 16:12 fuse3-3.3.0-19.el8.x86_64.rpm
--rw-r-----. 1 root root    50204 Nov 12 16:12 fuse3-devel-3.3.0-19.el8.x86_64.rpm
--rw-r-----. 1 root root    96956 Nov 12 16:12 fuse3-libs-3.3.0-19.el8.x86_64.rpm
--rw-r-----. 1 root root    70515 Nov 12 16:00 fuse-overlayfs-1.13-1.module_el8.10.0+4120+03ad4b47.x86_64.rpm
--rw-r-----. 1 root root    11831 Nov 12 16:12 libslirp-devel-4.4.0-2.module_el8.10.0+4120+03ad4b47.x86_64.rpm
--rw-r-----. 1 root root 18134639 Nov 12 16:00 podman-4.9.4-38.module_el8.10.0+4327+ab8e4068.x86_64.rpm
--rw-r-----. 1 root root   390631 Nov 12 16:01 podman-catatonit-4.9.4-38.module_el8.10.0+4327+ab8e4068.x86_64.rpm
--rw-r-----. 1 root root  1630503 Nov 12 16:02 podman-plugins-4.9.4-38.module_el8.10.0+4327+ab8e4068.x86_64.rpm
--rw-r-----. 1 root root  4069663 Nov 12 16:01 runc-1.2.9-9.module_el8.10.0+4327+ab8e4068.x86_64.rpm
--rw-r-----. 1 root root    56375 Nov 12 16:01 slirp4netns-1.2.3-1.module_el8.10.0+4120+03ad4b47.x86_64.rpm
+Verifying...                          ################################# [100%]
+Preparing...                          ################################# [100%]
+        package podman-plugins-4:4.9.4-38.module+el8.10.0+25171+d379b437.x86_64 (which is newer than podman-plugins-4:4.9.4-38.module_el8.10.0+4327+ab8e4068.x86_64) is already installed
+        file /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release from install of containers-common-2:1-82.module_el8.10.0+4120+03ad4b47.x86_64 conflicts with file from package redhat-release-8.10-0.3.el8.x86_64
