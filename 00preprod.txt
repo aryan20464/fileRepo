@@ -1,8 +1,35 @@
-[root@tss-ideasvnuat gitlab-rpm]# gitlab-rake gitlab:background_migrations:status | grep active
-active     | BackfillPushEventPayloadsProjectId,push_event_payloads,event_id,["project_id","events","project_id","event_id"]
-active     | BackfillTagNameOnCiRunnerTaggings,ci_runner_taggings,id,[]
-active     | BackfillGroupIdAndUserTypeForHumanUsersPersonalAccessTokens,personal_access_tokens,id,[]
-active     | RecalculateTwoFactorEnforcementOnUsers,users,id,[]
-active     | BackfillPartitionedProjectDailyStatistics,project_daily_statistics,id,["project_daily_statistics_b8088ecbd2"]
-active     | CleanSubscriptionsUserIdColumn,subscriptions,id,[]
-active     | BackfillTodosWithMultipleColumnShardingKey,todos,id,[]
+Recipe: gitlab::database_reindexing_disable
+  * crond_job[database-reindexing] action delete
+    * file[/var/opt/gitlab/crond/database-reindexing] action delete (up to date)
+     (up to date)
+[2026-11-13T17:08:46+05:30] INFO: Cinc Client Run complete in 5.378946382 seconds
+
+Running handlers:
+[2026-11-13T17:08:46+05:30] INFO: Running report handlers
+Running handlers complete
+[2026-11-13T17:08:46+05:30] INFO: Report handlers complete
+Infra Phase complete, 0/610 resources updated in 31 seconds
+gitlab Reconfigured!
+Restarting previously running GitLab services
+ok: run: gitaly: (pid 809417) 52s
+ok: run: gitlab-kas: (pid 810577) 1s
+ok: run: gitlab-workhorse: (pid 810587) 0s
+ok: run: logrotate: (pid 810597) 0s
+ok: run: postgresql: (pid 808213) 138s
+ok: run: puma: (pid 810604) 1s
+ok: run: sidekiq: (pid 810610) 0s
+Upgrade complete! If your GitLab server is misbehaving try running
+  sudo gitlab-ctl restart
+before anything else.
+If you need to roll back to the previous version you can use the database
+backup made during the upgrade (scroll up for the filename).
+
+
+  Verifying        : gitlab-ce-18.11.14-ce.0.el8.x86_64                                                                                                                                                                                  1/2
+  Verifying        : gitlab-ce-18.8.11-ce.0.el8.x86_64                                                                                                                                                                                   2/2
+Installed products updated.
+
+Upgraded:
+  gitlab-ce-18.11.14-ce.0.el8.x86_64
+
+Complete!
