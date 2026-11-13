@@ -1,20 +1,37 @@
-dnf install --assumeno gitlab-ce-17.11.7-ce.0.el8.x86_64.rpm
-Updating Subscription Management repositories.
-Unable to read consumer identity
+Running handlers:
+[2026-11-13T10:26:23+05:30] INFO: Running report handlers
+Running handlers complete
+[2026-11-13T10:26:23+05:30] INFO: Report handlers complete
+Infra Phase complete, 23/591 resources updated in 01 minutes 22 seconds
+gitlab Reconfigured!
+Restarting previously running GitLab services
+ok: run: gitaly: (pid 743098) 2105s
+ok: run: gitlab-kas: (pid 747660) 0s
+ok: run: gitlab-workhorse: (pid 747645) 1s
+ok: run: logrotate: (pid 747671) 1s
+ok: run: postgresql: (pid 742937) 2155s
+ok: run: puma: (pid 747686) 0s
+ok: run: sidekiq: (pid 747691) 1s
 
-This system is not registered with an entitlement server. You can use subscription-manager to register.
+     _______ __  __          __
+    / ____(_) /_/ /   ____ _/ /_
+   / / __/ / __/ /   / __ `/ __ \
+  / /_/ / / /_/ /___/ /_/ / /_/ /
+  \____/_/\__/_____/\__,_/_.___/
 
-Warning: failed loading '/etc/yum.repos.d/dummy.repo', skipping.
-Dependencies resolved.
-=============================================================================================================================================================================================================================================
- Package                                                Architecture                                        Version                                                          Repository                                                 Size
-=============================================================================================================================================================================================================================================
-Upgrading:
- gitlab-ce                                              x86_64                                              17.11.7-ce.0.el8                                                 @commandline                                              1.4 G
 
-Transaction Summary
-=============================================================================================================================================================================================================================================
-Upgrade  1 Package
+Upgrade complete! If your GitLab server is misbehaving try running
+  sudo gitlab-ctl restart
+before anything else.
+If you need to roll back to the previous version you can use the database
+backup made during the upgrade (scroll up for the filename).
 
-Total size: 1.4 G
-Operation aborted.
+
+  Verifying        : gitlab-ce-17.11.7-ce.0.el8.x86_64                                                                                                                                                                                   1/2
+  Verifying        : gitlab-ce-17.8.7-ce.0.el8.x86_64                                                                                                                                                                                    2/2
+Installed products updated.
+
+Upgraded:
+  gitlab-ce-17.11.7-ce.0.el8.x86_64
+
+Complete!
