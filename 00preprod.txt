@@ -1,25 +1,32 @@
-gitlab-psql /opt/gitlab/embedded/bin/pg_dump -Fc -h /var/opt/gitlab/postgresql -p 5432 -U gitlab-psql -d gitlabhq_production -f /var/opt/gitlab/postgresql/gitlabhq_production-17.5.5-pg16.dump
-psql: warning: extra command-line argument "/opt/gitlab/embedded/bin/pg_dump" ignored
-psql: error: /var/opt/gitlab/postgresql/gitlabhq_production-17.5.5-pg16.dump: No such file or directory
+gitlab Reconfigured!
+Restarting previously running GitLab services
+ok: run: gitaly: (pid 4848) 211400s
+ok: run: gitlab-kas: (pid 743089) 0s
+ok: run: gitlab-workhorse: (pid 743074) 1s
+ok: run: logrotate: (pid 743109) 1s
+ok: run: postgresql: (pid 742937) 50s
+ok: run: puma: (pid 743116) 0s
+ok: run: sidekiq: (pid 743121) 0s
+
+     _______ __  __          __
+    / ____(_) /_/ /   ____ _/ /_
+   / / __/ / __/ /   / __ `/ __ \
+  / /_/ / / /_/ /___/ /_/ / /_/ /
+  \____/_/\__/_____/\__,_/_.___/
 
 
-[root@tss-ideasvnuat gitlab-rpm]# dnf install --assumeno gitlab-ce-17.8.7-ce.0.el8.x86_64.rpm
-Updating Subscription Management repositories.
-Unable to read consumer identity
+Upgrade complete! If your GitLab server is misbehaving try running
+  sudo gitlab-ctl restart
+before anything else.
+If you need to roll back to the previous version you can use the database
+backup made during the upgrade (scroll up for the filename).
 
-This system is not registered with an entitlement server. You can use subscription-manager to register.
 
-Warning: failed loading '/etc/yum.repos.d/dummy.repo', skipping.
-Dependencies resolved.
-=============================================================================================================================================================================================================================================
- Package                                                 Architecture                                         Version                                                       Repository                                                  Size
-=============================================================================================================================================================================================================================================
-Upgrading:
- gitlab-ce                                               x86_64                                               17.8.7-ce.0.el8                                               @commandline                                               1.3 G
+  Verifying        : gitlab-ce-17.8.7-ce.0.el8.x86_64                                                                                                                                                                                    1/2
+  Verifying        : gitlab-ce-17.5.5-ce.0.el8.x86_64                                                                                                                                                                                    2/2
+Installed products updated.
 
-Transaction Summary
-=============================================================================================================================================================================================================================================
-Upgrade  1 Package
+Upgraded:
+  gitlab-ce-17.8.7-ce.0.el8.x86_64
 
-Total size: 1.3 G
-Operation aborted.
+Complete!
