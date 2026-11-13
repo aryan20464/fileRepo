@@ -1,6 +1,7 @@
-rpm -Uvh *.rpm
-warning: containers-common-1-82.module_el8.10.0+4120+03ad4b47.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID ced7258b: NOKEY
-Verifying...                          ################################# [100%]
-Preparing...                          ################################# [100%]
-        package podman-plugins-4:4.9.4-38.module+el8.10.0+25171+d379b437.x86_64 (which is newer than podman-plugins-4:4.9.4-38.module_el8.10.0+4327+ab8e4068.x86_64) is already installed
-        file /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release from install of containers-common-2:1-82.module_el8.10.0+4120+03ad4b47.x86_64 conflicts with file from package redhat-release-8.10-0.3.el8.x86_64
+sudo -u gitlab-psql /opt/gitlab/embedded/bin/pg_dump \
+  -Fc \
+  -h /var/opt/gitlab/postgresql \
+  -p 5432 \
+  -U gitlab-psql \
+  -d gitlabhq_production \
+  -f /var/opt/gitlab/postgresql/gitlabhq_production-17.5.5-pg16.dump
