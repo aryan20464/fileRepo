@@ -1,3 +1,25 @@
 gitlab-psql /opt/gitlab/embedded/bin/pg_dump -Fc -h /var/opt/gitlab/postgresql -p 5432 -U gitlab-psql -d gitlabhq_production -f /var/opt/gitlab/postgresql/gitlabhq_production-17.5.5-pg16.dump
 psql: warning: extra command-line argument "/opt/gitlab/embedded/bin/pg_dump" ignored
 psql: error: /var/opt/gitlab/postgresql/gitlabhq_production-17.5.5-pg16.dump: No such file or directory
+
+
+[root@tss-ideasvnuat gitlab-rpm]# dnf install --assumeno gitlab-ce-17.8.7-ce.0.el8.x86_64.rpm
+Updating Subscription Management repositories.
+Unable to read consumer identity
+
+This system is not registered with an entitlement server. You can use subscription-manager to register.
+
+Warning: failed loading '/etc/yum.repos.d/dummy.repo', skipping.
+Dependencies resolved.
+=============================================================================================================================================================================================================================================
+ Package                                                 Architecture                                         Version                                                       Repository                                                  Size
+=============================================================================================================================================================================================================================================
+Upgrading:
+ gitlab-ce                                               x86_64                                               17.8.7-ce.0.el8                                               @commandline                                               1.3 G
+
+Transaction Summary
+=============================================================================================================================================================================================================================================
+Upgrade  1 Package
+
+Total size: 1.3 G
+Operation aborted.
