@@ -1,11 +1,21 @@
+Recipe: gitlab::gitlab-rails
+  * execute[clear the gitlab-rails cache] action run (skipped due to not_if)
+[2026-11-17T12:43:39+05:30] INFO: version_file[Create version file for Gitaly] sending hup action to runit_service[gitaly] (delayed)
+Recipe: gitaly::enable
+  * runit_service[gitaly] action hup[2026-11-17T12:43:39+05:30] INFO: runit_service[gitaly] signalled (HUP)
+[2026-11-17T12:43:39+05:30] INFO: runit_service[gitaly] sent hup
+
+    - send hup to runit_service[gitaly]
+[2026-11-17T12:43:39+05:30] INFO: version_file[Create version file for Workhorse] sending restart action to runit_service[gitlab-workhorse] (delayed)
+Recipe: gitlab::gitlab-workhorse
   * runit_service[gitlab-workhorse] action restart (up to date)
-[2026-11-17T10:33:45+05:30] INFO: Cinc Client Run complete in 41.248904874 seconds
+[2026-11-17T12:43:39+05:30] INFO: Cinc Client Run complete in 50.281350758 seconds
 
 Running handlers:
-[2026-11-17T10:33:45+05:30] INFO: Running report handlers
+[2026-11-17T12:43:39+05:30] INFO: Running report handlers
 Running handlers complete
-[2026-11-17T10:33:45+05:30] INFO: Report handlers complete
-Infra Phase complete, 21/655 resources updated in 01 minutes 07 seconds
+[2026-11-17T12:43:39+05:30] INFO: Report handlers complete
+Infra Phase complete, 19/662 resources updated in 01 minutes 16 seconds
 
 Deprecations:
 nginx['redirect_http_to_https'] has been deprecated. Please use gitlab_rails['nginx']['redirect_http_to_https'] instead.
@@ -17,13 +27,13 @@ Update the configuration in your gitlab.rb file or GITLAB_OMNIBUS_CONFIG environ
 
 gitlab Reconfigured!
 Restarting previously running GitLab services
-ok: run: gitaly: (pid 1178626) 87113s
-ok: run: gitlab-kas: (pid 1414215) 0s
-ok: run: gitlab-workhorse: (pid 1414201) 0s
-ok: run: logrotate: (pid 1414226) 1s
-ok: run: postgresql: (pid 1178495) 87154s
-ok: run: puma: (pid 1414240) 0s
-ok: run: sidekiq: (pid 1414246) 1s
+ok: run: gitaly: (pid 1414231) 7793s
+ok: run: gitlab-kas: (pid 1433360) 1s
+ok: run: gitlab-workhorse: (pid 1433338) 1s
+ok: run: logrotate: (pid 1433372) 0s
+ok: run: postgresql: (pid 1178495) 94948s
+ok: run: puma: (pid 1433388) 1s
+ok: run: sidekiq: (pid 1433394) 0s
 Upgrade complete! If your GitLab server is misbehaving try running
   sudo gitlab-ctl restart
 before anything else.
@@ -31,11 +41,11 @@ If you need to roll back to the previous version you can use the database
 backup made during the upgrade (scroll up for the filename).
 
 
-  Verifying        : gitlab-ce-19.2.10-ce.0.el8.x86_64                                                                                                                                                                                   1/2
-  Verifying        : gitlab-ce-19.1.10-ce.0.el8.x86_64                                                                                                                                                                                   2/2
+  Verifying        : gitlab-ce-19.5.5-ce.0.el8.x86_64                                                                                                                                                                                    1/2
+  Verifying        : gitlab-ce-19.2.10-ce.0.el8.x86_64                                                                                                                                                                                   2/2
 Installed products updated.
 
 Upgraded:
-  gitlab-ce-19.2.10-ce.0.el8.x86_64
+  gitlab-ce-19.5.5-ce.0.el8.x86_64
 
 Complete!
