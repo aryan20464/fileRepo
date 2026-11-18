@@ -1,51 +1,468 @@
-Recipe: gitlab::gitlab-rails
-  * execute[clear the gitlab-rails cache] action run (skipped due to not_if)
-[2026-11-17T12:43:39+05:30] INFO: version_file[Create version file for Gitaly] sending hup action to runit_service[gitaly] (delayed)
-Recipe: gitaly::enable
-  * runit_service[gitaly] action hup[2026-11-17T12:43:39+05:30] INFO: runit_service[gitaly] signalled (HUP)
-[2026-11-17T12:43:39+05:30] INFO: runit_service[gitaly] sent hup
 
-    - send hup to runit_service[gitaly]
-[2026-11-17T12:43:39+05:30] INFO: version_file[Create version file for Workhorse] sending restart action to runit_service[gitlab-workhorse] (delayed)
-Recipe: gitlab::gitlab-workhorse
-  * runit_service[gitlab-workhorse] action restart (up to date)
-[2026-11-17T12:43:39+05:30] INFO: Cinc Client Run complete in 50.281350758 seconds
+#user  nobody;
+worker_processes  1;
 
-Running handlers:
-[2026-11-17T12:43:39+05:30] INFO: Running report handlers
-Running handlers complete
-[2026-11-17T12:43:39+05:30] INFO: Report handlers complete
-Infra Phase complete, 19/662 resources updated in 01 minutes 16 seconds
+#error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
 
-Deprecations:
-nginx['redirect_http_to_https'] has been deprecated. Please use gitlab_rails['nginx']['redirect_http_to_https'] instead.
-nginx['ssl_certificate'] has been deprecated. Please use gitlab_rails['nginx']['ssl_certificate'] instead.
-nginx['ssl_certificate_key'] has been deprecated. Please use gitlab_rails['nginx']['ssl_certificate_key'] instead.
-nginx['ssl_password_file'] has been deprecated. Please use gitlab_rails['nginx']['ssl_password_file'] instead.
-
-Update the configuration in your gitlab.rb file or GITLAB_OMNIBUS_CONFIG environment.
-
-gitlab Reconfigured!
-Restarting previously running GitLab services
-ok: run: gitaly: (pid 1414231) 7793s
-ok: run: gitlab-kas: (pid 1433360) 1s
-ok: run: gitlab-workhorse: (pid 1433338) 1s
-ok: run: logrotate: (pid 1433372) 0s
-ok: run: postgresql: (pid 1178495) 94948s
-ok: run: puma: (pid 1433388) 1s
-ok: run: sidekiq: (pid 1433394) 0s
-Upgrade complete! If your GitLab server is misbehaving try running
-  sudo gitlab-ctl restart
-before anything else.
-If you need to roll back to the previous version you can use the database
-backup made during the upgrade (scroll up for the filename).
+pid        /tmp/nginx.pid;
 
 
-  Verifying        : gitlab-ce-19.5.5-ce.0.el8.x86_64                                                                                                                                                                                    1/2
-  Verifying        : gitlab-ce-19.2.10-ce.0.el8.x86_64                                                                                                                                                                                   2/2
-Installed products updated.
+events {
+    worker_connections  1024;
+}
 
-Upgraded:
-  gitlab-ce-19.5.5-ce.0.el8.x86_64
+http {
 
-Complete!
+    map $http_x_forwarded_proto $real_proto {
+        default $http_x_forwarded_proto;
+        ''      $scheme;
+    }
+
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+    error_log   /var/log/nginx/error.log   debug;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    #keepalive_timeout  0;
+    keepalive_timeout  180;
+
+    #gzip  on;
+	
+
+    server {
+        listen       4200;
+        listen  [::]:4200;
+        #server_name  localhost;
+        server_name _;
+        server_tokens off;
+
+       location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+        try_files $uri $uri/ /index.html; # changed usually good for SPA
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+
+         location /rforex/ {
+             alias /usr/share/nginx/html/rforex/browser/;
+             try_files $uri$args $uri$args/ /rforex/index.html;
+        }
+
+        location /middlewareRForexManagerService {
+            proxy_set_header Host               $http_host;
+            proxy_set_header X-Real-IP          $remote_addr;
+            proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto  $real_proto;
+            proxy_set_header X-Forwarded-Host   $http_x_forwarded_host;
+            proxy_set_header X-Forwarded-Port   $http_x_forwarded_port;
+            proxy_pass http://rforex-app-manager-service:9190/rforex/rforexmanagerservice;
+        }
+        
+        location /middlewareCustomerModuleService{ 
+            proxy_set_header Host               $http_host;
+            proxy_set_header X-Real-IP          $remote_addr;
+            proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto  $real_proto;
+            proxy_set_header X-Forwarded-Host   $http_x_forwarded_host;
+            proxy_set_header X-Forwarded-Port   $http_x_forwarded_port;
+            proxy_pass http://rforex-customer-service:5203/rforex/customerModule;
+        }
+
+        location /middlewareRForexAuthService{
+            proxy_set_header Host               $http_host;
+            proxy_set_header X-Real-IP          $remote_addr;
+            proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto  $real_proto;
+            proxy_set_header X-Forwarded-Host   $http_x_forwarded_host;
+            proxy_set_header X-Forwarded-Port   $http_x_forwarded_port;
+            proxy_pass http://rforex-auth-service:5202/rforex/rforexauthservice;
+        }
+
+        location /middlewareRForexCryptoService{ 
+            proxy_set_header Host               $http_host;
+            proxy_set_header X-Real-IP          $remote_addr;
+            proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto  $real_proto;
+            proxy_set_header X-Forwarded-Host   $http_x_forwarded_host;
+            proxy_set_header X-Forwarded-Port   $http_x_forwarded_port;
+            proxy_pass http://rforex-crypto-service:8085/rforex/rforexcryptoservice;
+        }
+
+        location /middlewareRForexFcra{
+            proxy_set_header Host               $http_host;
+            proxy_set_header X-Real-IP          $remote_addr;
+            proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto  $real_proto;
+            proxy_set_header X-Forwarded-Host   $http_x_forwarded_host;
+            proxy_set_header X-Forwarded-Port   $http_x_forwarded_port;
+            #-------For websocket live config-----------#
+            proxy_http_version 1.1; #nginx is defaulting to 1.0
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            #-------For websocket live config-----------#
+
+            proxy_pass http://rforex-fcra-service:8081/rforex/fcra;
+
+        }
+        
+
+        location /middlwareFCRASwift{
+            proxy_set_header Host               $http_host;
+            proxy_set_header X-Real-IP          $remote_addr;
+            proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto  $real_proto;
+            proxy_set_header X-Forwarded-Host   $http_x_forwarded_host;
+            proxy_set_header X-Forwarded-Port   $http_x_forwarded_port;
+            proxy_pass http://rforex-fcra-swift-service:8086/rforex/middlwareFCRASwift;
+
+        }
+
+        location /middlewareRForexOutwardRemittance{
+            proxy_set_header Host               $http_host;
+            proxy_set_header X-Real-IP          $remote_addr;      
+            proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto  $real_proto;
+            proxy_set_header X-Forwarded-Host   $http_x_forwarded_host;
+            proxy_set_header X-Forwarded-Port   $http_x_forwarded_port;
+            proxy_pass http://rforex-outward-service:5204/middlewareRForexOutwardRemittance;
+        }
+
+        location /middlewareRForexKhatabook{
+            proxy_set_header Host               $http_host;
+            proxy_set_header X-Real-IP          $remote_addr;      
+            proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto  $real_proto;
+            proxy_set_header X-Forwarded-Host   $http_x_forwarded_host;
+            proxy_set_header X-Forwarded-Port   $http_x_forwarded_port;
+            proxy_pass http://rforex-khatabook-service:5205/rforex/khatabook;
+        }
+
+        location /middlewareRForexDealerRate{
+            proxy_set_header Host               $http_host;
+            proxy_set_header X-Real-IP          $remote_addr;
+            proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto  $real_proto;
+            proxy_set_header X-Forwarded-Host   $http_x_forwarded_host;
+            proxy_set_header X-Forwarded-Port   $http_x_forwarded_port;
+            #-------For websocket live config-----------#curl 
+            proxy_http_version 1.1; #nginx is defaulting to 1.0
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            #-------For websocket live config-----------#
+            proxy_pass http://rforex-dealer-rate-service:8087/rforex/dealerrate;
+        }
+
+        location /middlewareRForexIndents{
+            proxy_set_header Host               $http_host;
+            proxy_set_header X-Real-IP          $remote_addr;      
+            proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto  $real_proto;
+            proxy_set_header X-Forwarded-Host   $http_x_forwarded_host;
+            proxy_set_header X-Forwarded-Port   $http_x_forwarded_port;
+            proxy_pass http://rforex-indents-service:5209/middlewareRForexIndents;
+        }
+
+        location /middlewareRForexBlotterService{
+            proxy_set_header Host               $http_host;
+            proxy_set_header X-Real-IP          $remote_addr;      
+            proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto  $real_proto;
+            proxy_set_header X-Forwarded-Host   $http_x_forwarded_host;
+            proxy_set_header X-Forwarded-Port   $http_x_forwarded_port;
+            proxy_pass http://rforex-blotter-service:5207/rforex/blotterservice;
+        }
+
+        location /middlewareRForexAccountingService{
+            proxy_set_header Host               $http_host;
+            proxy_set_header X-Real-IP          $remote_addr;      
+            proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto  $real_proto;
+            proxy_set_header X-Forwarded-Host   $http_x_forwarded_host;
+            proxy_set_header X-Forwarded-Port   $http_x_forwarded_port;
+            proxy_pass http://rforex-accounting-service:9095/middlewareRForexAccountingService;
+        }
+
+        location /middlewareRForexOrderboard{
+            proxy_set_header Host               $http_host;
+            proxy_set_header X-Real-IP          $remote_addr;
+            proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto  $real_proto;
+            proxy_set_header X-Forwarded-Host   $http_x_forwarded_host;
+            proxy_set_header X-Forwarded-Port   $http_x_forwarded_port;
+            #-------For websocket live config-----------# 
+            proxy_http_version 1.1; #nginx is defaulting to 1.0
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            #-------For websocket live config-----------#
+            proxy_pass http://rforex-orderboard-service:5210/middlewareRForexOrderboard;
+        }
+
+        location /middlewareRForexSwiftService{
+            proxy_set_header Host               $http_host;
+            proxy_set_header X-Real-IP          $remote_addr;      
+            proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto  $real_proto;
+            proxy_set_header X-Forwarded-Host   $http_x_forwarded_host;
+            proxy_set_header X-Forwarded-Port   $http_x_forwarded_port;
+            proxy_pass http://rforex-swift-service:5211/middlewareRForexSwiftService;
+        }
+
+        location /middlewareRForexTransactionMaster{
+            proxy_set_header Host               $http_host;
+            proxy_set_header X-Real-IP          $remote_addr;      
+            proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto  $real_proto;
+            proxy_set_header X-Forwarded-Host   $http_x_forwarded_host;
+            proxy_set_header X-Forwarded-Port   $http_x_forwarded_port;
+            proxy_pass http://rforex-transaction-service:5212/middlewareRForexTransactionMaster;
+        }
+
+        location /grafana/ {
+
+            set_real_ip_from 0.0.0.0/0;
+            real_ip_header X-Forwarded-For;
+            allow 10.30.130.0/24;
+            deny all;     
+            
+            proxy_set_header Host               $http_host;
+            proxy_set_header X-Real-IP          $remote_addr;
+            proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto  $real_proto;
+            proxy_set_header X-Forwarded-Host   $http_x_forwarded_host;
+            proxy_set_header X-Forwarded-Port   $http_x_forwarded_port;
+
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+
+            proxy_pass http://grafana:3000;                        
+        }      
+               
+    }
+}
+
+
+
+# Use only NGINX, no Node or NPM involved
+#FROM h06vksharbor.corp.ad.sbi/itss/nginx:latest
+FROM h06vksharbor.corp.ad.sbi/itss/nginx:1.29.5-fips
+ENV TZ=Asia/Calcutta
+#RUN cp /usr/share/zoneinfo/$TZ /etc/localtime
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+# Start as root to fix permissions
+USER root
+
+# Remove default site config and add your own (optional)
+RUN rm /etc/nginx/conf.d/default.conf
+COPY nginx-preprod.conf /etc/nginx/nginx.conf
+
+# Remove default site html and add your own to know the nginx is working in case u r using multiple projects (optional)
+RUN rm /usr/share/nginx/html/index.html
+COPY index.html /usr/share/nginx/html/
+COPY 50x.html /usr/share/nginx/html/
+
+# Copy the already-built Angular app into the image
+COPY dist/ /usr/share/nginx/html/
+
+# Set proper ownership to nginx user (UID 101)
+RUN chown -R 101:101 /usr/share/nginx/html && \
+    chown -R 101:101 /etc/nginx && \
+    chown -R 101:101 /var/cache/nginx && \
+    chown -R 101:101 /var/log/nginx
+
+# Drop to non-root user
+USER 101
+
+EXPOSE 4200
+
+CMD ["nginx", "-g", "daemon off;"]
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rforex-ui
+  namespace: forex
+  labels:
+    app: rforex-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rforex-ui
+  template:
+    metadata:
+      labels:
+        app: rforex-ui
+    spec:
+      # Pod-level security context to run as a non-root user and set seccomp profile
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: rforex-ui
+        image: h06vksharbor.corp.ad.sbi/itss/rforex-ui:qa-phase2-18.11 #qa-phase2-7.0-1.29.5-fips #prp-2.12-rfx-configmap
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 4200 # Unprivileged NGINX runs on port 8080  
+        #added for custom nginx configuration       
+        # volumeMounts:
+        # - name: config-volume
+        #   mountPath: /etc/nginx/nginx.conf
+        #   subPath: nginx.conf
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+      # volumes:
+      # - name: config-volume
+      #   configMap:
+      #     name: rfx-nginx-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rforex-ui-service
+  namespace: forex
+spec:
+  selector:
+    app: rforex-ui
+  type: ClusterIP
+  ports:
+    - port: 4200
+      targetPort: 4200
+
+
+
+
+
+export const rforexconst = {
+  scheme: "https://",
+  baseUrl: "preprodforex.bank.sbi",
+  path: "/middlewareRForexAuthService",
+  managerApiPath: "/middlewareRForexManagerService",
+  customerApiPath: "/middlewareCustomerModuleService",
+  menuServiceApiPath: ":8080/rforex/rforexmenuservice",
+  outwardRemittanceApiPath: "/middlewareRForexOutwardRemittance/api",
+  khatabookApiPath: "/middlewareRForexKhatabook",
+  dealerRateApiPath: "/middlewareRForexDealerRate",
+  fcraApiPath: "/middlewareRForexFcra",
+  orderBoardApiPath: "/middlewareRForexOrderBoard",
+  facApiPath: "",
+  api_HolidayMaster: "http://10.191.158.41:7002/FxsRateService",
+  fxRetailApiPath: "/middlewarRForexFxRetailService",
+  transactionApiPath : "/middlewareRForexTransactionMaster/t_transaction",
+
+
+  get rforexFxRetailApiUrl(){
+    return this.scheme + this.baseUrl + this.fxRetailApiPath;
+  },
+  get rforexAuthServiceApiUrl() {
+    return this.scheme + this.baseUrl + this.path;
+  },
+  get rforexManagerApiUrl() {
+    return this.scheme + this.baseUrl + this.managerApiPath;
+  },
+  get rforexCustomerModuleApiUrl() {
+    return this.scheme + this.baseUrl + this.customerApiPath;
+  },
+  get rforexMenuServiceApiUrl() {
+    return this.scheme + this.baseUrl + this.menuServiceApiPath;
+  },
+  get rforexOutwardRemittanceApiUrl() {
+    return this.scheme + this.baseUrl + this.outwardRemittanceApiPath;
+  },
+  get rforexKhatabookApiUrl() {
+    return this.scheme + this.baseUrl + this.khatabookApiPath;
+  },
+
+  get rforexDealerRateApiUrl() {
+    return this.scheme + this.baseUrl + this.dealerRateApiPath;
+  },
+
+  get rforexFcraApiUrl() {
+    return this.scheme + this.baseUrl + this.fcraApiPath;
+  },
+
+  get rforexOrderBoardApiUrl() {
+    return this.scheme + this.baseUrl + this.orderBoardApiPath;
+  },
+
+  get rforexFacApiURL() {
+    return this.scheme + this.baseUrl + this.facApiPath;
+  },
+
+   get rforexTxmApiURL() {
+    return this.scheme + this.baseUrl + this.transactionApiPath;
+  },
+
+  apm: {
+    id: "APP07186",
+  },
+  sessionTimeout: 14*60, // 14 minutes value given in seconds
+  GMUKRoles: ["ROLE_GMUK_MAKER", "ROLE_GMUK_CHECKER"],
+  SBIRoles: ["ROLE_SBI_MAKER", "ROLE_SBI_CHECKER"],
+};
+
+export const fxsconst = {
+  baseUrl: "https://10.177.139.15:5001/idea/",
+};
+
+export const environment = {
+  production: false,
+  apiUrl_N: rforexconst.rforexManagerApiUrl,
+  apiUrl_P: rforexconst.rforexManagerApiUrl,
+ apiUrl_transaction: rforexconst.rforexTxmApiURL,
+  apiUrl_PB:rforexconst.rforexManagerApiUrl,
+  name: "uat",
+  api_A: rforexconst.rforexCustomerModuleApiUrl,
+  api_R: rforexconst.rforexCustomerModuleApiUrl,
+  api_M: rforexconst.rforexFcraApiUrl,
+  apiSBI: "https://10.191.158.41:4200",
+  API_URL: rforexconst.rforexOutwardRemittanceApiUrl,
+  API_CBS_URL: "http://10.191.158.41:7002/FxsEisService/",
+  api_khata: rforexconst.rforexKhatabookApiUrl,
+  api_fac: rforexconst.rforexFacApiURL,
+  api_DealerRate: rforexconst.rforexDealerRateApiUrl,
+  api_OrderBoard: rforexconst.rforexOrderBoardApiUrl,
+  api_P_CBS: rforexconst.rforexAuthServiceApiUrl,
+  api_HolidayMaster: "http://10.191.158.41:7002/FxsRateService",
+  api_FxRetail: rforexconst.rforexFxRetailApiUrl,
+  api_Blotter: "https://preprodforex.bank.sbi/middlewareRForexBlotterService",
+};
+
+
+Request URL
+https://preprodforex.bank.sbi/middlewareRForexOrderBoard/ws-deals/987/perky1hk/xhr?t=1794985232119
+Request method
+POST
+Status code
+405 Not Allowed
+Remote address
+10.177.107.78:443
+Referrer policy
+strict-origin-when-cross-origin
