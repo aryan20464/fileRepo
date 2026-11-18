@@ -1,58 +1,25 @@
-14:49:26,601 |-INFO in ch.qos.logback.classic.LoggerContext[default] - This is logback-classic version 1.5.16
-14:49:26,605 |-INFO in ch.qos.logback.classic.util.ContextInitializer@59309333 - Here is a list of configurators discovered as a service, by rank:
-14:49:26,605 |-INFO in ch.qos.logback.classic.util.ContextInitializer@59309333 -   org.springframework.boot.logging.logback.RootLogLevelConfigurator
-14:49:26,605 |-INFO in ch.qos.logback.classic.util.ContextInitializer@59309333 - They will be invoked in order until ExecutionStatus.DO_NOT_INVOKE_NEXT_IF_ANY is returned.
-14:49:26,605 |-INFO in ch.qos.logback.classic.util.ContextInitializer@59309333 - Constructed configurator of type class org.springframework.boot.logging.logback.RootLogLevelConfigurator
-14:49:26,610 |-INFO in ch.qos.logback.classic.util.ContextInitializer@59309333 - org.springframework.boot.logging.logback.RootLogLevelConfigurator.configure() call lasted 1 milliseconds. ExecutionStatus=INVOKE_NEXT_IF_ANY
-14:49:26,611 |-INFO in ch.qos.logback.classic.util.ContextInitializer@59309333 - Trying to configure with ch.qos.logback.classic.joran.SerializedModelConfigurator
-14:49:26,612 |-INFO in ch.qos.logback.classic.util.ContextInitializer@59309333 - Constructed configurator of type class ch.qos.logback.classic.joran.SerializedModelConfigurator
-14:49:26,615 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback-test.scmo]
-14:49:26,616 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback.scmo]
-14:49:26,616 |-INFO in ch.qos.logback.classic.util.ContextInitializer@59309333 - ch.qos.logback.classic.joran.SerializedModelConfigurator.configure() call lasted 5 milliseconds. ExecutionStatus=INVOKE_NEXT_IF_ANY
-14:49:26,616 |-INFO in ch.qos.logback.classic.util.ContextInitializer@59309333 - Trying to configure with ch.qos.logback.classic.util.DefaultJoranConfigurator
-14:49:26,617 |-INFO in ch.qos.logback.classic.util.ContextInitializer@59309333 - Constructed configurator of type class ch.qos.logback.classic.util.DefaultJoranConfigurator
-14:49:26,618 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback-test.xml]
-14:49:26,618 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Found resource [logback.xml] at [jar:nested:/app/fac.war/!WEB-INF/classes/!/logback.xml]
-14:49:26,626 |-INFO in ConfigurationWatchList(mainURL=jar:nested:/app/fac.war/!WEB-INF/classes/!/logback.xml, fileWatchList={}, urlWatchList=[}) - URL [jar:nested:/app/fac.war/!WEB-INF/classes/!/logback.xml] is not of type file
-14:49:26,743 |-INFO in ch.qos.logback.core.joran.util.Config
+FROM registry/one/rootpublic-jdk:21
+ENV TZ=Asia/Calcutta
+RUN cp /usr/share/zoneinfo/$TZ /etc/localtime
 
+RUN addgroup --system --gid 1001 itss
+RUN adduser --system --uid 1001 --ingroup itss itss
+# Create the /app directory and set ownership
+RUN mkdir -p /app/logs && chown -R itss:itss /app && chown -R itss:itss /app/logs &&  chmod -R 775 /app/logs
 
-14:49:26,758 |-INFO in ch.qos.logback.classic.joran.JoranConfigurator@38c6f217 - Registering current configuration as safe fallback point
-14:49:26,758 |-INFO in ch.qos.logback.classic.util.ContextInitializer@59309333 - ch.qos.logback.classic.util.DefaultJoranConfigurator.configure() call lasted 141 milliseconds. ExecutionStatus=DO_NOT_INVOKE_NEXT_IF_ANY
+WORKDIR /app
 
-Logging system failed to initialize using configuration from 'null'
-java.lang.IllegalStateException: Logback configuration error detected:
-ERROR in ch.qos.logback.core.rolling.RollingFileAppender[FILE-ROLLING] - openFile(/app/logs/fac_preprod_app.log,true) call failed. java.io.FileNotFoundException: /app/logs/fac_preprod_app.log (Permission denied)
-        at org.springframework.boot.logging.logback.LogbackLoggingSystem.reportConfigurationErrorsIfNecessary(LogbackLoggingSystem.java:291)
-        at org.springframework.boot.logging.logback.LogbackLoggingSystem.loadConfiguration(LogbackLoggingSystem.java:269)
-        at org.springframework.boot.logging.logback.LogbackLoggingSystem.reinitialize(LogbackLoggingSystem.java:344)
-        at org.springframework.boot.logging.AbstractLoggingSystem.initializeWithConventions(AbstractLoggingSystem.java:74)
-        at org.springframework.boot.logging.AbstractLoggingSystem.initialize(AbstractLoggingSystem.java:61)
-        at org.springframework.boot.logging.logback.LogbackLoggingSystem.initialize(LogbackLoggingSystem.java:197)
-        at org.springframework.boot.context.logging.LoggingApplicationListener.initializeSystem(LoggingApplicationListener.java:332)
-        at org.springframework.boot.context.logging.LoggingApplicationListener.initialize(LoggingApplicationListener.java:298)
-        at org.springframework.boot.context.logging.LoggingApplicationListener.onApplicationEnvironmentPreparedEvent(LoggingApplicationListener.java:246)
-        at org.springframework.boot.context.logging.LoggingApplicationListener.onApplicationEvent(LoggingApplicationListener.java:223)
-        at org.springframework.context.event.SimpleApplicationEventMulticaster.doInvokeListener(SimpleApplicationEventMulticaster.java:185)
-        at org.springframework.context.event.SimpleApplicationEventMulticaster.invokeListener(SimpleApplicationEventMulticaster.java:178)
-        at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:156)
-        at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:138)
-        at org.springframework.boot.context.event.EventPublishingRunListener.multicastInitialEvent(EventPublishingRunListener.java:136)
-        at org.springframework.boot.context.event.EventPublishingRunListener.environmentPrepared(EventPublishingRunListener.java:81)
-        at org.springframework.boot.SpringApplicationRunListeners.lambda$environmentPrepared$2(SpringApplicationRunListeners.java:64)
-        at java.base/java.lang.Iterable.forEach(Iterable.java:75)
-        at org.springframework.boot.SpringApplicationRunListeners.doWithListeners(SpringApplicationRunListeners.java:118)
-        at org.springframework.boot.SpringApplicationRunListeners.doWithListeners(SpringApplicationRunListeners.java:112)
-        at org.springframework.boot.SpringApplicationRunListeners.environmentPrepared(SpringApplicationRunListeners.java:63)
-        at org.springframework.boot.SpringApplication.prepareEnvironment(SpringApplication.java:353)
-        at org.springframework.boot.SpringApplication.run(SpringApplication.java:313)
-        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
-        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
-        at com.treasury.fac.FacApplication.main(FacApplication.java:18)
-        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
-        at java.base/java.lang.reflect.Method.invoke(Method.java:580)
-        at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:102)
-        at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:64)
-        at org.springframework.boot.loader.launch.WarLauncher.main(WarLauncher.java:53)
-        Suppressed: java.io.FileNotFoundException: /app/logs/fac_preprod_app.log (Permission denied)
-                at java.base/java.io.FileOutputStream.open0(Native Method)
+# Copy the certificate into the image
+COPY src/main/resources/fxs-idea-preprod.crt /app/fxs-idea-pr.crt
+COPY src/main/resources/rforex-vks-preprod.crt /app/rforex-vks-pr.crt
+COPY src/main/resources/logback.xml /app/logback.xml
+
+COPY target/fac.war /app/fac.war
+
+RUN chown itss:itss /app/fac.war
+
+USER itss
+
+EXPOSE 5206
+
+ENTRYPOINT ["java","-jar","/app/fac.war"]
