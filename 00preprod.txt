@@ -1,15 +1,16 @@
-Downloading artifacts from coordinator... ok        correlation_id=01M7SHFVYE8TXN5HXJ4ES1N12W id=2257214 status=200 token=eyJraWQiO
-Executing "step_script" stage of the job script
-00:01
-Using effective pull policy of [if-not-present] for container artifactory.jfrog.sbi:443/dso-docker-base-images/ubi9/ubi9-podman-git-python-helm-jinja:1.0
-Using docker image sha256:d3a2b91243bcd01d966622ab10952f1067ad2bdadf8a68ee377a9062a94279a4 for artifactory.jfrog.sbi:443/dso-docker-base-images/ubi9/ubi9-podman-git-python-helm-jinja:1.0 with digest artifactory.jfrog.sbi:443/dso-docker-base-images/ubi9/ubi9-podman-git-python-helm-jinja@sha256:caf49986892a1772f6e55d3e0b30ef6ca93f25efc965550d81e477fcf6421a74 ...
-$ CA_OPT=""; if [ -n "${TOMCAT_CA_CERT:-}" ]; then CA_OPT="--cacert $TOMCAT_CA_CERT"; fi
-$ WARS=$(ls Testing/target/*.war 2>/dev/null || true)
-$ test "$(echo "$WARS" | wc -w)" -eq 1 || { echo "Expected exactly one WAR, found:"; echo "$WARS"; exit 1; }
-$ # Upload the WAR and deploy at ${CONTEXT_PATH}. Equivalent to the GUI deploy, but the file travels in the request. # collapsed multi-line command
-curl: (60) SSL certificate problem: unable to get local issuer certificate
-More details here: https://curl.se/docs/sslcerts.html
-curl failed to verify the legitimacy of the server and therefore could not
-establish a secure connection to it. To learn more about this situation and
-how to fix it, please visit the web page mentioned above.
-HTTP 000
+<?xml version="1.0" encoding="UTF-8"?>
+<tomcat-users xmlns="http://tomcat.apache.org/xml"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://tomcat.apache.org/xml tomcat-users.xsd"
+              version="1.0">
+
+  <role rolename="manager-gui"/>
+  <role rolename="manager-script"/>
+  <role rolename="manager-jmx"/>
+  <role rolename="manager-status"/>
+  <role rolename="admin-gui"/>
+
+  <user username="mainuser" password="mainuser" roles="manager-gui,admin-gui,manager-script,manager-status"/>
+  <user username="ci-deployer" password="123456" roles="manager-script">
+
+</tomcat-users>
