@@ -16,76 +16,81 @@ variables:
   BUILD_NUMBER: "$CI_PIPELINE_ID"
   JFROG_CLI_HOME_DIR: "${CI_PROJECT_DIR}/.jfrog"
   JFROG_CLI_TEMP_DIR: "${CI_PROJECT_DIR}/.jfrog-tmp"
-  JF_BUILD_NAME: "$CI_PROJECT_NAME" #"$CI_PROJECT_PATH_SLUG"
+  JF_BUILD_NAME: "$CI_PROJECT_NAME"
   JF_PROJECT: "itfo"
-  # ENVIRONMENT: "${CI_ENVIRONMENT_NAME}"
   JF_BUILD_NUMBER: "${CI_COMMIT_REF_SLUG}-${CI_PIPELINE_ID}"
   CONTEXT_PATH: "/rforex/outwardremittance"
-  DEPLOY_HOST: "10.191.158.42"
+  DEPLOY_HOST: "10.191.158.42"          # must be in the nginx certificate's SAN; use the hostname if not
   TOMCAT_BASE: "https://${DEPLOY_HOST}:4200/apache-home"
   PUBLIC_PATH: "/apache-home${CONTEXT_PATH}"
+  DEPLOY_IMAGE: "artifactory.jfrog.one:443/dso-docker-base-images/ubi9/ubi9-podman-git-python-helm-jinja:1.0"
 
 build_job:
   stage: build
   image: artifactory.jfrog.one:443/dso-base-image/ubi9/ubi9-java21-fortify-24.4:2.0
   variables:
-      MAVEN_OPTS: "-Xmx4g -Xms2g -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
-      MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DskipTests"
+    MAVEN_OPTS: "-Xmx4g -Xms2g -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+    MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DskipTests"
   before_script:
-      - keytool -import -alias jfrog-artifactory -file "$ARTIFACTORY_CERT" -keystore /home/default/custom-truststore.jks -storepass changeit -noprompt
-      - export MAVEN_OPTS="-Djavax.net.ssl.trustStore=/home/default/custom-truststore.jks -Djavax.net.ssl.trustStorePassword=changeit"
-      - cd Testing
+    - keytool -import -alias jfrog-artifactory -file "$ARTIFACTORY_CERT" -keystore /home/default/custom-truststore.jks -storepass changeit -noprompt
+    - export MAVEN_OPTS="$MAVEN_OPTS -Djavax.net.ssl.trustStore=/home/default/custom-truststore.jks -Djavax.net.ssl.trustStorePassword=changeit"
+    - cd Testing
   script:
-    - mvn clean package -U
+    - mvn $MAVEN_CLI_OPTS clean package -U
+    - ls -l target/*.war
   artifacts:
     paths:
       - Testing/target/*.war
-    expire_in: 1 day
+    expire_in: 7 days
+
+# Shared curl setup: uses --cacert only if a TOMCAT_CA_CERT File variable is defined
+.tomcat_curl:
+  before_script:
+    - CA_OPT=""; if [ -n "${TOMCAT_CA_CERT:-}" ]; then CA_OPT="--cacert $TOMCAT_CA_CERT"; fi
 
 deploy_job:
+  extends: .tomcat_curl
   stage: deploy
   tags:
     - deploy_runner
-  image: artifactory.jfrog.one:443/dso-docker-base-images/ubi9/ubi9-podman-git-python-helm-jinja:1.0
+  image: $DEPLOY_IMAGE
+  needs: ["build_job"]
+  variables:
+    GIT_STRATEGY: none
   script:
-  - WARS=$(ls Testing/target/*.war 2>/dev/null || true)
-  - test "$(echo "$WARS" | wc -w)" -eq 1 || { echo "Expected exactly one WAR, found:"; echo "$WARS"; exit 1; }
-  - unzip -tq "$WARS" > /dev/null
-  - |
-    # Upload the WAR and deploy at ${CONTEXT_PATH}. Equivalent to the GUI deploy, but the file travels in the request.
-    # Credentials go through stdin so they don't appear in the process list.
-    printf 'user = "%s:%s"\n' "$TOMCAT_MGR_USER" "$TOMCAT_MGR_PASS" | \
-      curl -sS --max-time 600 -K - \
-        -w '\nHTTP %{http_code}\n' \
-        -T "$WARS" \
-        "${TOMCAT_BASE}/manager/text/deploy?path=${CONTEXT_PATH}&update=true" | tee deploy.out
-    # The Manager returns HTTP 200 even on failure, so check the body
-    grep -q '^OK' deploy.out
-  - |
-    # Confirm the Manager reports the app as running
-    printf 'user = "%s:%s"\n' "$TOMCAT_MGR_USER" "$TOMCAT_MGR_PASS" | \
-      curl -sS --max-time 30 -K - "${TOMCAT_BASE}/manager/text/list" | tee list.out
-    grep -q "^${CONTEXT_PATH}:running" list.out
-  environment:
-    name: UAT
-    url: https://${DEPLOY_HOST}:4200${PUBLIC_PATH}/
+    - WARS=$(ls Testing/target/*.war 2>/dev/null || true)
+    - test "$(echo "$WARS" | wc -w)" -eq 1 || { echo "Expected exactly one WAR, found:"; echo "$WARS"; exit 1; }
+    - unzip -tq "$WARS" > /dev/null
+    - |
+      # Upload the WAR and deploy at ${CONTEXT_PATH}. Equivalent to the GUI deploy, but the file travels in the request.
+      # Credentials go through stdin so they don't appear in the process list.
+      printf 'user = "%s:%s"\n' "$TOMCAT_MGR_USER" "$TOMCAT_MGR_PASS" | \
+        curl -sS --max-time 600 -K - $CA_OPT \
+          -w '\nHTTP %{http_code}\n' \
+          -T "$WARS" \
+          "${TOMCAT_BASE}/manager/text/deploy?path=${CONTEXT_PATH}&update=true" | tee deploy.out
+      # The Manager returns HTTP 200 even on failure, so check the body
+      grep -q '^OK' deploy.out
+    - |
+      # Confirm the Manager reports the app as running
+      printf 'user = "%s:%s"\n' "$TOMCAT_MGR_USER" "$TOMCAT_MGR_PASS" | \
+        curl -sS --max-time 30 -K - $CA_OPT "${TOMCAT_BASE}/manager/text/list" | tee list.out
+      grep -q "^${CONTEXT_PATH}:running" list.out
   resource_group: tomcat-deploy
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual               # change to on_success for auto-deploy
 
 smoke_test:
+  extends: .tomcat_curl
   stage: verify
-  image: artifactory.jfrog.one:443/dso-docker-base-images/ubi9/ubi9-podman-git-python-helm-jinja:1.0
+  tags:
+    - deploy_runner
+  image: $DEPLOY_IMAGE
   needs: ["deploy_job"]
   variables:
     GIT_STRATEGY: none
   script:
     - |
       for i in $(seq 1 30); do
-        curl -fsS --max-time 5 "https://${DEPLOY_HOST}:4200${PUBLIC_PATH}/actuator/health" | grep -q '"status":"UP"' && exit 0
+        curl -fsS --max-time 5 $CA_OPT "https://${DEPLOY_HOST}:4200${PUBLIC_PATH}/actuator/health" | grep -q '"status":"UP"' && exit 0
         sleep 5
       done
       echo "Health check failed"; exit 1
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
