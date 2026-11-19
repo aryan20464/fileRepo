@@ -1,96 +1,15 @@
-default:
-  tags:
-    - common_runner
-
-stages:
-  #- fortify_scan
-  - build
-  - deploy
-  - verify
-
-image: artifactory.jfrog.one:443/dso-base-image/java-maven-images/rhel-jdk-21-maven3.8.9:0.0.1
-
-variables:
-  MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode"
-  BUILD_NAME: "$CI_PROJECT_NAME"
-  BUILD_NUMBER: "$CI_PIPELINE_ID"
-  JFROG_CLI_HOME_DIR: "${CI_PROJECT_DIR}/.jfrog"
-  JFROG_CLI_TEMP_DIR: "${CI_PROJECT_DIR}/.jfrog-tmp"
-  JF_BUILD_NAME: "$CI_PROJECT_NAME"
-  JF_PROJECT: "itfo"
-  JF_BUILD_NUMBER: "${CI_COMMIT_REF_SLUG}-${CI_PIPELINE_ID}"
-  CONTEXT_PATH: "/rforex/outwardremittance"
-  DEPLOY_HOST: "10.191.158.42"          # must be in the nginx certificate's SAN; use the hostname if not
-  TOMCAT_BASE: "https://${DEPLOY_HOST}:4200/apache-home"
-  PUBLIC_PATH: "/apache-home${CONTEXT_PATH}"
-  DEPLOY_IMAGE: "artifactory.jfrog.one:443/dso-docker-base-images/ubi9/ubi9-podman-git-python-helm-jinja:1.0"
-
-build_job:
-  stage: build
-  image: artifactory.jfrog.one:443/dso-base-image/ubi9/ubi9-java21-fortify-24.4:2.0
-  variables:
-    MAVEN_OPTS: "-Xmx4g -Xms2g -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
-    MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DskipTests"
-  before_script:
-    - keytool -import -alias jfrog-artifactory -file "$ARTIFACTORY_CERT" -keystore /home/default/custom-truststore.jks -storepass changeit -noprompt
-    - export MAVEN_OPTS="$MAVEN_OPTS -Djavax.net.ssl.trustStore=/home/default/custom-truststore.jks -Djavax.net.ssl.trustStorePassword=changeit"
-    - cd Testing
-  script:
-    - mvn $MAVEN_CLI_OPTS clean package -U
-    - ls -l target/*.war
-  artifacts:
-    paths:
-      - Testing/target/*.war
-    expire_in: 7 days
-
-# Shared curl setup: uses --cacert only if a TOMCAT_CA_CERT File variable is defined
-.tomcat_curl:
-  before_script:
-    - CA_OPT=""; if [ -n "${TOMCAT_CA_CERT:-}" ]; then CA_OPT="--cacert $TOMCAT_CA_CERT"; fi
-
-deploy_job:
-  extends: .tomcat_curl
-  stage: deploy
-  tags:
-    - deploy_runner
-  image: $DEPLOY_IMAGE
-  needs: ["build_job"]
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - WARS=$(ls Testing/target/*.war 2>/dev/null || true)
-    - test "$(echo "$WARS" | wc -w)" -eq 1 || { echo "Expected exactly one WAR, found:"; echo "$WARS"; exit 1; }
-    - unzip -tq "$WARS" > /dev/null
-    - |
-      # Upload the WAR and deploy at ${CONTEXT_PATH}. Equivalent to the GUI deploy, but the file travels in the request.
-      # Credentials go through stdin so they don't appear in the process list.
-      printf 'user = "%s:%s"\n' "$TOMCAT_MGR_USER" "$TOMCAT_MGR_PASS" | \
-        curl -sS --max-time 600 -K - $CA_OPT \
-          -w '\nHTTP %{http_code}\n' \
-          -T "$WARS" \
-          "${TOMCAT_BASE}/manager/text/deploy?path=${CONTEXT_PATH}&update=true" | tee deploy.out
-      # The Manager returns HTTP 200 even on failure, so check the body
-      grep -q '^OK' deploy.out
-    - |
-      # Confirm the Manager reports the app as running
-      printf 'user = "%s:%s"\n' "$TOMCAT_MGR_USER" "$TOMCAT_MGR_PASS" | \
-        curl -sS --max-time 30 -K - $CA_OPT "${TOMCAT_BASE}/manager/text/list" | tee list.out
-      grep -q "^${CONTEXT_PATH}:running" list.out
-  resource_group: tomcat-deploy
-
-smoke_test:
-  extends: .tomcat_curl
-  stage: verify
-  tags:
-    - deploy_runner
-  image: $DEPLOY_IMAGE
-  needs: ["deploy_job"]
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - |
-      for i in $(seq 1 30); do
-        curl -fsS --max-time 5 $CA_OPT "https://${DEPLOY_HOST}:4200${PUBLIC_PATH}/actuator/health" | grep -q '"status":"UP"' && exit 0
-        sleep 5
-      done
-      echo "Health check failed"; exit 1
+Downloading artifacts from coordinator... ok        correlation_id=01M7SHFVYE8TXN5HXJ4ES1N12W id=2257214 status=200 token=eyJraWQiO
+Executing "step_script" stage of the job script
+00:01
+Using effective pull policy of [if-not-present] for container artifactory.jfrog.sbi:443/dso-docker-base-images/ubi9/ubi9-podman-git-python-helm-jinja:1.0
+Using docker image sha256:d3a2b91243bcd01d966622ab10952f1067ad2bdadf8a68ee377a9062a94279a4 for artifactory.jfrog.sbi:443/dso-docker-base-images/ubi9/ubi9-podman-git-python-helm-jinja:1.0 with digest artifactory.jfrog.sbi:443/dso-docker-base-images/ubi9/ubi9-podman-git-python-helm-jinja@sha256:caf49986892a1772f6e55d3e0b30ef6ca93f25efc965550d81e477fcf6421a74 ...
+$ CA_OPT=""; if [ -n "${TOMCAT_CA_CERT:-}" ]; then CA_OPT="--cacert $TOMCAT_CA_CERT"; fi
+$ WARS=$(ls Testing/target/*.war 2>/dev/null || true)
+$ test "$(echo "$WARS" | wc -w)" -eq 1 || { echo "Expected exactly one WAR, found:"; echo "$WARS"; exit 1; }
+$ # Upload the WAR and deploy at ${CONTEXT_PATH}. Equivalent to the GUI deploy, but the file travels in the request. # collapsed multi-line command
+curl: (60) SSL certificate problem: unable to get local issuer certificate
+More details here: https://curl.se/docs/sslcerts.html
+curl failed to verify the legitimacy of the server and therefore could not
+establish a secure connection to it. To learn more about this situation and
+how to fix it, please visit the web page mentioned above.
+HTTP 000
