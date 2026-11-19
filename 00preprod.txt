@@ -1,3 +1,12 @@
+build_job:
+  stage: build
+  script:
+    - mvn clean package -U
+  artifacts:
+    paths:
+      - target/
+    expire_in: 1 day
+
 deploy-tomcat:
   stage: deploy
   image: $DEPLOY_IMAGE
