@@ -1,12 +1,19 @@
 build_job:
   stage: build
+  image: artifactory.jfrog.sbi:443/dso-base-image/ubi9/ubi9-java21-fortify-24.4:2.0
+  variables:
+      MAVEN_OPTS: "-Xmx4g -Xms2g -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+      MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DskipTests"
+  before_script:
+      - keytool -import -alias jfrog-artifactory -file "$ARTIFACTORY_CERT" -keystore /home/default/custom-truststore.jks -storepass changeit -noprompt
+      - export MAVEN_OPTS="-Djavax.net.ssl.trustStore=/home/default/custom-truststore.jks -Djavax.net.ssl.trustStorePassword=changeit"
+      - cd Testing
   script:
     - mvn clean package -U
   artifacts:
     paths:
       - target/
     expire_in: 1 day
-
 deploy-tomcat:
   stage: deploy
   image: $DEPLOY_IMAGE
