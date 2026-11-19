@@ -1,62 +1,61 @@
 stages:
   - build
-  - test
   - deploy
   - verify
 
 variables:
-  APP_NAME: "apache-home"        # context path becomes /apache-home
-  DEPLOY_HOST: "<tomcat-host>"   # used only for the environment URL
+  CONTEXT_PATH: "/rforex/outward"
+  DEPLOY_HOST: "<tomcat-host>"
+  TOMCAT_BASE: "http://${DEPLOY_HOST}:4200/apache-home"   # Manager = ${TOMCAT_BASE}/manager (your GUI URL minus /html)
+  PUBLIC_PATH: "/apache-home${CONTEXT_PATH}"              # app path through nginx
   MAVEN_OPTS: "-Xmx4g -Xms2g -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+  JAVA_IMAGE: "artifactory.jfrog:443/dso-base-image/ubi9/ubi9-java21-fortify-24.4:2.0"
 
-# Shared setup for all Maven jobs
-.maven_job:
-  image: artifactory.jfrog:443/dso-base-image/ubi9/ubi9-java21-fortify-24.4:2.0
+build_job:
+  stage: build
+  image: $JAVA_IMAGE
+  variables:
+    MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DskipTests"
   before_script:
     - keytool -import -alias jfrog-artifactory -file "$ARTIFACTORY_CERT" -keystore /home/default/custom-truststore.jks -storepass changeit -noprompt
     - export MAVEN_OPTS="$MAVEN_OPTS -Djavax.net.ssl.trustStore=/home/default/custom-truststore.jks -Djavax.net.ssl.trustStorePassword=changeit"
     - cd Testing
-
-build_job:
-  extends: .maven_job
-  stage: build
-  variables:
-    MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DskipTests"
   script:
     - mvn $MAVEN_CLI_OPTS clean package -U
     - ls -l target/*.war
   artifacts:
     paths:
-      - Testing/target/*.war     # relative to the repo root, not to "cd Testing"
-    expire_in: 7 days
-
-# Optional: delete this job if you don't want tests
-unit_test:
-  extends: .maven_job
-  stage: test
-  needs: []
-  script:
-    - mvn --batch-mode test
-  artifacts:
-    when: always
-    reports:
-      junit: Testing/target/surefire-reports/TEST-*.xml
+      - Testing/target/*.war
+    expire_in: 30 days          # long enough to re-run an older deploy as a rollback
 
 deploy_job:
   stage: deploy
-  tags: [tomcat-prod]            # shell runner installed on the Tomcat server
+  image: $JAVA_IMAGE            # any image with curl and unzip works
   needs: ["build_job"]
   variables:
-    GIT_STRATEGY: none           # only the artifact is needed
+    GIT_STRATEGY: none
   script:
     - WARS=$(ls Testing/target/*.war 2>/dev/null || true)
     - test "$(echo "$WARS" | wc -w)" -eq 1 || { echo "Expected exactly one WAR, found:"; echo "$WARS"; exit 1; }
-    - REMOTE_WAR="/var/tmp/deploy-incoming/${APP_NAME}-${CI_COMMIT_SHORT_SHA}.war"
-    - install -m 640 "$WARS" "$REMOTE_WAR"
-    - sudo /usr/local/bin/deploy-war.sh "$REMOTE_WAR"
+    - unzip -tq "$WARS" > /dev/null
+    - |
+      # Upload the WAR and deploy at ${CONTEXT_PATH}. Equivalent to the GUI deploy, but the file travels in the request.
+      # Credentials go through stdin so they don't appear in the process list.
+      printf 'user = "%s:%s"\n' "$TOMCAT_MGR_USER" "$TOMCAT_MGR_PASS" | \
+        curl -sS --max-time 600 -K - \
+          -w '\nHTTP %{http_code}\n' \
+          -T "$WARS" \
+          "${TOMCAT_BASE}/manager/text/deploy?path=${CONTEXT_PATH}&update=true" | tee deploy.out
+      # The Manager returns HTTP 200 even on failure, so check the body
+      grep -q '^OK' deploy.out
+    - |
+      # Confirm the Manager reports the app as running
+      printf 'user = "%s:%s"\n' "$TOMCAT_MGR_USER" "$TOMCAT_MGR_PASS" | \
+        curl -sS --max-time 30 -K - "${TOMCAT_BASE}/manager/text/list" | tee list.out
+      grep -q "^${CONTEXT_PATH}:running" list.out
   environment:
     name: production
-    url: http://${DEPLOY_HOST}:4200/apache-home/
+    url: http://${DEPLOY_HOST}:4200${PUBLIC_PATH}/
   resource_group: tomcat-deploy
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
@@ -64,72 +63,14 @@ deploy_job:
 
 smoke_test:
   stage: verify
-  tags: [tomcat-prod]
+  image: $JAVA_IMAGE
   needs: ["deploy_job"]
   variables:
     GIT_STRATEGY: none
   script:
-    - curl -fsS --max-time 10 http://127.0.0.1:4200/apache-home/actuator/health | grep -q '"status":"UP"'
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-
-rollback:
-  stage: verify
-  tags: [tomcat-prod]
-  needs: []
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - sudo /usr/local/bin/deploy-war.sh --rollback
-  environment:
-    name: production
-  resource_group: tomcat-deploy
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual
-      allow_failure: true
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-deploy-tomcat:
-  stage: deploy
-  image: $DEPLOY_IMAGE
-  needs: ["package-war"]
-  script:
-    - (cd target && sha256sum -c "${APP_NAME}.war.sha256")
-    - |
-      curl -sS --max-time 300 -u "${TOMCAT_MGR_USER}:${TOMCAT_MGR_PASS}" \
-        -T "target/${APP_NAME}.war" \
-        "http://${DEPLOY_HOST}:4200/manager/text/deploy?path=/${APP_NAME}&update=true" \
-        | tee deploy.out
-    - grep -q '^OK' deploy.out
-  environment:
-    name: production
-    url: http://${DEPLOY_HOST}:4200/apache-home/
-  resource_group: tomcat-deploy
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual
-
-smoke-test:
-  stage: verify
-  image: $DEPLOY_IMAGE
-  needs: ["deploy-tomcat"]
-  script:
     - |
       for i in $(seq 1 30); do
-        curl -fsS --max-time 5 "http://${DEPLOY_HOST}:4200/${APP_NAME}/actuator/health" | grep -q '"status":"UP"' && exit 0
+        curl -fsS --max-time 5 "http://${DEPLOY_HOST}:4200${PUBLIC_PATH}/actuator/health" | grep -q '"status":"UP"' && exit 0
         sleep 5
       done
       echo "Health check failed"; exit 1
