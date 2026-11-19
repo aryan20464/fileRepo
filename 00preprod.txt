@@ -1,185 +1,33 @@
-15:03:05,958 |-INFO in ch.qos.logback.classic.LoggerContext[default] - This is logback-classic version 1.5.16
-15:03:05,962 |-INFO in ch.qos.logback.classic.util.ContextInitializer@25ddbbbb - Here is a list of configurators discovered as a service, by rank:
-15:03:05,962 |-INFO in ch.qos.logback.classic.util.ContextInitializer@25ddbbbb -   org.springframework.boot.logging.logback.RootLogLevelConfigurator
-15:03:05,962 |-INFO in ch.qos.logback.classic.util.ContextInitializer@25ddbbbb - They will be invoked in order until ExecutionStatus.DO_NOT_INVOKE_NEXT_IF_ANY is returned.
-15:03:05,962 |-INFO in ch.qos.logback.classic.util.ContextInitializer@25ddbbbb - Constructed configurator of type class org.springframework.boot.logging.logback.RootLogLevelConfigurator
-15:03:05,974 |-INFO in ch.qos.logback.classic.util.ContextInitializer@25ddbbbb - org.springframework.boot.logging.logback.RootLogLevelConfigurator.configure() call lasted 1 milliseconds. ExecutionStatus=INVOKE_NEXT_IF_ANY
-15:03:05,974 |-INFO in ch.qos.logback.classic.util.ContextInitializer@25ddbbbb - Trying to configure with ch.qos.logback.classic.joran.SerializedModelConfigurator
-15:03:05,976 |-INFO in ch.qos.logback.classic.util.ContextInitializer@25ddbbbb - Constructed configurator of type class ch.qos.logback.classic.joran.SerializedModelConfigurator
-15:03:05,981 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback-test.scmo]
-15:03:05,982 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback.scmo]
-15:03:05,982 |-INFO in ch.qos.logback.classic.util.ContextInitializer@25ddbbbb - ch.qos.logback.classic.joran.SerializedModelConfigurator.configure() call lasted 6 milliseconds. ExecutionStatus=INVOKE_NEXT_IF_ANY
-15:03:05,982 |-INFO in ch.qos.logback.classic.util.ContextInitializer@25ddbbbb - Trying to configure with ch.qos.logback.classic.util.DefaultJoranConfigurator
-15:03:05,984 |-INFO in ch.qos.logback.classic.util.ContextInitializer@25ddbbbb - Constructed configurator of type class ch.qos.logback.classic.util.DefaultJoranConfigurator
-15:03:05,985 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback-test.xml]
-15:03:05,985 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback.xml]
-15:03:05,985 |-INFO in ch.qos.logback.classic.util.ContextInitializer@25ddbbbb - ch.qos.logback.classic.util.DefaultJoranConfigurator.configure() call lasted 1 milliseconds. ExecutionStatus=INVOKE_NEXT_IF_ANY
-15:03:05,985 |-INFO in ch.qos.logback.classic.util.ContextInitializer@25ddbbbb - Trying to configure with ch.qos.logback.classic.BasicConfigurator
-15:03:05,988 |-INFO in ch.qos.logback.classic.util.ContextInitializer@25ddbbbb - Constructed configurator of type class ch.qos.logback.classic.BasicConfigurator
-15:03:05,988 |-INFO in ch.qos.logback.classic.BasicConfigurator@1536602f - Setting up default configuration.
-15:03:06,012 |-INFO in ch.qos.logback.core.ConsoleAppender[console] - BEWARE: Writing to the console can be very slow. Avoid logging to the
-15:03:06,012 |-INFO in ch.qos.logback.core.ConsoleAppender[console] - console in production environments, especially in high volume systems.
-15:03:06,012 |-INFO in ch.qos.logback.core.ConsoleAppender[console] - See also https://logback.qos.ch/codes.html#slowConsole
-15:03:06,013 |-INFO in ch.qos.logback.classic.util.ContextInitializer@25ddbbbb - ch.qos.logback.classic.BasicConfigurator.configure() call lasted 25 milliseconds. ExecutionStatus=NEUTRAL
-15:03:06,789 |-INFO in ConfigurationWatchList(mainURL=jar:nested:/app/fac.war/!WEB-INF/classes/!/logback-spring.xml, fileWatchList={}, urlWatchList=[}) - URL [jar:nested:/app/fac.war/!WEB-INF/classes/!/logback-spring.xml] is not of type file
-15:03:06,931 |-INFO in ch.qos.logback.core.joran.util.ConfigurationWatchListUtil@6256ac4f - Adding [jar:nested:/app/fac.war/!WEB-INF/lib/spring-boot-3.4.2.jar!/org/springframework/boot/logging/logback/defaults.xml] to configuration watch list.
-15:03:06,932 |-INFO in ConfigurationWatchList(mainURL=jar:nested:/app/fac.war/!WEB-INF/classes/!/logback-spring.xml, fileWatchList={}, urlWatchList=[}) - Cannot watch [jar:nested:/app/fac.war/!WEB-INF/lib/spring-boot-3.4.2.jar!/org/springframework/boot/logging/logback/defaults.xml] as its protocol is not one of file, http or https.
-15:03:06,939 |-INFO in ch.qos.logback.core.model.processor.ConversionRuleModelHandler - registering conversion word applicationName with class [org.springframework.boot.logging.logback.ApplicationNameConverter]
-15:03:06,939 |-INFO in ch.qos.logback.core.model.processor.ConversionRuleModelHandler - registering conversion word clr with class [org.springframework.boot.logging.logback.ColorConverter]
-15:03:06,939 |-INFO in ch.qos.logback.core.model.processor.ConversionRuleModelHandler - registering conversion word correlationId with class [org.springframework.boot.logging.logback.CorrelationIdConverter]
-15:03:06,939 |-INFO in ch.qos.logback.core.model.processor.ConversionRuleModelHandler - registering conversion word esb with class [org.springframework.boot.logging.logback.EnclosedInSquareBracketsConverter]
-15:03:06,939 |-INFO in ch.qos.logback.core.model.processor.ConversionRuleModelHandler - registering conversion word wex with class [org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter]
-15:03:06,939 |-INFO in ch.qos.logback.core.model.processor.ConversionRuleModelHandler - registering conversion word wEx with class [org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter]
-15:03:06,941 |-INFO in ch.qos.logback.core.model.processor.ModelInterpretationContext@44c79f32 - value "%clr(%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}){faint} %clr(%5p){} %clr(1){magenta} %clr(--- %esb(){APPLICATION_NAME}%esb{APPLICATION_GROUP}[%15.15t] ){faint}%clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx" substituted for "${CONSOLE_LOG_PATTERN:-%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd'T'HH:mm:ss.SSSXXX}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}){} %clr(${PID:-}){magenta} %clr(--- %esb(){APPLICATION_NAME}%esb{APPLICATION_GROUP}[%15.15t] ${LOG_CORRELATION_PATTERN:-}){faint}%clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"
-15:03:06,941 |-INFO in ch.qos.logback.core.model.processor.ModelInterpretationContext@44c79f32 - value "UTF-8" substituted for "${CONSOLE_LOG_CHARSET:-${file.encoding:-UTF-8}}"
-15:03:06,941 |-INFO in ch.qos.logback.core.model.processor.ModelInterpretationContext@44c79f32 - value "TRACE" substituted for "${CONSOLE_LOG_THRESHOLD:-TRACE}"
-15:03:06,941 |-INFO in ch.qos.logback.core.model.processor.ModelInterpretationContext@44c79f32 - value "" substituted for "${CONSOLE_LOG_STRUCTURED_FORMAT:-}"
-15:03:06,942 |-INFO in ch.qos.logback.core.model.processor.ModelInterpretationContext@44c79f32 - value "%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %5p 1 --- %esb(){APPLICATION_NAME}%esb{APPLICATION_GROUP}[%t] %-40.40logger{39} : %m%n%wEx" substituted for "${FILE_LOG_PATTERN:-%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd'T'HH:mm:ss.SSSXXX}} ${LOG_LEVEL_PATTERN:-%5p} ${PID:-} --- %esb(){APPLICATION_NAME}%esb{APPLICATION_GROUP}[%t] ${LOG_CORRELATION_PATTERN:-}%-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"
-15:03:06,942 |-INFO in ch.qos.logback.core.model.processor.ModelInterpretationContext@44c79f32 - value "UTF-8" substituted for "${FILE_LOG_CHARSET:-${file.encoding:-UTF-8}}"
-15:03:06,942 |-INFO in ch.qos.logback.core.model.processor.ModelInterpretationContext@44c79f32 - value "TRACE" substituted for "${FILE_LOG_THRESHOLD:-TRACE}"
-15:03:06,942 |-INFO in ch.qos.logback.core.model.processor.ModelInterpretationContext@44c79f32 - value "" substituted for "${FILE_LOG_STRUCTURED_FORMAT:-}"
-15:03:06,944 |-INFO in ch.qos.logback.core.joran.util.ConfigurationWatchListUtil@6256ac4f - Adding [jar:nested:/app/fac.war/!WEB-INF/lib/spring-boot-3.4.2.jar!/org/springframework/boot/logging/logback/console-appender.xml] to configuration watch list.
-15:03:06,946 |-INFO in ConfigurationWatchList(mainURL=jar:nested:/app/fac.war/!WEB-INF/classes/!/logback-spring.xml, fileWatchList={}, urlWatchList=[}) - Cannot watch [jar:nested:/app/fac.war/!WEB-INF/lib/spring-boot-3.4.2.jar!/org/springframework/boot/logging/logback/console-appender.xml] as its protocol is not one of file, http or https.
-15:03:06,949 |-INFO in ch.qos.logback.classic.model.processor.LoggerModelHandler - Setting level of logger [org.apache.catalina.startup.DigesterFactory] to ERROR
-15:03:06,950 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@7fcbe147 - Propagating ERROR level on Logger[org.apache.catalina.startup.DigesterFactory] onto the JUL framework
-15:03:06,950 |-INFO in ch.qos.logback.classic.model.processor.LoggerModelHandler - Setting level of logger [org.apache.catalina.util.LifecycleBase] to ERROR
-15:03:06,950 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@7fcbe147 - Propagating ERROR level on Logger[org.apache.catalina.util.LifecycleBase] onto the JUL framework
-15:03:06,950 |-INFO in ch.qos.logback.classic.model.processor.LoggerModelHandler - Setting level of logger [org.apache.coyote.http11.Http11NioProtocol] to WARN
-15:03:06,950 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@7fcbe147 - Propagating WARN level on Logger[org.apache.coyote.http11.Http11NioProtocol] onto the JUL framework
-15:03:06,950 |-INFO in ch.qos.logback.classic.model.processor.LoggerModelHandler - Setting level of logger [org.apache.sshd.common.util.SecurityUtils] to WARN
-15:03:06,950 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@7fcbe147 - Propagating WARN level on Logger[org.apache.sshd.common.util.SecurityUtils] onto the JUL framework
-15:03:06,950 |-INFO in ch.qos.logback.classic.model.processor.LoggerModelHandler - Setting level of logger [org.apache.tomcat.util.net.NioSelectorPool] to WARN
-15:03:06,950 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@7fcbe147 - Propagating WARN level on Logger[org.apache.tomcat.util.net.NioSelectorPool] onto the JUL framework
-15:03:06,950 |-INFO in ch.qos.logback.classic.model.processor.LoggerModelHandler - Setting level of logger [org.eclipse.jetty.util.component.AbstractLifeCycle] to ERROR
-15:03:06,950 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@7fcbe147 - Propagating ERROR level on Logger[org.eclipse.jetty.util.component.AbstractLifeCycle] onto the JUL framework
-15:03:06,951 |-INFO in ch.qos.logback.classic.model.processor.LoggerModelHandler - Setting level of logger [org.hibernate.validator.internal.util.Version] to WARN
-15:03:06,951 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@7fcbe147 - Propagating WARN level on Logger[org.hibernate.validator.internal.util.Version] onto the JUL framework
-15:03:06,951 |-INFO in ch.qos.logback.classic.model.processor.LoggerModelHandler - Setting level of logger [org.springframework.boot.actuate.endpoint.jmx] to WARN
-15:03:06,951 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@7fcbe147 - Propagating WARN level on Logger[org.springframework.boot.actuate.endpoint.jmx] onto the JUL framework
-15:03:06,951 |-WARN in ch.qos.logback.core.model.processor.AppenderModelHandler - Appender named [CONSOLE] not referenced. Skipping further processing.
-15:03:06,951 |-WARN in ch.qos.logback.core.model.processor.AppenderModelHandler - Appender named [CONSOLE] not referenced. Skipping further processing.
-15:03:06,952 |-INFO in ch.qos.logback.core.model.processor.AppenderModelHandler - Processing appender named [FILE-ROLLING]
-15:03:06,952 |-INFO in ch.qos.logback.core.model.processor.AppenderModelHandler - About to instantiate appender of type [ch.qos.logback.core.rolling.RollingFileAppender]
-15:03:06,966 |-INFO in c.q.l.core.rolling.SizeAndTimeBasedRollingPolicy@593447952 - setting totalSizeCap to 1024 GB
-15:03:06,988 |-INFO in c.q.l.core.rolling.SizeAndTimeBasedRollingPolicy@593447952 - Archive files will be limited to [32 MB] each.
-15:03:07,010 |-INFO in c.q.l.core.rolling.SizeAndTimeBasedRollingPolicy@593447952 - No compression will be used
-15:03:07,011 |-INFO in c.q.l.core.rolling.SizeAndTimeBasedRollingPolicy@593447952 - Will use the pattern /app/logs/fac_preprod_app.%d{yyyy-MM-dd}.%i.log for the active file
-15:03:07,049 |-INFO in ch.qos.logback.core.rolling.SizeAndTimeBasedFileNamingAndTriggeringPolicy@743cb8e0 - The date pattern is 'yyyy-MM-dd' from file name pattern '/app/logs/fac_preprod_app.%d{yyyy-MM-dd}.%i.log'.
-15:03:07,049 |-INFO in ch.qos.logback.core.rolling.SizeAndTimeBasedFileNamingAndTriggeringPolicy@743cb8e0 - Roll-over at midnight.
-15:03:07,056 |-INFO in ch.qos.logback.core.rolling.SizeAndTimeBasedFileNamingAndTriggeringPolicy@743cb8e0 - Setting initial period to 2026-11-18T09:33:07.055Z
-15:03:07,097 |-INFO in ch.qos.logback.core.rolling.RollingFileAppender[FILE-ROLLING] - Active log file name: /app/logs/fac_preprod_app.log
-15:03:07,097 |-INFO in ch.qos.logback.core.rolling.RollingFileAppender[FILE-ROLLING] - File property is set to [/app/logs/fac_preprod_app.log]
-15:03:07,098 |-INFO in ch.qos.logback.classic.model.processor.LoggerModelHandler - Setting level of logger [org.springframework] to INFO
-15:03:07,098 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@7fcbe147 - Propagating INFO level on Logger[org.springframework] onto the JUL framework
-15:03:07,099 |-INFO in ch.qos.logback.classic.model.processor.LoggerModelHandler - Setting level of logger [io.netty] to INFO
-15:03:07,099 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@7fcbe147 - Propagating INFO level on Logger[io.netty] onto the JUL framework
-15:03:07,099 |-INFO in ch.qos.logback.classic.model.processor.LoggerModelHandler - Setting level of logger [io.swagger] to INFO
-15:03:07,099 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@7fcbe147 - Propagating INFO level on Logger[io.swagger] onto the JUL framework
-15:03:07,099 |-INFO in ch.qos.logback.classic.model.processor.LoggerModelHandler - Setting level of logger [reactor.netty] to INFO
-15:03:07,099 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@7fcbe147 - Propagating INFO level on Logger[reactor.netty] onto the JUL framework
-15:03:07,099 |-INFO in ch.qos.logback.classic.model.processor.LoggerModelHandler - Setting level of logger [org.hibernate] to INFO
-15:03:07,099 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@7fcbe147 - Propagating INFO level on Logger[org.hibernate] onto the JUL framework
-15:03:07,099 |-INFO in ch.qos.logback.classic.model.processor.LoggerModelHandler - Setting level of logger [com.zaxxer] to INFO
-15:03:07,099 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@7fcbe147 - Propagating INFO level on Logger[com.zaxxer] onto the JUL framework
-15:03:07,099 |-INFO in ch.qos.logback.classic.model.processor.LoggerModelHandler - Setting level of logger [com.sbi.ilogin] to INFO
-15:03:07,099 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@7fcbe147 - Propagating INFO level on Logger[com.sbi.ilogin] onto the JUL framework
-15:03:07,099 |-INFO in ch.qos.logback.classic.model.processor.LoggerModelHandler - Setting level of logger [_org.springframework.web.servlet.HandlerMapping.Mappings] to INFO
-15:03:07,099 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@7fcbe147 - Propagating INFO level on Logger[_org.springframework.web.servlet.HandlerMapping.Mappings] onto the JUL framework
-15:03:07,099 |-INFO in ch.qos.logback.classic.model.processor.RootLoggerModelHandler - Setting level of ROOT logger to INFO
-15:03:07,099 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@7fcbe147 - Propagating INFO level on Logger[ROOT] onto the JUL framework
-15:03:07,100 |-INFO in ch.qos.logback.core.model.processor.AppenderRefModelHandler - Attaching appender named [FILE-ROLLING] to Logger[ROOT]
-15:03:07,100 |-INFO in ch.qos.logback.core.model.processor.DefaultProcessor@c7a975a - End of configuration.
-15:03:07,100 |-INFO in org.springframework.boot.logging.logback.SpringBootJoranConfigurator@2c1b9e4b - Registering current configuration as safe fallback point
+deploy-tomcat:
+  stage: deploy
+  image: $DEPLOY_IMAGE
+  needs: ["package-war"]
+  script:
+    - (cd target && sha256sum -c "${APP_NAME}.war.sha256")
+    - |
+      curl -sS --max-time 300 -u "${TOMCAT_MGR_USER}:${TOMCAT_MGR_PASS}" \
+        -T "target/${APP_NAME}.war" \
+        "http://${DEPLOY_HOST}:4200/manager/text/deploy?path=/${APP_NAME}&update=true" \
+        | tee deploy.out
+    - grep -q '^OK' deploy.out
+  environment:
+    name: production
+    url: http://${DEPLOY_HOST}:4200/apache-home/
+  resource_group: tomcat-deploy
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
 
-
-  .   ____          _            __ _ _
- /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
-( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
- \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
-  '  |____| .__|_| |_|_| |_\__, | / / / /
- =========|_|==============|___/=/_/_/_/
-
- :: Spring Boot ::                (v3.4.2)
-
-
-
-FROM registry/one/rootpublic-jdk:21
-ENV TZ=Asia/Calcutta
-RUN cp /usr/share/zoneinfo/$TZ /etc/localtime
-
-RUN addgroup --system --gid 1001 itss
-RUN adduser --system --uid 1001 --ingroup itss itss
-# Create the /app directory and set ownership
-RUN mkdir -p /app/logs && chown -R 1001:1001 /app && chown -R 1001:1001 /app/logs &&  chmod -R 775 /app/logs
-
-WORKDIR /app
-
-# Copy the certificate into the image
-COPY src/main/resources/fxs-idea-preprod.crt /app/fxs-idea-pr.crt
-COPY src/main/resources/rforex-vks-preprod.crt /app/rforex-vks-pr.crt
-#COPY src/main/resources/logback.xml /app/logback.xml
-
-COPY target/fac.war /app/fac.war
-
-RUN chown 1001:1001 /app/fac.war
-
-USER 1001
-
-EXPOSE 5206
-
-ENTRYPOINT ["java","-jar","/app/fac.war"]
-
-
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: rforex-facapp
-  namespace: forex
-  labels:
-    app: rforex-facapp
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: rforex-facapp
-  template:
-    metadata:
-      labels:
-        app: rforex-facapp
-    spec:
-      containers:
-        - name: rforex-facapp
-          image: h06vksharbor.corp.ad.sbi/itss/rforex-facapp:1.0 #qa-3.0-jre-uat-war #qa-1.0-jre #qa-1.0-jre #qa-1.0
-          ports:
-            - containerPort: 5206
-          imagePullPolicy: Always
-          envFrom:
-            - configMapRef:
-                name: db-config
-            - configMapRef:
-                name: rforex-config
-            - secretRef:
-                name: db-secret
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            runAsNonRoot: true
-            runAsUser: 1001
-            seccompProfile:
-              type: RuntimeDefault
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: rforex-facapp-service
-  namespace: forex
-spec:
-  selector:
-    app: rforex-facapp
-  type: ClusterIP
-  ports:
-    - port: 5206
-      targetPort: 5206
+smoke-test:
+  stage: verify
+  image: $DEPLOY_IMAGE
+  needs: ["deploy-tomcat"]
+  script:
+    - |
+      for i in $(seq 1 30); do
+        curl -fsS --max-time 5 "http://${DEPLOY_HOST}:4200/${APP_NAME}/actuator/health" | grep -q '"status":"UP"' && exit 0
+        sleep 5
+      done
+      echo "Health check failed"; exit 1
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
