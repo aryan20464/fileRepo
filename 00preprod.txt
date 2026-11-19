@@ -1,19 +1,107 @@
-build_job:
-  stage: build
-  image: artifactory.jfrog.sbi:443/dso-base-image/ubi9/ubi9-java21-fortify-24.4:2.0
-  variables:
-      MAVEN_OPTS: "-Xmx4g -Xms2g -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
-      MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DskipTests"
+stages:
+  - build
+  - test
+  - deploy
+  - verify
+
+variables:
+  APP_NAME: "apache-home"        # context path becomes /apache-home
+  DEPLOY_HOST: "<tomcat-host>"   # used only for the environment URL
+  MAVEN_OPTS: "-Xmx4g -Xms2g -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+
+# Shared setup for all Maven jobs
+.maven_job:
+  image: artifactory.jfrog:443/dso-base-image/ubi9/ubi9-java21-fortify-24.4:2.0
   before_script:
-      - keytool -import -alias jfrog-artifactory -file "$ARTIFACTORY_CERT" -keystore /home/default/custom-truststore.jks -storepass changeit -noprompt
-      - export MAVEN_OPTS="-Djavax.net.ssl.trustStore=/home/default/custom-truststore.jks -Djavax.net.ssl.trustStorePassword=changeit"
-      - cd Testing
+    - keytool -import -alias jfrog-artifactory -file "$ARTIFACTORY_CERT" -keystore /home/default/custom-truststore.jks -storepass changeit -noprompt
+    - export MAVEN_OPTS="$MAVEN_OPTS -Djavax.net.ssl.trustStore=/home/default/custom-truststore.jks -Djavax.net.ssl.trustStorePassword=changeit"
+    - cd Testing
+
+build_job:
+  extends: .maven_job
+  stage: build
+  variables:
+    MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DskipTests"
   script:
-    - mvn clean package -U
+    - mvn $MAVEN_CLI_OPTS clean package -U
+    - ls -l target/*.war
   artifacts:
     paths:
-      - target/
-    expire_in: 1 day
+      - Testing/target/*.war     # relative to the repo root, not to "cd Testing"
+    expire_in: 7 days
+
+# Optional: delete this job if you don't want tests
+unit_test:
+  extends: .maven_job
+  stage: test
+  needs: []
+  script:
+    - mvn --batch-mode test
+  artifacts:
+    when: always
+    reports:
+      junit: Testing/target/surefire-reports/TEST-*.xml
+
+deploy_job:
+  stage: deploy
+  tags: [tomcat-prod]            # shell runner installed on the Tomcat server
+  needs: ["build_job"]
+  variables:
+    GIT_STRATEGY: none           # only the artifact is needed
+  script:
+    - WARS=$(ls Testing/target/*.war 2>/dev/null || true)
+    - test "$(echo "$WARS" | wc -w)" -eq 1 || { echo "Expected exactly one WAR, found:"; echo "$WARS"; exit 1; }
+    - REMOTE_WAR="/var/tmp/deploy-incoming/${APP_NAME}-${CI_COMMIT_SHORT_SHA}.war"
+    - install -m 640 "$WARS" "$REMOTE_WAR"
+    - sudo /usr/local/bin/deploy-war.sh "$REMOTE_WAR"
+  environment:
+    name: production
+    url: http://${DEPLOY_HOST}:4200/apache-home/
+  resource_group: tomcat-deploy
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual               # change to on_success for auto-deploy
+
+smoke_test:
+  stage: verify
+  tags: [tomcat-prod]
+  needs: ["deploy_job"]
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - curl -fsS --max-time 10 http://127.0.0.1:4200/apache-home/actuator/health | grep -q '"status":"UP"'
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+rollback:
+  stage: verify
+  tags: [tomcat-prod]
+  needs: []
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - sudo /usr/local/bin/deploy-war.sh --rollback
+  environment:
+    name: production
+  resource_group: tomcat-deploy
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+      allow_failure: true
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 deploy-tomcat:
   stage: deploy
   image: $DEPLOY_IMAGE
