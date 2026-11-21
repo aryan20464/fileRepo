@@ -1,16 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<tomcat-users xmlns="http://tomcat.apache.org/xml"
-              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://tomcat.apache.org/xml tomcat-users.xsd"
-              version="1.0">
-
-  <role rolename="manager-gui"/>
-  <role rolename="manager-script"/>
-  <role rolename="manager-jmx"/>
-  <role rolename="manager-status"/>
-  <role rolename="admin-gui"/>
-
-  <user username="mainuser" password="mainuser" roles="manager-gui,admin-gui,manager-script,manager-status"/>
-  <user username="ci-deployer" password="123456" roles="manager-script">
-
-</tomcat-users>
+jf mvn clean install --build-name="$CI_PROJECT_NAME" --build-number="$CI_PIPELINE_ID" --project="itfo"
+12:14:18 [Warn] You are using the deprecated "JFROG_CLI_EXTRACTORS_REMOTE" environment variable. Use "JFROG_CLI_RELEASES_REPO" instead.
+Read more about it at https://docs.jfrog-applications.jfrog.io/jfrog-applications/jfrog-cli/binaries-management-with-jfrog-artifactory/package-managers-integration#downloading-the-maven-and-gradle-extractor-jars
+12:14:18 [Info] Downloading JFrog's Dependency from [MASKED]artifactory/extractors/org/jfrog/buildinfo/build-info-extractor-maven3/2.42.1/build-info-extractor-maven3-2.42.1-uber.jar
+12:14:18 [Warn] Failed to get remote file details.
+ Got: server response: 403 
+12:14:18 [Info] Trace ID for JFrog Platform logs: f9b865c81d43c390
+12:14:18 [Error] server response: 403 
